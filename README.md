@@ -4,6 +4,10 @@ Initially developed as a JavaFx toy project 'WeiqiTool', QiPan strives to become
 ## Current Progress
 QiPan is a long way from v1.0.
 As with all great apps, though, there are humble beginnings.
+See [Projects](https://github.com/Nibby/QiPan/projects) for current development progress.
+
+##Roadmap
+To meet major release milestones, the following features are planned.
 
 ### Chapter 1: Humble Beginnings (v0.5 earlybird)
 - [ ] Rendering a goban
@@ -37,3 +41,7 @@ As with all great apps, though, there are humble beginnings.
 
 ... More to be announced!
 
+## Dependencies
+- Gradle
+- JavaFX
+- JSON
