@@ -1,6 +1,6 @@
 package codes.nibby.qipan.board;
 
-import codes.nibby.qipan.game.GoGame;
+import codes.nibby.qipan.game.Game;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
@@ -59,9 +59,9 @@ public class GameBoard extends Pane {
     private GameBoardController controller;
 
     // The go game to be represented on the board
-    private GoGame game;
+    private Game game;
 
-    public GameBoard(GoGame game, GameBoardController controller) {
+    public GameBoard(Game game, GameBoardController controller) {
         this.game = game;
         this.controller = controller;
         this.metrics = new BoardMetrics();
@@ -129,11 +129,11 @@ public class GameBoard extends Pane {
         this.controller = controller;
     }
 
-    public GoGame getGame() {
+    public Game getGame() {
         return game;
     }
 
-    public void setGame(GoGame game) {
+    public void setGame(Game game) {
         this.game = game;
         // TODO: update board graphics to display new game
     }

@@ -1,7 +1,7 @@
 package codes.nibby.qipan;
 
 import codes.nibby.qipan.board.GameBoard;
-import codes.nibby.qipan.game.GoGame;
+import codes.nibby.qipan.game.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -26,7 +26,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         System.setProperty("file.encoding", CHARSET);
 
-        GoGame game = new GoGame();
+        Game game = new Game();
         game.setBoardSize(19, 19);
         GameBoard board = new GameBoard(game, null);
         BorderPane root = new BorderPane(board);

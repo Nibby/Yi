@@ -1,6 +1,6 @@
 package codes.nibby.qipan.board;
 
-import codes.nibby.qipan.game.GoGame;
+import codes.nibby.qipan.game.Game;
 
 /**
  * A collection of variables that is used to calculate various component spacings
@@ -86,7 +86,7 @@ public class BoardMetrics {
 
         // Amount of spacing between the start of the board background and the grid lines
         double margin = (!drawLabels) ? 35 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 65 : 50;
-        GoGame game = board.getGame();
+        Game game = board.getGame();
         this.boardWidth = game.getBoardWidth();
         this.boardHeight = game.getBoardHeight();
         drawWidth = board.getWidth() - margin;

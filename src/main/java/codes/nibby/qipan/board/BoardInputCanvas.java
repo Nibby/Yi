@@ -1,14 +1,10 @@
 package codes.nibby.qipan.board;
 
-import javafx.event.Event;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.paint.Color;
-
-import java.awt.event.MouseWheelEvent;
 
 /**
  * The top-most layer of the board canvas stack.
