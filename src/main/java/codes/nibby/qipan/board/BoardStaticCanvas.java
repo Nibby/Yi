@@ -22,6 +22,6 @@ public class BoardStaticCanvas extends Canvas {
     }
 
     public void render() {
-
+        g.clearRect(0,0, getWidth(), getHeight());
     }
 }

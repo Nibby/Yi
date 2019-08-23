@@ -64,6 +64,7 @@ public class GameBoard extends Pane {
     public GameBoard(Game game, GameBoardController controller) {
         this.game = game;
         this.controller = controller;
+        this.controller.initialize(game, this);
         this.metrics = new BoardMetrics();
         this.metrics.calibrate(this);
 
@@ -89,8 +90,8 @@ public class GameBoard extends Pane {
      */
     private void updateSize(double width, double height) {
         super.setPrefSize(width, height);
-        metrics.calibrate(this);
         layoutChildren();
+        metrics.calibrate(this);
         render();
     }
 

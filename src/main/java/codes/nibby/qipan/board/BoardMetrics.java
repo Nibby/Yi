@@ -102,6 +102,21 @@ public class BoardMetrics {
         gridOffsetX = drawLabels ? (labelOrientation == LABEL_ORIENTATION_ALL) ? 40 : 20 : 0;
         gridOffsetY = drawLabels ? (labelOrientation == LABEL_ORIENTATION_ALL) ? 40 : 20 : 0;
         gap = drawLabels ? stoneSize / stoneGap / 11 : 0;
+
+
+        // Debug:
+//        System.out.println("==========================");
+//        System.out.println("Board metrics calibration:");
+//        System.out.println("==========================");
+//        System.out.printf("Board:           %d x %d\n", boardWidth, boardHeight);
+//        System.out.printf("Draw bounds:     %f x %f\n", drawWidth, drawHeight);
+//        System.out.printf("minSize:         %f\n", minSize);
+//        System.out.printf("stoneSize:       %f\n", stoneSize);
+//        System.out.printf("stoneGap:        %f\n", stoneGap);
+//        System.out.printf("gridSize:        %f\n", gridSize);
+//        System.out.printf("Offsets:         %f, %f\n", offsetX, offsetY);
+//        System.out.printf("Grid offsets:    %f, %f\n", gridOffsetX, gridOffsetY);
+//        System.out.printf("gap:             %f\n", gap);
     }
 
     /**

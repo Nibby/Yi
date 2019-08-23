@@ -7,7 +7,7 @@ package codes.nibby.qipan.config;
  * @author Kevin Yang
  * Created on 23 August 2019
  */
-public enum ConfigValue {
+public enum ConfigValueType {
 
     /*
         Example in config.json:
@@ -52,9 +52,9 @@ public enum ConfigValue {
      * @param value Config string value
      * @return An enum from this enum set.
      */
-    public static ConfigValue parse(String value) {
+    public static ConfigValueType parse(String value) {
         value = value.replace("$", "");
-        for (ConfigValue v : ConfigValue.values()) {
+        for (ConfigValueType v : ConfigValueType.values()) {
             if (value.toUpperCase().equals(v.name()))
                 return v;
         }

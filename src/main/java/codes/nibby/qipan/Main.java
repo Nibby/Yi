@@ -1,6 +1,7 @@
 package codes.nibby.qipan;
 
 import codes.nibby.qipan.board.GameBoard;
+import codes.nibby.qipan.board.GameBoardController;
 import codes.nibby.qipan.game.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -28,7 +29,8 @@ public class Main extends Application {
 
         Game game = new Game();
         game.setBoardSize(19, 19);
-        GameBoard board = new GameBoard(game, null);
+        TestBoardController controller = new TestBoardController();
+        GameBoard board = new GameBoard(game, controller);
         BorderPane root = new BorderPane(board);
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);

@@ -32,6 +32,14 @@ public class BoardBackgroundCanvas extends Canvas {
     private static final Color TEXTURE_SHADOW_COLOR = Color.color(0.25d, 0.25d, 0.25d, 0.25d);
     private static final int TEXTURE_SHADOW_MARGIN = 10;
 
+    static {
+        // TODO may be temporary, need to scale it with board size
+        TEXTURE_SHADOW.setRadius(15);
+        TEXTURE_SHADOW.setOffsetX(10);
+        TEXTURE_SHADOW.setOffsetY(10);
+        TEXTURE_SHADOW.setColor(Color.color(0d, 0d, 0d, 0.5d));
+    }
+
     private GameBoard gameBoard;
     private GraphicsContext g;
 
@@ -53,10 +61,10 @@ public class BoardBackgroundCanvas extends Canvas {
 
         g.clearRect(0, 0, getWidth(), getHeight());
         {
-
+            // TODO: Allow theme parameter override
             // Draw the backdrop
-            if (Config.boardTheme().shouldDrawBackground()) {
-                Image backgroundTexture = Config.boardTheme().getBoardBackgroundTexture();
+            if (Config.getBoardTheme().shouldDrawBackground()) {
+                Image backgroundTexture = Config.getBoardTheme().getBoardBackgroundTexture();
                 g.drawImage(backgroundTexture, 0, 0, getWidth(), getHeight());
             }
 
@@ -71,57 +79,64 @@ public class BoardBackgroundCanvas extends Canvas {
             g.fillRect(x - TEXTURE_SHADOW_MARGIN, y - TEXTURE_SHADOW_MARGIN,
                     width + TEXTURE_SHADOW_MARGIN * 2, height + TEXTURE_SHADOW_MARGIN * 2);
             g.setEffect(null);
-            if (Config.boardTheme().shouldDrawBoardTexture()) {
-                Image boardTexture = Config.boardTheme().getBoardTexture();
+            // TODO: Allow theme parameter override
+            // Draw board texture
+            if (Config.getBoardTheme().shouldDrawBoardTexture()) {
+                Image boardTexture = Config.getBoardTheme().getBoardTexture();
                 g.drawImage(boardTexture, x, y, width, height);
             }
         }
 
-        g.setFill(Color.BLACK);
-        g.setStroke(Color.BLACK);
+        if (Config.getBoardTheme().shouldDrawGrid()) {
+            // TODO: Allow theme parameter override
+            g.setFill(Config.getBoardTheme().getGridColor());
+            g.setStroke(Config.getBoardTheme().getGridColor());
 
-        // Board lines
-        for (int x = 0; x < boardWidth; x++) {
-            g.strokeLine(metrics.getGridX(x),offsetY + gridOffsetY, metrics.getGridX(x),
-                    metrics.getGridY(boardHeight - 1));
-        }
+            // Board lines
+            for (int x = 0; x < boardWidth; x++) {
+                g.strokeLine(metrics.getGridX(x),offsetY + gridOffsetY, metrics.getGridX(x),
+                        metrics.getGridY(boardHeight - 1));
+            }
 
-        for (int y = 0; y < boardHeight; y++) {
-            g.strokeLine(offsetX + gridOffsetX, metrics.getGridY(y),
-                    metrics.getGridX(boardWidth - 1), metrics.getGridY(y));
-        }
+            for (int y = 0; y < boardHeight; y++) {
+                g.strokeLine(offsetX + gridOffsetX, metrics.getGridY(y),
+                        metrics.getGridX(boardWidth - 1), metrics.getGridY(y));
+            }
 
-        // Board star points
-        double dotSize = gridSize / 6;
-        int centerDot = (boardWidth % 2 == 1) ? (boardWidth - 1) / 2 : -1;
+            // Board star points
+            double dotSize = gridSize / 6;
+            int centerDot = (boardWidth % 2 == 1) ? (boardWidth - 1) / 2 : -1;
 
-        if (boardWidth == boardHeight && (boardWidth == 9 || boardWidth == 13 || boardWidth == 19)) {
-            int corner = boardWidth == 9 ? 2 : 3;
-            double grid = gridSize - gap;
+            if (boardWidth == boardHeight && (boardWidth == 9 || boardWidth == 13 || boardWidth == 19)) {
+                int corner = boardWidth == 9 ? 2 : 3;
+                double grid = gridSize - gap;
 
-            if (centerDot != -1)
-                g.fillOval(metrics.getGridX(centerDot) - dotSize / 2,
-                        metrics.getGridY(centerDot) - dotSize / 2, dotSize, dotSize);
+                if (centerDot != -1)
+                    g.fillOval(metrics.getGridX(centerDot) - dotSize / 2,
+                            metrics.getGridY(centerDot) - dotSize / 2, dotSize, dotSize);
 
-            g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
-                    gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
-            g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
-                    gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
-            g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
-                    gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
-            g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
-                    gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
-
-            if (boardWidth == 19) {
-                g.fillOval(gridOffsetX + offsetX + centerDot * grid - dotSize / 2,
-                        gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
-                g.fillOval(gridOffsetX + offsetX + centerDot * grid - dotSize / 2,
-                        gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
                 g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
-                        gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
+                        gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
                 g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
-                        gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
+                        gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
+                g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
+                        gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
+                g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
+                        gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
+
+                if (boardWidth == 19) {
+                    g.fillOval(gridOffsetX + offsetX + centerDot * grid - dotSize / 2,
+                            gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
+                    g.fillOval(gridOffsetX + offsetX + centerDot * grid - dotSize / 2,
+                            gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
+                    g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
+                            gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
+                    g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
+                            gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
+                }
             }
         }
+
+        // TODO: Draw stone shadows here
     }
 }
