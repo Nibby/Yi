@@ -10,10 +10,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.json:json:20171018" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:12" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:mac:12" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:12" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:mac:12" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:12" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:12.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:mac:12.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:12.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:mac:12.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:12.0.2" level="project" />
   </component>
 </module>
