@@ -1,8 +1,8 @@
-package codes.nibby.qipan;
+package codes.nibby.yi;
 
-import codes.nibby.qipan.board.GameBoardController;
-import codes.nibby.qipan.game.Game;
-import codes.nibby.qipan.game.GameNode;
+import codes.nibby.yi.board.GameBoardController;
+import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameNode;
 
 public class TestBoardController extends GameBoardController {
 

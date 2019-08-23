@@ -1,7 +1,7 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
-import codes.nibby.qipan.config.Config;
-import codes.nibby.qipan.game.Game;
+import codes.nibby.yi.config.Config;
+import codes.nibby.yi.game.Game;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;

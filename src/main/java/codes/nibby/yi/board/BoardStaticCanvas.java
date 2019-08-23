@@ -1,4 +1,4 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

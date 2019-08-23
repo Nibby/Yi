@@ -1,6 +1,4 @@
-package codes.nibby.qipan.game;
-
-import codes.nibby.qipan.board.GameBoardController;
+package codes.nibby.yi.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;

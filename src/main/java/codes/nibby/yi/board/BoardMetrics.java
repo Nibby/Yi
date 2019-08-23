@@ -1,6 +1,6 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
-import codes.nibby.qipan.game.Game;
+import codes.nibby.yi.game.Game;
 
 /**
  * A collection of variables that is used to calculate various component spacings

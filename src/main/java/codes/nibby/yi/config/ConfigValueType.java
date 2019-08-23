@@ -1,4 +1,4 @@
-package codes.nibby.qipan.config;
+package codes.nibby.yi.config;
 
 /**
  * The values in this enum corresponds to the unique $ values in .json config files.

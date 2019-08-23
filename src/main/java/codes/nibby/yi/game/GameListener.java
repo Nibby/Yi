@@ -1,4 +1,4 @@
-package codes.nibby.qipan.game;
+package codes.nibby.yi.game;
 
 public interface GameListener {
 

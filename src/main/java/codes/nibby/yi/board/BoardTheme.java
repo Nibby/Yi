@@ -1,7 +1,10 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
-import codes.nibby.qipan.config.ConfigValueType;
-import codes.nibby.qipan.utility.ColorUtility;
+import codes.nibby.yi.config.ConfigValueType;
+import codes.nibby.yi.utility.AlertUtility;
+import codes.nibby.yi.utility.ColorUtility;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
@@ -118,6 +121,8 @@ public class BoardTheme {
         } catch (IOException e) {
             // TODO: better exception handling
             e.printStackTrace();
+            AlertUtility.showAlert("Unable to load theme settings.\n" + " " + e.getMessage(), "BoardTheme",
+                    Alert.AlertType.ERROR, ButtonType.OK);
         }
     }
 
