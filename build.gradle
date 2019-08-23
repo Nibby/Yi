@@ -1,12 +1,13 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 group 'codes.nibby.qipan'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.12
 
 repositories {
     jcenter()
@@ -18,4 +19,9 @@ dependencies {
     compile 'org.json:json:20171018'
 }
 
-mainClassName = 'codes.nibby.qipan.Main'
+javafx {
+    version = "12.0.2"
+    modules = [ 'javafx.controls' ]
+}
+
+mainClassName = 'codes.nibby.yi.Main'
