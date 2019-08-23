@@ -1,4 +1,4 @@
-package codes.nibby.qipan.utility;
+package codes.nibby.yi.utility;
 
 import javafx.scene.paint.Color;
 

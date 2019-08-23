@@ -1,4 +1,4 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
 /**
  * Determines the type of graphics to be displayed when the mouse hovers over

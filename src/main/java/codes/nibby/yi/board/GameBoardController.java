@@ -1,7 +1,7 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
-import codes.nibby.qipan.game.Game;
-import codes.nibby.qipan.game.GameListener;
+import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameListener;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 

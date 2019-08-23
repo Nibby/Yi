@@ -14,6 +14,10 @@
       <option name="path" value="/src/main/java/codes/nibby/yi/board" />
     </index-move-record>
     <index-move-record>
+      <option name="firstPath" value="/src/main/resources/ui_themes/megumi" />
+      <option name="path" value="/src/main/resources/uiThemes/megumi" />
+    </index-move-record>
+    <index-move-record>
       <option name="firstPath" value="/src/main/java/codes/nibby/qipan/Main.java" />
       <option name="path" value="/src/main/java/codes/nibby/yi/Main.java" />
     </index-move-record>

@@ -1,6 +1,6 @@
-package codes.nibby.qipan.board;
+package codes.nibby.yi.board;
 
-import codes.nibby.qipan.config.Config;
+import codes.nibby.yi.config.Config;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
