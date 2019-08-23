@@ -22,6 +22,9 @@ public enum ConfigValueType {
     /** The value is as specified by some other template. */
     AS_DEFINED,
 
+    /** Use system default */
+    DEFAULT,
+
     /**
      * As a substitute for image based assets such as stone texture.
      * The application will use its own drawing methods for displaying them.

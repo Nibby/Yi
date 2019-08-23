@@ -32,19 +32,10 @@ public class UiLanguage {
     // The language-specific CSS files to be applied to the UI
     private String cssFile;
 
-    // Determines whether the language pack has been loaded before
-    private boolean loaded = false;
-
-    public UiLanguage(String locale) {
-        String[] localeData = locale.split("_");
+    public UiLanguage(String localeString) {
+        String[] localeData = localeString.split("_");
         this.locale = new Locale(localeData[0], localeData[1]);
         fonts = new Font[FONTS_USED];
-        load();
-    }
-
-    private void load() {
-        if (loaded)
-            throw new RuntimeException("Language files can only be loaded once!");
 
         // First load the config.json file
         String langDirectory = LANGUAGE_DIRECTORY + locale + "/";
@@ -80,20 +71,15 @@ public class UiLanguage {
             String bundleName = langDirectory.replace("/", ".").substring(1, langDirectory.length()) + fileName;
 
             try {
-                if (locale == null)
-                    bundle = ResourceBundle.getBundle(bundleName);
-                else
-                    bundle = ResourceBundle.getBundle(bundleName, locale);
+                bundle = ResourceBundle.getBundle(bundleName, this.locale);
                 resourceBundles.put(fileName, bundle);
             } catch (MissingResourceException e) {
                 e.printStackTrace();
-                AlertUtility.showAlert("Failed to load resource bundle for locale:" + locale.getDisplayScript()
+                AlertUtility.showAlert("Failed to load resource bundle for locale:" + this.locale.getDisplayScript()
                         + "\n" + e.getMessage(), "Conf -> UiLanguage", Alert.AlertType.ERROR, ButtonType.OK);
             }
 
         }
-
-        loaded = true;
     }
 
     public ResourceBundle getResourceBundle(String resource) {
