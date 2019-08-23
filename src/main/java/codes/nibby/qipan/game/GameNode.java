@@ -87,9 +87,9 @@ public class GameNode {
     }
 
     /**
-     * The root node counts as move 1, hence 1 is added to the step count.
      *
-     * @return The distance to the root + 1, as move number.
+     *
+     * @return The distance to the root.
      */
     public int getMoveNumber() {
         int steps = 0;
@@ -98,7 +98,7 @@ public class GameNode {
             current = current.getParent();
             steps++;
         }
-        return steps + 1;
+        return steps;
     }
 
     /**
@@ -107,7 +107,7 @@ public class GameNode {
      * @return An array of game states, with root at index 0.
      */
     public GameNode[] getNodeChain() {
-        int size = getMoveNumber();
+        int size = getMoveNumber() + 1;
         GameNode[] result = new GameNode[size];
         GameNode current = this;
         for (int step = size; step > 0; step--) {

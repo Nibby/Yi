@@ -1,5 +1,7 @@
 package codes.nibby.qipan.game;
 
+import codes.nibby.qipan.board.GameBoardController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.Map;
  * Created on 23 August 2019
  */
 public class Game {
+
+    public static final int COLOR_BLACK = 1;
+    public static final int COLOR_WHITE = 2;
 
     /** Width of the go board. */
     private int boardWidth;
@@ -107,6 +112,16 @@ public class Game {
     }
 
     /**
+     * Returns the number code of the next player to move.
+     * TODO: Integrate this with game rules
+     *
+     * @return COLOR_BLACK or COLOR_WHITE, depending on oddity of the move number.
+     */
+    public int getNextMoveColor() {
+        return currentNode.getMoveNumber() % 2 == 1 ? COLOR_WHITE : COLOR_BLACK;
+    }
+
+    /**
      * A destructive operation that resizes the go board.
      * Will reset game tree.
      *
@@ -134,5 +149,9 @@ public class Game {
 
     public GameNode getCurrentNode() {
         return currentNode;
+    }
+
+    public void addGameListener(GameListener listener) {
+        listeners.add(listener);
     }
 }

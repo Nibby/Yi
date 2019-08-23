@@ -1,6 +1,6 @@
 package codes.nibby.qipan.board;
 
-import codes.nibby.qipan.config.ConfigValue;
+import codes.nibby.qipan.config.ConfigValueType;
 import codes.nibby.qipan.utility.ColorUtility;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -38,14 +38,14 @@ public class BoardTheme {
     private Image boardTexture;
     private Image boardBackgroundTexture;
 
-    private ConfigValue stoneBlackConfig;
+    private ConfigValueType stoneBlackConfig;
     private Image whiteStoneTexture;
-    private ConfigValue stoneWhiteConfig;
+    private ConfigValueType stoneWhiteConfig;
     private Image blackStoneTexture;
 
-    private ConfigValue gridColorConfig;
+    private ConfigValueType gridColorConfig;
     private Color gridColor;
-    private ConfigValue coordColorConfig;
+    private ConfigValueType coordColorConfig;
     private Color coordColor;
 
     public BoardTheme(Path themeDirectory) {
@@ -88,29 +88,29 @@ public class BoardTheme {
 
                 // Black and white stones are mandatory settings, cannot allow missing values
                 String stoneBlackValue = boardObj.getString(KEY_STONE_BLACK);
-                stoneBlackConfig = ConfigValue.parse(stoneBlackValue);
-                if (stoneBlackConfig.equals(ConfigValue.OVERRIDE))
+                stoneBlackConfig = ConfigValueType.parse(stoneBlackValue);
+                if (stoneBlackConfig.equals(ConfigValueType.OVERRIDE))
                     whiteStoneTexture = new Image(Files.newInputStream(directory.resolve(stoneBlackValue)));
 
                 String stoneWhiteValue = boardObj.getString(KEY_STONE_WHITE);
-                stoneWhiteConfig = ConfigValue.parse(stoneWhiteValue);
-                if (stoneWhiteConfig.equals(ConfigValue.OVERRIDE))
+                stoneWhiteConfig = ConfigValueType.parse(stoneWhiteValue);
+                if (stoneWhiteConfig.equals(ConfigValueType.OVERRIDE))
                     blackStoneTexture = new Image(Files.newInputStream(directory.resolve(stoneWhiteValue)));
 
                 // Grid color optional? Might be fun to play without the lines x)
                 boolean hasGridColor = boardObj.has(KEY_GRID_COLOR);
                 if (hasGridColor) {
                     String gridColorValue = boardObj.getString(KEY_GRID_COLOR);
-                    gridColorConfig = ConfigValue.parse(gridColorValue);
-                    if (gridColorConfig.equals(ConfigValue.OVERRIDE))
+                    gridColorConfig = ConfigValueType.parse(gridColorValue);
+                    if (gridColorConfig.equals(ConfigValueType.OVERRIDE))
                         gridColor = ColorUtility.parseRGBA_255(gridColorValue);
                 }
 
                 boolean hasCoordColor = boardObj.has(KEY_COORDINATES_COLOR);
                 if (hasCoordColor) {
                     String coordColorValue = boardObj.getString(KEY_GRID_COLOR);
-                    coordColorConfig = ConfigValue.parse(coordColorValue);
-                    if (coordColorConfig.equals(ConfigValue.OVERRIDE))
+                    coordColorConfig = ConfigValueType.parse(coordColorValue);
+                    if (coordColorConfig.equals(ConfigValueType.OVERRIDE))
                         coordColor = ColorUtility.parseRGBA_255(coordColorValue);
                 }
             }
@@ -122,19 +122,19 @@ public class BoardTheme {
     }
 
     public boolean isBlackStoneAppRendered() {
-        return stoneBlackConfig.equals(ConfigValue.APP_RENDERED);
+        return stoneBlackConfig.equals(ConfigValueType.APP_RENDERED);
     }
 
     public boolean isWhiteStoneAppRendered() {
-        return stoneWhiteConfig.equals(ConfigValue.APP_RENDERED);
+        return stoneWhiteConfig.equals(ConfigValueType.APP_RENDERED);
     }
 
     public boolean isGridAppRendered() {
-        return gridColorConfig.equals(ConfigValue.APP_RENDERED);
+        return gridColorConfig.equals(ConfigValueType.APP_RENDERED);
     }
 
     public boolean isCoordAppRendered() {
-        return coordColorConfig.equals(ConfigValue.APP_RENDERED);
+        return coordColorConfig.equals(ConfigValueType.APP_RENDERED);
     }
 
     public boolean shouldDrawBackground() {
