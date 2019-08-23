@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="QiPan.main" target="1.8" />
       <module name="QiPan.test" target="1.8" />
+      <module name="Yi.main" target="12" />
+      <module name="Yi.test" target="12" />
     </bytecodeTargetLevel>
   </component>
 </project>
