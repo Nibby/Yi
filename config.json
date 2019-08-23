@@ -1,8 +1,9 @@
 {
+  "language": "en_US",
   "board_cursor": "circle",
 
   "theme": {
-    "use": "megumi",
+    "use": "qipanClassic",
     "stones": "$AS_DEFINED",
     "background": "$AS_DEFINED"
   }

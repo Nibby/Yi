@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ApexVcsIndex">
+    <index-move-record>
+      <option name="firstPath" value="/src/main/java/codes/nibby/qipan/config" />
+      <option name="path" value="/src/main/java/codes/nibby/yi/config" />
+    </index-move-record>
+    <index-move-record>
+      <option name="firstPath" value="/src/main/java/codes/nibby/qipan/game" />
+      <option name="path" value="/src/main/java/codes/nibby/yi/game" />
+    </index-move-record>
+    <index-move-record>
+      <option name="firstPath" value="/src/main/java/codes/nibby/qipan/board" />
+      <option name="path" value="/src/main/java/codes/nibby/yi/board" />
+    </index-move-record>
+    <index-move-record>
+      <option name="firstPath" value="/src/main/java/codes/nibby/qipan/Main.java" />
+      <option name="path" value="/src/main/java/codes/nibby/yi/Main.java" />
+    </index-move-record>
+    <index-move-record>
+      <option name="firstPath" value="/src/main/java/codes/nibby/qipan/TestBoardController.java" />
+      <option name="path" value="/src/main/java/codes/nibby/yi/TestBoardController.java" />
+    </index-move-record>
+    <index-move-record>
+      <option name="firstPath" value="/src/main/java/codes/nibby/qipan/utility" />
+      <option name="path" value="/src/main/java/codes/nibby/yi/utility" />
+    </index-move-record>
+  </component>
+</project>
