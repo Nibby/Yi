@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/Yi.iml" filepath="$PROJECT_DIR$/.idea/Yi.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Yi.iml" filepath="$PROJECT_DIR$/.idea/modules/Yi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Yi.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Yi.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Yi.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Yi.test.iml" />
+>>>>>>> master
     </modules>
   </component>
 </project>
