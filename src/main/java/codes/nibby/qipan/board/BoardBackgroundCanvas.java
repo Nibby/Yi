@@ -1,8 +1,10 @@
 package codes.nibby.qipan.board;
 
+import codes.nibby.qipan.config.Config;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
@@ -51,9 +53,12 @@ public class BoardBackgroundCanvas extends Canvas {
 
         g.clearRect(0, 0, getWidth(), getHeight());
         {
+
             // Draw the backdrop
-            // TODO: Acquire board background image via configurations
-//          g.drawImage(backgroundStyle.getTexture(), 0, 0, getWidth(), getHeight());
+            if (Config.boardTheme().shouldDrawBackground()) {
+                Image backgroundTexture = Config.boardTheme().getBoardBackgroundTexture();
+                g.drawImage(backgroundTexture, 0, 0, getWidth(), getHeight());
+            }
 
             // Draw the board
             double width = gridSize * boardWidth;
@@ -66,8 +71,10 @@ public class BoardBackgroundCanvas extends Canvas {
             g.fillRect(x - TEXTURE_SHADOW_MARGIN, y - TEXTURE_SHADOW_MARGIN,
                     width + TEXTURE_SHADOW_MARGIN * 2, height + TEXTURE_SHADOW_MARGIN * 2);
             g.setEffect(null);
-            // TODO: Acquire board texture via configurations
-//          g.drawImage(boardStyle.getTexture(), x, y, width, height);
+            if (Config.boardTheme().shouldDrawBoardTexture()) {
+                Image boardTexture = Config.boardTheme().getBoardTexture();
+                g.drawImage(boardTexture, x, y, width, height);
+            }
         }
 
         g.setFill(Color.BLACK);

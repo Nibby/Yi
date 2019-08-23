@@ -1,0 +1,8 @@
+{
+
+  "theme": {
+    "use": "megumi",
+    "stones": "$AS_DEFINED",
+    "background": "$AS_DEFINED"
+  }
+}

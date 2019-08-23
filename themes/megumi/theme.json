@@ -1,0 +1,12 @@
+{
+  "name": "Megumi",
+  "background": "tatami.jpg",
+
+  "board": {
+    "texture": "board.jpg",
+    "stone_black": "$APP_RENDERED",
+    "stone_white": "$APP_RENDERED",
+    "grid_color": "158,103,35,255",
+    "coordinates_color": "158,103,35,255"
+  }
+}
