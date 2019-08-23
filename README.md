@@ -1,8 +1,8 @@
-# QiPan
-Initially developed as a JavaFx toy project 'WeiqiTool', QiPan strives to become an elegant and powerful companion for the dedicated players of the board game Go. It will feature an SGF editor, Leela Zero interface, OGS and IGS game client.
+# 弈 (Yi), lit. Go
+Formerly known as 'WeiqiTool' and 'QiPan', Yi strives to become an elegant and powerful companion for the dedicated players of the board game Go. It will feature a game record editor, AI analysis module, and a personal SGF library.
 
 ## Current Progress
-QiPan is a long way from v1.0.
+Yi is a long way from v1.0.
 As with all great apps, though, there are humble beginnings.
 See [Projects](https://github.com/Nibby/QiPan/projects) for current development progress.
 
@@ -10,7 +10,7 @@ See [Projects](https://github.com/Nibby/QiPan/projects) for current development 
 To meet major release milestones, the following features are planned.
 
 ### Chapter 1: Humble Beginnings (v0.5 earlybird)
-- [ ] Rendering a goban
+- [X] Rendering a goban
 - [ ] Basic stone placement
 - [ ] Move tree
 - [ ] Annotations
