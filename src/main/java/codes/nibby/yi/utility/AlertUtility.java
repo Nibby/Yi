@@ -14,7 +14,7 @@ public class AlertUtility {
     public static void showAlert(String content, String title, Alert.AlertType type, ButtonType ... buttons) {
         Alert alert = new Alert(type, content, buttons);
         alert.setTitle(title);
-        alert.show();
+        alert.showAndWait();
     }
 
 }

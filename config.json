@@ -1,9 +1,10 @@
 {
   "language": "en_US",
   "board_cursor": "circle",
+  "ui_theme": "megumi",
 
-  "theme": {
-    "use": "qipanClassic",
+  "board_theme": {
+    "use": "qipan",
     "stones": "$AS_DEFINED",
     "background": "$AS_DEFINED"
   }

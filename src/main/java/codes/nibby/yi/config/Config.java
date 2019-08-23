@@ -21,15 +21,17 @@ import java.util.Scanner;
 public class Config {
 
     // JSON keys
-    private static final String KEY_THEME = "theme";
-    private static final String KEY_THEME_USE = "use";
-    private static final String KEY_THEME_STONES = "stones";
-    private static final String KEY_THEME_BACKGROUND = "background";
+    private static final String KEY_UI_THEME = "ui_theme";
+    private static final String KEY_BOARD_THEME = "board_theme";
+    private static final String KEY_BOARD_THEME_USE = "use";
+    private static final String KEY_BOARD_THEME_STONES = "stones";
+    private static final String KEY_BOARD_THEME_BACKGROUND = "background";
     private static final String KEY_BOARD_CURSOR = "board_cursor";
 
     // Directories
-    private static final String BOARD_THEME_DIRECTORY = "boardThemes";
-    private static final String UI_THEME_DIRECTORY = "uiThemes";
+    protected static final String THEME_DIRECTORY = "themes";
+    protected static final String BOARD_THEME_DIRECTORY = "board_themes";
+    protected static final String UI_THEME_DIRECTORY = "ui_themes";
 
     // The config.json document.
     private static JSONObject root;
@@ -39,6 +41,9 @@ public class Config {
 
     // Current application display language
     private static UiLanguage uiLanguage;
+
+    // Current application UI theme
+    private static UiTheme uiTheme;
 
     // Type of cursor to be displayed when mouse hovers over the board.
     private static BoardCursorType cursorType;
@@ -65,11 +70,20 @@ public class Config {
             String locale = root.getString("language");
             uiLanguage = new UiLanguage(locale);
 
-            // Load board theme template.
-            String useName = root.getJSONObject(KEY_THEME).getString(KEY_THEME_USE);
-            Path directory = Paths.get(BOARD_THEME_DIRECTORY).resolve(useName);
-            boardTheme = new BoardTheme(directory);
+            Path themeDirectory = Paths.get(THEME_DIRECTORY);
 
+            {
+                String useName = root.getString(KEY_UI_THEME);
+                Path uiThemeDir = themeDirectory.resolve(UI_THEME_DIRECTORY).resolve(useName);
+                uiTheme = new UiTheme(useName);
+            }
+
+            {
+                // Load board theme template.
+                String useName = root.getJSONObject(KEY_BOARD_THEME).getString(KEY_BOARD_THEME_USE);
+                Path boardThemeDir = themeDirectory.resolve(BOARD_THEME_DIRECTORY).resolve(useName);
+                boardTheme = new BoardTheme(boardThemeDir);
+            }
             cursorType = BoardCursorType.parse(root.getString(KEY_BOARD_CURSOR));
 
         } catch (Exception e) {
@@ -88,5 +102,9 @@ public class Config {
 
     public static BoardCursorType getCursorType() {
         return cursorType;
+    }
+
+    public static UiTheme getUiTheme() {
+        return uiTheme;
     }
 }

@@ -7,6 +7,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * Main application class.
+ *
+ *
+ * @author Kevin Yang
+ * Created on 24 August 2019
+ */
 public class Yi extends Application {
 
     public static final String NAME = "Yi";
@@ -15,6 +22,7 @@ public class Yi extends Application {
     public static final String CHARSET = "UTF-8";
 
     public static final String PATH_CONFIG = "config.json";
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -33,6 +41,10 @@ public class Yi extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static void exit() {
+        System.exit(0);
     }
 
 }
