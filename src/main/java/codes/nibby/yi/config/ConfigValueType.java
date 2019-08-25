@@ -9,19 +9,6 @@ package codes.nibby.yi.config;
  */
 public enum ConfigValueType {
 
-    /*
-        Example in config.json:
-        "theme": {
-            "use": "megumi"
-            "stones": "$AS_DEFINED"
-        }
-
-        Meaning:
-            Use stone textures as defined in the "megumi" theme template.
-     */
-    /** The value is as specified by some other template. */
-    AS_DEFINED,
-
     /** Use system default */
     DEFAULT,
 

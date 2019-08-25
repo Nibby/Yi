@@ -5,7 +5,7 @@
 
   "board_theme": {
     "use": "qipan",
-    "stones": "$AS_DEFINED",
+    "stones": "biconvex_ceramic",
     "background": "$AS_DEFINED"
   }
 }
