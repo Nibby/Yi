@@ -18,7 +18,7 @@ To meet major release milestones, the following features are planned.
 - [ ] Saving / loading SGF
 - [ ] Support for **9x9**, **13x13**, **19x19** sizes
 - [ ] Custom size board support
-- [ ] Multi-lingual support
+- [x] Multi-lingual support
 
 ### Chapter 2: Expanding Horizons (v0.7 alpha)
 - [ ] Score estimation

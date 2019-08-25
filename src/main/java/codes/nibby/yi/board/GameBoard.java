@@ -113,8 +113,8 @@ public class GameBoard extends Pane {
     private void adjustBounds(Canvas canvas) {
         final double x = snappedLeftInset();
         final double y = snappedTopInset();
-        final double w = snapSize(getWidth()) - x - snappedRightInset();
-        final double h = snapSize(getHeight()) - y - snappedBottomInset();
+        final double w = snapSizeX(getWidth()) - x - snappedRightInset();
+        final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
 
         canvas.setLayoutX(x);
         canvas.setLayoutY(y);

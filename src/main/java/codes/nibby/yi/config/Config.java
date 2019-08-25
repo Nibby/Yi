@@ -3,6 +3,7 @@ package codes.nibby.yi.config;
 import codes.nibby.yi.Yi;
 import codes.nibby.yi.board.BoardCursorType;
 import codes.nibby.yi.board.BoardTheme;
+import codes.nibby.yi.board.StoneStyle;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
@@ -48,6 +49,10 @@ public class Config {
     // Type of cursor to be displayed when mouse hovers over the board.
     private static BoardCursorType cursorType;
 
+    // Type of stone to draw by default
+    private static StoneStyle stoneStyle;
+
+
     /*
         Loads config once upon startup.
      */
@@ -74,15 +79,16 @@ public class Config {
 
             {
                 String useName = root.getString(KEY_UI_THEME);
-                Path uiThemeDir = themeDirectory.resolve(UI_THEME_DIRECTORY).resolve(useName);
                 uiTheme = new UiTheme(useName);
             }
 
             {
                 // Load board theme template.
-                String useName = root.getJSONObject(KEY_BOARD_THEME).getString(KEY_BOARD_THEME_USE);
+                JSONObject boardConfig = root.getJSONObject(KEY_BOARD_THEME);
+                String useName = boardConfig.getString(KEY_BOARD_THEME_USE);
                 Path boardThemeDir = themeDirectory.resolve(BOARD_THEME_DIRECTORY).resolve(useName);
                 boardTheme = new BoardTheme(boardThemeDir);
+                stoneStyle = StoneStyle.parse(boardConfig.getString(KEY_BOARD_THEME_STONES));
             }
             cursorType = BoardCursorType.parse(root.getString(KEY_BOARD_CURSOR));
 
@@ -106,5 +112,9 @@ public class Config {
 
     public static UiTheme getUiTheme() {
         return uiTheme;
+    }
+
+    public static StoneStyle getStoneStyle() {
+        return stoneStyle;
     }
 }
