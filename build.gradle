@@ -24,4 +24,4 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
-mainClassName = 'codes.nibby.yi.Main'
+mainClassName = 'codes.nibby.yi.Yi'

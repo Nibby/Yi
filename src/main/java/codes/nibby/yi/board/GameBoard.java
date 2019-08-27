@@ -1,12 +1,17 @@
 package codes.nibby.yi.board;
 
 import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameListener;
+import codes.nibby.yi.game.GameNode;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 
+import java.util.*;
+
 /**
  * The standard go board component used in the program.
+ * This class manages all the graphical aspect of the <strong>Game</strong> object.
  * It consists of a stack of <strong>three</strong> canvas layers,
  * in draw order (back to front):
  *
@@ -43,7 +48,7 @@ import javafx.scene.layout.Pane;
  * @author Kevin Yang
  * created on 23 August 2019
  */
-public class GameBoard extends Pane {
+public class GameBoard extends Pane implements GameListener {
 
     /*
         The three stacked canvas layers
@@ -61,13 +66,22 @@ public class GameBoard extends Pane {
     // The go game to be represented on the board
     private Game game;
 
+    // A list of renderable objects (sourced from game.currentNode)
+    private Stone[] stones;
+    private List<Stone> stonesStatic, stonesAnimated;
+
     public GameBoard(Game game, GameBoardController controller) {
         this.game = game;
+        this.game.addGameListener(this);
         this.controller = controller;
         this.controller.initialize(game, this);
         this.metrics = new BoardMetrics();
         this.metrics.calibrate(this);
 
+        int capacity = game.getBoardWidth() * game.getBoardHeight();
+        this.stones = new Stone[capacity];
+        this.stonesAnimated = new ArrayList<>();
+        this.stonesStatic = new ArrayList<>();
         canvasBg = new BoardBackgroundCanvas(this);
         canvasStatic = new BoardStaticCanvas(this);
         canvasInput = new BoardInputCanvas(this);
@@ -83,6 +97,128 @@ public class GameBoard extends Pane {
         widthProperty().addListener(e -> updateSize(getWidth(), getHeight()));
         heightProperty().addListener(e -> updateSize(getWidth(), getHeight()));
     }
+
+    /**
+     * Picks displayable game data from the current game node and add them to the
+     * board for display.
+     *
+     * If the <pre>flush</pre> flag is false, then the board objects will retain
+     * what it already has, provided that the game node contains the same element too.
+     * This is done so that the boardObjects map doesn't have to be reset and rebuilt
+     * each time.
+     *
+     * However, if the flush is set to true, then the entire boardObjects map is reset
+     * and rebuilt from ground up.
+     *
+     * @param node The current node data.
+     * @param flush Whether to clear existing object cache first.
+     */
+    public void updateBoardObjects(GameNode node, boolean flush, boolean newMove) {
+        if (flush) {
+            int capacity = game.getBoardWidth() * game.getBoardHeight();
+            this.stones = new Stone[capacity];
+        }
+        stonesStatic.clear();
+        stonesAnimated.clear();
+
+        // First scan through the stone data on the current node
+        int[] nodeStoneData = node.getStoneData();
+        int boardWidth = getGame().getBoardWidth();
+
+        for (int i = 0; i < nodeStoneData.length; i++) {
+            int x = i % boardWidth;
+            int y = i / boardWidth;
+
+            // TODO: Implement this
+            /*
+                Scenarios:
+
+                1. A stone exists in nodeStoneData[] but not in stone[] and versa
+                    - The new stones from source is the difference in data between
+                      the old and new nodes.
+                    - Add the new ones to the screen,
+                        TODO: static or animated? DEFAULT STATIC FOR NOW
+                        TODO: how to just animate the stone once when it's placed?
+
+
+                2. No data exists in nodeStoneData[] but it exists in stone[]
+                    - User is probably backtracking in the game tree
+                    - Remove all stones[] instances that do not match source
+
+                3. Conflicting stone data exist in nodeStoneData[] and stone[]
+                    - Always resort to source.
+
+             */
+            switch (nodeStoneData[i]) {
+                case Stone.NONE:
+                    // Source has no stones, therefore we should have none here too.
+                    stones[i] = null;
+                    break;
+                case Stone.BLACK:
+                    // Source has a black stone, adjust to black.
+                    if (stones[i] != null)
+                        stones[i].setColor(Stone.BLACK);
+                    else
+                        stones[i] = new Stone(Stone.BLACK, x, y);
+                    break;
+                case Stone.WHITE:
+                    // Source has a white stone, adjust to white.
+                    if (stones[i] != null)
+                        stones[i].setColor(Stone.WHITE);
+                    else
+                        stones[i] = new Stone(Stone.WHITE, x, y);
+                    break;
+            }
+
+            // TODO: Adjust this later
+            if (stones[i] != null) {
+                // Check if it's a brand new move. If so, wobble it if applicable.
+                boolean wobble = false;
+                if (newMove) {
+                    int[] move = node.getCurrentMove();
+                    if (x == move[0] && y == move[1]) {
+                        stones[i].setWobble(200d);
+                        stonesAnimated.add(stones[i]);
+                        wobble = true;
+                    }
+                }
+
+                if (!wobble) {
+                    if (stones[i].shouldWobble())
+                        stonesAnimated.add(stones[i]);
+                    else
+                        stonesStatic.add(stones[i]);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void gameInitialized(Game game) {
+
+    }
+
+    @Override
+    public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
+        // TODO: Should flush always be false here?
+        updateBoardObjects(currentMove, false, newMove);
+
+        render();
+    }
+
+
+//  TODO: Not sure how necessary yet.
+
+//    /**
+//     * Move an animated stone to the static stone list.
+//     * The stone will then be rendered in BoardStaticCanvas
+//     *
+//     * @param stone Stone affected
+//     */
+//    public void makeStatic(Stone stone) {
+//        stonesAnimated.remove(stone);
+//        stonesStatic.add(stone);
+//    }
 
     /*
         Invoked each time this component has been resized.
@@ -136,7 +272,7 @@ public class GameBoard extends Pane {
 
     public void setGame(Game game) {
         this.game = game;
-        // TODO: update board graphics to display new game
+        updateBoardObjects(game.getCurrentNode(), true, false);
     }
 
     protected BoardInputCanvas getInputCanvas() {
@@ -153,5 +289,17 @@ public class GameBoard extends Pane {
 
     public BoardMetrics getMetrics() {
         return metrics;
+    }
+
+    public Stone[] getAllRenderableStones() {
+        return stones;
+    }
+
+    public List<Stone> getStaticStones() {
+        return stonesStatic;
+    }
+
+    public List<Stone> getAnimatedStones() {
+        return stonesAnimated;
     }
 }

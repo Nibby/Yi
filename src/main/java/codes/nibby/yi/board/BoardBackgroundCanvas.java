@@ -1,11 +1,14 @@
 package codes.nibby.yi.board;
 
 import codes.nibby.yi.config.Config;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /**
  * The bottom-most layer of the game board canvas stack.
@@ -139,10 +142,20 @@ public class BoardBackgroundCanvas extends Canvas {
         }
 
         if (Config.getBoardTheme().shouldDrawStoneShadow()) {
-            // TODO: Draw stone shadows here
-            // TODO: test
-            StoneRenderer.renderShadow(g, new Stone(Stone.BLACK, 1, 1), metrics);
-            StoneRenderer.renderShadow(g, new Stone(Stone.WHITE, 2, 1), metrics);
+            boolean redraw = false;
+            Stone[] stones = gameBoard.getAllRenderableStones();
+            for (Stone stone : stones) {
+                if (stone == null)
+                    continue;
+
+                StoneRenderer.renderShadow(g, stone, metrics);
+                if (stone.shouldWobble())
+                    redraw = true;
+            }
+
+            if (redraw) {
+                new Timeline(new KeyFrame(Duration.millis(40), e -> render())).play();
+            }
         }
     }
 }
