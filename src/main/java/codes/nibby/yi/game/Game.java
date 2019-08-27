@@ -1,5 +1,8 @@
 package codes.nibby.yi.game;
 
+import codes.nibby.yi.game.rules.GameRules;
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.Map;
 
 /**
  * The core representation for a Go 'game'. This class contains all the
- * information to generate a SGF file.
+ * information to generate a game record file.
  *
  * @author Kevin Yang
  * Created on 23 August 2019
@@ -28,6 +31,9 @@ public class Game {
 
     /** The current selected node in the game tree. */
     private GameNode currentNode;
+
+    /** Current rules governing the game. */
+    private GameRules ruleset;
 
     /**
      * A list of the game positions leading up to currentNode.
@@ -107,6 +113,18 @@ public class Game {
                 pastStates.put(move, chain[move]);
             }
         }
+    }
+
+    /**
+     * Performs scoring on the position as given by <i>currentNode</i> and
+     * returns the outcome of the game.
+     *
+     * TODO: Implement this later
+     * @return Information regarding the outcome of the game.
+     * @throws ExecutionControl.NotImplementedException Not implemented!
+     */
+    public GameOutcome getOutcome() throws ExecutionControl.NotImplementedException {
+        throw new ExecutionControl.NotImplementedException("Not yet implemented!");
     }
 
     /**
