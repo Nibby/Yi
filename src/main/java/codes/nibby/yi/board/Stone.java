@@ -40,7 +40,7 @@ public class Stone implements IRenderable {
         imitate this effect.
      */
     /** Fuzzy placement offset. */
-    protected double fuzzyX = 0, fuzzyY = 0;
+    private double fuzzyX = 0, fuzzyY = 0;
 
     public Stone(int color, int x, int y) {
         this.color = color;

@@ -54,6 +54,17 @@ public class BoardInputCanvas extends Canvas {
     public void render() {
         g.clearRect(0, 0, getWidth(), getHeight());
 
+        // Draw all animated stones.
+        List<Stone> animatedStones = gameBoard.getAnimatedStones();
+        boolean redraw = false;
+        for (Stone stone : animatedStones) {
+            stone.wobble();
+            StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
+
+            if (stone.shouldWobble())
+                redraw = true;
+        }
+
         // Draw board cursor
         if (mouseX >= 0 && mouseY >= 0) {
             BoardCursorType cursorType = Config.getCursorType();
@@ -63,6 +74,13 @@ public class BoardInputCanvas extends Canvas {
             double x = metrics.getBoardStoneX(mouseX) + w / 2;
             double y = metrics.getBoardStoneY(mouseY) + h / 2;
             int nextColor = gameBoard.getGame().getNextMoveColor();
+            Stone[] stones = gameBoard.getAllRenderableStones();
+            Stone hover = stones[mouseX + mouseY * gameBoard.getGame().getBoardWidth()];
+            if (hover != null) {
+                x += hover.getFuzzyX() + hover.getWobbleX();
+                y += hover.getFuzzyY() + hover.getWobbleY();
+            }
+
             if (nextColor == Game.COLOR_BLACK)
                 g.setFill(COLOR_BLACK);
             else
@@ -79,17 +97,6 @@ public class BoardInputCanvas extends Canvas {
                     // TODO: Implement later
                     break;
             }
-        }
-
-        // Draw all animated stones.
-        List<Stone> animatedStones = gameBoard.getAnimatedStones();
-        boolean redraw = false;
-        for (Stone stone : animatedStones) {
-            stone.wobble();
-            StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
-
-            if (stone.shouldWobble())
-                redraw = true;
         }
 
         if (redraw) {

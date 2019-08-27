@@ -50,6 +50,8 @@ import java.util.*;
  */
 public class GameBoard extends Pane implements GameListener {
 
+    private static final double STONE_WOBBLE_FACTOR = 3d;
+
     /*
         The three stacked canvas layers
      */
@@ -177,7 +179,7 @@ public class GameBoard extends Pane implements GameListener {
                 if (newMove) {
                     int[] move = node.getCurrentMove();
                     if (x == move[0] && y == move[1]) {
-                        stones[i].setWobble(200d);
+                        stones[i].setWobble(STONE_WOBBLE_FACTOR);
                         stonesAnimated.add(stones[i]);
                         wobble = true;
                     }
@@ -205,20 +207,6 @@ public class GameBoard extends Pane implements GameListener {
 
         render();
     }
-
-
-//  TODO: Not sure how necessary yet.
-
-//    /**
-//     * Move an animated stone to the static stone list.
-//     * The stone will then be rendered in BoardStaticCanvas
-//     *
-//     * @param stone Stone affected
-//     */
-//    public void makeStatic(Stone stone) {
-//        stonesAnimated.remove(stone);
-//        stonesStatic.add(stone);
-//    }
 
     /*
         Invoked each time this component has been resized.
