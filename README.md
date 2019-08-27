@@ -28,7 +28,7 @@ To meet major release milestones, the following features are planned.
 - [ ] Printing support, export board as image etc.
 
 ### Chapter 3: Eye Candy and Zen (v0.9 beta)
-- [ ] Customizable stone, board and background styles
+- [x] Customizable stone, board and background styles
 - [ ] Customizable program color schemes?
 - [ ] Animations, UI effects
 - [ ] Sound effects
