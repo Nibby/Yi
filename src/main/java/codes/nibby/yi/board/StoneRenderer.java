@@ -33,17 +33,23 @@ public class StoneRenderer {
     }
 
     /**
-     * Draws a stone texture onto a go board.
+     * Draws a stone texture onto a go board with stone wobble/fuzzy parameters.
      *
      * @param g Board graphics context.
      * @param stone Stone instance.
      * @param metrics Board metrics.
      */
     public static void renderTexture(GraphicsContext g, Stone stone, BoardMetrics metrics) {
-        double drawX = metrics.getBoardStoneX(stone.getX());
-        double drawY = metrics.getBoardStoneY(stone.getY());
         int stoneColor = stone.getColor();
+        double wobbleX = stone.getWobbleX();
+        double wobbleY = stone.getWobbleY();
+        double fuzzyX = stone.getFuzzyX();
+        double fuzzyY = stone.getFuzzyY();
+
+        double drawX = metrics.getBoardStoneX(stone.getX()) + wobbleX + fuzzyX;
+        double drawY = metrics.getBoardStoneY(stone.getY()) + wobbleY + fuzzyY;
         double stoneSize = metrics.getStoneSize();
+
         renderTexture(g, stoneColor, stoneSize, drawX, drawY);
     }
 
@@ -78,8 +84,13 @@ public class StoneRenderer {
     }
 
     public static void renderShadow(GraphicsContext g, Stone stone, BoardMetrics metrics) {
-        double drawX = metrics.getBoardStoneX(stone.getX());
-        double drawY = metrics.getBoardStoneY(stone.getY());
+        double wobbleX = stone.getWobbleX();
+        double wobbleY = stone.getWobbleY();
+        double fuzzyX = stone.getFuzzyX();
+        double fuzzyY = stone.getFuzzyY();
+
+        double drawX = metrics.getBoardStoneX(stone.getX()) + wobbleX + fuzzyX;
+        double drawY = metrics.getBoardStoneY(stone.getY()) + wobbleY + fuzzyY;
         renderShadow(g, metrics, drawX, drawY);
     }
 

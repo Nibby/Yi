@@ -1,12 +1,10 @@
 package codes.nibby.yi.game;
 
-import codes.nibby.yi.game.rules.GameRules;
+import codes.nibby.yi.board.Stone;
+import codes.nibby.yi.game.rules.IGameRules;
 import jdk.jshell.spi.ExecutionControl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The core representation for a Go 'game'. This class contains all the
@@ -33,7 +31,7 @@ public class Game {
     private GameNode currentNode;
 
     /** Current rules governing the game. */
-    private GameRules ruleset;
+    private IGameRules ruleset;
 
     /**
      * A list of the game positions leading up to currentNode.
@@ -44,16 +42,20 @@ public class Game {
     /** Listeners for the game. */
     private List<GameListener> listeners = new ArrayList<>();
 
-    public Game() {
-        initialize();
+    public Game(IGameRules rules, int boardWidth, int boardHeight) {
+        setRuleset(rules);
+        setBoardSize(boardWidth, boardHeight);
     }
 
+    /**
+     * Resets the game state. All nodes will be deleted.
+     */
     private void initialize() {
         gameTree = new GameNode();
         int[] boardData = new int[boardWidth * boardHeight];
-        gameTree.setBoardData(boardData);
+        gameTree.setStoneData(boardData);
         pastStates = new HashMap<>();
-        enumeratePastStates(null, gameTree);
+        constructBoardState(null, gameTree);
         currentNode = gameTree;
 
         for (GameListener l : listeners)
@@ -62,21 +64,37 @@ public class Game {
     }
 
     /**
-     * Updates the game to the a new node position.
-     * TODO: The new node must be part of the game tree.
+     * Checks whether a move can be played at (x, y), if yes, the move is played,
+     * otherwise it is aborted.
      *
-     * @param newNode
+     * The color of the stone is determined by the result of <i>getNextMoveColor();</i>
+     *
+     * @param x X position on the board.
+     * @param y Y position on the board.
+     * @return The result of the proposal.
      */
-    public void setCurrentNode(GameNode newNode) {
-        enumeratePastStates(currentNode, newNode);
-        this.currentNode = newNode;
-
-        for (GameListener l : listeners)
-            l.gameCurrentMoveUpdate(newNode);
+    public ProposalResult proposeMove(int x, int y) {
+        return ruleset.proposeAndSubmitMove(this, getNextMoveColor(), x, y);
     }
 
     /**
-     * Populates the past states map using the newest node.
+     * Updates the game to the a new node position.
+     * TODO: The new node must be part of the game tree.
+     *
+     * @param newNode The new currentNode
+     * @param isNewMove Whether this node is the newest move played on the board.
+     */
+    public void setCurrentNode(GameNode newNode, boolean isNewMove) {
+        constructBoardState(currentNode, newNode);
+        this.currentNode = newNode;
+
+        for (GameListener l : listeners)
+            l.gameCurrentMoveUpdate(newNode, isNewMove);
+    }
+
+    /**
+     * Constructs pastState from current node.
+     *
      * This method takes an oldNode as reference. If oldNode is 1 step ahead
      * or behind the newNode then the algorithm won't reinitialise the entire
      * data structure.
@@ -84,7 +102,7 @@ public class Game {
      * @param oldNode The former 'currentNode'
      * @param newNode The latest 'currentNode'
      */
-    public void enumeratePastStates(GameNode oldNode, GameNode newNode) {
+    public void constructBoardState(GameNode oldNode, GameNode newNode) {
         // If there is no old nodes, then newNode must be root node.
         if (oldNode == null) {
             pastStates.put(0, newNode);
@@ -95,7 +113,7 @@ public class Game {
         int step = oldNode.getMoveNumber() - newNode.getMoveNumber();
 
         // The new move is 1 move ahead of the old
-        // In this case we append the new move to the state map
+        // In this case we append the new move to the current state.
         if (step == 1) {
             pastStates.put(newNode.getMoveNumber(), newNode);
         }
@@ -108,11 +126,20 @@ public class Game {
         // move number. The state map is reconstructed.
         else {
             pastStates.clear();
-            GameNode[] chain = newNode.getNodeChain();
+            GameNode[] chain = newNode.getNodeHistory();
             for (int move = 0; move < chain.length; move++) {
                 pastStates.put(move, chain[move]);
             }
         }
+    }
+
+    /**
+     * Sets the game rules.
+     *
+     * @param rules Game rules to use.
+     */
+    public void setRuleset(IGameRules rules) {
+        this.ruleset = rules;
     }
 
     /**
@@ -169,5 +196,15 @@ public class Game {
 
     public void addGameListener(GameListener listener) {
         listeners.add(listener);
+    }
+
+    public IGameRules getRuleset() {
+        return ruleset;
+    }
+
+    public GameNode createNextNode() {
+        GameNode nextNode = new GameNode(currentNode);
+        nextNode.setColor(getNextMoveColor());
+        return nextNode;
     }
 }

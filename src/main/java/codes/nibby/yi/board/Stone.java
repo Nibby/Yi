@@ -1,5 +1,7 @@
 package codes.nibby.yi.board;
 
+import javafx.scene.canvas.GraphicsContext;
+
 import java.util.Random;
 
 /**
@@ -13,10 +15,11 @@ import java.util.Random;
  * @author Kevin Yang
  * Created on 25 August 2019
  */
-public class Stone {
+public class Stone implements IRenderable {
 
-    public static int BLACK = 1;
-    public static int WHITE = 2;
+    public static final int NONE = 0;
+    public static final int BLACK = 1;
+    public static final int WHITE = 2;
 
     /** Position on the go board. */
     private int x, y;
@@ -106,4 +109,23 @@ public class Stone {
         return wobble > 0d;
     }
 
+    public double getWobbleX() {
+        return wobbleX;
+    }
+
+    public double getWobbleY() {
+        return wobbleY;
+    }
+
+    public double getFuzzyX() {
+        return fuzzyX;
+    }
+
+    public double getFuzzyY() {
+        return fuzzyY;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 }

@@ -2,12 +2,17 @@ package codes.nibby.yi.board;
 
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.game.Game;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
+
+import java.util.List;
 
 /**
  * The top-most layer of the board canvas stack.
@@ -76,9 +81,20 @@ public class BoardInputCanvas extends Canvas {
             }
         }
 
-        // TODO: Testing code
-        StoneRenderer.renderTexture(g, new Stone(Stone.BLACK, 1, 1), gameBoard.getMetrics());
-        StoneRenderer.renderTexture(g, new Stone(Stone.WHITE, 2, 1), gameBoard.getMetrics());
+        // Draw all animated stones.
+        List<Stone> animatedStones = gameBoard.getAnimatedStones();
+        boolean redraw = false;
+        for (Stone stone : animatedStones) {
+            stone.wobble();
+            StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
+
+            if (stone.shouldWobble())
+                redraw = true;
+        }
+
+        if (redraw) {
+            new Timeline(new KeyFrame(Duration.millis(40), e -> render())).play();
+        }
     }
 
     private void mouseMoved(MouseEvent evt) {

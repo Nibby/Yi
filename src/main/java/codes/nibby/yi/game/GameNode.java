@@ -24,6 +24,23 @@ import java.util.List;
  */
 public class GameNode {
 
+    /*
+        Game node data:
+     */
+    // Current move that is played
+    // This is an array of size 2:
+    // move[0] = moveX, move[1] = moveY
+    private int[] currentMove;
+    // Stone color
+    private int color;
+
+    /** List of custom-added black stones in this node for demonstration purposes */
+    private List<Integer[]> helpersBlack;
+    /** List of custom-added white stones in this node for demonstration purposes */
+    private List<Integer[]> helpersWhite;
+    /** List of captures at this node. */
+    private List<Integer[]> captures;
+
     // Game tree hierarchy
     /** The parent node */
     private GameNode parent = null;
@@ -31,10 +48,8 @@ public class GameNode {
     /** Children nodes, with index 0 being the main variation child. */
     private List<GameNode> children = new ArrayList<>();
 
-    /*
-        Board state data
-     */
-    private int[] boardData;
+    /** Board stone positions at this point. */
+    private int[] stoneData;
 
     public GameNode() {
         this(null);
@@ -62,14 +77,6 @@ public class GameNode {
             children.add(node);
     }
 
-    public int[] getBoardData() {
-        return boardData;
-    }
-
-    public void setBoardData(int[] boardData) {
-        this.boardData = boardData;
-    }
-
     private boolean hasChildren() {
         return children.size() > 0;
     }
@@ -94,7 +101,7 @@ public class GameNode {
     public int getMoveNumber() {
         int steps = 0;
         GameNode current = this;
-        while (this.hasParent()) {
+        while (current.hasParent()) {
             current = current.getParent();
             steps++;
         }
@@ -106,14 +113,62 @@ public class GameNode {
      *
      * @return An array of game states, with root at index 0.
      */
-    public GameNode[] getNodeChain() {
+    public GameNode[] getNodeHistory() {
         int size = getMoveNumber() + 1;
         GameNode[] result = new GameNode[size];
         GameNode current = this;
-        for (int step = size; step > 0; step--) {
+        for (int step = size - 1; step > 0; step--) {
             result[step] = current;
             current = current.getParent();
         }
         return result;
+    }
+
+    public int[] getStoneData() {
+        return stoneData;
+    }
+
+    public void setStoneData(int[] stoneData) {
+        this.stoneData = stoneData;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public int[] getCurrentMove() {
+        return currentMove;
+    }
+
+    public List<Integer[]> getHelpersBlack() {
+        return helpersBlack;
+    }
+
+    public List<Integer[]> getHelpersWhite() {
+        return helpersWhite;
+    }
+
+    public List<Integer[]> getCaptures() {
+        return captures;
+    }
+
+    public void setCurrentMove(int[] currentMove) {
+        this.currentMove = currentMove;
+    }
+
+    public void setHelpersBlack(List<Integer[]> helpersBlack) {
+        this.helpersBlack = helpersBlack;
+    }
+
+    public void setHelpersWhite(List<Integer[]> helpersWhite) {
+        this.helpersWhite = helpersWhite;
+    }
+
+    public void setCaptures(List<Integer[]> captures) {
+        this.captures = captures;
     }
 }

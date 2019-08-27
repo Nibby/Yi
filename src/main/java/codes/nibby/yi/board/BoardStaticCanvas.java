@@ -3,6 +3,8 @@ package codes.nibby.yi.board;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.util.List;
+
 /**
  * The middle layer of the canvas stack.
  * This layer draws all still, permanent objects on the game board.
@@ -23,5 +25,10 @@ public class BoardStaticCanvas extends Canvas {
 
     public void render() {
         g.clearRect(0,0, getWidth(), getHeight());
+
+        List<Stone> staticStones = gameBoard.getStaticStones();
+        for (Stone stone : staticStones) {
+            StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
+        }
     }
 }

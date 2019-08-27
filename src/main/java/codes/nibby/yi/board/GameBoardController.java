@@ -59,4 +59,12 @@ public abstract class GameBoardController implements GameListener {
     public void keyReleased(KeyCode code) {
 
     }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public GameBoard getBoard() {
+        return board;
+    }
 }
