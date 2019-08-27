@@ -115,28 +115,34 @@ public class BoardBackgroundCanvas extends Canvas {
                     g.fillOval(metrics.getGridX(centerDot) - dotSize / 2,
                             metrics.getGridY(centerDot) - dotSize / 2, dotSize, dotSize);
 
-                g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
-                        gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
-                g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
-                        gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
-                g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
-                        gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
-                g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
-                        gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
+                double x = gridOffsetX + offsetX + corner * grid - dotSize / 2;
+                double y = gridOffsetY + offsetY + corner * grid - dotSize / 2;
+
+                double x1 = gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2;
+                double y1 = gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2;
+
+                g.fillOval(x, y, dotSize, dotSize);
+                g.fillOval(x1, y, dotSize, dotSize);
+                g.fillOval(x, y1, dotSize, dotSize);
+                g.fillOval(x1, y1, dotSize, dotSize);
 
                 if (boardWidth == 19) {
-                    g.fillOval(gridOffsetX + offsetX + centerDot * grid - dotSize / 2,
-                            gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
-                    g.fillOval(gridOffsetX + offsetX + centerDot * grid - dotSize / 2,
-                            gridOffsetY + offsetY + (boardHeight - corner - 1) * grid - dotSize / 2, dotSize, dotSize);
-                    g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
-                            gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
-                    g.fillOval(gridOffsetX + offsetX + (boardWidth - corner - 1) * grid - dotSize / 2,
-                            gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
+                    double x2 = gridOffsetX + offsetX + centerDot * grid - dotSize / 2;
+                    double y2 = gridOffsetY + offsetY + centerDot * grid - dotSize / 2;
+
+                    g.fillOval(x2, y, dotSize, dotSize);
+                    g.fillOval(x2, y1, dotSize, dotSize);
+                    g.fillOval(x, y2, dotSize, dotSize);
+                    g.fillOval(x1, y2, dotSize, dotSize);
                 }
             }
         }
 
-        // TODO: Draw stone shadows here
+        if (Config.getBoardTheme().shouldDrawStoneShadow()) {
+            // TODO: Draw stone shadows here
+            // TODO: test
+            StoneRenderer.renderShadow(g, new Stone(Stone.BLACK, 1, 1), metrics);
+            StoneRenderer.renderShadow(g, new Stone(Stone.WHITE, 2, 1), metrics);
+        }
     }
 }

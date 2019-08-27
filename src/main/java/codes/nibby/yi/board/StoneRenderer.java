@@ -13,18 +13,52 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
+/**
+ * Provides methods to draw stone textures and shadows.
+ * See <strong>StoneStyles</strong> for a list of internally
+ * supported stone textures.
+ *
+ * @author Kevin Yang
+ * Created on 25 August 2019
+ */
 public class StoneRenderer {
 
     private static DropShadow shadow;
 
     static {
+        // Stone shadows aren't unique to each stone instance.
         shadow = new DropShadow();
         shadow.setBlurType(BlurType.GAUSSIAN);
         shadow.setColor(Color.color(0.15f, 0.15f, 0.15f, 0.5f));
     }
 
-    public static void drawStone(GraphicsContext g, Stone stone, BoardMetrics metrics, double x, double y) {
+    /**
+     * Draws a stone texture onto a go board.
+     *
+     * @param g Board graphics context.
+     * @param stone Stone instance.
+     * @param metrics Board metrics.
+     */
+    public static void renderTexture(GraphicsContext g, Stone stone, BoardMetrics metrics) {
+        double drawX = metrics.getBoardStoneX(stone.getX());
+        double drawY = metrics.getBoardStoneY(stone.getY());
+        int stoneColor = stone.getColor();
+        double stoneSize = metrics.getStoneSize();
+        renderTexture(g, stoneColor, stoneSize, drawX, drawY);
+    }
+
+    /**
+     * Draws a stone texture of custom color, size and position.
+     *
+     * @param g Canvas graphics context.
+     * @param color Color of the Go stone.
+     * @param size Radius (in pixels) of the Go stone.
+     * @param x X draw position.
+     * @param y Y draw position.
+     */
+    public static void renderTexture(GraphicsContext g, int color, double size, double x, double y) {
         StoneStyle stoneStyle = Config.getStoneStyle();
+
         if (stoneStyle == null) {
             // TODO: Make this more user friendly
             AlertUtility.showAlert("Unrecognized stone style.", "StoneRenderer Error",
@@ -35,20 +69,68 @@ public class StoneRenderer {
 
         switch (stoneStyle) {
             case BICONVEX_CERAMIC:
-                CeramicStone.draw(g, stone, metrics.getStoneSize(), x, y);
+                CeramicStone.draw(g, color, size, x, y);
                 break;
+            // TODO: implement more stone styles here.
             default:
                 throw new RuntimeException("StoneStyle not implemented: " + Config.getStoneStyle().name());
         }
     }
 
-    public static void drawShadow(GraphicsContext g, Stone stone, BoardMetrics metrics, double x, double y) {
+    public static void renderShadow(GraphicsContext g, Stone stone, BoardMetrics metrics) {
+        double drawX = metrics.getBoardStoneX(stone.getX());
+        double drawY = metrics.getBoardStoneY(stone.getY());
+        renderShadow(g, metrics, drawX, drawY);
+    }
+
+    /**
+     * Draws stone shadow at a custom position on the go board.
+     *
+     * @param g Canvas graphics context.
+     * @param metrics Board metrics.
+     * @param x X draw position.
+     * @param y Y draw position.
+     */
+    public static void renderShadow(GraphicsContext g, BoardMetrics metrics, double x, double y) {
         double size = metrics.getStoneSize();
+        renderShadow(g, size, x, y);
+    }
+
+    /**
+     * Draws a stone shadow of custom size on a custom canvas.
+     *
+     * @param g Canvas graphics context.
+     * @param size Shadow size (equal to stone size).
+     * @param x X draw position.
+     * @param y Y draw position.
+     */
+    public static void renderShadow(GraphicsContext g, double size, double x, double y) {
         shadow.setRadius(size / 8);
         shadow.setOffsetX(size / 12);
         shadow.setOffsetY(size / 12);
+        g.setEffect(shadow);
+        g.fillOval(x, y, size, size);
+        g.setEffect(null);
     }
 
+    /**
+     * Draws a fully rendered Go stone (texture + shadow) on one layer.
+     *
+     * @param g Canvas graphics context.
+     * @param color Color of the go stone. Stone.BLACK | Stone.WHITE
+     * @param size Radius (in pixels) of the Go stone.
+     * @param x X draw position.
+     * @param y Y draw position.
+     */
+    public static void renderTextureAndShadow(GraphicsContext g, int color, double size, double x, double y) {
+        renderShadow(g, size, x, y);
+        renderTexture(g, color, size, x, y);
+    }
+
+    /**
+     * The first, and default, stone texture displayed, if it is not
+     * overridden by the current theme.
+     */
     private static class CeramicStone {
 
         static RadialGradient gradientWhite, gradientBlack;
@@ -75,10 +157,10 @@ public class StoneRenderer {
 
         }
 
-        public static void draw(GraphicsContext g, Stone stone, double size, double x, double y) {
-            if (stone.getColor() == Stone.BLACK) {
+        public static void draw(GraphicsContext g, int color, double size, double x, double y) {
+            if (color == Stone.BLACK) {
                 g.setFill(gradientBlack);
-            } else if (stone.getColor() == Stone.WHITE) {
+            } else if (color == Stone.WHITE) {
                 g.setFill(gradientWhite);
             }
             g.fillOval(x, y, size, size);

@@ -77,15 +77,8 @@ public class BoardInputCanvas extends Canvas {
         }
 
         // TODO: Testing code
-        Stone s = new Stone(Stone.BLACK, 1, 1);
-        BoardMetrics metrics = gameBoard.getMetrics();
-        double mx = metrics.getBoardStoneX(1);
-        double my = metrics.getBoardStoneY(1);
-        StoneRenderer.drawStone(g, s, gameBoard.getMetrics(), mx, my);
-        s = new Stone(Stone.WHITE, 1, 1);
-        mx = metrics.getBoardStoneX(2);
-        my = metrics.getBoardStoneY(1);
-        StoneRenderer.drawStone(g, s, gameBoard.getMetrics(), mx, my);
+        StoneRenderer.renderTexture(g, new Stone(Stone.BLACK, 1, 1), gameBoard.getMetrics());
+        StoneRenderer.renderTexture(g, new Stone(Stone.WHITE, 2, 1), gameBoard.getMetrics());
     }
 
     private void mouseMoved(MouseEvent evt) {

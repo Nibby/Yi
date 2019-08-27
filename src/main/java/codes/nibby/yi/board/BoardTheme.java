@@ -33,6 +33,8 @@ public class BoardTheme {
     private static final String KEY_STONE_WHITE = "stone_white";
     private static final String KEY_GRID_COLOR = "grid_color";
     private static final String KEY_COORDINATES_COLOR = "coordinates_color";
+    private static final String KEY_DRAW_STONE_SHADOW = "stone_shadow";
+    private static final String KEY_STONE_RANDOM_ORIENTATION = "stone_rotate";
 
     private Path directory;
     private JSONObject themeConfig;
@@ -50,6 +52,14 @@ public class BoardTheme {
     private Color gridColor;
     private ConfigValueType coordColorConfig;
     private Color coordColor;
+
+    // Some themes may not want to use a stone shadow
+    // e.g. flat black & white stones to resemble paper print
+    private boolean drawStoneShadow;
+
+    // Some stones look more organic when its rotation is
+    // randomised, e.g. white clam and shell stones.
+    private boolean stoneOrientationRandomised;
 
     public BoardTheme(Path themeDirectory) {
         this.directory = themeDirectory;
@@ -116,6 +126,21 @@ public class BoardTheme {
                     if (coordColorConfig.equals(ConfigValueType.OVERRIDE))
                         coordColor = ColorUtility.parseRGBA_255(coordColorValue);
                 }
+
+                boolean hasShadowProperty = boardObj.has(KEY_DRAW_STONE_SHADOW);
+                if (!hasShadowProperty)
+                    drawStoneShadow = false;
+                else {
+                    drawStoneShadow = boardObj.getBoolean(KEY_DRAW_STONE_SHADOW);
+                }
+
+                boolean hasRotationProperty = boardObj.has(KEY_STONE_RANDOM_ORIENTATION);
+                if (!hasRotationProperty)
+                    stoneOrientationRandomised = false;
+                else {
+                    stoneOrientationRandomised = boardObj.getBoolean(KEY_STONE_RANDOM_ORIENTATION);
+                }
+
             }
 
         } catch (IOException e) {
@@ -180,5 +205,13 @@ public class BoardTheme {
 
     public Color getCoordColor() {
         return coordColor;
+    }
+
+    public boolean shouldDrawStoneShadow() {
+        return drawStoneShadow;
+    }
+
+    public boolean isStoneOrientationRandomised() {
+        return stoneOrientationRandomised;
     }
 }
