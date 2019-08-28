@@ -2,7 +2,6 @@ package codes.nibby.yi.game.rules;
 
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameOutcome;
-import codes.nibby.yi.game.ProposalResult;
 
 /**
  * Defines the set of rules that govern stone placement, capture and scoring.
@@ -25,7 +24,16 @@ public interface IGameRules {
      * @param y Y position of the stone on the Go board.
      * @return
      */
-    ProposalResult proposeAndSubmitMove(Game game, int color, int x, int y);
+    ProposalResult proposeMove(Game game, int color, int x, int y);
+
+    /**
+     * Formally submits a move to the game object.
+     *
+     * @param game The game to append the new move.
+     * @param proposal Data for the newly proposed move.
+     * @return
+     */
+    boolean submitMove(Game game, ProposalResult proposal);
 
     /**
      * Analyses a game position and return the outcome according to the rules.

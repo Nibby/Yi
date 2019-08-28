@@ -22,7 +22,9 @@ import java.util.Scanner;
 public class Config {
 
     // JSON keys
+    private static final String KEY_LANGUAGE = "language";
     private static final String KEY_UI_THEME = "ui_theme";
+    private static final String KEY_ALLOW_STONE_DISPLACEMENT = "stone_displacement";
     private static final String KEY_BOARD_THEME = "board_theme";
     private static final String KEY_BOARD_THEME_USE = "use";
     private static final String KEY_BOARD_THEME_STONES = "stones";
@@ -52,6 +54,7 @@ public class Config {
     // Type of stone to draw by default
     private static StoneStyle stoneStyle;
 
+    private static boolean stoneDisplacement;
 
     /*
         Loads config once upon startup.
@@ -72,11 +75,11 @@ public class Config {
 
             root = new JSONObject(buffer.toString());
 
-            String locale = root.getString("language");
+            String locale = root.getString(KEY_LANGUAGE);
             uiLanguage = new UiLanguage(locale);
+            stoneDisplacement = root.getBoolean(KEY_ALLOW_STONE_DISPLACEMENT);
 
             Path themeDirectory = Paths.get(THEME_DIRECTORY);
-
             {
                 String useName = root.getString(KEY_UI_THEME);
                 uiTheme = new UiTheme(useName);
@@ -116,5 +119,9 @@ public class Config {
 
     public static StoneStyle getStoneStyle() {
         return stoneStyle;
+    }
+
+    public static boolean allowStoneDisplacement() {
+        return stoneDisplacement;
     }
 }

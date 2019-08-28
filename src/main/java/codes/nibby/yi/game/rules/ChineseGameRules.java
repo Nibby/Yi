@@ -17,4 +17,8 @@ public class ChineseGameRules extends StandardGameRules {
         return 7.5f;
     }
 
+    @Override
+    protected boolean isSuicideAllowed() {
+        return false;
+    }
 }

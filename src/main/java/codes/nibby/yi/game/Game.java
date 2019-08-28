@@ -1,7 +1,7 @@
 package codes.nibby.yi.game;
 
-import codes.nibby.yi.board.Stone;
 import codes.nibby.yi.game.rules.IGameRules;
+import codes.nibby.yi.game.rules.ProposalResult;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.util.*;
@@ -74,7 +74,18 @@ public class Game {
      * @return The result of the proposal.
      */
     public ProposalResult proposeMove(int x, int y) {
-        return ruleset.proposeAndSubmitMove(this, getNextMoveColor(), x, y);
+        return ruleset.proposeMove(this, getNextMoveColor(), x, y);
+    }
+
+    /**
+     * Submits a (approved) move proposal as a formal move to be appended to the game
+     * tree.
+     *
+     * @param proposal Move proposal to be submitted.
+     * @return Whether the submission was approved (true) or rejected (false).
+     */
+    public boolean submitMove(ProposalResult proposal) {
+        return ruleset.submitMove(this, proposal);
     }
 
     /**
@@ -110,7 +121,7 @@ public class Game {
         }
 
         // Otherwise, adjust the state map accordingly...
-        int step = oldNode.getMoveNumber() - newNode.getMoveNumber();
+        int step = newNode.getMoveNumber() - oldNode.getMoveNumber();
 
         // The new move is 1 move ahead of the old
         // In this case we append the new move to the current state.
@@ -204,7 +215,86 @@ public class Game {
 
     public GameNode createNextNode() {
         GameNode nextNode = new GameNode(currentNode);
+        int[] currentData = currentNode.getStoneData();
+        nextNode.setStoneData(Arrays.copyOf(currentData, currentData.length));
         nextNode.setColor(getNextMoveColor());
+        nextNode.setPrisonersBlack(currentNode.getPrisonersBlack());
+        nextNode.setPrisonersWhite(currentNode.getPrisonersWhite());
+
         return nextNode;
+    }
+
+    /**
+     * A utility method to convert (x, y) coordinates to single array indices.
+     *
+     * @param x X position
+     * @param y Y position
+     * @return x + y * boardWidth
+     */
+    public int getIndex(int x, int y) {
+        return x + y * boardWidth;
+    }
+
+    /**
+     * Returns a set of indices that are neighboring a given point.
+     *
+     * @param x Reference point X
+     * @param y Reference point y
+     * @return A list of indices that are neighbors to (x, y)
+     */
+    public List<Integer> getNeighborIndices(int x, int y) {
+
+        return getNeighborIndices(x + y * getBoardWidth());
+    }
+
+    /**
+     * Returns a set of indices that are neighboring a given point index.
+     *
+     * @param index Position index in (x + y * width) form.
+     * @return A list of indices that are neighbors to the input index.
+     */
+    public List<Integer> getNeighborIndices(int index) {
+        int x = index % getBoardWidth();
+        int y = index / getBoardWidth();
+
+        // Verify the point is indeed within the board.
+        if (x < 0 || x > getBoardWidth() || y < 0 || y > getBoardHeight())
+            return new ArrayList<>();
+
+        List<Integer> result = new ArrayList<>();
+
+        // Up
+        if (y > 0)
+            result.add(getIndex(x, y - 1));
+        // Down
+        if (y < getBoardHeight() - 1)
+            result.add(getIndex(x, y + 1));
+        // Left
+        if (x > 0)
+            result.add(getIndex(x - 1, y));
+        //Right
+        if (x < getBoardWidth() - 1)
+            result.add(getIndex(x + 1, y));
+
+        return result;
+    }
+
+    /**
+     * Checks whether a game position repeats the past state.
+     * This is not allowed in Go.
+     *
+     * @param stoneData The position to test.
+     * @return A boolean describing whether a position is repeated or not.
+     */
+    public boolean isRepeatingPastState(int[] stoneData) {
+        // Searches backwards because a repeating position is likely to be found
+        // closer to the currentNode than it is from root.
+        for (int m = currentNode.getMoveNumber() - 1; m > 0; m--) {
+            GameNode pastNode = pastStates.get(m);
+            int[] pastPosition = pastNode.getStoneData();
+            if (Arrays.equals(stoneData, pastPosition))
+                return true;
+        }
+        return false;
     }
 }
