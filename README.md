@@ -18,8 +18,8 @@ To meet major release milestones, the following features are planned.
 - [ ] Annotations
 - [ ] SGF info editor
 - [ ] Saving / loading SGF
-- [ ] Support for **9x9**, **13x13**, **19x19** sizes
-- [ ] Custom size board support
+- [x] Support for **9x9**, **13x13**, **19x19** sizes
+- [x] Custom size board support
 - [x] Multi-lingual support
 
 ### Chapter 2: Expanding Horizons (v0.7 alpha)
@@ -28,6 +28,7 @@ To meet major release milestones, the following features are planned.
 - [ ] Support for multiple game rules
 - [ ] SGF operations: rotate board, tutor mode etc.
 - [ ] Printing support, export board as image etc.
+- [ ] Supporting other record formats.
 
 ### Chapter 3: Eye Candy and Zen (v0.9 beta)
 - [x] Customizable stone, board and background styles
