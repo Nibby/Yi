@@ -1,5 +1,6 @@
 package codes.nibby.yi.board;
 
+import codes.nibby.yi.config.Config;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.GameNode;
@@ -182,6 +183,51 @@ public class GameBoard extends Pane implements GameListener {
                         stones[i].setWobble(STONE_WOBBLE_FACTOR);
                         stonesAnimated.add(stones[i]);
                         wobble = true;
+
+                        // Displace the nearby stones (if fuzzy effect is on)
+                        // TODO: Use bigCollision parameter to determine sound effect
+                        boolean bigCollision = false;
+                        boolean snap = false;
+                        List<Stone> wobbles = new ArrayList<>();
+                        wobbles.add(stones[i]);
+                        List<Integer> adjacentPoints = game.getNeighborIndices(x, y);
+                        List<Stone> adjacent = new ArrayList<>();
+                        adjacentPoints.forEach(pt -> adjacent.add(stones[pt]));
+                        for (Stone s : adjacent) {
+                            if (s == null)
+                                continue;
+
+                            if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
+                                double wobbleAmount = (Math.abs(s.getY() - y) == 1)
+                                        ? STONE_WOBBLE_FACTOR
+                                        : (Math.random() + 0.1d) * STONE_WOBBLE_FACTOR / 2;
+                                if (Math.abs(s.getY() - y) == 1) {
+                                    stones[i].setWobble(wobbleAmount);
+                                    snap = true;
+                                } else {
+                                    s.setWobble(wobbleAmount);
+                                    s.nudge(s.getX() - x, s.getY() - y, metrics);
+                                }
+                                wobbles.add(s);
+                                // Collision detection
+                                if ((int) (Math.random() * 5) < 2) {
+                                    adjacentPoints = game.getNeighborIndices(s.getX(), s.getY());
+                                    List<Stone> adjacent2 = new ArrayList<>();
+                                    adjacentPoints.forEach(pt -> adjacent2.add(stones[pt]));
+                                    if (adjacent2.size() >= 2)
+                                        bigCollision = true;
+                                    for (Stone ss : adjacent2) {
+                                        if (ss == null)
+                                            continue;
+                                        if (ss.equals(stones[i]) || ss.equals(s))
+                                            continue;
+                                        ss.setWobble((Math.random() + 0.1d) * STONE_WOBBLE_FACTOR / 2);
+                                        ss.nudge(s.getX() - x, s.getY() - y, metrics);
+                                        wobbles.add(ss);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 

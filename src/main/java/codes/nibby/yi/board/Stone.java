@@ -2,6 +2,7 @@ package codes.nibby.yi.board;
 
 import javafx.scene.canvas.GraphicsContext;
 
+import java.awt.*;
 import java.util.Random;
 
 /**
@@ -50,7 +51,6 @@ public class Stone implements IRenderable {
 
     public void onPlace(GameBoard board) {
         BoardMetrics metrics = board.getMetrics();
-        nudge(metrics);
     }
 
     /**
@@ -60,11 +60,11 @@ public class Stone implements IRenderable {
      *
      * @param metrics Board parameters.
      */
-    public void nudge(BoardMetrics metrics) {
+    public void nudge(double xDiff, double yDiff, BoardMetrics metrics) {
         int factor = (int) (Math.random() * 2) - 2;
         double margin = metrics.getStoneSize() / 20;
-        fuzzyX = Math.random() * margin * factor;
-        fuzzyY = Math.random() * margin * factor;
+        fuzzyX = Math.random() * margin * factor * xDiff;
+        fuzzyY = Math.random() * margin * factor * yDiff;
     }
 
     /**
@@ -127,5 +127,14 @@ public class Stone implements IRenderable {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public static int getOpponentColor(int color) {
+        if (color == NONE)
+            return -1;
+        else if (color == BLACK)
+            return WHITE;
+        else
+            return BLACK;
     }
 }

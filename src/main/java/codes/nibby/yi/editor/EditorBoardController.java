@@ -4,6 +4,7 @@ import codes.nibby.yi.board.GameBoard;
 import codes.nibby.yi.board.GameBoardController;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameNode;
+import codes.nibby.yi.game.rules.ProposalResult;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
@@ -41,7 +42,10 @@ public class EditorBoardController extends GameBoardController {
         super.mousePressed(x, y, oldX, oldY, button);
 
         if (button.equals(MouseButton.PRIMARY)) {
-            getGame().proposeMove(x, y);
+            ProposalResult proposal = getGame().proposeMove(x, y);
+            System.out.println("Proposal result : " + proposal.getType().name());
+            boolean successful = getGame().submitMove(proposal);
+            System.out.println();
         }
     }
 

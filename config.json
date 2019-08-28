@@ -1,7 +1,8 @@
 {
   "language": "en_US",
-  "board_cursor": "circle",
   "ui_theme": "megumi",
+  "board_cursor": "circle",
+  "stone_displacement": "true",
 
   "board_theme": {
     "use": "qipan",

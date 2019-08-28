@@ -35,11 +35,14 @@ public class GameNode {
     private int color;
 
     /** List of custom-added black stones in this node for demonstration purposes */
-    private List<Integer[]> helpersBlack;
+    private List<Integer> helpersBlack;
     /** List of custom-added white stones in this node for demonstration purposes */
-    private List<Integer[]> helpersWhite;
+    private List<Integer> helpersWhite;
     /** List of captures at this node. */
-    private List<Integer[]> captures;
+    private int prisonersBlack, prisonersWhite;
+
+    /** The position of the ko square */
+    private int koPoint = -1;
 
     // Game tree hierarchy
     /** The parent node */
@@ -144,31 +147,55 @@ public class GameNode {
         return currentMove;
     }
 
-    public List<Integer[]> getHelpersBlack() {
-        return helpersBlack;
-    }
-
-    public List<Integer[]> getHelpersWhite() {
-        return helpersWhite;
-    }
-
-    public List<Integer[]> getCaptures() {
-        return captures;
-    }
-
     public void setCurrentMove(int[] currentMove) {
         this.currentMove = currentMove;
     }
 
-    public void setHelpersBlack(List<Integer[]> helpersBlack) {
+    public int getKoPoint() {
+        return koPoint;
+    }
+
+    public void setKoPoint(int koPoint) {
+        this.koPoint = koPoint;
+    }
+
+    public int getPrisonersBlack() {
+        return prisonersBlack;
+    }
+
+    public void setPrisonersBlack(int prisonersBlack) {
+        this.prisonersBlack = prisonersBlack;
+    }
+
+    public int getPrisonersWhite() {
+        return prisonersWhite;
+    }
+
+    public void addPrisonersBlack(int blackPrisoners) {
+        prisonersBlack += blackPrisoners;
+    }
+
+    public void addPrisonersWhite(int whitePrisoners) {
+        prisonersWhite += whitePrisoners;
+    }
+
+    public void setPrisonersWhite(int prisonersWhite) {
+        this.prisonersWhite = prisonersWhite;
+    }
+
+    public List<Integer> getHelpersBlack() {
+        return helpersBlack;
+    }
+
+    public void setHelpersBlack(List<Integer> helpersBlack) {
         this.helpersBlack = helpersBlack;
     }
 
-    public void setHelpersWhite(List<Integer[]> helpersWhite) {
-        this.helpersWhite = helpersWhite;
+    public List<Integer> getHelpersWhite() {
+        return helpersWhite;
     }
 
-    public void setCaptures(List<Integer[]> captures) {
-        this.captures = captures;
+    public void setHelpersWhite(List<Integer> helpersWhite) {
+        this.helpersWhite = helpersWhite;
     }
 }
