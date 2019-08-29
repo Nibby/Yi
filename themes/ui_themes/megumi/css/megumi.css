@@ -3,7 +3,7 @@
 
 .editor_tb_menubar {
   -fx-background-color: #141414;
-  -fx-use-system-menu-bar: false; }
+  -fx-use-system-menu-bar: true; }
   .editor_tb_menubar .menu .label {
     -fx-text-fill: #969696; }
   .editor_tb_menubar .menu .menu > .right-container > .arrow {
@@ -37,8 +37,30 @@
   .editor_board_tb .label {
     -fx-text-fill: white; }
 
-.editor_ui_gametree {
-  -fx-background-color: #c8c8c8; }
+.editor_sidebar_tabpane {
+  -fx-padding: 2px;
+  -fx-background-color: #2e5fad; }
+  .editor_sidebar_tabpane *.tab-header-area {
+    -fx-padding: 3px 3px -1px 3px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: #2e5fad; }
+    .editor_sidebar_tabpane *.tab-header-area .tab-header-background {
+      -fx-background-color: #2e5fad; }
+  .editor_sidebar_tabpane .tab {
+    -fx-background-color: #2e5fad;
+    -fx-padding: 2px 10px 8px 10px;
+    -fx-background-radius: 0px; }
+  .editor_sidebar_tabpane .tab:selected {
+    -fx-background-color: #538eed; }
+    .editor_sidebar_tabpane .tab:selected .tab-label {
+      -fx-text-fill: white; }
+
+.treeview_scroll_bar {
+  -fx-background-color: white; }
+
+.corner {
+  -fx-background-color: white; }
 
 .editor_ui_comments {
   -fx-background-color: #a0a0a0; }

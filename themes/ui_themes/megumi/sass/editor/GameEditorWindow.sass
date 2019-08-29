@@ -1,9 +1,37 @@
 @import GameEditorMenuBar
 @import GameBoardToolBar
+@import ../constants
+
+.editor_sidebar_tabpane
+    -fx-padding: 2px
+    -fx-background-color: $COLOR_PRIMARY
+
+    *.tab-header-area
+        -fx-padding: 3px 3px -1px 3px
+        -fx-focus-color: transparent
+        -fx-faint-focus-color: transparent
+        -fx-background-color: $COLOR_PRIMARY
+
+        .tab-header-background
+            -fx-background-color: $COLOR_PRIMARY
+
+    .tab
+        -fx-background-color: $COLOR_PRIMARY
+        -fx-padding: 2px 10px 8px 10px
+        -fx-background-radius: 0px
+
+    .tab:selected
+        -fx-background-color: $COLOR_PRIMARY_LIGHTER
+
+        .tab-label
+            -fx-text-fill: white
 
 
-.editor_ui_gametree
-    -fx-background-color: rgb(200,200,200)
+.treeview_scroll_bar
+    -fx-background-color: white
+
+.corner
+    -fx-background-color: rgb(255, 255, 255)
 
 .editor_ui_comments
     -fx-background-color: rgb(160, 160, 160)

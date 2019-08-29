@@ -1,7 +1,7 @@
-# 弈 (Yi), lit. Go
+# Yi
 Formerly known as 'WeiqiTool' and 'QiPan', Yi strives to become an elegant and powerful companion for the dedicated players of the board game Go. It will feature a game record editor, AI analysis module, and a personal SGF library.
 
-![Yi v0.0.6](screenshots/0_0_6.png)
+![Yi v0.0.6](screenshots/0_0_7.png)
 
 ## Current Progress
 Yi is a long way from v1.0.
@@ -45,6 +45,7 @@ To meet major release milestones, the following features are planned.
 ... More to be announced!
 
 ## Dependencies
+- OpenJDK 12
 - Gradle
 - JavaFX
 - JSON

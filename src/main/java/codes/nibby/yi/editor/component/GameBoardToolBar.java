@@ -2,6 +2,8 @@ package codes.nibby.yi.editor.component;
 
 import codes.nibby.yi.board.BoardMetrics;
 import codes.nibby.yi.editor.GameEditorWindow;
+import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.GameNode;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
@@ -18,7 +20,7 @@ import java.io.InputStream;
  * @author Kevin Yang
  * Created on 29 August 2019
  */
-public class GameBoardToolBar extends ToolBar {
+public class GameBoardToolBar extends ToolBar implements GameListener {
 
     public static final int BUTTON_SIZE = BoardMetrics.RESERVED_TOOLBAR_SIZE - 15;
 
@@ -40,7 +42,7 @@ public class GameBoardToolBar extends ToolBar {
 
     public GameBoardToolBar(GameEditorWindow editor) {
         this.editor = editor;
-
+        this.editor.getGame().addGameListener(this);
         annotationGroup = new ToggleGroup();
 
         Label lbTools = new Label("Tools: ");
@@ -197,7 +199,13 @@ public class GameBoardToolBar extends ToolBar {
         getItems().add(b);
     }
 
-    public void updateMove(GameNode node) {
-        moveLabel.setText(" Move: " + node.getMoveNumber());
+    @Override
+    public void gameInitialized(Game game) {
+
+    }
+
+    @Override
+    public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
+        moveLabel.setText(" Move: " + currentMove.getMoveNumber());
     }
 }
