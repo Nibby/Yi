@@ -4,11 +4,11 @@ import codes.nibby.yi.Yi;
 import codes.nibby.yi.board.GameBoard;
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.config.UiStylesheets;
-import codes.nibby.yi.editor.component.GameCommentViewer;
-import codes.nibby.yi.editor.component.GameEditorToolBar;
-import codes.nibby.yi.editor.component.GameTreeViewer;
-import codes.nibby.yi.editor.perspective.Perspective;
-import codes.nibby.yi.editor.perspective.PerspectiveLayout;
+import codes.nibby.yi.editor.component.MoveCommentPane;
+import codes.nibby.yi.editor.component.GameEditorMenuBar;
+import codes.nibby.yi.editor.component.GameTreePane;
+import codes.nibby.yi.editor.layout.LayoutType;
+import codes.nibby.yi.editor.layout.AbstractLayout;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.rules.GameRules;
 import javafx.scene.Scene;
@@ -24,17 +24,17 @@ import javafx.stage.Stage;
  */
 public class GameEditorWindow extends Stage {
 
-    private static final int START_WIDTH = 600;
+    private static final int START_WIDTH = 800;
     private static final int START_HEIGHT = 600;
 
     private Game game;
     private GameBoard gameBoard;
     private EditorBoardController controller;
-    private GameTreeViewer gameTreeViewer;
-    private GameCommentViewer gameCommentViewer;
-    private GameEditorToolBar toolBar;
+    private GameTreePane gameTreePane;
+    private MoveCommentPane moveCommentPane;
+    private GameEditorMenuBar toolBar;
 
-    private PerspectiveLayout layout;
+    private AbstractLayout layout;
     private Scene scene;
 
     public GameEditorWindow() {
@@ -52,9 +52,9 @@ public class GameEditorWindow extends Stage {
         handled by the perspective manager.
      */
     private void initializeComponents() {
-        toolBar = new GameEditorToolBar(this);
-        gameTreeViewer = new GameTreeViewer(this);
-        gameCommentViewer = new GameCommentViewer(this);
+        toolBar = new GameEditorMenuBar(this);
+        gameTreePane = new GameTreePane(this);
+        moveCommentPane = new MoveCommentPane(this);
     }
 
     private void initializeGame() {
@@ -65,23 +65,23 @@ public class GameEditorWindow extends Stage {
     private void initializeScene() {
         setTitle(Yi.TITLE);
 
-        layout = PerspectiveLayout.generate(this);
+        layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
         scene = new Scene(root, START_WIDTH, START_HEIGHT);
         setScene(scene);
     }
 
-    public Perspective getPerspective() {
-        return Config.getEditorPerspective();
+    public LayoutType getPerspective() {
+        return Config.getEditorLayout();
     }
 
-    public void setPerspective(Perspective perspective) {
-        Perspective oldPerspective = Config.getEditorPerspective();
+    public void setPerspective(LayoutType perspective) {
+        LayoutType oldPerspective = Config.getEditorLayout();
         if (oldPerspective.equals(perspective))
             return;
 
-        Config.setEditorPerspective(perspective);
-        layout = PerspectiveLayout.generate(this);
+        Config.setEditorLayout(perspective);
+        layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
         scene.setRoot(root);
     }
@@ -94,19 +94,23 @@ public class GameEditorWindow extends Stage {
         return gameBoard;
     }
 
-    public GameTreeViewer getGameTreeViewer() {
-        return gameTreeViewer;
+    public GameTreePane getGameTreePane() {
+        return gameTreePane;
     }
 
-    public GameCommentViewer getGameCommentViewer() {
-        return gameCommentViewer;
+    public MoveCommentPane getMoveCommentPane() {
+        return moveCommentPane;
     }
 
-    public GameEditorToolBar getToolBar() {
+    public GameEditorMenuBar getToolBar() {
         return toolBar;
     }
 
     public EditorBoardController getController() {
         return controller;
+    }
+
+    public AbstractLayout getLayout() {
+        return layout;
     }
 }

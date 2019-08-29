@@ -1,2 +1,24 @@
 @import constants
 @import editor/GameEditorWindow
+
+.split-pane
+    -fx-background-insets: 0px
+    -fx-padding: 0px
+
+    *.split-pane-divider
+            -fx-background-color: rgba(0, 0, 0, 0)
+            -fx-padding: 0px 0px 0px 0px
+
+.context-menu
+    -fx-padding: 0px
+
+    .menu-item
+        -fx-padding: 5px 0px 5px 9px
+
+.separator
+    -fx-background-color: $COLOR_PRIMARY
+    -fx-border-color: $COLOR_PRIMARY
+
+    .line
+        -fx-border-color: $COLOR_PRIMARY_LIGHTER
+        -fx-border-insets: 0px
