@@ -1,13 +1,8 @@
 package codes.nibby.yi;
 
-import codes.nibby.yi.board.GameBoard;
-import codes.nibby.yi.editor.GameRecordEditor;
-import codes.nibby.yi.game.Game;
-import codes.nibby.yi.game.rules.ChineseGameRules;
-import codes.nibby.yi.game.rules.GameRules;
+import codes.nibby.yi.config.Config;
+import codes.nibby.yi.editor.GameEditorWindow;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
@@ -30,8 +25,7 @@ public class Yi extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         System.setProperty("file.encoding", CHARSET);
-
-        GameRecordEditor editor = new GameRecordEditor();
+        GameEditorWindow editor = new GameEditorWindow();
         editor.show();
     }
 

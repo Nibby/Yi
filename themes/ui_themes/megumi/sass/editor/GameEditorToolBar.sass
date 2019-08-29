@@ -1,0 +1,42 @@
+@import constants
+
+.editor_tb_base
+    -fx-background-color: $COLOR_TOOLBAR_BASE
+
+.editor_tb_perspective_btn
+    -fx-background-color: $COLOR_TOOLBAR_BASE
+    -fx-border-width: 0px
+    -fx-padding: 0px
+    -fx-margin: 0px
+    -fx-background-radius: 0px
+    -fx-background-insets: 0px
+
+    .label
+        -fx-text-fill: $COLOR_TOOLBAR_FOREGROUND_DIMMED
+
+    .context-menu
+        -fx-padding: 0px
+
+        .menu-item
+            -fx-background-color: $COLOR_PRIMARY
+            -fx-pref-width: 100px
+            -fx-padding: 5px 0px 5px 9px
+
+        .menu-item:hover
+            -fx-background-color: $COLOR_PRIMARY_LIGHTER
+
+    .arrow-button
+        -fx-padding: 0px
+
+        .arrow
+            -fx-padding: 0px
+
+
+.editor_tb_perspective_btn:hover, .editor_tb_perspective_btn:focused
+    -fx-background-color: $COLOR_PRIMARY
+    -fx-border-color: $COLOR_PRIMARY
+
+    .label
+        -fx-text-fill: $COLOR_TOOLBAR_FOREGROUND
+
+

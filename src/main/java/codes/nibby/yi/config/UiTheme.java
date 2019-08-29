@@ -48,7 +48,7 @@ public class UiTheme {
             config = new JSONObject(buffer.toString());
             String cssFile = config.getString(JSON_KEY_CSS);
             Path themeCss = themeDir.resolve(cssFile);
-            UiStylesheets.add(themeCss.toAbsolutePath().toString());
+            UiStylesheets.add("file:///" + themeCss.toAbsolutePath().toString());
 
         } catch (NoSuchFileException e) {
             e.printStackTrace();

@@ -1,0 +1,32 @@
+.editor_tb_base {
+  -fx-background-color: #141414; }
+
+.editor_tb_perspective_btn {
+  -fx-background-color: #141414;
+  -fx-border-width: 0px;
+  -fx-padding: 0px;
+  -fx-margin: 0px;
+  -fx-background-radius: 0px;
+  -fx-background-insets: 0px; }
+  .editor_tb_perspective_btn .label {
+    -fx-text-fill: #969696; }
+  .editor_tb_perspective_btn .context-menu {
+    -fx-padding: 0px; }
+    .editor_tb_perspective_btn .context-menu .menu-item {
+      -fx-background-color: #2e5fad;
+      -fx-pref-width: 100px;
+      -fx-padding: 5px 0px 5px 9px; }
+    .editor_tb_perspective_btn .context-menu .menu-item:hover {
+      -fx-background-color: #538eed; }
+  .editor_tb_perspective_btn .arrow-button {
+    -fx-padding: 0px; }
+    .editor_tb_perspective_btn .arrow-button .arrow {
+      -fx-padding: 0px; }
+
+.editor_tb_perspective_btn:hover, .editor_tb_perspective_btn:focused {
+  -fx-background-color: #2e5fad;
+  -fx-border-color: #2e5fad; }
+  .editor_tb_perspective_btn:hover .label, .editor_tb_perspective_btn:focused .label {
+    -fx-text-fill: #f0f0f0; }
+
+/*# sourceMappingURL=GameEditorToolBar.css.map */

@@ -121,8 +121,10 @@ public class BoardInputCanvas extends Canvas {
     }
 
     private void mouseExited(MouseEvent evt) {
-        requestFocus();
-        updateMousePosition(evt);
+        mouseX = -1;
+        mouseY = -1;
+        lastMouseX = -1;
+        lastMouseY = -1;
         if (gameBoard.getController() != null)
             gameBoard.getController().mouseExited();
         render();

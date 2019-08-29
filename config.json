@@ -1,12 +1,16 @@
 {
   "language": "en_US",
   "ui_theme": "megumi",
-  "board_cursor": "circle",
-  "stone_displacement": "true",
 
-  "board_theme": {
+  "board": {
     "use": "qipan",
+    "cursor": "circle",
     "stones": "biconvex_ceramic",
+    "stone_displacement": "true",
     "background": "$AS_DEFINED"
+  },
+
+  "editor": {
+    "perspective": "simple"
   }
 }

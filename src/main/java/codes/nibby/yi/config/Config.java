@@ -4,6 +4,7 @@ import codes.nibby.yi.Yi;
 import codes.nibby.yi.board.BoardCursorType;
 import codes.nibby.yi.board.BoardTheme;
 import codes.nibby.yi.board.StoneStyle;
+import codes.nibby.yi.editor.perspective.Perspective;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
@@ -24,12 +25,16 @@ public class Config {
     // JSON keys
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_UI_THEME = "ui_theme";
-    private static final String KEY_ALLOW_STONE_DISPLACEMENT = "stone_displacement";
-    private static final String KEY_BOARD_THEME = "board_theme";
+
+    private static final String KEY_BOARD = "board";
     private static final String KEY_BOARD_THEME_USE = "use";
     private static final String KEY_BOARD_THEME_STONES = "stones";
+    private static final String KEY_BOARD_ALLOW_STONE_DISPLACEMENT = "stone_displacement";
     private static final String KEY_BOARD_THEME_BACKGROUND = "background";
-    private static final String KEY_BOARD_CURSOR = "board_cursor";
+    private static final String KEY_BOARD_CURSOR = "cursor";
+
+    private static final String KEY_EDITOR = "editor";
+    private static final String KEY_EDITOR_PERSPECTIVE = "perspective";
 
     // Directories
     protected static final String THEME_DIRECTORY = "themes";
@@ -54,11 +59,13 @@ public class Config {
     // Type of stone to draw by default
     private static StoneStyle stoneStyle;
 
+    // Whether stones are allowed to have misalignment as a result of
+    // stones bumping into one another. (eye candy)
     private static boolean stoneDisplacement;
 
-    /*
-        Loads config once upon startup.
-     */
+    // Current editor window perspective
+    private static Perspective editorPerspective;
+
     static {
         load();
     }
@@ -77,7 +84,6 @@ public class Config {
 
             String locale = root.getString(KEY_LANGUAGE);
             uiLanguage = new UiLanguage(locale);
-            stoneDisplacement = root.getBoolean(KEY_ALLOW_STONE_DISPLACEMENT);
 
             Path themeDirectory = Paths.get(THEME_DIRECTORY);
             {
@@ -85,15 +91,23 @@ public class Config {
                 uiTheme = new UiTheme(useName);
             }
 
+            // Board preferences
+            // Load board theme template.
             {
-                // Load board theme template.
-                JSONObject boardConfig = root.getJSONObject(KEY_BOARD_THEME);
+                JSONObject boardConfig = root.getJSONObject(KEY_BOARD);
                 String useName = boardConfig.getString(KEY_BOARD_THEME_USE);
                 Path boardThemeDir = themeDirectory.resolve(BOARD_THEME_DIRECTORY).resolve(useName);
                 boardTheme = new BoardTheme(boardThemeDir);
                 stoneStyle = StoneStyle.parse(boardConfig.getString(KEY_BOARD_THEME_STONES));
+                stoneDisplacement = boardConfig.getBoolean(KEY_BOARD_ALLOW_STONE_DISPLACEMENT);
+                cursorType = BoardCursorType.parse(boardConfig.getString(KEY_BOARD_CURSOR));
             }
-            cursorType = BoardCursorType.parse(root.getString(KEY_BOARD_CURSOR));
+
+            // Editor window preferences
+            {
+                JSONObject editorConfig = root.getJSONObject(KEY_EDITOR);
+                editorPerspective = Perspective.parse(editorConfig.getString(KEY_EDITOR_PERSPECTIVE));
+            }
 
         } catch (Exception e) {
             // TODO: exception handling
@@ -123,5 +137,13 @@ public class Config {
 
     public static boolean allowStoneDisplacement() {
         return stoneDisplacement;
+    }
+
+    public static Perspective getEditorPerspective() {
+        return editorPerspective;
+    }
+
+    public static void setEditorPerspective(Perspective editorPerspective) {
+        Config.editorPerspective = editorPerspective;
     }
 }

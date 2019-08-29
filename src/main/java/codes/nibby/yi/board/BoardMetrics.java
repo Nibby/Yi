@@ -85,7 +85,7 @@ public class BoardMetrics {
         // therefore need to adjust some spacing calculations below...
 
         // Amount of spacing between the start of the board background and the grid lines
-        double margin = (!drawLabels) ? 35 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 65 : 50;
+        double margin = (!drawLabels) ? 10 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 45 : 30;
         Game game = board.getGame();
         this.boardWidth = game.getBoardWidth();
         this.boardHeight = game.getBoardHeight();

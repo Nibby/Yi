@@ -43,9 +43,8 @@ public class EditorBoardController extends GameBoardController {
 
         if (button.equals(MouseButton.PRIMARY)) {
             ProposalResult proposal = getGame().proposeMove(x, y);
-            System.out.println("Proposal result : " + proposal.getType().name());
+//            System.out.println("Proposal result : " + proposal.getType().name());
             boolean successful = getGame().submitMove(proposal);
-            System.out.println();
         }
     }
 
