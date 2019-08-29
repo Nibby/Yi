@@ -40,6 +40,8 @@ public class GameNode {
     private List<Integer> helpersWhite;
     /** List of captures at this node. */
     private int prisonersBlack, prisonersWhite;
+    /** Move comments */
+    private String comments = "";
 
     /** The position of the ko square */
     private int koPoint = -1;
@@ -197,5 +199,13 @@ public class GameNode {
 
     public void setHelpersWhite(List<Integer> helpersWhite) {
         this.helpersWhite = helpersWhite;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

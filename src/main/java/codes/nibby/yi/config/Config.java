@@ -4,7 +4,7 @@ import codes.nibby.yi.Yi;
 import codes.nibby.yi.board.BoardCursorType;
 import codes.nibby.yi.board.BoardTheme;
 import codes.nibby.yi.board.StoneStyle;
-import codes.nibby.yi.editor.perspective.Perspective;
+import codes.nibby.yi.editor.layout.LayoutType;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
@@ -64,7 +64,7 @@ public class Config {
     private static boolean stoneDisplacement;
 
     // Current editor window perspective
-    private static Perspective editorPerspective;
+    private static LayoutType editorLayout;
 
     static {
         load();
@@ -106,7 +106,7 @@ public class Config {
             // Editor window preferences
             {
                 JSONObject editorConfig = root.getJSONObject(KEY_EDITOR);
-                editorPerspective = Perspective.parse(editorConfig.getString(KEY_EDITOR_PERSPECTIVE));
+                editorLayout = LayoutType.parse(editorConfig.getString(KEY_EDITOR_PERSPECTIVE));
             }
 
         } catch (Exception e) {
@@ -139,11 +139,11 @@ public class Config {
         return stoneDisplacement;
     }
 
-    public static Perspective getEditorPerspective() {
-        return editorPerspective;
+    public static LayoutType getEditorLayout() {
+        return editorLayout;
     }
 
-    public static void setEditorPerspective(Perspective editorPerspective) {
-        Config.editorPerspective = editorPerspective;
+    public static void setEditorLayout(LayoutType editorLayout) {
+        Config.editorLayout = editorLayout;
     }
 }

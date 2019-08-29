@@ -11,12 +11,13 @@ import javafx.scene.layout.Pane;
  * @author Kevin Yang
  * Created on 29 August 2019
  */
-public class GameCommentViewer extends Pane {
+public class MoveCommentPane extends Pane {
 
     private GameEditorWindow editor;
 
-    public GameCommentViewer(GameEditorWindow editor) {
+    public MoveCommentPane(GameEditorWindow editor) {
         this.editor = editor;
+        getStyleClass().add("editor_ui_comments");
     }
 
 }

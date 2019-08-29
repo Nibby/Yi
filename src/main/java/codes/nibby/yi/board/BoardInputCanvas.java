@@ -76,26 +76,23 @@ public class BoardInputCanvas extends Canvas {
             int nextColor = gameBoard.getGame().getNextMoveColor();
             Stone[] stones = gameBoard.getAllRenderableStones();
             Stone hover = stones[mouseX + mouseY * gameBoard.getGame().getBoardWidth()];
-            if (hover != null) {
-                x += hover.getFuzzyX() + hover.getWobbleX();
-                y += hover.getFuzzyY() + hover.getWobbleY();
-            }
+            if (hover == null) {
+                if (nextColor == Game.COLOR_BLACK)
+                    g.setFill(COLOR_BLACK);
+                else
+                    g.setFill(COLOR_WHITE);
 
-            if (nextColor == Game.COLOR_BLACK)
-                g.setFill(COLOR_BLACK);
-            else
-                g.setFill(COLOR_WHITE);
-
-            switch (cursorType) {
-                case CIRCLE:
-                    g.fillOval(x, y, w, h);
-                    break;
-                case SQUARE:
-                    g.fillRect(x, y, w, h);
-                    break;
-                case STONE:
-                    // TODO: Implement later
-                    break;
+                switch (cursorType) {
+                    case CIRCLE:
+                        g.fillOval(x, y, w, h);
+                        break;
+                    case SQUARE:
+                        g.fillRect(x, y, w, h);
+                        break;
+                    case STONE:
+                        // TODO: Implement later
+                        break;
+                }
             }
         }
 

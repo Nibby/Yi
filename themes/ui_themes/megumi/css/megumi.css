@@ -1,32 +1,51 @@
 .editor_tb_base {
   -fx-background-color: #141414; }
 
-.editor_tb_perspective_btn {
+.editor_tb_menubar {
   -fx-background-color: #141414;
-  -fx-border-width: 0px;
-  -fx-padding: 0px;
-  -fx-margin: 0px;
-  -fx-background-radius: 0px;
-  -fx-background-insets: 0px; }
-  .editor_tb_perspective_btn .label {
+  -fx-use-system-menu-bar: false; }
+  .editor_tb_menubar .menu .label {
     -fx-text-fill: #969696; }
-  .editor_tb_perspective_btn .context-menu {
-    -fx-padding: 0px; }
-    .editor_tb_perspective_btn .context-menu .menu-item {
-      -fx-background-color: #2e5fad;
-      -fx-pref-width: 100px;
-      -fx-padding: 5px 0px 5px 9px; }
-    .editor_tb_perspective_btn .context-menu .menu-item:hover {
-      -fx-background-color: #538eed; }
-  .editor_tb_perspective_btn .arrow-button {
-    -fx-padding: 0px; }
-    .editor_tb_perspective_btn .arrow-button .arrow {
-      -fx-padding: 0px; }
+  .editor_tb_menubar .menu .menu > .right-container > .arrow {
+    -fx-text-fill: #f0f0f0;
+    -fx-mark-color: #f0f0f0; }
+  .editor_tb_menubar .menu .menu-item {
+    -fx-background-color: #2e5fad; }
+    .editor_tb_menubar .menu .menu-item .label {
+      -fx-text-fill: #f0f0f0; }
+  .editor_tb_menubar .menu .menu-item:hover {
+    -fx-background-color: #538eed; }
+  .editor_tb_menubar .menu .check-menu-item:checked {
+    -fx-text-fill: #f0f0f0;
+    -fx-mark-color: #f0f0f0; }
+  .editor_tb_menubar .menu:hover, .editor_tb_menubar .menu:focused, .editor_tb_menubar .menu:showing {
+    -fx-background-color: #2e5fad; }
+    .editor_tb_menubar .menu:hover .label, .editor_tb_menubar .menu:focused .label, .editor_tb_menubar .menu:showing .label {
+      -fx-text-fill: #f0f0f0; }
 
-.editor_tb_perspective_btn:hover, .editor_tb_perspective_btn:focused {
+.editor_ui_gametree {
+  -fx-background-color: #c8c8c8; }
+
+.editor_ui_comments {
+  -fx-background-color: #a0a0a0; }
+
+.split-pane {
+  -fx-background-insets: 0px;
+  -fx-padding: 0px; }
+  .split-pane *.split-pane-divider {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-padding: 0px 0px 0px 0px; }
+
+.context-menu {
+  -fx-padding: 0px; }
+  .context-menu .menu-item {
+    -fx-padding: 5px 0px 5px 9px; }
+
+.separator {
   -fx-background-color: #2e5fad;
   -fx-border-color: #2e5fad; }
-  .editor_tb_perspective_btn:hover .label, .editor_tb_perspective_btn:focused .label {
-    -fx-text-fill: #f0f0f0; }
+  .separator .line {
+    -fx-border-color: #538eed;
+    -fx-border-insets: 0px; }
 
 /*# sourceMappingURL=megumi.css.map */
