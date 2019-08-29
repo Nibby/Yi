@@ -76,6 +76,8 @@ public class BoardBackgroundCanvas extends Canvas {
             double height = gridSize * boardHeight;
             double x = getWidth() / 2 - width / 2;
             double y = getHeight() / 2 - height / 2;
+            if (gameBoard.getTopToolBar() != null)
+                y += (double) BoardMetrics.RESERVED_TOOLBAR_SIZE / 2;
 
             g.setEffect(TEXTURE_SHADOW);
             g.setFill(TEXTURE_SHADOW_COLOR);
