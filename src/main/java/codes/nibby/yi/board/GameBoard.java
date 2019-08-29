@@ -1,14 +1,18 @@
 package codes.nibby.yi.board;
 
-import codes.nibby.yi.config.Config;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.GameNode;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The standard go board component used in the program.
@@ -53,6 +57,12 @@ public class GameBoard extends Pane implements GameListener {
 
     private static final double STONE_WOBBLE_FACTOR = 3d;
 
+    /**
+     * An optional fx component can be placed around the edges of the board
+     * for aesthetic purposes. The board metrics will make space accordingly.
+     */
+    private ToolBar topToolBar;
+
     /*
         The three stacked canvas layers
      */
@@ -73,11 +83,12 @@ public class GameBoard extends Pane implements GameListener {
     private Stone[] stones;
     private List<Stone> stonesStatic, stonesAnimated;
 
-    public GameBoard(Game game, GameBoardController controller) {
+    public GameBoard(Game game, GameBoardController controller, ToolBar toolbar) {
         this.game = game;
         this.game.addGameListener(this);
         this.controller = controller;
         this.controller.initialize(game, this);
+        this.topToolBar = toolbar;
         this.metrics = new BoardMetrics();
         this.metrics.calibrate(this);
 
@@ -91,6 +102,10 @@ public class GameBoard extends Pane implements GameListener {
         getChildren().add(0, canvasBg);
         getChildren().add(1, canvasStatic);
         getChildren().add(2, canvasInput);
+        if (getTopToolBar() != null) {
+            getChildren().add(3, topToolBar);
+            StackPane.setAlignment(topToolBar, Pos.TOP_CENTER);
+        }
 
         setCursor(Cursor.HAND);
 
@@ -261,6 +276,8 @@ public class GameBoard extends Pane implements GameListener {
     private void updateSize(double width, double height) {
         super.setPrefSize(width, height);
         layoutChildren();
+        if (topToolBar != null)
+            topToolBar.setPrefWidth(width);
         metrics.calibrate(this);
         render();
     }
@@ -335,5 +352,13 @@ public class GameBoard extends Pane implements GameListener {
 
     public List<Stone> getAnimatedStones() {
         return stonesAnimated;
+    }
+
+    public ToolBar getTopToolBar() {
+        return topToolBar;
+    }
+
+    public void setTopToolBar(ToolBar topToolBar) {
+        this.topToolBar = topToolBar;
     }
 }

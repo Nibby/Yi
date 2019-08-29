@@ -23,6 +23,20 @@
     .editor_tb_menubar .menu:hover .label, .editor_tb_menubar .menu:focused .label, .editor_tb_menubar .menu:showing .label {
       -fx-text-fill: #f0f0f0; }
 
+.editor_board_tb {
+  -fx-background-color: rgba(0, 0, 0, 0.65);
+  -fx-padding: 5px 10px 5px 10px; }
+  .editor_board_tb .editor_board_tb_toggle {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 0;
+    -fx-background-radius: 0px; }
+  .editor_board_tb .editor_board_tb_toggle:selected {
+    -fx-background-color: #ffb44a;
+    -fx-text-fill: black; }
+  .editor_board_tb .label {
+    -fx-text-fill: white; }
+
 .editor_ui_gametree {
   -fx-background-color: #c8c8c8; }
 
@@ -47,5 +61,8 @@
   .separator .line {
     -fx-border-color: #538eed;
     -fx-border-insets: 0px; }
+
+.toggle-button {
+  -fx-background-insets: 0px; }
 
 /*# sourceMappingURL=megumi.css.map */
