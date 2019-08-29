@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 public class Yi extends Application {
 
     public static final String NAME = "Yi";
-    public static final String VERSION = "v0.2.0";
+    public static final String VERSION = "v0.0.7";
     public static final String TITLE = NAME + " - " + VERSION;
     public static final String CHARSET = "UTF-8";
 

@@ -82,7 +82,7 @@ public class GameNode {
             children.add(node);
     }
 
-    private boolean hasChildren() {
+    public boolean hasChildren() {
         return children.size() > 0;
     }
 
@@ -207,5 +207,9 @@ public class GameNode {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public boolean isRootNode() {
+        return getParent() == null;
     }
 }

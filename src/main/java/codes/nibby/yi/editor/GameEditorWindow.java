@@ -11,6 +11,8 @@ import codes.nibby.yi.editor.component.GameTreePane;
 import codes.nibby.yi.editor.layout.LayoutType;
 import codes.nibby.yi.editor.layout.AbstractLayout;
 import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameListener;
+import codes.nibby.yi.game.GameNode;
 import codes.nibby.yi.game.rules.GameRules;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -41,8 +43,8 @@ public class GameEditorWindow extends Stage {
 
     public GameEditorWindow() {
         controller = new EditorBoardController();
-        initializeComponents();
         initializeGame();
+        initializeComponents();
         initializeScene();
 
         UiStylesheets.applyTo(scene);
