@@ -19,7 +19,9 @@ public abstract class StandardGameRules implements IGameRules {
 
     @Override
     public ProposalResult proposeMove(Game game, int color, int x, int y) {
-        // TODO: TEMPORARY! Add rules later
+        if (x < 0 || x > game.getBoardWidth() - 1 || y < 0 || y > game.getBoardHeight() - 1)
+            return new ProposalResult(ProposalResult.Type.INVALID_UNKNOWN_ERROR, null);
+
         // First create new node to test the position
         GameNode newNode = game.createNextNode();
         GameNode currentNode = game.getCurrentNode();
