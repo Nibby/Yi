@@ -42,7 +42,7 @@ public class EditLayout extends AbstractLayout {
 
         boardPane = new BorderPane();
         boardPane.setCenter(getEditor().getGameBoard());
-        splitMain = new SplitPane(boardPane, splitSidebar);
+        splitMain = new SplitPane(boardPane);
         splitMain.setOrientation(Orientation.HORIZONTAL);
         splitMain.setDividerPositions(0.7d);
 
