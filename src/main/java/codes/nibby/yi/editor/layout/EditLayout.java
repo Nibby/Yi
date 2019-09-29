@@ -5,6 +5,7 @@ import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.editor.component.MoveCommentPane;
 import codes.nibby.yi.editor.component.GameTreePane;
 import javafx.geometry.Orientation;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -28,11 +29,13 @@ public class EditLayout extends AbstractLayout {
     protected BorderPane createLayout() {
         ResourceBundle lang = Config.getLanguage().getResourceBundle("GameEditorWindow");
         GameTreePane treeViewer = getEditor().getGameTreePane();
+        ScrollPane treeScrollPane = new ScrollPane(treeViewer);
+        treeScrollPane.getStyleClass().add("tree_scroll_pane");
         TabPane treeTabPane = new TabPane();
         treeTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         treeTabPane.getStyleClass().add("editor_sidebar_tabpane");
         String treeTabText = lang.getString("editor.sidebar.tabpane.gametree");
-        Tab treeTab = new Tab(treeTabText, treeViewer);
+        Tab treeTab = new Tab(treeTabText, treeScrollPane);
         treeTabPane.getTabs().add(treeTab);
 
         MoveCommentPane commentViewer = getEditor().getMoveCommentPane();
@@ -42,7 +45,7 @@ public class EditLayout extends AbstractLayout {
 
         boardPane = new BorderPane();
         boardPane.setCenter(getEditor().getGameBoard());
-        splitMain = new SplitPane(boardPane);
+        splitMain = new SplitPane(boardPane, splitSidebar);
         splitMain.setOrientation(Orientation.HORIZONTAL);
         splitMain.setDividerPositions(0.7d);
 
