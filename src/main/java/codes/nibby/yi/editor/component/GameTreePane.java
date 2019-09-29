@@ -1,8 +1,6 @@
 package codes.nibby.yi.editor.component;
 
 import codes.nibby.yi.board.StoneRenderer;
-import codes.nibby.yi.board.StoneStyle;
-import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
@@ -32,92 +30,94 @@ public class GameTreePane extends GridPane implements GameListener {
     private static final int COMPONENT_HEIGHT = 24;
 
     private int orientation = VERTICAL;
+    private Map<GameNode, NodeElement> nodeMap;
+    private ElementLayout layout;
     private GameEditorWindow editor;
     private Game game;
+    private NodeElement currentNode;
 
     public GameTreePane(GameEditorWindow editor) {
         this.editor = editor;
     }
 
     private void rebuildTree() {
+        nodeMap = new HashMap<>();
+        layout = new ElementLayout();
         getChildren().clear();
         GameNode current = game.getGameTree();
         int row = 0, col = 0;
         buildBranch(current, row, col);
-
-//
-//        do {
-//            // First add the node component
-//            NodeComponent _node = new NodeComponent(current);
-//            add(_node, row, col);
-//
-//            // Then add child branches
-//            List<GameNode> children = current.getChildren();
-//            for (int i = 0; i < children.size(); i++) {
-//                if (i == 0) {
-//                    // Create a connector
-//                    int cRow = (orientation == HORIZONTAL) ? row + 1 : row;
-//                    int cCol = (orientation == HORIZONTAL) ? col : col + 1;
-//                    TrackComponent _line = new TrackComponent();
-//                    add(_line, cRow, cCol);
-//                } else {
-//                    // TODO: create child branch
-//                    int cRow = (orientation == HORIZONTAL) ? row : row + 1;
-//                    int cCol = (orientation == HORIZONTAL) ? col + 1 : col;
-//                    buildBranch(children.get(i), cRow, cCol);
-//                }
-//            }
-//
-//            // Next...
-//            if (current.hasChildren()) {
-//                current = children.get(0);
-//                if (orientation == HORIZONTAL)
-//                    row += 2;
-//                else
-//                    col += 2;
-//
-//            }
-//        } while (current.hasChildren());
     }
 
-    private void buildBranch(GameNode branchRoot, int startRow, int startCol) {
-        // TODO add connectors connecting back to main (in case this isn't the main variation)
+    private void buildBranch(GameNode branchRoot, int startCol, int startRow) {
+        int gridX = startCol;
+        int gridY = startRow;
 
-        int row = startRow;
-        int col = startCol;
         GameNode current = branchRoot;
+        List<NodeElement> branchNodes = new ArrayList<>();
+        Stack<GameNode> childNodes = new Stack<>();
+        Map<GameNode, NodeElement> parentNodes = new HashMap<>();
+        int size = 0;
+        int start = branchRoot.getMoveNumber() - 1;
         do {
             // Build current variation
-            NodeComponent _node = new NodeComponent(current);
-            add(_node, row, col);
+            int moveNumber = current.getMoveNumber();
+            NodeElement _node = new NodeElement(game, current, gridX, gridY++);
+            nodeMap.put(current, _node);
+            layout.nodeData.putIfAbsent(moveNumber, new ArrayList<>());
+            layout.nodeData.get(moveNumber).add(_node);
+            branchNodes.add(_node);
+            if (current.equals(game.getCurrentNode()))
+                currentNode = _node;
+
             // Build child variation branches
             List<GameNode> children = current.getChildren();
             for (int i = 1; i < children.size(); i++) {
-                int cRow = (orientation == HORIZONTAL) ? row : row + 1;
-                int cCol = (orientation == HORIZONTAL) ? col + 1 : col;
-                buildBranch(children.get(i), cRow, cCol);
+                GameNode child = children.get(i);
+                childNodes.push(child);
+                parentNodes.put(child, _node);
             }
 
-            // If there is a continuation on this variation,
-            // continue laying tracks...
-
+            size++;
             if (current.hasChildren()) {
-                if (orientation == HORIZONTAL)
-                    row++;
-                else
-                    col++;
-                TrackComponent _track = new TrackComponent(current, current.getChildren().get(0));
-                add(_track, row, col);
-
                 current = current.getChildren().get(0);
-                if (orientation == HORIZONTAL)
-                    row++;
-                else
-                    col++;
 
             } else
                 current = null;
         } while (current != null);
+
+        int end = start + size;
+        int col = startCol;
+        NodeElement firstNode = branchNodes.get(0);
+        while (!layout.isSegmentAvailable(col, start, end)) {
+            TrackElement track = new TrackElement(orientation, 0, col,firstNode.gridY - 1);
+            add(track, track.gridX, track.gridY);
+            col++;
+        }
+
+        if (firstNode.node.getParent() != null
+                && firstNode.node.getParent().getChildren().indexOf(firstNode.node) != 0
+                && firstNode.gridY >= 1) {
+            int index = firstNode.node.getParent().getChildren().indexOf(firstNode.node);
+            boolean lastChild = firstNode.node.getParent().getChildren().size() - 1 == index;
+            int trackType = lastChild ? 2 : 1;
+            TrackElement track = new TrackElement(orientation, trackType, col,firstNode.gridY - 1);
+            add(track, track.gridX, track.gridY);
+            System.out.println(lastChild);
+        }
+
+        layout.columnData.putIfAbsent(col, new ArrayList<>());
+        layout.columnData.get(col).add(new Integer[] { start, end });
+        for (NodeElement _node : branchNodes) {
+            add(_node, col, _node.gridY);
+        }
+
+        // Handle child nodes
+        while (!childNodes.isEmpty()) {
+            GameNode node = childNodes.pop();
+            int index = node.getParent().getChildren().indexOf(node);
+            buildBranch(node, col + index, node.getMoveNumber());
+        }
     }
 
     @Override
@@ -128,53 +128,149 @@ public class GameTreePane extends GridPane implements GameListener {
 
     @Override
     public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
-        rebuildTree();
-    }
-
-    private static class NodeComponent extends Canvas {
-
-        private GraphicsContext g;
-        private GameNode node;
-
-        private NodeComponent(GameNode node) {
-            g = getGraphicsContext2D();
-            this.node = node;
-            setWidth(COMPONENT_WIDTH);
-            setHeight(COMPONENT_HEIGHT);
-
-            int iconSize = (int) Math.min(getWidth(), getHeight());
-            StoneRenderer.renderTexture(g, node.getColor(), iconSize, 0, 0);
-
-
-            // TODO temporary
-            g.setStroke(Color.BLACK);
-            g.strokeRect(0, 0, getWidth(), getHeight());
+        if (!newMove) {
+            assert currentNode != null;
+            currentNode.render();
+            currentNode = nodeMap.get(currentMove);
+            currentNode.render();
+        } else {
+            // TODO temporary. Ideally new moves are appended to the existing structure.
+            rebuildTree();
         }
     }
 
-    private static class TrackComponent extends Canvas {
-        private static final int TRACK_HORIZONTAL_THROUGH = 0;
+    private abstract static class AbstractElement extends Canvas {
+
+        GraphicsContext g;
+        int gridY, gridX;
+
+        private AbstractElement(int gridX, int gridY) {
+            g = getGraphicsContext2D();
+            this.gridY = gridY;
+            this.gridX = gridX;
+        }
+    }
+
+    private static class NodeElement extends AbstractElement {
+
+        private Game game;
+        private GameNode node;
+
+        private NodeElement(Game game, GameNode node, int gridX, int gridY) {
+            super(gridX, gridY);
+            this.game = game;
+            this.node = node;
+            setWidth(COMPONENT_WIDTH);
+            setHeight(COMPONENT_HEIGHT);
+            render();
+        }
+
+        public void render() {
+            g.clearRect(0, 0, getWidth(), getHeight());
+            if (game.getCurrentNode().equals(node)) {
+                // TODO change aesthetics later
+                g.setFill(Color.YELLOW);
+                g.fillRect(0, 0, getWidth(), getHeight());
+            } else {
+                // TODO temporary
+                g.setStroke(Color.BLACK);
+                g.strokeRect(0, 0, getWidth(), getHeight());
+            }
+
+            int iconSize = (int) Math.min(getWidth(), getHeight());
+            StoneRenderer.renderTexture(g, node.getColor(), iconSize, 0, 0);
+        }
+    }
+
+    private static class TrackElement extends AbstractElement {
+        private static final int TRACK_HORIZONTAL_LINE = 0;
         private static final int TRACK_HORIZONTAL_T = 1;
         private static final int TRACK_HORIZONTAL_CORNER = 2;
-
-        private static final int TRACK_VERTICAL = 3;
+        private static final int TRACK_VERTICAL_LINE = 3;
         private static final int TRACK_VERTICAL_T = 4;
         private static final int TRACK_VERTICAL_CORNER = 5;
 
         private int trackType;
-        private GraphicsContext g;
+        private GameNode nodeParent;
+        private GameNode nodeChild;
+        private int row, col;
 
-        private TrackComponent(GameNode parent, GameNode child) {
+        private TrackElement(int orientation, int type, int col, int row) {
+            super(col, row);
+            this.row = row;
+            this.col = col;
+            switch (type) {
+                case 0:
+                    trackType = (orientation == VERTICAL) ? TRACK_HORIZONTAL_LINE : TRACK_VERTICAL_LINE;
+                    break;
+                case 1:
+                    trackType = (orientation == VERTICAL) ? TRACK_HORIZONTAL_T : TRACK_VERTICAL_T;
+                    break;
+                case 2:
+                    trackType = (orientation == VERTICAL) ? TRACK_HORIZONTAL_CORNER : TRACK_VERTICAL_CORNER;
+                    break;
+            }
+
             g = getGraphicsContext2D();
-            int height = COMPONENT_HEIGHT / 2;
             setWidth(COMPONENT_WIDTH);
-            setHeight(height);
-
+            setHeight(COMPONENT_HEIGHT);
             g.setStroke(Color.BLACK);
-            g.strokeLine(getWidth() / 2, 0, getWidth()/ 2, getHeight());
+            g.setLineWidth(2d);
+            switch (trackType) {
+                case TRACK_HORIZONTAL_LINE:
+                    g.strokeLine(0, getHeight() / 2 - 1, getWidth(), getHeight() / 2 - 1);
+                    break;
+                case TRACK_HORIZONTAL_T:
+                    g.strokeLine(0, getHeight() / 2 - 1, getWidth(), getHeight() / 2 - 1);
+                    g.strokeLine(getWidth() / 2, getHeight() / 2 - 1, getWidth()/ 2, getHeight());
+                    break;
+                case TRACK_HORIZONTAL_CORNER:
+                    g.strokeLine(0, getHeight() / 2 - 1, getWidth() / 2, getHeight() / 2 - 1);
+                    g.strokeLine(getWidth() / 2, getHeight() / 2 - 1, getWidth()/ 2, getHeight());
+                    break;
 
-            // TODO temporary
-            g.strokeRect(0, 0, getWidth(), getHeight());
+                case TRACK_VERTICAL_LINE:
+                    g.strokeLine(getWidth() / 2, 0, getWidth()/ 2, getHeight());
+                    break;
+            }
+            g.setLineWidth(1d);
+        }
+    }
+
+    private static class ElementLayout {
+
+        private Map<Integer, List<Integer[]>> columnData = new HashMap<>();
+        private Map<Integer, List<NodeElement>> nodeData = new HashMap<>();
+
+        private boolean isSegmentAvailable(int column, int start, int end) {
+            List<Integer[]> segmentData = columnData.get(column);
+            if (segmentData == null) {
+                columnData.put(column, new ArrayList<>());
+                return true;
+            }
+
+            // Avoid stepping into a column where an existing branch line extends further out
+            List<Integer[]> nextColumn;
+            int c = column;
+            while ((nextColumn = columnData.get(c + 1)) != null) {
+                for (Integer[] segment : nextColumn) {
+                    if (start <= segment[0] && end >= segment[0] ||
+                            start <= segment[1] && end >= segment[1] ||
+                            start >= segment[0] && end <= segment[1])
+                        return false;
+
+                }
+                c++;
+            }
+
+            for (Integer[] segment : segmentData) {
+                if (start <= segment[0] && end >= segment[0] ||
+                        start <= segment[1] && end >= segment[1] ||
+                        start >= segment[0] && end <= segment[1])
+                    return false;
+
+            }
+            return true;
         }
     }
 }

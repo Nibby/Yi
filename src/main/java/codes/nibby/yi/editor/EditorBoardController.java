@@ -61,6 +61,17 @@ public class EditorBoardController extends GameBoardController {
     @Override
     public void mouseScrolled(double notch) {
         super.mouseScrolled(notch);
+        if (notch > 0) {
+            GameNode node = getGame().getCurrentNode();
+            if (node.hasParent())
+                node = node.getParent();
+            getGame().setCurrentNode(node, false);
+        } else if (notch < 0) {
+            GameNode node = getGame().getCurrentNode();
+            if (node.hasChildren())
+                node = node.getChildren().get(0);
+            getGame().setCurrentNode(node, false);
+        }
     }
 
     @Override
