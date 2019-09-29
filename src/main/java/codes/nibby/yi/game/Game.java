@@ -50,7 +50,7 @@ public class Game {
     /**
      * Resets the game state. All nodes will be deleted.
      */
-    private void initialize() {
+    public void initialize() {
         gameTree = new GameNode();
         int[] boardData = new int[boardWidth * boardHeight];
         gameTree.setStoneData(boardData);
@@ -185,8 +185,6 @@ public class Game {
     public void setBoardSize(int width, int height) {
         this.boardWidth = width;
         this.boardHeight = height;
-
-        initialize();
     }
 
     public int getBoardWidth() {

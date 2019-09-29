@@ -43,9 +43,9 @@ public class GameEditorWindow extends Stage {
 
     public GameEditorWindow() {
         controller = new EditorBoardController();
-        initializeGame();
         initializeComponents();
         initializeScene();
+        game.initialize();
 
         UiStylesheets.applyTo(scene);
     }
@@ -56,16 +56,16 @@ public class GameEditorWindow extends Stage {
         handled by the perspective manager.
      */
     private void initializeComponents() {
-        toolBar = new GameEditorMenuBar(this);
-        gameTreePane = new GameTreePane(this);
-        moveCommentPane = new MoveCommentPane(this);
-    }
-
-    private void initializeGame() {
         game = new Game(GameRules.CHINESE, 19, 19);
         boardToolBar = new GameBoardToolBar(this);
         gameBoard  = new GameBoard(game, controller, boardToolBar);
+        toolBar = new GameEditorMenuBar(this);
+        gameTreePane = new GameTreePane(this);
+        moveCommentPane = new MoveCommentPane(this);
+
+        game.addGameListener(gameTreePane);
     }
+
 
     private void initializeScene() {
         setTitle(Yi.TITLE);
