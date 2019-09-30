@@ -10,16 +10,16 @@
     -fx-text-fill: #f0f0f0;
     -fx-mark-color: #f0f0f0; }
   .editor_tb_menubar .menu .menu-item {
-    -fx-background-color: #2e5fad; }
+    -fx-background-color: #788555; }
     .editor_tb_menubar .menu .menu-item .label {
       -fx-text-fill: #f0f0f0; }
   .editor_tb_menubar .menu .menu-item:hover {
-    -fx-background-color: #538eed; }
+    -fx-background-color: #94a36a; }
   .editor_tb_menubar .menu .check-menu-item:checked {
     -fx-text-fill: #f0f0f0;
     -fx-mark-color: #f0f0f0; }
   .editor_tb_menubar .menu:hover, .editor_tb_menubar .menu:focused, .editor_tb_menubar .menu:showing {
-    -fx-background-color: #2e5fad; }
+    -fx-background-color: #788555; }
     .editor_tb_menubar .menu:hover .label, .editor_tb_menubar .menu:focused .label, .editor_tb_menubar .menu:showing .label {
       -fx-text-fill: #f0f0f0; }
 
@@ -30,47 +30,73 @@
     -fx-text-fill: white;
     -fx-background-color: transparent;
     -fx-padding: 0 0 0 0;
-    -fx-background-radius: 0px; }
+    -fx-background-radius: 3px; }
   .editor_board_tb .editor_board_tb_toggle:selected {
-    -fx-background-color: #ffb44a;
+    -fx-background-color: white;
     -fx-text-fill: black; }
   .editor_board_tb .label {
     -fx-text-fill: white; }
 
 .game_tree_toolbar {
-  -fx-background-color: #538eed; }
+  -fx-background-color: #94a36a; }
 
 .editor_sidebar_tabpane {
   -fx-padding: 2px;
-  -fx-background-color: #2e5fad; }
+  -fx-background-color: #788555; }
   .editor_sidebar_tabpane *.tab-header-area {
-    -fx-padding: 3px 3px -1px 3px;
+    -fx-padding: 10px 3px -1px 3px;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    -fx-background-color: #2e5fad; }
+    -fx-background-color: #788555; }
     .editor_sidebar_tabpane *.tab-header-area .tab-header-background {
-      -fx-background-color: #2e5fad; }
+      -fx-background-color: #788555; }
   .editor_sidebar_tabpane .tab {
-    -fx-background-color: #2e5fad;
-    -fx-padding: 2px 10px 8px 10px;
+    -fx-background-color: #788555;
+    -fx-padding: 1px 10px 1px 10px;
     -fx-background-radius: 0px; }
   .editor_sidebar_tabpane .tab:selected {
-    -fx-background-color: #538eed; }
+    -fx-background-color: #94a36a; }
     .editor_sidebar_tabpane .tab:selected .tab-label {
       -fx-text-fill: white; }
 
-.corner {
-  -fx-background-color: white; }
+.editor_side_toolbar {
+  -fx-background-color: #94a36a; }
+  .editor_side_toolbar .tool-bar {
+    -fx-background-color: inherit;
+    -fx-padding: 9px 5px 9px 5px; }
+    .editor_side_toolbar .tool-bar .button {
+      -fx-text-fill: white;
+      -fx-background-color: #788555;
+      -fx-padding: 2px 4px 2px 4px;
+      -fx-background-radius: 3px; }
 
-.editor_ui_comments {
-  -fx-background-color: #a0a0a0; }
+.editor_node_comments {
+  -fx-text-fill: white;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-border-radius: 0px;
+  -fx-background-radius: 0px;
+  -fx-background-color: #2c3028;
+  -fx-text-fill: white;
+  -fx-prompt-text-fill: #c8c8c8; }
+  .editor_node_comments .content {
+    -fx-text-fill: white;
+    -fx-background-color: #2c3028;
+    -fx-background-radius: 0px; }
+  .editor_node_comments .scroll-pane {
+    -fx-background-color: #2c3028; }
+    .editor_node_comments .scroll-pane *.scroll-bar {
+      -fx-background-color: #2c3028; }
+      .editor_node_comments .scroll-pane *.scroll-bar .thumb {
+        -fx-background-color: #2c3028; }
 
 .split-pane {
+  -fx-background-color: black;
   -fx-background-insets: 0px;
   -fx-padding: 0px; }
   .split-pane *.split-pane-divider {
-    -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-padding: 0px 0px 0px 0px; }
+    -fx-background-color: #2f3625;
+    -fx-padding: 1px; }
 
 .context-menu {
   -fx-padding: 0px; }
@@ -78,10 +104,10 @@
     -fx-padding: 5px 0px 5px 9px; }
 
 .separator {
-  -fx-background-color: #2e5fad;
-  -fx-border-color: #2e5fad; }
+  -fx-background-color: #788555;
+  -fx-border-color: #788555; }
   .separator .line {
-    -fx-border-color: #538eed;
+    -fx-border-color: #94a36a;
     -fx-border-insets: 0px; }
 
 .toggle-button {

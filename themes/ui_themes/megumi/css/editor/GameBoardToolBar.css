@@ -5,9 +5,9 @@
     -fx-text-fill: white;
     -fx-background-color: transparent;
     -fx-padding: 0 0 0 0;
-    -fx-background-radius: 0px; }
+    -fx-background-radius: 3px; }
   .editor_board_tb .editor_board_tb_toggle:selected {
-    -fx-background-color: #ffb44a;
+    -fx-background-color: white;
     -fx-text-fill: black; }
   .editor_board_tb .label {
     -fx-text-fill: white; }

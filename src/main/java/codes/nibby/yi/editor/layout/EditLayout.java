@@ -5,6 +5,7 @@ import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.editor.component.GameTreeToolBar;
 import codes.nibby.yi.editor.component.MoveCommentPane;
 import codes.nibby.yi.editor.component.GameTreePane;
+import codes.nibby.yi.editor.component.SideToolBar;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
@@ -31,6 +32,8 @@ public class EditLayout extends AbstractLayout {
     @Override
     protected BorderPane createLayout() {
         ResourceBundle lang = Config.getLanguage().getResourceBundle("GameEditorWindow");
+        // Components on the sidebar
+
         GameTreePane treePane = getEditor().getGameTreePane();
         ScrollPane treeScrollPane = new ScrollPane(treePane);
         {
@@ -42,7 +45,7 @@ public class EditLayout extends AbstractLayout {
             treeScrollPane.onMouseDragReleasedProperty().addListener(l -> {
                 treeScrollPane.setCursor(Cursor.OPEN_HAND);
             });
-            treeScrollPane.setPadding(new Insets(2, 5 ,2 ,5));
+            treeScrollPane.setPadding(new Insets(2, 5, 2, 5));
             treePane.setScrollPane(treeScrollPane);
             treeScrollPane.getStyleClass().add("game_tree_scroll_pane");
         }
@@ -62,9 +65,15 @@ public class EditLayout extends AbstractLayout {
         splitSidebar.setOrientation(Orientation.VERTICAL);
         splitSidebar.setDividerPositions(0.7d);
 
+        BorderPane sidebar = new BorderPane();
+        sidebar.setCenter(splitSidebar);
+        SideToolBar sideToolBar = new SideToolBar();
+        sidebar.setTop(sideToolBar);
+
+        // Components in the centre
         boardPane = new BorderPane();
         boardPane.setCenter(getEditor().getGameBoard());
-        splitMain = new SplitPane(boardPane, splitSidebar);
+        splitMain = new SplitPane(boardPane, sidebar);
         splitMain.setOrientation(Orientation.HORIZONTAL);
         splitMain.setDividerPositions(0.7d);
 
