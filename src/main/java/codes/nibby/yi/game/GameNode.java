@@ -42,6 +42,8 @@ public class GameNode {
     private int prisonersBlack, prisonersWhite;
     /** Move comments */
     private String comments = "";
+    /** Board labels, markers etc. */
+    private List<Markup> markups = new ArrayList<>();
 
     /** The position of the ko square */
     private int koPoint = -1;
@@ -211,5 +213,17 @@ public class GameNode {
 
     public boolean isRootNode() {
         return getParent() == null;
+    }
+
+    public List<Markup> getMarkups() {
+        return markups;
+    }
+
+    public void setMarkups(List<Markup> markups) {
+        this.markups = markups;
+    }
+
+    public void addMarkup(Markup markup) {
+        markups.add(markup);
     }
 }

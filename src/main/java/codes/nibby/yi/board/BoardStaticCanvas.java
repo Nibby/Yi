@@ -1,7 +1,9 @@
 package codes.nibby.yi.board;
 
+import codes.nibby.yi.game.Markup;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import java.util.List;
 
@@ -30,5 +32,11 @@ public class BoardStaticCanvas extends Canvas {
         for (Stone stone : staticStones) {
             StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
         }
+
+        // TODO testing code, remove later.
+        MarkupRenderer.render(g, null, Markup.triangle(0,0), gameBoard.getMetrics(), Color.BLACK);
+        MarkupRenderer.render(g, null, Markup.circle(1,0), gameBoard.getMetrics(), Color.BLACK);
+        MarkupRenderer.render(g, null, Markup.square(2,0), gameBoard.getMetrics(), Color.BLACK);
+        MarkupRenderer.render(g, null, Markup.cross(3,0), gameBoard.getMetrics(), Color.BLACK);
     }
 }
