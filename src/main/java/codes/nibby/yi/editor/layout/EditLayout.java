@@ -2,9 +2,12 @@ package codes.nibby.yi.editor.layout;
 
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
+import codes.nibby.yi.editor.component.GameTreeToolBar;
 import codes.nibby.yi.editor.component.MoveCommentPane;
 import codes.nibby.yi.editor.component.GameTreePane;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.scene.Cursor;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -28,14 +31,30 @@ public class EditLayout extends AbstractLayout {
     @Override
     protected BorderPane createLayout() {
         ResourceBundle lang = Config.getLanguage().getResourceBundle("GameEditorWindow");
-        GameTreePane treeViewer = getEditor().getGameTreePane();
-        ScrollPane treeScrollPane = new ScrollPane(treeViewer);
-        treeScrollPane.getStyleClass().add("tree_scroll_pane");
+        GameTreePane treePane = getEditor().getGameTreePane();
+        ScrollPane treeScrollPane = new ScrollPane(treePane);
+        {
+            treeScrollPane.setPannable(true);
+            treeScrollPane.setCursor(Cursor.OPEN_HAND);
+            treeScrollPane.onMouseDraggedProperty().addListener(l -> {
+                treeScrollPane.setCursor(Cursor.CLOSED_HAND);
+            });
+            treeScrollPane.onMouseDragReleasedProperty().addListener(l -> {
+                treeScrollPane.setCursor(Cursor.OPEN_HAND);
+            });
+            treeScrollPane.setPadding(new Insets(2, 5 ,2 ,5));
+            treePane.setScrollPane(treeScrollPane);
+            treeScrollPane.getStyleClass().add("game_tree_scroll_pane");
+        }
+
+        BorderPane treeComponent = new BorderPane(treeScrollPane);
+        treeComponent.setTop(new GameTreeToolBar(treePane));
+
         TabPane treeTabPane = new TabPane();
         treeTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         treeTabPane.getStyleClass().add("editor_sidebar_tabpane");
         String treeTabText = lang.getString("editor.sidebar.tabpane.gametree");
-        Tab treeTab = new Tab(treeTabText, treeScrollPane);
+        Tab treeTab = new Tab(treeTabText, treeComponent);
         treeTabPane.getTabs().add(treeTab);
 
         MoveCommentPane commentViewer = getEditor().getMoveCommentPane();

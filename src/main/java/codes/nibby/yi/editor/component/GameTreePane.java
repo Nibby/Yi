@@ -5,8 +5,11 @@ import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.GameNode;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
@@ -14,7 +17,12 @@ import java.util.*;
 
 /**
  * A component for displaying the game tree structure visually.
- * Allows user input to navigate.
+ * Accepts mouse and keyboard input to navigate the game states.
+ *
+ * The tree pane is implemented using a GridPane, where each 'node'
+ * is added as a separate 'NodeElement' element. TrackElements are
+ * added where child branch exists to graphically indicate a branching
+ * relationship.
  *
  * TODO: Implement this later.
  *
@@ -23,23 +31,27 @@ import java.util.*;
  */
 public class GameTreePane extends GridPane implements GameListener {
 
-    public static final int HORIZONTAL = 0;
-    public static final int VERTICAL = 1;
+    private static final int HORIZONTAL = 0;
+    private static final int VERTICAL = 1;
 
     private static final int COMPONENT_WIDTH = 24;
     private static final int COMPONENT_HEIGHT = 24;
 
-    private int orientation = VERTICAL;
     private Map<GameNode, NodeElement> nodeMap;
     private ElementLayout layout;
     private GameEditorWindow editor;
     private Game game;
     private NodeElement currentNode;
+    private ScrollPane scrollPane;
 
     public GameTreePane(GameEditorWindow editor) {
         this.editor = editor;
     }
 
+    /**
+     * Clears all previous elements on the tree and reconstruct
+     * from scratch.
+     */
     private void rebuildTree() {
         nodeMap = new HashMap<>();
         layout = new ElementLayout();
@@ -49,6 +61,14 @@ public class GameTreePane extends GridPane implements GameListener {
         buildBranch(current, row, col);
     }
 
+    /**
+     * Constructs a single branch from the tree, traversing through until the
+     * end of the main variation. Child branches are constructed recursively this way.
+     *
+     * @param branchRoot The first node in the branch.
+     * @param startCol GridPane X co-ordinate of the first node.
+     * @param startRow GridPane Y co-ordinate of the first node.
+     */
     private void buildBranch(GameNode branchRoot, int startCol, int startRow) {
         int gridX = startCol;
         int gridY = startRow;
@@ -90,7 +110,7 @@ public class GameTreePane extends GridPane implements GameListener {
         int col = startCol;
         NodeElement firstNode = branchNodes.get(0);
         while (!layout.isSegmentAvailable(col, start, end)) {
-            TrackElement track = new TrackElement(orientation, 0, col,firstNode.gridY - 1);
+            TrackElement track = new TrackElement(VERTICAL, 0, col,firstNode.gridY - 1);
             add(track, track.gridX, track.gridY);
             col++;
         }
@@ -101,9 +121,8 @@ public class GameTreePane extends GridPane implements GameListener {
             int index = firstNode.node.getParent().getChildren().indexOf(firstNode.node);
             boolean lastChild = firstNode.node.getParent().getChildren().size() - 1 == index;
             int trackType = lastChild ? 2 : 1;
-            TrackElement track = new TrackElement(orientation, trackType, col,firstNode.gridY - 1);
+            TrackElement track = new TrackElement(VERTICAL, trackType, col,firstNode.gridY - 1);
             add(track, track.gridX, track.gridY);
-            System.out.println(lastChild);
         }
 
         layout.columnData.putIfAbsent(col, new ArrayList<>());
@@ -118,6 +137,10 @@ public class GameTreePane extends GridPane implements GameListener {
             int index = node.getParent().getChildren().indexOf(node);
             buildBranch(node, col + index, node.getMoveNumber());
         }
+    }
+
+    public void setScrollPane(ScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
     }
 
     @Override
@@ -137,6 +160,8 @@ public class GameTreePane extends GridPane implements GameListener {
             // TODO temporary. Ideally new moves are appended to the existing structure.
             rebuildTree();
         }
+
+        // TODO Keep the current node in the viewport
     }
 
     private abstract static class AbstractElement extends Canvas {
@@ -149,12 +174,18 @@ public class GameTreePane extends GridPane implements GameListener {
             this.gridY = gridY;
             this.gridX = gridX;
         }
+
+        public abstract void render();
     }
 
+    /**
+     * Represents a GameNode rendered on the game tree.
+     */
     private static class NodeElement extends AbstractElement {
 
         private Game game;
         private GameNode node;
+        private boolean hovered = false;
 
         private NodeElement(Game game, GameNode node, int gridX, int gridY) {
             super(gridX, gridY);
@@ -162,26 +193,69 @@ public class GameTreePane extends GridPane implements GameListener {
             this.node = node;
             setWidth(COMPONENT_WIDTH);
             setHeight(COMPONENT_HEIGHT);
+            addEventHandler(MouseEvent.MOUSE_ENTERED, this::mouseEntered);
+            addEventHandler(MouseEvent.MOUSE_EXITED, this::mouseExited);
+            addEventHandler(MouseEvent.MOUSE_MOVED, this::mouseMoved);
+            addEventHandler(MouseEvent.MOUSE_PRESSED, this::mousePressed);
             render();
         }
 
+        private void mousePressed(MouseEvent t) {
+            game.setCurrentNode(node, false);
+        }
+
+        private void mouseMoved(MouseEvent t) {
+
+        }
+
+        private void mouseExited(MouseEvent t) {
+            hovered = false;
+            setCursor(Cursor.OPEN_HAND);
+            render();
+        }
+
+        private void mouseEntered(MouseEvent t) {
+            hovered = true;
+            setCursor(Cursor.HAND);
+            render();
+        }
+
+        @Override
         public void render() {
             g.clearRect(0, 0, getWidth(), getHeight());
+
             if (game.getCurrentNode().equals(node)) {
                 // TODO change aesthetics later
                 g.setFill(Color.YELLOW);
                 g.fillRect(0, 0, getWidth(), getHeight());
-            } else {
-                // TODO temporary
-                g.setStroke(Color.BLACK);
-                g.strokeRect(0, 0, getWidth(), getHeight());
+            } else if (hovered) {
+                g.setFill(Color.LAVENDER);
+                g.fillRect(0, 0, getWidth(), getHeight());
             }
 
-            int iconSize = (int) Math.min(getWidth(), getHeight());
-            StoneRenderer.renderTexture(g, node.getColor(), iconSize, 0, 0);
+            // Draw tracks
+            g.setLineWidth(2d);
+            g.setStroke(Color.DARKGRAY);
+            if (node.getParent() != null) {
+                g.strokeLine(getWidth() / 2, 0, getWidth() / 2, getHeight() / 2);
+            }
+
+            if (node.hasChildren()) {
+                g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth() / 2, getHeight());
+
+                if (node.getChildren().size() > 1)
+                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth(), getHeight() / 2);
+            }
+
+            // Draw node icon
+            int size = (int) Math.min(getWidth() / 3 * 2, getHeight() / 3 * 2);
+            StoneRenderer.renderTexture(g, node.getColor(), size, getWidth() / 2 - (size / 2f), getHeight() / 2 - (size / 2f));
         }
     }
 
+    /**
+     * Represents a child variation branch icon.
+     */
     private static class TrackElement extends AbstractElement {
         private static final int TRACK_HORIZONTAL_LINE = 0;
         private static final int TRACK_HORIZONTAL_T = 1;
@@ -191,14 +265,10 @@ public class GameTreePane extends GridPane implements GameListener {
         private static final int TRACK_VERTICAL_CORNER = 5;
 
         private int trackType;
-        private GameNode nodeParent;
-        private GameNode nodeChild;
-        private int row, col;
+        boolean debug = true;
 
         private TrackElement(int orientation, int type, int col, int row) {
             super(col, row);
-            this.row = row;
-            this.col = col;
             switch (type) {
                 case 0:
                     trackType = (orientation == VERTICAL) ? TRACK_HORIZONTAL_LINE : TRACK_VERTICAL_LINE;
@@ -211,37 +281,76 @@ public class GameTreePane extends GridPane implements GameListener {
                     break;
             }
 
-            g = getGraphicsContext2D();
             setWidth(COMPONENT_WIDTH);
             setHeight(COMPONENT_HEIGHT);
-            g.setStroke(Color.BLACK);
+
+            addEventHandler(MouseEvent.MOUSE_ENTERED, this::mouseEntered);
+            addEventHandler(MouseEvent.MOUSE_EXITED, this::mouseExited);
+            addEventHandler(MouseEvent.MOUSE_MOVED, this::mouseMoved);
+            addEventHandler(MouseEvent.MOUSE_PRESSED, this::mousePressed);
+            render();
+        }
+
+        private void mousePressed(MouseEvent t) {
+        }
+
+        private void mouseMoved(MouseEvent t) {
+
+        }
+
+        private void mouseExited(MouseEvent t) {
+
+        }
+
+        private void mouseEntered(MouseEvent t) {
+        }
+
+        @Override
+        public void render() {
+            g.clearRect(0, 0, getWidth(), getHeight());
+            // TODO track color subject to change
+            g.setStroke(Color.DARKGRAY);
             g.setLineWidth(2d);
+
             switch (trackType) {
                 case TRACK_HORIZONTAL_LINE:
-                    g.strokeLine(0, getHeight() / 2 - 1, getWidth(), getHeight() / 2 - 1);
+                    g.strokeLine(0, getHeight() / 2, getWidth(), getHeight() / 2);
                     break;
                 case TRACK_HORIZONTAL_T:
-                    g.strokeLine(0, getHeight() / 2 - 1, getWidth(), getHeight() / 2 - 1);
-                    g.strokeLine(getWidth() / 2, getHeight() / 2 - 1, getWidth()/ 2, getHeight());
+                    g.strokeLine(0, getHeight() / 2, getWidth(), getHeight() / 2);
+                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth()/ 2, getHeight());
                     break;
                 case TRACK_HORIZONTAL_CORNER:
-                    g.strokeLine(0, getHeight() / 2 - 1, getWidth() / 2, getHeight() / 2 - 1);
-                    g.strokeLine(getWidth() / 2, getHeight() / 2 - 1, getWidth()/ 2, getHeight());
+                    g.strokeLine(0, getHeight() / 2, getWidth() / 2, getHeight() / 2);
+                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth()/ 2, getHeight());
                     break;
 
                 case TRACK_VERTICAL_LINE:
                     g.strokeLine(getWidth() / 2, 0, getWidth()/ 2, getHeight());
                     break;
+                    // TODO rest of the vertical lines
             }
             g.setLineWidth(1d);
         }
     }
 
+    /**
+     * A helper class storing tree node positions. It is used to calculate the
+     * position of new branches.
+     */
     private static class ElementLayout {
 
         private Map<Integer, List<Integer[]>> columnData = new HashMap<>();
         private Map<Integer, List<NodeElement>> nodeData = new HashMap<>();
 
+        /**
+         * Checks if a given section does not have nodes.
+         *
+         * @param column The column index
+         * @param start Segment start index
+         * @param end Segment end index
+         * @return Whether the segment is available for new branches.
+         */
         private boolean isSegmentAvailable(int column, int start, int end) {
             List<Integer[]> segmentData = columnData.get(column);
             if (segmentData == null) {
