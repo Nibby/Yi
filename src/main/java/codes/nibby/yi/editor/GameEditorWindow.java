@@ -63,7 +63,7 @@ public class GameEditorWindow extends Stage {
         gameTreePane = new GameTreePane(this);
         moveCommentPane = new MoveCommentPane(this);
 
-        game.addGameListener(gameTreePane);
+        game.addGameListener(gameTreePane, moveCommentPane);
     }
 
 

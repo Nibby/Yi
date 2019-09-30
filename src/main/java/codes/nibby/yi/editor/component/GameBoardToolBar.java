@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.util.Duration;
 
 import java.io.InputStream;
 
@@ -151,7 +152,11 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
 
     private void addToolButton(ToggleButton b, String icon, String tooltip, boolean group) {
         b.applyCss();
-        b.setTooltip(new Tooltip(tooltip));
+        Tooltip tt = new Tooltip(tooltip);
+        tt.setShowDelay(Duration.millis(500));
+        tt.setHideDelay(Duration.millis(500));
+        tt.setShowDuration(Duration.seconds(2));
+        b.setTooltip(tt);
         b.setPrefWidth(BUTTON_SIZE);
         b.setPrefHeight(b.getPrefWidth());
         b.getStyleClass().add("editor_board_tb_toggle");

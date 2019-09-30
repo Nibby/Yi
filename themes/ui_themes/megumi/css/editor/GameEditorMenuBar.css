@@ -10,16 +10,16 @@
     -fx-text-fill: #f0f0f0;
     -fx-mark-color: #f0f0f0; }
   .editor_tb_menubar .menu .menu-item {
-    -fx-background-color: #2e5fad; }
+    -fx-background-color: #788555; }
     .editor_tb_menubar .menu .menu-item .label {
       -fx-text-fill: #f0f0f0; }
   .editor_tb_menubar .menu .menu-item:hover {
-    -fx-background-color: #538eed; }
+    -fx-background-color: #94a36a; }
   .editor_tb_menubar .menu .check-menu-item:checked {
     -fx-text-fill: #f0f0f0;
     -fx-mark-color: #f0f0f0; }
   .editor_tb_menubar .menu:hover, .editor_tb_menubar .menu:focused, .editor_tb_menubar .menu:showing {
-    -fx-background-color: #2e5fad; }
+    -fx-background-color: #788555; }
     .editor_tb_menubar .menu:hover .label, .editor_tb_menubar .menu:focused .label, .editor_tb_menubar .menu:showing .label {
       -fx-text-fill: #f0f0f0; }
 

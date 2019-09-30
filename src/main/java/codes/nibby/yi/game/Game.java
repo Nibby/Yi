@@ -203,8 +203,9 @@ public class Game {
         return currentNode;
     }
 
-    public void addGameListener(GameListener listener) {
-        listeners.add(listener);
+    public void addGameListener(GameListener ... listener) {
+        for (GameListener l : listener)
+            listeners.add(l);
     }
 
     public IGameRules getRuleset() {

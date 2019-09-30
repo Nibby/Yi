@@ -3,12 +3,13 @@
 @import GameTreeToolBar
 @import ../constants
 
+// Sidebar tab pane (for GameTree etc.)
 .editor_sidebar_tabpane
     -fx-padding: 2px
     -fx-background-color: $COLOR_PRIMARY
 
     *.tab-header-area
-        -fx-padding: 3px 3px -1px 3px
+        -fx-padding: 10px 3px -1px 3px
         -fx-focus-color: transparent
         -fx-faint-focus-color: transparent
         -fx-background-color: $COLOR_PRIMARY
@@ -18,7 +19,7 @@
 
     .tab
         -fx-background-color: $COLOR_PRIMARY
-        -fx-padding: 2px 10px 8px 10px
+        -fx-padding: 1px 10px 1px 10px
         -fx-background-radius: 0px
 
     .tab:selected
@@ -27,8 +28,44 @@
         .tab-label
             -fx-text-fill: white
 
-.corner
-    -fx-background-color: rgb(255, 255, 255)
+// Main side toolbar on top right
+.editor_side_toolbar
+    -fx-background-color: $COLOR_PRIMARY_LIGHTER
 
-.editor_ui_comments
-    -fx-background-color: rgb(160, 160, 160)
+    .tool-bar
+        -fx-background-color: inherit
+        -fx-padding: 9px 5px 9px 5px
+
+        .button
+            -fx-text-fill: white
+            -fx-background-color: $COLOR_PRIMARY
+            -fx-padding: 2px 4px 2px 4px
+            -fx-background-radius: 3px
+
+
+
+// Comment TextArea for GameNode
+$COLOR_COMMENTS_BACKGROUND: rgb(44, 48, 40)
+.editor_node_comments
+    -fx-text-fill: white
+    -fx-focus-color: transparent
+    -fx-faint-focus-color: transparent
+    -fx-border-radius: 0px
+    -fx-background-radius: 0px
+    -fx-background-color: $COLOR_COMMENTS_BACKGROUND
+    -fx-text-fill: rgb(255, 255, 255)
+    -fx-prompt-text-fill: rgb(200, 200, 200)
+
+    .content
+        -fx-text-fill: white
+        -fx-background-color: $COLOR_COMMENTS_BACKGROUND
+        -fx-background-radius: 0px
+
+    .scroll-pane
+        -fx-background-color: $COLOR_COMMENTS_BACKGROUND
+
+        *.scroll-bar
+            -fx-background-color: $COLOR_COMMENTS_BACKGROUND
+
+            .thumb
+                -fx-background-color: $COLOR_COMMENTS_BACKGROUND

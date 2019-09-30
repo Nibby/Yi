@@ -249,7 +249,7 @@ public class GameTreePane extends GridPane implements GameListener {
 
             // Draw node icon
             int size = (int) Math.min(getWidth() / 3 * 2, getHeight() / 3 * 2);
-            StoneRenderer.renderTexture(g, node.getColor(), size, getWidth() / 2 - (size / 2f), getHeight() / 2 - (size / 2f));
+            StoneRenderer.renderTextureAndShadow(g, node.getColor(), size, getWidth() / 2 - (size / 2f), getHeight() / 2 - (size / 2f));
         }
     }
 
