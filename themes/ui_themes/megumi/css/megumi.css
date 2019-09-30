@@ -37,6 +37,9 @@
   .editor_board_tb .label {
     -fx-text-fill: white; }
 
+.game_tree_toolbar {
+  -fx-background-color: #538eed; }
+
 .editor_sidebar_tabpane {
   -fx-padding: 2px;
   -fx-background-color: #2e5fad; }
@@ -55,9 +58,6 @@
     -fx-background-color: #538eed; }
     .editor_sidebar_tabpane .tab:selected .tab-label {
       -fx-text-fill: white; }
-
-.treeview_scroll_bar {
-  -fx-background-color: white; }
 
 .corner {
   -fx-background-color: white; }
