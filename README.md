@@ -8,13 +8,10 @@ Yi is a long way from v1.0.
 As with all great apps, though, there are humble beginnings.
 See [Projects](https://github.com/Nibby/QiPan/projects) for current development progress.
 
-##Roadmap
-To meet major release milestones, the following features are planned.
-
 ### Chapter 1: Humble Beginnings (v0.5 earlybird)
 - [X] Rendering a goban
 - [x] Basic stone placement
-- [ ] Move tree
+- [x] Move tree
 - [ ] Annotations
 - [ ] SGF info editor
 - [ ] Saving / loading SGF
@@ -44,8 +41,16 @@ To meet major release milestones, the following features are planned.
 
 ... More to be announced!
 
-## Dependencies
-- OpenJDK 12
-- Gradle
-- JavaFX
-- JSON
+## Project setup
+Prerequisites for the project are:
+- OpenJDK 12+
+- Gradle 5.6+
+
+First, clone the repository from GitHub: 
+
+`git clone https://github.com/Nibby/Yi.git Yi`
+
+Yi is built using Gradle, you can import the project in your IDE as a Gradle project. To run the project in command line, use: `gradle run`.
+
+- For IntelliJ IDEA users, use `File -> New -> Project from Existing Sources`, import and select `Gradle Project`.
+- For Eclipse users, use `File -> Import -> Gradle -> Existing Gradle Project`
