@@ -21,11 +21,9 @@ public class Yi extends Application {
 
     public static final String PATH_CONFIG = "config.json";
 
-
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         System.setProperty("file.encoding", CHARSET);
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", NAME);
         GameEditorWindow editor = new GameEditorWindow();
         editor.show();
     }

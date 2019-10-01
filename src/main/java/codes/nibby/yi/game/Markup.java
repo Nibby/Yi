@@ -69,14 +69,23 @@ public final class Markup {
     public static Markup triangle(int x, int y) {
         return basicMarkup(MarkupType.TRIANGLE, x, y);
     }
+
     public static Markup circle(int x, int y) {
         return basicMarkup(MarkupType.CIRCLE, x, y);
     }
+
     public static Markup square(int x, int y) {
         return basicMarkup(MarkupType.SQUARE, x, y);
     }
+
     public static Markup cross(int x, int y) {
         return basicMarkup(MarkupType.CROSS, x, y);
+    }
+
+    public static Markup label(int x, int y, String text) {
+        Markup markup = basicMarkup(MarkupType.LABEL, x, y);
+        markup.setArguments(text);
+        return markup;
     }
 
     private static Markup basicMarkup(MarkupType type, int x, int y) {

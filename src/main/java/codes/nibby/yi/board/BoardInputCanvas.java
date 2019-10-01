@@ -2,6 +2,8 @@ package codes.nibby.yi.board;
 
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameNode;
+import codes.nibby.yi.game.Markup;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -48,7 +50,6 @@ public class BoardInputCanvas extends Canvas {
 
         addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
         addEventHandler(KeyEvent.KEY_RELEASED, this::keyReleased);
-
     }
 
     public void render() {
@@ -66,7 +67,10 @@ public class BoardInputCanvas extends Canvas {
         }
 
         // Draw board cursor
-        if (mouseX >= 0 && mouseY >= 0) {
+        GameNode node = gameBoard.getGame().getCurrentNode();
+        boolean drawCursor = mouseX >= 0 && mouseY >= 0 && !node.hasMarkupAt(mouseX, mouseY, false);
+
+        if (drawCursor) {
             BoardCursorType cursorType = Config.getCursorType();
             BoardMetrics metrics = gameBoard.getMetrics();
             double w = metrics.getStoneSize() / 2;
@@ -76,25 +80,48 @@ public class BoardInputCanvas extends Canvas {
             int nextColor = gameBoard.getGame().getNextMoveColor();
             Stone[] stones = gameBoard.getAllRenderableStones();
             Stone hover = stones[mouseX + mouseY * gameBoard.getGame().getBoardWidth()];
-            if (hover == null) {
-                if (nextColor == Game.COLOR_BLACK)
-                    g.setFill(COLOR_BLACK);
-                else
-                    g.setFill(COLOR_WHITE);
+            Color markupColor = hover != null && hover.getColor() == Game.COLOR_BLACK ? Color.WHITE : Color.BLACK;
 
-                switch (cursorType) {
-                    case CIRCLE:
-                        g.fillOval(x, y, w, h);
-                        break;
-                    case SQUARE:
-                        g.fillRect(x, y, w, h);
-                        break;
-                    case STONE:
-                        // TODO: Implement later
-                        break;
+            g.setGlobalAlpha(0.65d);
+            BoardInputHintType inputHint = gameBoard.getInputHint();
+            if (inputHint.equals(BoardInputHintType.DYNAMIC)) {
+                if (hover == null) {
+                    if (nextColor == Game.COLOR_BLACK)
+                        g.setFill(COLOR_BLACK);
+                    else
+                        g.setFill(COLOR_WHITE);
+
+                    switch (cursorType) {
+                        case CIRCLE:
+                            g.fillOval(x, y, w, h);
+                            break;
+                        case SQUARE:
+                            g.fillRect(x, y, w, h);
+                            break;
+                        case STONE:
+                            StoneRenderer.renderTexture(g, nextColor, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
+                            break;
+                    }
                 }
+            } else if (inputHint.equals(BoardInputHintType.STONE_BLACK)) {
+                StoneRenderer.renderTexture(g, Game.COLOR_BLACK, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
+            } else if (inputHint.equals(BoardInputHintType.STONE_WHITE)) {
+                StoneRenderer.renderTexture(g, Game.COLOR_WHITE, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
+            } else if (inputHint.equals(BoardInputHintType.MARKUP_TRIANGLE)) {
+                MarkupRenderer.render(g, hover, Markup.triangle(mouseX, mouseY), metrics, markupColor);
+            } else if (inputHint.equals(BoardInputHintType.MARKUP_SQUARE)) {
+                MarkupRenderer.render(g, hover, Markup.square(mouseX, mouseY), metrics, markupColor);
+            } else if (inputHint.equals(BoardInputHintType.MARKUP_CIRCLE)) {
+                MarkupRenderer.render(g, hover, Markup.circle(mouseX, mouseY), metrics, markupColor);
+            } else if (inputHint.equals(BoardInputHintType.MARKUP_CROSS)) {
+                MarkupRenderer.render(g, hover, Markup.cross(mouseX, mouseY), metrics, markupColor);
+            } else if (inputHint.equals(BoardInputHintType.MARKUP_LABEL)) {
+                // TODO implement later
             }
+
+            g.setGlobalAlpha(1.0d);
         }
+
 
         if (redraw) {
             new Timeline(new KeyFrame(Duration.millis(40), e -> render())).play();
