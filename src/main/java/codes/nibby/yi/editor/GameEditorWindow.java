@@ -5,14 +5,12 @@ import codes.nibby.yi.board.GameBoard;
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.config.UiStylesheets;
 import codes.nibby.yi.editor.component.GameBoardToolBar;
-import codes.nibby.yi.editor.component.MoveCommentPane;
 import codes.nibby.yi.editor.component.GameEditorMenuBar;
 import codes.nibby.yi.editor.component.GameTreePane;
-import codes.nibby.yi.editor.layout.LayoutType;
+import codes.nibby.yi.editor.component.MoveCommentPane;
 import codes.nibby.yi.editor.layout.AbstractLayout;
+import codes.nibby.yi.editor.layout.LayoutType;
 import codes.nibby.yi.game.Game;
-import codes.nibby.yi.game.GameListener;
-import codes.nibby.yi.game.GameNode;
 import codes.nibby.yi.game.rules.GameRules;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -26,9 +24,6 @@ import javafx.stage.Stage;
  * Created on 29 August 2019
  */
 public class GameEditorWindow extends Stage {
-
-    private static final int START_WIDTH = 800;
-    private static final int START_HEIGHT = 600;
 
     private Game game;
     private GameBoard gameBoard;
@@ -72,7 +67,7 @@ public class GameEditorWindow extends Stage {
 
         layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
-        scene = new Scene(root, START_WIDTH, START_HEIGHT);
+        scene = new Scene(root, 800, 600);
         setScene(scene);
     }
 

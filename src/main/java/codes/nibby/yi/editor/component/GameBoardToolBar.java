@@ -1,6 +1,9 @@
 package codes.nibby.yi.editor.component;
 
+import codes.nibby.yi.board.BoardInputHintType;
 import codes.nibby.yi.board.BoardMetrics;
+import codes.nibby.yi.editor.EditorBoardController;
+import codes.nibby.yi.editor.EditorToolType;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
@@ -28,7 +31,6 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
     private GameEditorWindow editor;
 
     private Label moveLabel;
-
     private ToggleGroup annotationGroup;
     private ToggleButton btnPlay;
     private ToggleButton btnTriangle;
@@ -52,10 +54,9 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
 
         addToolButton(btnPlay = new ToggleButton(), "play", "Place stones", true);
         btnPlay.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_STONE);
-//
-//            if(btnPlay.isSelected())
-//                editor.showHUD("Place stones");
+            editor.getController().setToolType(EditorToolType.PLAY_MOVE);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.DYNAMIC);
         });
 
         Label lbSep1 = new Label("-");
@@ -64,18 +65,16 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
 
         addToolButton(btnMarkBlack = new ToggleButton(), "circle-thick", "Add black stones", true);
         btnMarkBlack.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_MARKER_BLACK);
-//
-//            if(btnMarkBlack.isSelected())
-//                editor.showHUD("Add black stones (1 per move)");
+            editor.getController().setToolType(EditorToolType.ADD_HELPER_BLACK);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.STONE_BLACK);
         });
 
         addToolButton(btnMarkWhite = new ToggleButton(), "circle-thick-fill", "Add white stones", true);
         btnMarkWhite.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_MARKER_WHITE);
-//
-//            if(btnMarkWhite.isSelected())
-//                editor.showHUD("Add white stones (1 per move)");
+            editor.getController().setToolType(EditorToolType.ADD_HELPER_WHITE);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.STONE_WHITE);
         });
 
         Label lbSep2 = new Label("-");
@@ -84,50 +83,44 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
 
         addToolButton(btnTriangle = new ToggleButton(), "triangle", "Triangle marker", true);
         btnTriangle.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_TRIANGLE);
-//
-//            if(btnTriangle.isSelected())
-//                editor.showHUD("Triangle marker");
+            editor.getController().setToolType(EditorToolType.MARKUP_TRIANGLE);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_TRIANGLE);
         });
 
         addToolButton(btnSquare = new ToggleButton(), "square", "Square marker", true);
         btnSquare.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_SQUARE);
-//
-//            if(btnSquare.isSelected())
-//                editor.showHUD("Square marker");
+            editor.getController().setToolType(EditorToolType.MARKUP_SQUARE);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_SQUARE);
         });
 
         addToolButton(btnCircle = new ToggleButton(), "circle", "Circle marker", true);
         btnCircle.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_CIRCLE);
-//
-//            if(btnCircle.isSelected())
-//                editor.showHUD("Circle marker");
+            editor.getController().setToolType(EditorToolType.MARKUP_CIRCLE);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_CIRCLE);
         });
 
         addToolButton(btnCross = new ToggleButton(), "cross", "Cross marker", true);
         btnCross.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_CROSS);
-//
-//            if(btnCross.isSelected())
-//                editor.showHUD("Cross marker");
+            editor.getController().setToolType(EditorToolType.MARKUP_CROSS);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_CROSS);
         });
 
         addToolButton(btnNumber = new ToggleButton("1"), "", "Number marker", true);
         btnNumber.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_NUMBER);
-//
-//            if(btnNumber.isSelected())
-//                editor.showHUD("Number marker");
+            editor.getController().setToolType(EditorToolType.MARKUP_LABEL_NUMBER);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_LABEL);
         });
 
         addToolButton(btnLetter = new ToggleButton("A"), "", "Letter marker", true);
         btnLetter.selectedProperty().addListener(e -> {
-//            editor.setEditMode(EditorView.EDIT_MODE_PLACE_LETTER);
-//
-//            if(btnLetter.isSelected())
-//                editor.showHUD("Letter marker");
+            editor.getController().setToolType(EditorToolType.MARKUP_LABEL_LETTER);
+            if (editor.getGameBoard() != null)
+                editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_LABEL);
         });
 
         HBox divider = new HBox();

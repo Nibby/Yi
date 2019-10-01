@@ -82,6 +82,7 @@ public class GameBoard extends Pane implements GameListener {
     // A list of renderable objects (sourced from game.currentNode)
     private Stone[] stones;
     private List<Stone> stonesStatic, stonesAnimated;
+    private BoardInputHintType inputHint = BoardInputHintType.DYNAMIC;
 
     public GameBoard(Game game, GameBoardController controller, ToolBar toolbar) {
         this.game = game;
@@ -360,5 +361,13 @@ public class GameBoard extends Pane implements GameListener {
 
     public void setTopToolBar(ToolBar topToolBar) {
         this.topToolBar = topToolBar;
+    }
+
+    public BoardInputHintType getInputHint() {
+        return inputHint;
+    }
+
+    public void setInputHint(BoardInputHintType inputHint) {
+        this.inputHint = inputHint;
     }
 }

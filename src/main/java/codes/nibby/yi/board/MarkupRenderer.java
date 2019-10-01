@@ -3,6 +3,7 @@ package codes.nibby.yi.board;
 import codes.nibby.yi.game.Markup;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class MarkupRenderer {
 
@@ -36,7 +37,18 @@ public class MarkupRenderer {
                 g.strokeLine(x + gridSize / 4, y + gridSize / 4 * 3, x + gridSize / 4 * 3, y + gridSize / 4);
                 break;
             case LABEL:
-                // TODO implement later
+                g.setFill(Color.color(1d, 1d, 1d, 0.1d));
+                g.fillOval(x, y, gridSize, gridSize);
+
+                g.setFill(color);
+                g.setStroke(color);
+
+                Text t = new Text(markup.getArguments());
+                t.applyCss();
+                double width = t.getLayoutBounds().getWidth();
+                double height = t.getLayoutBounds().getHeight();
+                g.fillText(markup.getArguments(), x + gridSize / 2 - width / 2, y + gridSize / 2 + height / 4);
+
                 break;
             case LINE:
                 // TODO implement later

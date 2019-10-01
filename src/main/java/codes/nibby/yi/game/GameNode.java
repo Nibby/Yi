@@ -34,10 +34,6 @@ public class GameNode {
     // Stone color
     private int color;
 
-    /** List of custom-added black stones in this node for demonstration purposes */
-    private List<Integer> helpersBlack;
-    /** List of custom-added white stones in this node for demonstration purposes */
-    private List<Integer> helpersWhite;
     /** List of captures at this node. */
     private int prisonersBlack, prisonersWhite;
     /** Move comments */
@@ -58,11 +54,14 @@ public class GameNode {
     /** Board stone positions at this point. */
     private int[] stoneData;
 
-    public GameNode() {
-        this(null);
+    private Game game;
+
+    public GameNode(Game game) {
+        this(game, null);
     }
 
-    public GameNode(GameNode parent) {
+    public GameNode(Game game, GameNode parent) {
+        this.game = game;
         this.parent = parent;
     }
 
@@ -187,22 +186,6 @@ public class GameNode {
         this.prisonersWhite = prisonersWhite;
     }
 
-    public List<Integer> getHelpersBlack() {
-        return helpersBlack;
-    }
-
-    public void setHelpersBlack(List<Integer> helpersBlack) {
-        this.helpersBlack = helpersBlack;
-    }
-
-    public List<Integer> getHelpersWhite() {
-        return helpersWhite;
-    }
-
-    public void setHelpersWhite(List<Integer> helpersWhite) {
-        this.helpersWhite = helpersWhite;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -225,5 +208,25 @@ public class GameNode {
 
     public void addMarkup(Markup markup) {
         markups.add(markup);
+        game.fireGameCurrentMoveUpdateEvent(this, false);
+    }
+
+    public boolean hasMarkupAt(int x, int y, boolean shouldRemove) {
+        boolean removed = false;
+        for (int i = 0; i < markups.size(); ) {
+            Markup markup = markups.get(i);
+            if (markup.getX1() == x && markup.getY1() == y) {
+                if (shouldRemove) {
+                    markups.remove(markup);
+                    removed = true;
+                } else
+                    return true;
+            } else {
+                i++;
+            }
+        }
+        if (shouldRemove && removed)
+            game.fireGameCurrentMoveUpdateEvent(this, false);
+        return removed;
     }
 }

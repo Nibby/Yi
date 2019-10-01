@@ -4,7 +4,7 @@
 
   "board": {
     "use": "qipan",
-    "cursor": "circle",
+    "cursor": "stone",
     "stones": "biconvex_ceramic",
     "stone_displacement": "true",
     "background": "$AS_DEFINED"

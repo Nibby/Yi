@@ -51,7 +51,7 @@ public class Game {
      * Resets the game state. All nodes will be deleted.
      */
     public void initialize() {
-        gameTree = new GameNode();
+        gameTree = new GameNode(this);
         int[] boardData = new int[boardWidth * boardHeight];
         gameTree.setStoneData(boardData);
         pastStates = new HashMap<>();
@@ -60,7 +60,6 @@ public class Game {
 
         for (GameListener l : listeners)
             l.gameInitialized(this);
-
     }
 
     /**
@@ -99,8 +98,12 @@ public class Game {
         constructBoardState(currentNode, newNode);
         this.currentNode = newNode;
 
+        fireGameCurrentMoveUpdateEvent(newNode, isNewMove);
+    }
+
+    public void fireGameCurrentMoveUpdateEvent(GameNode node, boolean isNewMove) {
         for (GameListener l : listeners)
-            l.gameCurrentMoveUpdate(newNode, isNewMove);
+            l.gameCurrentMoveUpdate(node, isNewMove);
     }
 
     /**
@@ -204,8 +207,7 @@ public class Game {
     }
 
     public void addGameListener(GameListener ... listener) {
-        for (GameListener l : listener)
-            listeners.add(l);
+        listeners.addAll(Arrays.asList(listener));
     }
 
     public IGameRules getRuleset() {
@@ -213,7 +215,7 @@ public class Game {
     }
 
     public GameNode createNextNode() {
-        GameNode nextNode = new GameNode(currentNode);
+        GameNode nextNode = new GameNode(this, currentNode);
         int[] currentData = currentNode.getStoneData();
         nextNode.setStoneData(Arrays.copyOf(currentData, currentData.length));
         nextNode.setColor(getNextMoveColor());

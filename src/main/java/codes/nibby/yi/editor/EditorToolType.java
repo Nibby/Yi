@@ -1,0 +1,17 @@
+package codes.nibby.yi.editor;
+
+public enum EditorToolType {
+
+    PLAY_MOVE,
+    ADD_HELPER_BLACK,
+    ADD_HELPER_WHITE,
+    MARKUP_TRIANGLE,
+    MARKUP_CIRCLE,
+    MARKUP_SQUARE,
+    MARKUP_CROSS,
+    MARKUP_LABEL_LETTER,
+    MARKUP_LABEL_NUMBER,
+    MARKUP_LINE,
+    MARKUP_ARROW
+
+}
