@@ -12,8 +12,7 @@ See [Projects](https://github.com/Nibby/QiPan/projects) for current development 
 - [X] Rendering a goban
 - [x] Basic stone placement
 - [x] Move tree
-- [ ] Annotations
-- [ ] SGF info editor
+- [x] Annotations
 - [ ] Saving / loading SGF
 - [x] Support for **9x9**, **13x13**, **19x19** sizes
 - [x] Custom size board support
@@ -22,9 +21,8 @@ See [Projects](https://github.com/Nibby/QiPan/projects) for current development 
 ### Chapter 2: Expanding Horizons (v0.7 alpha)
 - [ ] Score estimation
 - [ ] Scoring
-- [ ] Support for multiple game rules
+- [x] Support for multiple game rules
 - [ ] SGF operations: rotate board, tutor mode etc.
-- [ ] Printing support, export board as image etc.
 - [ ] Supporting other record formats.
 
 ### Chapter 3: Eye Candy and Zen (v0.9 beta)
@@ -34,6 +32,7 @@ See [Projects](https://github.com/Nibby/QiPan/projects) for current development 
 - [ ] Sound effects
 
 ### Chapter 4: The Journey Begins (v1.0 +)
+- [ ] Printing support, export board as image etc.
 - [ ] Leela Zero review compatibility
 - [ ] GTP support for AI engines (to play with)
 - [ ] OGS client
