@@ -47,4 +47,10 @@ public interface IGameRules {
      * Amount of komi to be given.
      */
     float getKomi();
+
+    /**
+     *
+     * @return User-friendly name of the ruleset
+     */
+    String getName();
 }

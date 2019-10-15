@@ -2,6 +2,7 @@ package codes.nibby.yi.game;
 
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
+import codes.nibby.yi.io.GameMetadata;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.util.*;
@@ -17,6 +18,8 @@ public class Game {
 
     public static final int COLOR_BLACK = 1;
     public static final int COLOR_WHITE = 2;
+
+    private GameMetadata metadata;
 
     /** Width of the go board. */
     private int boardWidth;
@@ -45,6 +48,10 @@ public class Game {
     public Game(IGameRules rules, int boardWidth, int boardHeight) {
         setRuleset(rules);
         setBoardSize(boardWidth, boardHeight);
+
+        metadata = new GameMetadata();
+        metadata.playerBlackName = "Black";
+        metadata.playerWhiteName = "White";
     }
 
     /**
