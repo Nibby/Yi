@@ -67,11 +67,23 @@ public class GameEditorWindow extends Stage {
         gameTreePane = new GameTreePane(this);
         moveCommentPane = new MoveCommentPane(this);
 
-        // Drag & drop files to load
-        gameBoard.setOnDragOver(e -> {
+        game.addGameListener(gameTreePane, moveCommentPane);
+    }
+
+
+    private void initializeScene() {
+        setTitle(Yi.TITLE);
+
+        layout = AbstractLayout.generate(this);
+        Pane root = layout.getContentPane();
+        scene = new Scene(root, 820, 600);
+        setScene(scene);
+
+        scene.setOnDragDone(e -> {
+            boolean success = false;
             if (e.getDragboard().hasFiles()) {
                 e.acceptTransferModes(TransferMode.ANY);
-
+                success = true;
                 // TODO ask the user what to do on multiple file drag?
                 List<File> files = e.getDragboard().getFiles();
                 // TODO temporary: default to opening one file
@@ -89,20 +101,9 @@ public class GameEditorWindow extends Stage {
                     }
                 }
             }
+            e.setDropCompleted(success);
             e.consume();
         });
-
-        game.addGameListener(gameTreePane, moveCommentPane);
-    }
-
-
-    private void initializeScene() {
-        setTitle(Yi.TITLE);
-
-        layout = AbstractLayout.generate(this);
-        Pane root = layout.getContentPane();
-        scene = new Scene(root, 820, 600);
-        setScene(scene);
     }
 
     public LayoutType getPerspective() {

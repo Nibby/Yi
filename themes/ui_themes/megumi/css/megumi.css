@@ -135,6 +135,9 @@
 .editor_side_toolbar .tool-bar .combo-box:hover {
   -fx-background-color: #ffb44a;
 }
+.editor_side_toolbar .tool-bar .combo-box:hover .list-cell {
+  -fx-text-fill: #141414;
+}
 
 .editor_node_comments {
   -fx-text-fill: #969696;
