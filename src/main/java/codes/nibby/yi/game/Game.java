@@ -2,7 +2,6 @@ package codes.nibby.yi.game;
 
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
-import codes.nibby.yi.io.GameMetadata;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.util.*;

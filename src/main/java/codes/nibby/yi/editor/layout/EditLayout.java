@@ -36,6 +36,7 @@ public class EditLayout extends AbstractLayout {
 
         GameTreePane treePane = getEditor().getGameTreePane();
         ScrollPane treeScrollPane = new ScrollPane(treePane);
+        treeScrollPane.getStyleClass().add("game_tree_scroll_pane");
         {
             treeScrollPane.setPannable(true);
             treeScrollPane.setCursor(Cursor.OPEN_HAND);

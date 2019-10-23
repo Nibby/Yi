@@ -1,26 +1,36 @@
 .editor_tb_base {
-  -fx-background-color: #141414; }
+  -fx-background-color: #141414;
+}
 
 .editor_tb_menubar {
   -fx-background-color: #141414;
-  -fx-use-system-menu-bar: true; }
-  .editor_tb_menubar .menu .label {
-    -fx-text-fill: #969696; }
-  .editor_tb_menubar .menu .menu > .right-container > .arrow {
-    -fx-text-fill: #f0f0f0;
-    -fx-mark-color: #f0f0f0; }
-  .editor_tb_menubar .menu .menu-item {
-    -fx-background-color: #788555; }
-    .editor_tb_menubar .menu .menu-item .label {
-      -fx-text-fill: #f0f0f0; }
-  .editor_tb_menubar .menu .menu-item:hover {
-    -fx-background-color: #94a36a; }
-  .editor_tb_menubar .menu .check-menu-item:checked {
-    -fx-text-fill: #f0f0f0;
-    -fx-mark-color: #f0f0f0; }
-  .editor_tb_menubar .menu:hover, .editor_tb_menubar .menu:focused, .editor_tb_menubar .menu:showing {
-    -fx-background-color: #788555; }
-    .editor_tb_menubar .menu:hover .label, .editor_tb_menubar .menu:focused .label, .editor_tb_menubar .menu:showing .label {
-      -fx-text-fill: #f0f0f0; }
+  -fx-use-system-menu-bar: true;
+}
+.editor_tb_menubar .menu .label {
+  -fx-text-fill: #969696;
+}
+.editor_tb_menubar .menu .menu > .right-container > .arrow {
+  -fx-text-fill: #f0f0f0;
+  -fx-mark-color: #f0f0f0;
+}
+.editor_tb_menubar .menu .menu-item {
+  -fx-background-color: #282828;
+}
+.editor_tb_menubar .menu .menu-item .label {
+  -fx-text-fill: #f0f0f0;
+}
+.editor_tb_menubar .menu .menu-item:hover {
+  -fx-background-color: #323232;
+}
+.editor_tb_menubar .menu .check-menu-item:checked {
+  -fx-text-fill: #f0f0f0;
+  -fx-mark-color: #f0f0f0;
+}
+.editor_tb_menubar .menu:hover, .editor_tb_menubar .menu:focused, .editor_tb_menubar .menu:showing {
+  -fx-background-color: #282828;
+}
+.editor_tb_menubar .menu:hover .label, .editor_tb_menubar .menu:focused .label, .editor_tb_menubar .menu:showing .label {
+  -fx-text-fill: #f0f0f0;
+}
 
 /*# sourceMappingURL=GameEditorMenuBar.css.map */
