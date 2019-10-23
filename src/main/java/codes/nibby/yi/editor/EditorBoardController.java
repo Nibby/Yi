@@ -56,8 +56,22 @@ public class EditorBoardController extends GameBoardController {
         switch (toolType) {
             case PLAY_MOVE:
                 if (button.equals(MouseButton.PRIMARY)) {
-                    ProposalResult proposal = getGame().proposeMove(x, y);
-                    getGame().submitMove(proposal);
+                    // Check if move already exists in the parent
+                    GameNode currentNode = getGame().getCurrentNode();
+                    List<GameNode> children = currentNode.getChildren();
+                    boolean foundMove = false;
+                    for (GameNode child : children) {
+                        int[] currentMove = child.getCurrentMove();
+                        if (currentMove[0] == x && currentMove[1] == y) {
+                            getGame().setCurrentNode(child, false);
+                            foundMove = true;
+                        }
+                    }
+
+                    if (!foundMove) {
+                        ProposalResult proposal = getGame().proposeMove(x, y);
+                        getGame().submitMove(proposal);
+                    }
                 }
                 break;
             case ADD_HELPER_BLACK:
