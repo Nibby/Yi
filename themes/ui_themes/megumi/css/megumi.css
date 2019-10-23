@@ -166,7 +166,7 @@
   -fx-padding: 0px;
 }
 .split-pane *.split-pane-divider {
-  -fx-background-color: #2f3625;
+  -fx-background-color: #323232;
   -fx-padding: 1px;
 }
 

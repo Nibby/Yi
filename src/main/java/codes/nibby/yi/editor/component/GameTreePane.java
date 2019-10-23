@@ -1,5 +1,6 @@
 package codes.nibby.yi.editor.component;
 
+import codes.nibby.yi.board.Stone;
 import codes.nibby.yi.board.StoneRenderer;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
@@ -56,6 +57,7 @@ public class GameTreePane extends GridPane implements GameListener {
         nodeMap = new HashMap<>();
         layout = new ElementLayout();
         getChildren().clear();
+        currentNode = null;
         GameNode current = game.getGameTree();
         int row = 0, col = 0;
         buildBranch(current, row, col);
@@ -77,7 +79,6 @@ public class GameTreePane extends GridPane implements GameListener {
         GameNode current = branchRoot;
         List<NodeElement> branchNodes = new ArrayList<>();
         Stack<GameNode> childNodes = new Stack<>();
-        Map<GameNode, NodeElement> parentNodes = new HashMap<>();
         int size = 0;
         int start = branchRoot.getMoveNumber() - 1;
         do {
@@ -96,7 +97,6 @@ public class GameTreePane extends GridPane implements GameListener {
             for (int i = 1; i < children.size(); i++) {
                 GameNode child = children.get(i);
                 childNodes.push(child);
-                parentNodes.put(child, _node);
             }
 
             size++;
@@ -153,7 +153,6 @@ public class GameTreePane extends GridPane implements GameListener {
     @Override
     public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
         if (!newMove) {
-            assert currentNode != null;
             currentNode.render();
             currentNode = nodeMap.get(currentMove);
             currentNode.render();
@@ -163,6 +162,11 @@ public class GameTreePane extends GridPane implements GameListener {
         }
 
         // TODO Keep the current node in the viewport
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+        rebuildTree();
     }
 
     private abstract static class AbstractElement extends Canvas {
@@ -224,13 +228,14 @@ public class GameTreePane extends GridPane implements GameListener {
         @Override
         public void render() {
             g.clearRect(0, 0, getWidth(), getHeight());
-
+            boolean current = false;
             if (game.getCurrentNode().equals(node)) {
                 // TODO change aesthetics later
-                g.setFill(Color.YELLOW);
+                g.setFill(Color.GRAY);
                 g.fillRect(0, 0, getWidth(), getHeight());
+                current = true;
             } else if (hovered) {
-                g.setFill(Color.LAVENDER);
+                g.setFill(Color.DARKGRAY);
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
 
@@ -249,8 +254,30 @@ public class GameTreePane extends GridPane implements GameListener {
             }
 
             // Draw node icon
+            g.setStroke(current ? Color.LIGHTGRAY : Color.GRAY);
+            g.setFill(current ? Color.LIGHTGRAY : Color.GRAY);
             int size = (int) Math.min(getWidth() / 3 * 2, getHeight() / 3 * 2);
-            StoneRenderer.renderTextureAndShadow(g, node.getColor(), size, getWidth() / 2 - (size / 2f), getHeight() / 2 - (size / 2f));
+            double x = getWidth() / 2 - (size / 2f);
+            double y = getHeight() / 2 - (size / 2f);
+
+            if (node.isRootNode()) {
+                g.fillRect(x, y, size, size);
+            } else {
+                double lineWidth = g.getLineWidth();
+                g.setLineWidth(2d);
+
+                switch (node.getColor()) {
+                    case Stone.BLACK:
+                        g.setFill(new Color(50d / 255d, 50d / 255d, 50d / 255d, 1.0d));
+                        g.fillOval((x + 1), (y + 1), (size - 2), (size - 2));
+                        g.strokeOval(x, y, size, size);
+                        break;
+                    case Stone.WHITE:
+                        g.fillOval(x, y, size, size);
+                        break;
+                }
+                g.setLineWidth(lineWidth);
+            }
         }
     }
 

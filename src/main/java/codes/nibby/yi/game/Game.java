@@ -304,4 +304,8 @@ public class Game {
         }
         return false;
     }
+
+    public List<GameListener> getGameListeners() {
+        return listeners;
+    }
 }

@@ -1,6 +1,6 @@
 {
   "name": "QiPan Classic",
-  "background": "tatami.jpg",
+  "background": "blur.jpg",
 
   "board": {
     "texture": "board.jpg",

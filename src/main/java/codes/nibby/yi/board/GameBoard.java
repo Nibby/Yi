@@ -259,7 +259,9 @@ public class GameBoard extends Pane implements GameListener {
 
     @Override
     public void gameInitialized(Game game) {
-
+        this.game = game;
+        updateBoardObjects(game.getCurrentNode(), true, true);
+        render();
     }
 
     @Override
@@ -324,7 +326,6 @@ public class GameBoard extends Pane implements GameListener {
 
     public void setGame(Game game) {
         this.game = game;
-        updateBoardObjects(game.getCurrentNode(), true, false);
     }
 
     protected BoardInputCanvas getInputCanvas() {

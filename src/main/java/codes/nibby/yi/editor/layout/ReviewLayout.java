@@ -17,7 +17,7 @@ import javafx.scene.layout.BorderPane;
 
 import java.util.ResourceBundle;
 
-public class EditLayout extends AbstractLayout {
+public class ReviewLayout extends AbstractLayout {
 
     private SplitPane splitMain;
     private SplitPane splitSidebar;
@@ -25,7 +25,7 @@ public class EditLayout extends AbstractLayout {
     private BorderPane boardPane;
     private BorderPane content;
 
-    public EditLayout(GameEditorWindow editor) {
+    public ReviewLayout(GameEditorWindow editor) {
         super(editor);
     }
 
@@ -68,7 +68,7 @@ public class EditLayout extends AbstractLayout {
 
         BorderPane sidebar = new BorderPane();
         sidebar.setCenter(splitSidebar);
-        SideToolBar sideToolBar = new SideToolBar();
+        SideToolBar sideToolBar = new SideToolBar(getEditor());
         sidebar.setTop(sideToolBar);
 
         // Components in the centre
@@ -76,7 +76,7 @@ public class EditLayout extends AbstractLayout {
         boardPane.setCenter(getEditor().getGameBoard());
         splitMain = new SplitPane(boardPane, sidebar);
         splitMain.setOrientation(Orientation.HORIZONTAL);
-        splitMain.setDividerPositions(0.7d);
+        splitMain.setDividerPositions(0.685d);
 
         content = new BorderPane();
         content.setCenter(splitMain);
