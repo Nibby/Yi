@@ -15,6 +15,7 @@ import java.util.*;
  */
 public class Game {
 
+    public static final int COLOR_NONE = 0;
     public static final int COLOR_BLACK = 1;
     public static final int COLOR_WHITE = 2;
 
@@ -48,6 +49,13 @@ public class Game {
         setRuleset(rules);
         setBoardSize(boardWidth, boardHeight);
 
+        gameTree = new GameNode(this);
+        int[] boardData = new int[boardWidth * boardHeight];
+        gameTree.setStoneData(boardData);
+        pastStates = new HashMap<>();
+        constructBoardState(null, gameTree);
+        currentNode = gameTree;
+
         metadata = new GameMetadata();
         metadata.playerBlackName = "Black";
         metadata.playerWhiteName = "White";
@@ -57,13 +65,6 @@ public class Game {
      * Resets the game state. All nodes will be deleted.
      */
     public void initialize() {
-        gameTree = new GameNode(this);
-        int[] boardData = new int[boardWidth * boardHeight];
-        gameTree.setStoneData(boardData);
-        pastStates = new HashMap<>();
-        constructBoardState(null, gameTree);
-        currentNode = gameTree;
-
         for (GameListener l : listeners)
             l.gameInitialized(this);
     }

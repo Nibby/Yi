@@ -14,6 +14,12 @@ public final class Markup {
 
     private Markup() { }
 
+    // TODO not implemented
+    public static Markup parseSgf(int markType, String markerData) {
+        System.out.println(markType + " => " + markerData);
+        return null;
+    }
+
     public int getX1() {
         return x1;
     }
