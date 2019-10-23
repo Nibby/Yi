@@ -1,4 +1,4 @@
-package codes.nibby.yi.io;
+package codes.nibby.yi.game;
 
 /**
  * A class that stores miscellaneous information related to a game.

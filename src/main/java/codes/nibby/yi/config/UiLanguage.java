@@ -1,5 +1,6 @@
 package codes.nibby.yi.config;
 
+import static codes.nibby.yi.io.IoConstants.*;
 import codes.nibby.yi.utility.AlertUtility;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -7,6 +8,10 @@ import javafx.scene.text.Font;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -18,7 +23,7 @@ import java.util.*;
 public class UiLanguage {
 
     private static final int FONTS_USED = 1;
-    private static final String LANGUAGE_DIRECTORY = "/lang/";
+    private static final String LANGUAGE_DIRECTORY = SEP + "lang" + SEP;
 
     // Font categories, used to access font array
     public static final int FONT_STANDARD = 0;
@@ -38,7 +43,7 @@ public class UiLanguage {
         fonts = new Font[FONTS_USED];
 
         // First load the config.json file
-        String langDirectory = LANGUAGE_DIRECTORY + locale + "/";
+        String langDirectory = LANGUAGE_DIRECTORY + locale + SEP;
         String configFilePath = langDirectory + "config.json";
         Scanner scanner = new Scanner(UiLanguage.class.getResourceAsStream(configFilePath));
         StringBuilder buffer = new StringBuilder();
@@ -60,15 +65,25 @@ public class UiLanguage {
         UiStylesheets.add(cssFile);
 
         // Load all the resource bundles
-        String path = UiLanguage.class.getResource(langDirectory).getPath();
-        File[] files = new File(path).listFiles();
-        assert files != null;
-        for (File file : files) {
-            if (!file.getName().endsWith(".properties"))
+        String pathString = UiLanguage.class.getResource(langDirectory).getPath();
+        File file = new File(pathString);
+        File[] files = file.listFiles();
+        // Usually it's impossible for a local resource listing to fail unless Java fails to locate
+        // the file internally. That is beyond our control.
+        // Tested on macOS Catalina - I ran Yi on a separate volume (space character in the path
+        // replaced by %20 instead).
+        if (files == null) {
+            AlertUtility.showAlert("Failed to load resource bundle for locale:" + this.locale.getDisplayScript()
+                    + "\nCheck that you are not on a partition whose name contains a space!",
+                    "Conf -> UiLanguage", Alert.AlertType.ERROR, ButtonType.OK);
+            System.exit(1);
+        }
+        for (File f : files) {
+            if (!f.getName().endsWith(".properties"))
                 continue;
             ResourceBundle bundle;
-            String fileName = file.getName().replace(".properties", "");
-            String bundleName = langDirectory.replace("/", ".").substring(1, langDirectory.length()) + fileName;
+            String fileName = f.getName().replace(".properties", "");
+            String bundleName = langDirectory.replace(SEP, ".").substring(1, langDirectory.length()) + fileName;
 
             try {
                 bundle = ResourceBundle.getBundle(bundleName, this.locale);
@@ -78,7 +93,6 @@ public class UiLanguage {
                 AlertUtility.showAlert("Failed to load resource bundle for locale:" + this.locale.getDisplayScript()
                         + "\n" + e.getMessage(), "Conf -> UiLanguage", Alert.AlertType.ERROR, ButtonType.OK);
             }
-
         }
     }
 

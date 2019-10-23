@@ -59,6 +59,7 @@ public class GameTreePane extends GridPane implements GameListener {
         GameNode current = game.getGameTree();
         int row = 0, col = 0;
         buildBranch(current, row, col);
+        getStyleClass().add("game_tree");
     }
 
     /**
