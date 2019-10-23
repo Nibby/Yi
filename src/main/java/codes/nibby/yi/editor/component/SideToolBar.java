@@ -1,15 +1,16 @@
 package codes.nibby.yi.editor.component;
 
-import codes.nibby.yi.utility.IconUtility;
+import codes.nibby.yi.editor.GameEditorWindow;
+import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.rules.GameRules;
+import codes.nibby.yi.utility.UiUtility;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.ToolBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
+
+import java.nio.file.Paths;
 
 /**
  * The top level sidebar tool bar.
@@ -20,15 +21,33 @@ import javafx.scene.layout.BorderPane;
 public class SideToolBar extends BorderPane {
 
     private ToolBar tbLeft, tbRight;
+    private GameEditorWindow editorWindow;
 
-    public SideToolBar() {
+    public SideToolBar(GameEditorWindow editorWindow) {
         final int iconSize = 16;
+        this.editorWindow = editorWindow;
         tbLeft = new ToolBar();
         {
-            Button btnNew = new Button("", IconUtility.getFxIcon("/icons/new_invert.png", iconSize, iconSize));
-            Button btnOpen = new Button("", IconUtility.getFxIcon("/icons/open_invert.png", iconSize, iconSize));
-            Button btnSave = new Button("", IconUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
-            Button btnSaveAs = new Button("", IconUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
+            Button btnNew = new Button("", UiUtility.getFxIcon("/icons/new_invert.png", iconSize, iconSize));
+            btnNew.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                // TODO check if document needs saving
+//                ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
+//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//                alert.setTitle(bundle.getString(""));
+
+                Game game = new Game(GameRules.CHINESE, 19, 19);
+                editorWindow.setGame(game);
+            });
+
+            Button btnOpen = new Button("", UiUtility.getFxIcon("/icons/open_invert.png", iconSize, iconSize));
+            btnOpen.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                // TODO temporary
+                FileChooser fc = UiUtility.createGameRecordOpenFileChooser("Open file", Paths.get(System.getProperty("user.home")));
+                fc.showOpenDialog(editorWindow);
+            });
+
+            Button btnSave = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
+            Button btnSaveAs = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
 
             tbLeft.getItems().addAll(btnNew, btnOpen, btnSave, btnSaveAs);
         }

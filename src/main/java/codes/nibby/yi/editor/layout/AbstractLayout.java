@@ -53,7 +53,7 @@ public abstract class AbstractLayout {
         LayoutType p = Config.getEditorLayout();
         switch (p) {
             case EDIT:
-                return new EditLayout(editor);
+                return new ReviewLayout(editor);
             case ANALYSIS:
                 return new AnalysisLayout(editor);
             case PRESENTER:

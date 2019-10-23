@@ -199,7 +199,7 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
 
     @Override
     public void gameInitialized(Game game) {
-
+        moveLabel.setText(" Move: " + game.getCurrentNode().getMoveNumber());
     }
 
     @Override

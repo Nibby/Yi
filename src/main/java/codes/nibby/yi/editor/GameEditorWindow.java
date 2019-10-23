@@ -11,6 +11,7 @@ import codes.nibby.yi.editor.component.MoveCommentPane;
 import codes.nibby.yi.editor.layout.AbstractLayout;
 import codes.nibby.yi.editor.layout.LayoutType;
 import codes.nibby.yi.game.Game;
+import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.rules.GameRules;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -67,7 +68,7 @@ public class GameEditorWindow extends Stage {
 
         layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, 820, 600);
         setScene(scene);
     }
 
@@ -88,6 +89,17 @@ public class GameEditorWindow extends Stage {
 
     public Game getGame() {
         return game;
+    }
+
+    public void setGame(Game game) {
+        for (GameListener l : this.game.getGameListeners()) {
+            game.addGameListener(l);
+        }
+        this.game = game;
+        this.gameBoard.setGame(game);
+        game.initialize();
+        this.controller.initialize(game, this.gameBoard);
+        gameBoard.updateBoardObjects(game.getCurrentNode(), true, true);
     }
 
     public GameBoard getGameBoard() {
