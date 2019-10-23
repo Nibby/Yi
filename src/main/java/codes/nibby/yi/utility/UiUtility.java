@@ -24,7 +24,11 @@ public class UiUtility {
         fc.setTitle(title);
         fc.setInitialDirectory(initialDirectory.toFile());
         // Game record file chooser
-        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Go game formats (.sgf)", ".sgf"));
+        FileChooser.ExtensionFilter filters[] = {
+            new FileChooser.ExtensionFilter("Go game formats (.sgf)", "*.sgf")
+        };
+        fc.getExtensionFilters().addAll(filters);
+        fc.setSelectedExtensionFilter(filters[0]);
         return fc;
     }
 }

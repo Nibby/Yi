@@ -13,9 +13,17 @@ import codes.nibby.yi.editor.layout.LayoutType;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.rules.GameRules;
+import codes.nibby.yi.io.GameFileParser;
+import codes.nibby.yi.io.GameParseException;
+import codes.nibby.yi.io.UnsupportedFileTypeException;
 import javafx.scene.Scene;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The main editor window.
@@ -58,6 +66,31 @@ public class GameEditorWindow extends Stage {
         toolBar = new GameEditorMenuBar(this);
         gameTreePane = new GameTreePane(this);
         moveCommentPane = new MoveCommentPane(this);
+
+        // Drag & drop files to load
+        gameBoard.setOnDragOver(e -> {
+            if (e.getDragboard().hasFiles()) {
+                e.acceptTransferModes(TransferMode.ANY);
+
+                // TODO ask the user what to do on multiple file drag?
+                List<File> files = e.getDragboard().getFiles();
+                // TODO temporary: default to opening one file
+                if (files.get(0).isFile()) {
+                    try {
+                        Game game = GameFileParser.parse(files.get(0));
+                        if (game != null)
+                            setGame(game);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch (GameParseException ex) {
+                        ex.printStackTrace();
+                    } catch (UnsupportedFileTypeException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            e.consume();
+        });
 
         game.addGameListener(gameTreePane, moveCommentPane);
     }

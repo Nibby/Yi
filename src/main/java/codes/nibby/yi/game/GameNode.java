@@ -55,6 +55,7 @@ public class GameNode {
     private int[] stoneData;
 
     private Game game;
+    private boolean pass = false;
 
     public GameNode(Game game) {
         this(game, null);
@@ -228,5 +229,13 @@ public class GameNode {
         if (shouldRemove && removed)
             game.fireGameCurrentMoveUpdateEvent(this, false);
         return removed;
+    }
+
+    public void setPass(boolean flag) {
+        pass = true;
+    }
+
+    public boolean isPass() {
+        return pass;
     }
 }
