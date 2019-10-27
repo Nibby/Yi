@@ -1,11 +1,13 @@
 package codes.nibby.yi.editor.component;
 
+import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.rules.GameRules;
 import codes.nibby.yi.io.GameFileParser;
 import codes.nibby.yi.io.GameParseException;
 import codes.nibby.yi.io.UnsupportedFileTypeException;
+import codes.nibby.yi.utility.AlertUtility;
 import codes.nibby.yi.utility.UiUtility;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
@@ -16,6 +18,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ResourceBundle;
 
 /**
  * The top level sidebar tool bar.
@@ -46,20 +49,7 @@ public class SideToolBar extends BorderPane {
 
             Button btnOpen = new Button("", UiUtility.getFxIcon("/icons/open_invert.png", iconSize, iconSize));
             btnOpen.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                // TODO temporary
-                FileChooser fc = UiUtility.createGameRecordOpenFileChooser("Open file", Paths.get(System.getProperty("user.home")));
-                File file = fc.showOpenDialog(editorWindow);
-                try {
-                    Game game = GameFileParser.parse(file);
-                    if (game != null)
-                        editorWindow.setGame(game);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                } catch (GameParseException ex) {
-                    ex.printStackTrace();
-                } catch (UnsupportedFileTypeException ex) {
-                    ex.printStackTrace();
-                }
+                editorWindow.showOpenFileDialog();
             });
 
             Button btnSave = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));

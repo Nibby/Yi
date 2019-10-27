@@ -12,18 +12,28 @@ import codes.nibby.yi.editor.layout.AbstractLayout;
 import codes.nibby.yi.editor.layout.LayoutType;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
+import codes.nibby.yi.game.GameNode;
 import codes.nibby.yi.game.rules.GameRules;
 import codes.nibby.yi.io.GameFileParser;
 import codes.nibby.yi.io.GameParseException;
 import codes.nibby.yi.io.UnsupportedFileTypeException;
+import codes.nibby.yi.utility.AlertUtility;
+import codes.nibby.yi.utility.UiUtility;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The main editor window.
@@ -69,7 +79,6 @@ public class GameEditorWindow extends Stage {
 
         game.addGameListener(gameTreePane, moveCommentPane);
     }
-
 
     private void initializeScene() {
         setTitle(Yi.TITLE);
@@ -126,14 +135,36 @@ public class GameEditorWindow extends Stage {
     }
 
     public void setGame(Game game) {
-        for (GameListener l : this.game.getGameListeners()) {
-            game.addGameListener(l);
+        for (GameListener listener : this.game.getGameListeners()) {
+            game.addGameListener(listener);
         }
+
         this.game = game;
         this.gameBoard.setGame(game);
+        this.game.addGameListener(gameBoard);
         game.initialize();
         this.controller.initialize(game, this.gameBoard);
         gameBoard.updateBoardObjects(game.getCurrentNode(), true, true);
+    }
+
+    public void showOpenFileDialog() {
+        FileChooser fc = UiUtility.createGameRecordOpenFileChooser("Open file", Paths.get(System.getProperty("user.home")));
+        File file = fc.showOpenDialog(this);
+        try {
+            Game game = GameFileParser.parse(file);
+            if (game != null)
+                setGame(game);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (GameParseException ex) {
+            ex.printStackTrace();
+
+            ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
+            AlertUtility.showAlert(bundle.getString("alert.exception.gameparse.content") + "\n\n" + ex.getMessage(),
+                    bundle.getString("alert.exception.gameparse.title"), Alert.AlertType.ERROR, ButtonType.OK);
+        } catch (UnsupportedFileTypeException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public GameBoard getGameBoard() {

@@ -14,12 +14,12 @@ public class GameRules {
     public static final ChineseGameRules CHINESE = new ChineseGameRules();
 
     public static IGameRules parse(String ruleset) throws GameParseException {
-        ruleset = ruleset.toLowerCase();
+        ruleset = ruleset.toUpperCase();
         switch (ruleset) {
-            case "chinese":
+            case "CHINESE":
                 return CHINESE;
             default:
-                throw new GameParseException("Ruleset not implemented!");
+                throw new GameParseException("Ruleset not implemented: " + ruleset);
         }
     }
 }

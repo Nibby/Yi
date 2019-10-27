@@ -1,7 +1,6 @@
 package codes.nibby.yi.editor.component;
 
 import codes.nibby.yi.board.Stone;
-import codes.nibby.yi.board.StoneRenderer;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
@@ -42,7 +41,7 @@ public class GameTreePane extends GridPane implements GameListener {
     private ElementLayout layout;
     private GameEditorWindow editor;
     private Game game;
-    private NodeElement currentNode;
+    private NodeElement currentNodeUi;
     private ScrollPane scrollPane;
 
     public GameTreePane(GameEditorWindow editor) {
@@ -57,7 +56,7 @@ public class GameTreePane extends GridPane implements GameListener {
         nodeMap = new HashMap<>();
         layout = new ElementLayout();
         getChildren().clear();
-        currentNode = null;
+        currentNodeUi = null;
         GameNode current = game.getGameTree();
         int row = 0, col = 0;
         buildBranch(current, row, col);
@@ -90,7 +89,7 @@ public class GameTreePane extends GridPane implements GameListener {
             layout.nodeData.get(moveNumber).add(_node);
             branchNodes.add(_node);
             if (current.equals(game.getCurrentNode()))
-                currentNode = _node;
+                currentNodeUi = _node;
 
             // Build child variation branches
             List<GameNode> children = current.getChildren();
@@ -144,29 +143,28 @@ public class GameTreePane extends GridPane implements GameListener {
         this.scrollPane = scrollPane;
     }
 
-    @Override
-    public void gameInitialized(Game game) {
+    public void setGame(Game game) {
         this.game = game;
         rebuildTree();
     }
 
     @Override
+    public void gameInitialized(Game game) {
+        setGame(game);
+    }
+
+    @Override
     public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
         if (!newMove) {
-            currentNode.render();
-            currentNode = nodeMap.get(currentMove);
-            currentNode.render();
+            currentNodeUi.render();
+            currentNodeUi = nodeMap.get(currentMove);
+            currentNodeUi.render();
         } else {
             // TODO temporary. Ideally new moves are appended to the existing structure.
             rebuildTree();
         }
 
         // TODO Keep the current node in the viewport
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-        rebuildTree();
     }
 
     private abstract static class AbstractElement extends Canvas {
