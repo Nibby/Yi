@@ -6,8 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+
+import java.util.ResourceBundle;
 
 /**
  * The top level sidebar tool bar.
@@ -24,28 +27,42 @@ public class SideToolBar extends BorderPane {
         final int iconSize = 16;
         this.editorWindow = editorWindow;
         tbLeft = new ToolBar();
+        ResourceBundle locale = editorWindow.getLocaleResourceBundle();
         {
-            Button btnNew = new Button("", UiUtility.getFxIcon("/icons/new_invert.png", iconSize, iconSize));
-            btnNew.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            Button buttonNew = new Button("", UiUtility.getFxIcon("/icons/new_invert.png", iconSize, iconSize));
+            buttonNew.setTooltip(new Tooltip(locale.getString("sidebar.button.new")));
+            buttonNew.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 editorWindow.createDocument();
             });
 
-            Button btnOpen = new Button("", UiUtility.getFxIcon("/icons/open_invert.png", iconSize, iconSize));
-            btnOpen.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            Button buttonOpen = new Button("", UiUtility.getFxIcon("/icons/open_invert.png", iconSize, iconSize));
+            buttonOpen.setTooltip(new Tooltip(locale.getString("sidebar.button.open")));
+            buttonOpen.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 editorWindow.openDocument();
             });
 
-            Button btnSave = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
-            Button btnSaveAs = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
+            Button buttonSave = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
+            buttonSave.setTooltip(new Tooltip(locale.getString("sidebar.button.save")));
+            buttonSave.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                editorWindow.saveDocument(false);
+            });
 
-            tbLeft.getItems().addAll(btnNew, btnOpen, btnSave, btnSaveAs);
+            Button buttonSaveAs = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
+            buttonSaveAs.setTooltip(new Tooltip(locale.getString("sidebar.button.save_as")));
+            buttonSaveAs.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                editorWindow.saveDocument(true);
+            });
+
+            tbLeft.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveAs);
         }
         setCenter(tbLeft);
 
         tbRight = new ToolBar();
         {
             String[] perspectives = new String[]{
-                    "Review", "AI Analysis", "Presentation"
+                locale.getString("perspectives.edit"),
+                locale.getString("perspectives.ai"),
+                locale.getString("perspectives.presentation"),
             };
             ComboBox<String> comboPerspective = new ComboBox<>(FXCollections.observableArrayList(perspectives));
             comboPerspective.setEditable(false);

@@ -33,7 +33,7 @@ public class MoveCommentPane extends BorderPane implements GameListener {
             node.setComments(textArea.getText());
         });
         ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
-        textArea.setPromptText(bundle.getString("editor.sidebar.comments.no_comment"));
+        textArea.setPromptText(bundle.getString("sidebar.comments.no_comment"));
         textArea.getStyleClass().add("editor_node_comments");
         setCenter(textArea);
 
