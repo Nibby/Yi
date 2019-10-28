@@ -1,17 +1,18 @@
 package codes.nibby.yi.io;
 
 import codes.nibby.yi.Yi;
-import codes.nibby.yi.game.Game;
-import codes.nibby.yi.game.GameNode;
-import codes.nibby.yi.game.Markup;
+import codes.nibby.yi.game.*;
 import codes.nibby.yi.game.rules.GameRules;
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static codes.nibby.yi.io.SgfFile.Key.*;
@@ -27,8 +28,9 @@ import static codes.nibby.yi.io.SgfFile.Key.*;
 public class SgfFile {
 
     private static final String POINT_MAP = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    
-    public static Game parse(File resource) throws IOException, GameParseException {
+
+    @NotNull
+    public static Game parse(@NotNull File resource) throws IOException, GameParseException {
         if (!resource.getName().endsWith(".sgf"))
             throw new GameParseException("File is not of .sgf file type!");
 
@@ -40,7 +42,6 @@ public class SgfFile {
             buffer.append(nextLine).append("\n");
         }
 
-        SgfFile sgf = new SgfFile();
         Game game;
         String data = buffer.toString();
 //
@@ -125,20 +126,34 @@ public class SgfFile {
         }
 
         // TODO: Board size may be rectangular?
-        int boardSize = -1;
+        int boardWidth, boardHeight;
         IGameRules rules;
         try {
-            boardSize = Integer.parseInt(headerProperties.get(BOARD_SIZE).get(0));
-            rules = GameRules.parse(headerProperties.get(RULESET).get(0));
+            String boardSizeString = headerProperties.get(BOARD_SIZE).get(0);
+            boolean rectangular = boardSizeString.contains(":");
+            if (!rectangular)
+                boardWidth = boardHeight = Integer.parseInt(boardSizeString);
+            else {
+                String[] boardSizeData = boardSizeString.split(":");
+                try {
+                    boardWidth = Integer.parseInt(boardSizeData[0]);
+                    boardHeight = Integer.parseInt(boardSizeData[1]);
+                } catch (NumberFormatException e) {
+                    throw new GameParseException("Malformed game board size: " + boardSizeString);
+                }
+            }
+            rules = GameRules.getRuleset(headerProperties.get(RULESET).get(0), true);
         } catch (NumberFormatException e) {
             throw new GameParseException("Unrecognized board size: " + headerProperties.get(BOARD_SIZE).get(0) + "!");
+        } catch (NullPointerException e) {
+            throw new GameParseException("Unable to read root node header data.");
         }
 
-        game = new Game(rules, boardSize, boardSize);
+        game = new Game(rules, boardWidth, boardHeight);
 
         // Parse moves
         GameNode rootNode = parseGameNode(sgfHeader, game, null);
-        rootNode.setStoneData(new int[boardSize * boardSize]);
+        rootNode.setStoneData(new int[boardWidth * boardHeight]);
         Map<Integer, List<GameNode>> moveTree = parseMoveTree(root, true, 1, rootNode, game);
         // TODO implement later
 //        if (moveTree.size() > 0 && moveTree.get(0).size() > 0)
@@ -327,8 +342,7 @@ public class SgfFile {
         return node;
     }
 
-    public static Map<SgfFile.Key, List<String>> splitDataTags(String data) throws GameParseException {
-
+    public static Map<SgfFile.Key, List<String>> splitDataTags(String data) {
         Map<SgfFile.Key, List<String>> result = new HashMap<>();
         StringBuilder buffer = new StringBuilder();
         String key = "", lastKey = "", value = "";
@@ -380,6 +394,199 @@ public class SgfFile {
         return result;
     }
 
+    public static void write(@NotNull Path path, @NotNull Game game) throws IOException {
+        BufferedWriter writer = Files.newBufferedWriter(path);
+        writer.append("(;");
+
+        // Determine board size string
+        int boardWidth = game.getBoardWidth();
+        int boardHeight = game.getBoardHeight();
+        boolean square = boardWidth == boardHeight;
+        String boardSize;
+        if (square)
+            boardSize = String.valueOf(boardWidth);
+        else
+            boardSize = boardWidth + ":" + boardHeight;
+
+        // Move list data
+        GameNode root = game.getGameTree();
+        GameMetadata meta = game.getMetadata();
+        writeTag(writer, APPLICATION, Yi.NAME);
+        writeTag(writer, GAME_MODE, "1");
+        writeTag(writer, BOARD_SIZE, boardSize);
+        writeTag(writer, AUTHOR, meta.author);
+        writeTag(writer, GAME_NAME, meta.gameName);
+        writeTag(writer, EVENT, meta.eventName);
+        writeTag(writer, ROUND, meta.round);
+        writeTag(writer, RULESET, meta.ruleset);
+        writeTag(writer, SOURCE, meta.source);
+        writeTag(writer, DATE, meta.datePlayed);
+        writeTag(writer, LOCATION, meta.location);
+        writeTag(writer, COPYRIGHT, meta.copyright);
+
+        writeTag(writer, HANDICAP, String.valueOf(meta.handicaps));
+        writeTag(writer, KOMI, meta.komi);
+        writeTag(writer, MAIN_TIME, meta.mainTime);
+        writeTag(writer, OVERTIME, meta.overtime);
+
+        writeTag(writer, BLACK_NAME, meta.playerBlackName);
+        writeTag(writer, BLACK_RANK, meta.playerBlackRank);
+        writeTag(writer, BLACK_TEAM, meta.playerBlackTeam);
+        writeTag(writer, WHITE_NAME, meta.playerWhiteName);
+        writeTag(writer, WHITE_RANK, meta.playerWhiteRank);
+        writeTag(writer, WHITE_TEAM, meta.playerWhiteTeam);
+
+        writeTag(writer, RESULT, meta.result);
+
+        // Write initial setup stones, markers in the root node
+        writeNodeMarkups(writer, game, root);
+        writeNodeHelperStones(writer, game, root);
+        writeNodeComments(writer, game, root);
+
+        // Write standard branch
+        writeMoveBranch(writer, game, root);
+        writer.append(")");
+        writer.flush();
+        writer.close();
+
+        game.setModified(false);
+    }
+
+    private static void writeMoveBranch(BufferedWriter writer, Game game, GameNode node) throws IOException {
+        writeNodeData(writer, game, node);
+        writer.append("\n");
+
+        if (node.getChildren().size() > 1) {
+            for (GameNode variation : node.getChildren()) {
+                writer.append("(");
+                writeMoveBranch(writer, game, variation);
+                writer.append(")\n");
+            }
+        } else if (node.getChildren().size() == 1) {
+            writeMoveBranch(writer, game, node.getChildren().get(0));
+        }
+    }
+
+    private static void writeNodeData(BufferedWriter writer, Game game, GameNode node) throws IOException {
+        // Skip root node
+        if (node.getMoveNumber() == 0)
+            return;
+
+        int[] move = node.getCurrentMove();
+        int x = move[0];
+        int y = move[1];
+        int player = node.getColor();
+        writer.append(";");
+
+        // Write node position
+        if (x != -1 && y != -1 && player != Game.COLOR_NONE) {
+            writeTag(writer,
+                    player == Game.COLOR_BLACK
+                            ? SgfFile.Key.BLACK_MOVE : SgfFile.Key.WHITE_MOVE,
+                    toSGFPoint(x, y));
+        } else {
+            if (node.getMoveNumber() > 0) {
+                //TODO check erasure node
+
+                //TODO what is this condition for?
+                if (node.getClearPoints().size() == 0) {
+                    // Pass (sgf4 format, no tt)
+                    // TODO Is it okay to assume this condition?
+                    // By this I mean, if not black then it has to be white.
+                    writeTag(writer, player == Game.COLOR_BLACK
+                            ? SgfFile.Key.BLACK_MOVE
+                            : SgfFile.Key.WHITE_MOVE, "");
+                }
+            }
+        }
+
+        writeNodeHelperStones(writer, game, node);
+        writeNodeMarkups(writer, game, node);
+        writeNodeComments(writer, game, node);
+        writeNodeClearPoints(writer, game, node);
+    }
+
+    private static void writeNodeComments(@NotNull BufferedWriter writer, @NotNull Game game, @NotNull GameNode node) throws IOException {
+        if (node.getComments() != null && !node.getComments().trim().isEmpty()) {
+            String comment = node.getComments().replace("]", "\\]");
+            writeTag(writer, SgfFile.Key.COMMENT, comment);
+        }
+    }
+
+    private static void writeNodeHelperStones(@NotNull BufferedWriter writer, @NotNull Game game, @NotNull GameNode node) throws IOException {
+        int width = game.getBoardWidth();
+        for (Integer helper : node.getHelperStonesBlack()) {
+            int hx = helper % width;
+            int hy = helper / width;
+            writeTag(writer, ADD_BLACK, toSGFPoint(hx, hy));
+        }
+        for (Integer helper : node.getHelperStonesWhite()) {
+            int hx = helper % width;
+            int hy = helper / width;
+            writeTag(writer, ADD_WHITE, toSGFPoint(hx, hy));
+        }
+    }
+
+    private static void writeNodeClearPoints(BufferedWriter writer, Game game, GameNode node) throws IOException {
+        int width = game.getBoardWidth();
+        for (Integer point : node.getClearPoints()) {
+            int px = point % width;
+            int py = point / width;
+            writeTag(writer, SgfFile.Key.CLEAR_POINT, toSGFPoint(px, py));
+        }
+    }
+
+    private static void writeNodeMarkups(BufferedWriter writer, Game game, GameNode node) throws IOException {
+        for (Markup markup : node.getMarkups()) {
+            MarkupType type = markup.getType();
+            SgfFile.Key annotationKey = null;
+            int x1 = markup.getX1(); // Start X
+            int y1 = markup.getY1(); // Start Y
+            int x2 = markup.getX2(); // End X (for lines / arrows)
+            int y2 = markup.getY2(); // End Y (for lines / arrows)
+            String data = toSGFPoint(x1, y1);
+            switch (type) {
+                case TRIANGLE:
+                    annotationKey = MARKER_TRIANGLE;
+                    break;
+                case CIRCLE:
+                    annotationKey = MARKER_CIRCLE;
+                    break;
+                case SQUARE:
+                    annotationKey = MARKER_SQUARE;
+                    break;
+                case CROSS:
+                    annotationKey = MARKER_CROSS;
+                    break;
+                case LABEL:
+                    annotationKey = MARKER_LABEL;
+                    data += ":" + markup.getArguments().split(":")[1];
+                    break;
+                // TODO implement lines and arrows
+            }
+
+            if (annotationKey != null) {
+                writeTag(writer, annotationKey, data);
+            }
+        }
+    }
+
+    private static void writeTag(@NotNull BufferedWriter writer, @NotNull SgfFile.Key key, @NotNull String value)
+            throws IOException {
+        writeTag(writer, key, new String[]{value});
+    }
+
+    private static void writeTag(@NotNull BufferedWriter writer, @NotNull SgfFile.Key key, @NotNull String[] values)
+            throws IOException {
+
+        writer.write(key.asString());
+        for (int i = 0; i < values.length; i++) {
+            writer.write("[");
+            writer.write(values[i]);
+            writer.write("]");
+        }
+    }
+
     public static String toSGFPoint(int x, int y) {
         if (x < 0 || y < 0)
             return "-";
@@ -424,9 +631,9 @@ public class SgfFile {
         RULESET("RU", "Ruleset", null),
         SOURCE("SO", "Source", null),
         BOARD_SIZE("SZ", "Board size", "19"),
-        TIME_LIMIT("TM", "Main time", null),
+        MAIN_TIME("TM", "Main time", null),
         AUTHOR("US", "Author", null),
-        PLAY_LOCATION("PC", "Played at", null),
+        LOCATION("PC", "Played at", null),
 
         CLEAR_POINT("AE", "", null),
 
@@ -456,7 +663,7 @@ public class SgfFile {
             return null;
         }
 
-        public String getKey() {
+        public String asString() {
             return key;
         }
 

@@ -202,7 +202,7 @@ public class GameBoard extends Pane implements GameListener {
                         boolean snap = false;
                         List<Stone> wobbles = new ArrayList<>();
                         wobbles.add(stones[i]);
-                        List<Integer> adjacentPoints = game.getNeighborIndices(x, y);
+                        List<Integer> adjacentPoints = game.getNeighboringIndices(x, y);
                         List<Stone> adjacent = new ArrayList<>();
                         adjacentPoints.forEach(pt -> adjacent.add(stones[pt]));
                         for (Stone s : adjacent) {
@@ -223,7 +223,7 @@ public class GameBoard extends Pane implements GameListener {
                                 wobbles.add(s);
                                 // Collision detection
                                 if ((int) (Math.random() * 5) < 2) {
-                                    adjacentPoints = game.getNeighborIndices(s.getX(), s.getY());
+                                    adjacentPoints = game.getNeighboringIndices(s.getX(), s.getY());
                                     List<Stone> adjacent2 = new ArrayList<>();
                                     adjacentPoints.forEach(pt -> adjacent2.add(stones[pt]));
                                     if (adjacent2.size() >= 2)
@@ -261,7 +261,7 @@ public class GameBoard extends Pane implements GameListener {
     }
 
     @Override
-    public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
+    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
         // TODO: Should flush always be false here?
         updateBoardObjects(currentMove, false, newMove);
 

@@ -6,6 +6,7 @@ public class ProposalResult {
 
     private Type type;
     private GameNode newNode;
+
     public ProposalResult(Type type) {
         this(type, null);
     }

@@ -71,6 +71,7 @@ public class BoardInputCanvas extends Canvas {
         boolean drawCursor = mouseX >= 0 && mouseY >= 0 && !node.hasMarkupAt(mouseX, mouseY, false);
 
         if (drawCursor) {
+
             BoardCursorType cursorType = Config.getCursorType();
             BoardMetrics metrics = gameBoard.getMetrics();
             double w = metrics.getStoneSize() / 2;

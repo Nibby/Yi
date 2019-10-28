@@ -38,14 +38,31 @@ public class GameNode {
      * List of captures at this node.
      */
     private int prisonersBlack, prisonersWhite;
+
     /**
      * Move comments
      */
     private String comments = "";
+
     /**
      * Board labels, markers etc.
      */
     private List<Markup> markups = new ArrayList<>();
+
+    /**
+     * A list of black demo stones.
+     */
+    private List<Integer> helperStonesBlack = new ArrayList<>();
+
+    /**
+     * A list of white demo stones.
+     */
+    private List<Integer> helperStonesWhite = new ArrayList<>();
+
+    /**
+     * A list of points on the board where stones are removed.
+     */
+    private List<Integer> clearPointsList = new ArrayList<>();
 
     /**
      * The position of the ko square
@@ -223,7 +240,7 @@ public class GameNode {
 
     public void addMarkup(Markup markup) {
         markups.add(markup);
-        game.fireGameCurrentMoveUpdateEvent(this, false);
+        game.updateNode(this);
         game.setModified(true);
     }
 
@@ -242,10 +259,68 @@ public class GameNode {
             }
         }
         if (shouldRemove && removed) {
-            game.fireGameCurrentMoveUpdateEvent(this, false);
+            game.updateNode(this);
             game.setModified(true);
         }
         return removed;
+    }
+
+    public void toggleHelperStone(int color, int x, int y) {
+        int index = x + y * game.getBoardWidth();
+        if (index < 0 || index > game.getBoardWidth() * game.getBoardHeight())
+            throw new IllegalArgumentException("Helper stone position out of bounds!");
+        boolean exists = helperStonesBlack.contains(color) || helperStonesWhite.contains(color);
+        boolean updated = false;
+        int[] stones = getStoneData();
+        if (stones[index] != color) {
+            // If a stone exists in this position but has a different color,
+            // then turn it into the current color.
+            stones[index] = color;
+            updated = true;
+        } else if (stones[index] == color) {
+            // If a stone exists and it's already of the same color
+            // then remove it from the board.
+            stones[index] = Game.COLOR_NONE;
+            updated = true;
+        }
+
+        if (updated) {
+            game.updateNode(this);
+            game.setModified(true);
+        }
+    }
+
+    public void addHelperStone(int color, int x, int y) {
+        int index = x + y * game.getBoardWidth();
+        if (index < 0 || index > game.getBoardWidth() * game.getBoardHeight())
+            throw new IllegalArgumentException("Helper stone position out of bounds!");
+
+        switch (color) {
+            case Game.COLOR_BLACK:
+                if (!helperStonesBlack.contains(index))
+                    helperStonesBlack.add(index);
+                break;
+            case Game.COLOR_WHITE:
+                if (!helperStonesWhite.contains(index))
+                    helperStonesWhite.add(index);
+                break;
+        }
+    }
+
+    public List<Integer> getHelperStonesBlack() {
+        return helperStonesBlack;
+    }
+
+    public void setHelperStonesBlack(List<Integer> helperStonesBlack) {
+        this.helperStonesBlack = helperStonesBlack;
+    }
+
+    public List<Integer> getHelperStonesWhite() {
+        return helperStonesWhite;
+    }
+
+    public void setHelperStonesWhite(List<Integer> helperStonesWhite) {
+        this.helperStonesWhite = helperStonesWhite;
     }
 
     public boolean isPass() {
@@ -254,5 +329,9 @@ public class GameNode {
 
     public void setPass(boolean flag) {
         pass = true;
+    }
+
+    public List<Integer> getClearPoints() {
+        return clearPointsList;
     }
 }

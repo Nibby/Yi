@@ -154,7 +154,7 @@ public class GameTreePane extends GridPane implements GameListener {
     }
 
     @Override
-    public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
+    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
         if (!newMove) {
             currentNodeUi.render();
             currentNodeUi = nodeMap.get(currentMove);

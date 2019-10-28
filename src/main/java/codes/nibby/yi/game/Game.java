@@ -2,7 +2,9 @@ package codes.nibby.yi.game;
 
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
+import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -60,6 +62,11 @@ public class Game {
      * Whether the document has been modified since last save.
      */
     private boolean modified = false;
+
+    /**
+     * Path where the game was last saved.
+     */
+    private Path lastSavePath = null;
 
     public Game(IGameRules rules, int boardWidth, int boardHeight) {
         setRuleset(rules);
@@ -121,17 +128,17 @@ public class Game {
         constructBoardState(currentNode, newNode);
         this.currentNode = newNode;
 
-        fireGameCurrentMoveUpdateEvent(newNode, isNewMove);
+        fireNodeUpdateEvent(newNode, isNewMove);
         if (isNewMove)
             setModified(true);
     }
 
-    public void fireGameCurrentMoveUpdateEvent(GameNode node, boolean isNewMove) {
+    private void fireNodeUpdateEvent(GameNode node, boolean isNewMove) {
         for (GameListener l : listeners)
-            l.gameCurrentMoveUpdate(node, isNewMove);
+            l.gameNodeUpdated(node, isNewMove);
     }
 
-    public void fireGameModifiedEvent() {
+    private void fireGameModifiedEvent() {
         for (GameListener l : listeners)
             l.gameModified(this);
     }
@@ -275,9 +282,9 @@ public class Game {
      * @param y Reference point y
      * @return A list of indices that are neighbors to (x, y)
      */
-    public List<Integer> getNeighborIndices(int x, int y) {
+    public List<Integer> getNeighboringIndices(int x, int y) {
 
-        return getNeighborIndices(x + y * getBoardWidth());
+        return getNeighboringIndices(x + y * getBoardWidth());
     }
 
     /**
@@ -286,7 +293,7 @@ public class Game {
      * @param index Position index in (x + y * width) form.
      * @return A list of indices that are neighbors to the input index.
      */
-    public List<Integer> getNeighborIndices(int index) {
+    public List<Integer> getNeighboringIndices(int index) {
         int x = index % getBoardWidth();
         int y = index / getBoardWidth();
 
@@ -348,5 +355,18 @@ public class Game {
 
     public GameMetadata getMetadata() {
         return metadata;
+    }
+
+    public void updateNode(GameNode gameNode) {
+        fireNodeUpdateEvent(gameNode, false);
+    }
+
+    @Nullable
+    public Path getLastSavePath() {
+        return lastSavePath;
+    }
+
+    public void setLastSavePath(Path lastSavePath) {
+        this.lastSavePath = lastSavePath;
     }
 }

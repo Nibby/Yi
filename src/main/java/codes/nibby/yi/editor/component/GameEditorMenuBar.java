@@ -56,14 +56,14 @@ public class GameEditorMenuBar extends BorderPane {
                     itemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP));
                 else
                     itemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP));
-                itemSave.setOnAction(event -> editor.saveDocument());
+                itemSave.setOnAction(event -> editor.saveDocument(false));
 
                 MenuItem itemSaveAs = new MenuItem(lang.getString("menubar.file.save_as"));
                 if (System.getProperty("os.name").toLowerCase().contains("mac"))
                     itemSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP));
                 else
                     itemSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP));
-                itemSaveAs.setOnAction(event -> editor.saveAsDocument());
+                itemSaveAs.setOnAction(event -> editor.saveDocument(true));
 
                 menuFile.getItems().addAll(itemNew, itemOpen, itemSave, itemSaveAs);
             }
