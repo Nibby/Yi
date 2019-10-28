@@ -1,7 +1,7 @@
 # Yi
 Formerly known as 'WeiqiTool' and 'QiPan', Yi strives to become an elegant and powerful companion for the dedicated players of the board game Go. It will feature a game record editor, AI analysis module, and a personal SGF library.
 
-![Yi v0.1](screenshots/0_1.png)
+![Yi v0.1](screenshots/0_2.png)
 
 ## Current Progress
 Yi is a long way from v1.0.
@@ -13,7 +13,7 @@ See [Projects](https://github.com/Nibby/QiPan/projects) for current development 
 - [x] Basic stone placement
 - [x] Move tree
 - [x] Annotations
-- [ ] Saving / loading SGF
+- [x] Saving / loading SGF
 - [x] Support for **9x9**, **13x13**, **19x19** sizes
 - [x] Custom size board support
 - [x] Multi-lingual support
@@ -29,7 +29,7 @@ See [Projects](https://github.com/Nibby/QiPan/projects) for current development 
 - [x] Customizable stone, board and background styles
 - [x] Customizable program color schemes?
 - [ ] Animations, UI effects
-- [ ] Sound effects
+- [x] Sound effects
 
 ### Chapter 4: The Journey Begins (v1.0 +)
 - [ ] Printing support, export board as image etc.

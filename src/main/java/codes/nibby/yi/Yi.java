@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class Yi extends Application {
 
     public static final String NAME = "Yi";
-    public static final String VERSION = "v0.2";
+    public static final String VERSION = "v0.5";
     public static final String TITLE = NAME;
     public static final String CHARSET = "UTF-16";
 
