@@ -24,124 +24,12 @@ import static codes.nibby.yi.io.SgfFile.Key.*;
  * Created on 24 October 2019
  * @see codes.nibby.yi.game.Game
  */
-public class SgfFile extends AbstractGameFile {
+public class SgfFile {
 
-    private Map<Key, String> headerData = new HashMap<>();
-
-    @Override
-    public Game createGame() {
-        return null;
-    }
-
-    public void putHeaderData(Key key, String value) {
-        headerData.put(key, value);
-    }
-
-    public String getHeaderData(Key key) {
-        String data = headerData.get(key);
-        return data == null ? "" : data;
-    }
-
-    public Map<Key, String> getHeaderMap() {
-        return headerData;
-    }
-
-    public static class BranchData {
-
-        private List<BranchData> children = new ArrayList<>();
-        private List<String> data = new ArrayList<>();
-
-        public List<String> getData() {
-            return data;
-        }
-
-        public void addData(String data) {
-            this.data.add(data);
-        }
-
-        public void addChild(BranchData moveNode) {
-            this.children.add(moveNode);
-        }
-
-        public List<BranchData> getChildren() {
-            return children;
-        }
-    }
-
-    public enum Key {
-        ADD_BLACK("AB", "Add black", null),
-        ADD_WHITE("AW", "Add white", null),
-        ANNOTATIONS("AN", "Annotations", null),
-        APPLICATION("AP", "Application", Yi.TITLE),
-        BLACK_RANK("BR", "Black rank", "?"),
-        WHITE_RANK("WR", "White rank", "?"),
-        BLACK_MOVE("B", "Black move", null),
-        WHITE_MOVE("W", "White move", null),
-        BLACK_TEAM("BT", "Black team", null),
-        WHITE_TEAM("WT", "White team", null),
-        FILE_FORMAT("FF", "File format", "4"),
-        DATE("DT", "Date played", null),
-        COMMENT("C", "Comment", null),
-        COPYRIGHT("CP", "Copyright", null),
-        EVENT("EV", "Event", null),
-        GAME_MODE("GM", "Game type", "1"),
-        GAME_NAME("GN", "Game name", null),
-        HANDICAP("HA", "Handicap", "0"),
-        KOMI("KM", "Komi", null),
-        OVERTIME("OT", "Overtime", null),
-        BLACK_NAME("PB", "Black name", "Black"),
-        WHITE_NAME("PW", "White name", "White"),
-        RESULT("RE", "Result", null),
-        ROUND("RO", "Round", null),
-        RULESET("RU", "Ruleset", null),
-        SOURCE("SO", "Source", null),
-        BOARD_SIZE("SZ", "Board size", "19"),
-        TIME_LIMIT("TM", "Main time", null),
-        AUTHOR("US", "Author", null),
-        PLAY_LOCATION("PC", "Played at", null),
-
-        CLEAR_POINT("AE", "", null),
-
-        MARKER_ARROWS("AR", "", null),
-        MARKER_LABEL("LB", "", null),
-        MARKER_CIRCLE("CR", "", null),
-        MARKER_DIM_STONE("DD", "", null),
-        MARKER_CROSS("XX", "", null),
-        MARKER_SQUARE("SQ", "", null),
-        MARKER_TRIANGLE("TR", "", null);
-
-        String key;
-        String name;
-        String defaultValue;
-
-        Key(String key, String name, String defaultValue) {
-            this.name = name;
-            this.key = key;
-            this.defaultValue = defaultValue;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public static Key get(String tag) {
-            for(Key key : Key.values()) {
-                if(key.key.equals(tag))
-                    return key;
-            }
-            return null;
-        }
-    }
-
-    private static final String KEY_GAME_MODE = "GM";
     private static final String POINT_MAP = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    public static final Game parse(File resource) throws IOException, GameParseException {
-        if(!resource.getName().endsWith(".sgf"))
+    
+    public static Game parse(File resource) throws IOException, GameParseException {
+        if (!resource.getName().endsWith(".sgf"))
             throw new GameParseException("File is not of .sgf file type!");
 
         BufferedReader reader = Files.newBufferedReader(resource.toPath());
@@ -155,10 +43,10 @@ public class SgfFile extends AbstractGameFile {
         SgfFile sgf = new SgfFile();
         Game game;
         String data = buffer.toString();
-
-        // TODO Manual trimming OGS game data?
-        data = data.replace("-- chat --", "").replace("\n\n\n", "")
-                .replace("[Object object]", "");
+//
+//        // TODO Manual trimming OGS game data?
+//        data = data.replace("-- chat --", "").replace("\n\n\n", "")
+//                .replace("[Object object]", "");
 
         Stack<BranchData> dataStack = new Stack<>();
         buffer.delete(0, buffer.length());
@@ -222,40 +110,36 @@ public class SgfFile extends AbstractGameFile {
             }
         }
 
-        if(root.getChildren().size() <= 0)
+        if (root.getChildren().size() <= 0)
             throw new GameParseException("SGF record is missing root node!");
 
         // Parse header
         String sgfHeader = root.getChildren().get(0).getData().get(0);
-
         Map<SgfFile.Key, List<String>> headerProperties = splitDataTags(sgfHeader);
-        if (headerProperties.get(GAME_MODE)!= null
+
+        if (headerProperties.get(GAME_MODE) != null
                 && !headerProperties.get(GAME_MODE).get(0).equals("1")) {
 
             throw new GameParseException("GM type returned " +
                     headerProperties.get(GAME_MODE).get(0) + ", expected 1 for Go game records!");
         }
 
-        for (SgfFile.Key key : headerProperties.keySet()) {
-            sgf.putHeaderData(key, headerProperties.get(key).get(0));
-        }
-
         // TODO: Board size may be rectangular?
         int boardSize = -1;
         IGameRules rules;
         try {
-            boardSize = Integer.parseInt(sgf.getHeaderData(BOARD_SIZE));
-            rules = GameRules.parse(sgf.getHeaderData(RULESET));
-        } catch(NumberFormatException e) {
-            throw new GameParseException("Unrecognized board size: " + sgf.getHeaderData(BOARD_SIZE) + "!");
+            boardSize = Integer.parseInt(headerProperties.get(BOARD_SIZE).get(0));
+            rules = GameRules.parse(headerProperties.get(RULESET).get(0));
+        } catch (NumberFormatException e) {
+            throw new GameParseException("Unrecognized board size: " + headerProperties.get(BOARD_SIZE).get(0) + "!");
         }
 
         game = new Game(rules, boardSize, boardSize);
 
         // Parse moves
-        GameNode rootNode = parseGameNode(sgfHeader, game,null);
+        GameNode rootNode = parseGameNode(sgfHeader, game, null);
         rootNode.setStoneData(new int[boardSize * boardSize]);
-        Map<Integer, List<GameNode>> moveTree = parseMoveTree(root, true, 1, rootNode, sgf, game);
+        Map<Integer, List<GameNode>> moveTree = parseMoveTree(root, true, 1, rootNode, game);
         // TODO implement later
 //        if (moveTree.size() > 0 && moveTree.get(0).size() > 0)
 //            sgf.getGameRecord().getGoban().update(moveTree.get(0).get(0), false);
@@ -269,19 +153,19 @@ public class SgfFile extends AbstractGameFile {
     }
 
     public static Map<Integer, List<GameNode>> parseMoveTree(SgfFile.BranchData sgfData, boolean isRoot, int startTurn,
-                                                             GameNode root, SgfFile sgf, Game game) throws GameParseException {
+                                                             GameNode root, Game game) throws GameParseException {
 
         Map<Integer, List<GameNode>> result = new HashMap<>();
         result.put(0, new ArrayList<>());
         if (isRoot)
             result.get(0).add(root);
 
-        String sgfVersion = sgf.getHeaderData(FILE_FORMAT);
-
-        if(sgfVersion == null)
-            throw new GameParseException("SGF file version is undefined!");
-        if(sgfVersion.trim().isEmpty())
-            throw new GameParseException("SGF file version is missing!");
+        // TODO file metadata support
+//        String sgfVersion = sgf.getHeaderData(FILE_FORMAT);
+//        if(sgfVersion == null)
+//            throw new GameParseException("SGF file version is undefined!");
+//        if(sgfVersion.trim().isEmpty())
+//            throw new GameParseException("SGF file version is missing!");
 
         int turn = startTurn;
         List<String> data = (isRoot) ? sgfData.getChildren().get(0).getData() : sgfData.getData();
@@ -295,11 +179,12 @@ public class SgfFile extends AbstractGameFile {
             } else {
                 previousMove.addChild(node);
             }
-            // [tt] is a pass for earlier versions
-            if (!sgfVersion.equals("4") && node.getCurrentMove()[0] == 19 && node.getCurrentMove()[1] == 19) {
-                node.setCurrentMove(new int[] { -1, -1 });
-                node.setPass(true);
-            }
+            // TODO file metadata support
+//            // [tt] is a pass for earlier versions
+//            if (!sgfVersion.equals("4") && node.getCurrentMove()[0] == 19 && node.getCurrentMove()[1] == 19) {
+//                node.setCurrentMove(new int[] { -1, -1 });
+//                node.setPass(true);
+//            }
 
             result.putIfAbsent(turn, new ArrayList<>());
             result.get(turn).add(node);
@@ -308,7 +193,7 @@ public class SgfFile extends AbstractGameFile {
         }
 
         for (SgfFile.BranchData childNode : (isRoot) ? sgfData.getChildren().get(0).getChildren() : sgfData.getChildren()) {
-            Map<Integer, List<GameNode>> childTree = parseMoveTree(childNode, false, turn, previousMove, sgf, game);
+            Map<Integer, List<GameNode>> childTree = parseMoveTree(childNode, false, turn, previousMove, game);
             for (int move : childTree.keySet()) {
                 result.putIfAbsent(move, new ArrayList<>());
                 result.get(move).addAll(childTree.get(move));
@@ -329,22 +214,21 @@ public class SgfFile extends AbstractGameFile {
 
         // Addition stones
         if (propertyData.containsKey(ADD_BLACK)) {
-            for(String helperPos : propertyData.get(ADD_BLACK))
+            for (String helperPos : propertyData.get(ADD_BLACK))
                 helperPositions.add("B:" + helperPos);
 
             player = Game.COLOR_NONE;
         }
 
         if (propertyData.containsKey(ADD_WHITE)) {
-            for(String helperPos : propertyData.get(ADD_WHITE))
+            for (String helperPos : propertyData.get(ADD_WHITE))
                 helperPositions.add("W:" + helperPos);
 
             player = Game.COLOR_NONE;
         }
 
-        if(propertyData.containsKey(CLEAR_POINT)) {
-            for(String clearPoint : propertyData.get(CLEAR_POINT))
-                clearPoints.add(clearPoint);
+        if (propertyData.containsKey(CLEAR_POINT)) {
+            clearPoints.addAll(propertyData.get(CLEAR_POINT));
 
             player = Game.COLOR_NONE;
         }
@@ -352,12 +236,12 @@ public class SgfFile extends AbstractGameFile {
         // Standard play
         if (propertyData.containsKey(BLACK_MOVE))
             player = Game.COLOR_BLACK;
-        else if(propertyData.containsKey(WHITE_MOVE))
+        else if (propertyData.containsKey(WHITE_MOVE))
             player = Game.COLOR_WHITE;
 
         // Parse marker stones
-        if(helperPositions.size() > 0) {
-            for(String pos : helperPositions) {
+        if (helperPositions.size() > 0) {
+            for (String pos : helperPositions) {
                 String[] keyValue = pos.split(":");
                 // TODO check if this assumption is 100% correct when I'm less tired
                 int color = keyValue[0].equals("B") ? Game.COLOR_BLACK : Game.COLOR_WHITE;
@@ -366,11 +250,11 @@ public class SgfFile extends AbstractGameFile {
                 int hx = POINT_MAP.indexOf(helperPos.charAt(0));
                 int hy = POINT_MAP.indexOf(helperPos.charAt(1));
 
-                helperStoneData.add(new Integer[] { hx, hy, color });
+                helperStoneData.add(new Integer[]{hx, hy, color});
             }
         }
 
-        if(player != Game.COLOR_NONE)
+        if (player != Game.COLOR_NONE)
             position = propertyData.get(player == Game.COLOR_BLACK
                     ? BLACK_MOVE : WHITE_MOVE).get(0);
         else
@@ -383,13 +267,13 @@ public class SgfFile extends AbstractGameFile {
         comment = commentList != null ? commentList.get(0) : "";
 
         // Annotations/markers
-        SgfFile.Key[] markerKeys = { MARKER_TRIANGLE,
+        SgfFile.Key[] markerKeys = {MARKER_TRIANGLE,
                 MARKER_SQUARE,
                 MARKER_CIRCLE,
                 MARKER_CROSS,
                 MARKER_LABEL,
                 MARKER_ARROWS,
-                MARKER_DIM_STONE, };
+                MARKER_DIM_STONE,};
 
         List<Markup> markups = new ArrayList<>();
         for (int markType = 0; markType < markerKeys.length; markType++) {
@@ -409,8 +293,8 @@ public class SgfFile extends AbstractGameFile {
             try {
                 x = POINT_MAP.indexOf(position.charAt(0));
                 y = POINT_MAP.indexOf(position.charAt(1));
-            } catch(Exception e) {
-                throw new GameParseException("Malformed move #" + node.getMoveNumber() + ", co-ordinate '" + position +"'!");
+            } catch (Exception e) {
+                throw new GameParseException("Malformed move #" + node.getMoveNumber() + ", co-ordinate '" + position + "'!");
             }
         } else {
             x = -1;
@@ -419,7 +303,7 @@ public class SgfFile extends AbstractGameFile {
 
         node.setComments(comment);
         node.getMarkups().addAll(markups);
-        node.setCurrentMove(new int[] { x, y });
+        node.setCurrentMove(new int[]{x, y});
         ProposalResult result = game.getRuleset().proposeMove(game, player, x, y);
         game.submitMove(result);
 
@@ -456,14 +340,14 @@ public class SgfFile extends AbstractGameFile {
             char ch = data.charAt(i);
             if (!readValue) {
                 if (ch == '[') {
-                    if(previous == ']') {
+                    if (previous == ']') {
                         //Continuous value following previous key
                         readValue = true;
                         forwardKey = true;
                     } else {
                         key = buffer.toString();
 
-                        if(!forwardKey)
+                        if (!forwardKey)
                             lastKey = key;
 
                         readValue = true;
@@ -471,7 +355,7 @@ public class SgfFile extends AbstractGameFile {
                     }
                     previous = ch;
                     continue;
-                } else if(forwardKey) {
+                } else if (forwardKey) {
                     forwardKey = false;
                 }
             } else {
@@ -497,18 +381,109 @@ public class SgfFile extends AbstractGameFile {
     }
 
     public static String toSGFPoint(int x, int y) {
-        if(x < 0 || y < 0)
+        if (x < 0 || y < 0)
             return "-";
         return Character.toString(POINT_MAP.charAt(x)) + Character.toString(POINT_MAP.charAt(y));
     }
 
-//    public static void dumpNode(SgfData set, int depth) {
-//        String indents = "";
-//        for (int i = 0; i < depth; i++)
-//            indents += "\t";
-//        System.out.println(indents + "Node [depth:" + depth + "]: \n" + indents + set.getData());
-//        for (SgfData child : set.getChildren()) {
-//            dumpNode(child, depth + 1);
-//        }
-//    }
+    public static void dumpNode(SgfFile.BranchData set, int depth) {
+        StringBuilder indents = new StringBuilder();
+        for (int i = 0; i < depth; i++)
+            indents.append("\t");
+        System.out.println(indents + "Node [depth:" + depth + "]: \n" + indents + set.getData());
+        for (SgfFile.BranchData child : set.getChildren()) {
+            dumpNode(child, depth + 1);
+        }
+    }
+
+    public enum Key {
+        ADD_BLACK("AB", "Add black", null),
+        ADD_WHITE("AW", "Add white", null),
+        ANNOTATIONS("AN", "Annotations", null),
+        APPLICATION("AP", "Application", Yi.TITLE),
+        BLACK_RANK("BR", "Black rank", "?"),
+        WHITE_RANK("WR", "White rank", "?"),
+        BLACK_MOVE("B", "Black move", null),
+        WHITE_MOVE("W", "White move", null),
+        BLACK_TEAM("BT", "Black team", null),
+        WHITE_TEAM("WT", "White team", null),
+        FILE_FORMAT("FF", "File format", "4"),
+        DATE("DT", "Date played", null),
+        COMMENT("C", "Comment", null),
+        COPYRIGHT("CP", "Copyright", null),
+        EVENT("EV", "Event", null),
+        GAME_MODE("GM", "Game type", "1"),
+        GAME_NAME("GN", "Game name", null),
+        HANDICAP("HA", "Handicap", "0"),
+        KOMI("KM", "Komi", null),
+        OVERTIME("OT", "Overtime", null),
+        BLACK_NAME("PB", "Black name", "Black"),
+        WHITE_NAME("PW", "White name", "White"),
+        RESULT("RE", "Result", null),
+        ROUND("RO", "Round", null),
+        RULESET("RU", "Ruleset", null),
+        SOURCE("SO", "Source", null),
+        BOARD_SIZE("SZ", "Board size", "19"),
+        TIME_LIMIT("TM", "Main time", null),
+        AUTHOR("US", "Author", null),
+        PLAY_LOCATION("PC", "Played at", null),
+
+        CLEAR_POINT("AE", "", null),
+
+        MARKER_ARROWS("AR", "", null),
+        MARKER_LABEL("LB", "", null),
+        MARKER_CIRCLE("CR", "", null),
+        MARKER_DIM_STONE("DD", "", null),
+        MARKER_CROSS("XX", "", null),
+        MARKER_SQUARE("SQ", "", null),
+        MARKER_TRIANGLE("TR", "", null);
+
+        String key;
+        String name;
+        String defaultValue;
+
+        Key(String key, String name, String defaultValue) {
+            this.name = name;
+            this.key = key;
+            this.defaultValue = defaultValue;
+        }
+
+        public static Key get(String tag) {
+            for (Key key : Key.values()) {
+                if (key.key.equals(tag))
+                    return key;
+            }
+            return null;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class BranchData {
+
+        private List<BranchData> children = new ArrayList<>();
+        private List<String> data = new ArrayList<>();
+
+        public List<String> getData() {
+            return data;
+        }
+
+        public void addData(String data) {
+            this.data.add(data);
+        }
+
+        public void addChild(BranchData moveNode) {
+            this.children.add(moveNode);
+        }
+
+        public List<BranchData> getChildren() {
+            return children;
+        }
+    }
 }
