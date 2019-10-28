@@ -57,7 +57,7 @@ public class ReviewLayout extends AbstractLayout {
         TabPane treeTabPane = new TabPane();
         treeTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         treeTabPane.getStyleClass().add("editor_sidebar_tabpane");
-        String treeTabText = lang.getString("editor.sidebar.tabpane.gametree");
+        String treeTabText = lang.getString("sidebar.tabpane.gametree");
         Tab treeTab = new Tab(treeTabText, treeComponent);
         treeTabPane.getTabs().add(treeTab);
 

@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -56,6 +55,8 @@ public class GameEditorWindow extends Stage {
     private Scene scene;
     private ResourceBundle locale;
 
+    private Path lastSavePath;
+
     public GameEditorWindow() {
         locale = Config.getLanguage().getResourceBundle("GameEditorWindow");
         controller = new EditorBoardController();
@@ -78,7 +79,7 @@ public class GameEditorWindow extends Stage {
         gameTreePane = new GameTreePane(this);
         moveCommentPane = new MoveCommentPane(this);
 
-        game.addGameListener(gameTreePane, moveCommentPane);
+        game.addGameListener(gameBoard, gameTreePane, moveCommentPane);
         game.initialize();
     }
 
@@ -103,7 +104,7 @@ public class GameEditorWindow extends Stage {
                         File file = files.get(0);
                         Game game = GameFileParser.parse(file);
                         if (game != null) {
-                            game.setLastSavePath(file.toPath());
+                            setLastSavePath(file.toPath());
                             setGame(game);
                         }
                     } catch (IOException ex) {
@@ -143,10 +144,10 @@ public class GameEditorWindow extends Stage {
         for (GameListener listener : this.game.getGameListeners()) {
             game.addGameListener(listener);
         }
+        this.game.removeListeners();
 
         this.game = game;
         this.gameBoard.setGame(game);
-        this.game.addGameListener(gameBoard);
         game.initialize();
         this.controller.initialize(game, this.gameBoard);
         gameBoard.updateBoardObjects(game.getCurrentNode(), true, true);
@@ -154,12 +155,16 @@ public class GameEditorWindow extends Stage {
 
     public void createDocument() {
         if (game.isModified()) {
-            Optional<ButtonType> response =
-                    AlertUtility.showAlert(locale.getString("alert.editor.confirm_save.content"),
-                            locale.getString("alert.editor.confirm_save.title"),
+            ButtonType responseType =
+                    AlertUtility.showAlert(locale.getString("alert.confirm_save.content"),
+                            locale.getString("alert.confirm_save.title"),
                             Alert.AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-
-            // TODO if cancel, return
+            if (responseType == null)
+                return;
+            else if (responseType == ButtonType.CANCEL)
+                return;
+            else if (responseType.equals(ButtonType.YES))
+                saveDocument(false);
         }
 
         Game game = new Game(GameRules.CHINESE, 19, 19);
@@ -167,13 +172,14 @@ public class GameEditorWindow extends Stage {
     }
 
     public void openDocument() {
+        Path defaultPath = getLastSavePath() == null ? Paths.get(System.getProperty("user.dir")) : getLastSavePath();
         FileChooser fc = UiUtility.createGameRecordOpenFileChooser(locale.getString("dialog.open_file.title"),
-                Paths.get(System.getProperty("user.dir")));
+                defaultPath);
         File file = fc.showOpenDialog(this);
         try {
             Game game = GameFileParser.parse(file);
             if (game != null) {
-                game.setLastSavePath(file.toPath());
+                setLastSavePath(file.toPath());
                 setGame(game);
             }
         } catch (IOException ex) {
@@ -192,7 +198,7 @@ public class GameEditorWindow extends Stage {
     }
 
     public void saveDocument(boolean forceChoosePath) {
-        Path savePath = game.getLastSavePath();
+        Path savePath = getLastSavePath();
         if (savePath == null || forceChoosePath) {
             Path defaultPath = savePath == null ? Paths.get(System.getProperty("user.dir")) : savePath;
             FileChooser fc = UiUtility.createGameRecordOpenFileChooser(locale.getString("dialog.save_file.title"), defaultPath);
@@ -206,7 +212,7 @@ public class GameEditorWindow extends Stage {
 
         try {
             SgfFile.write(savePath, game);
-            game.setLastSavePath(savePath);
+            setLastSavePath(savePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -234,5 +240,17 @@ public class GameEditorWindow extends Stage {
 
     public AbstractLayout getLayout() {
         return layout;
+    }
+
+    public Path getLastSavePath() {
+        return lastSavePath;
+    }
+
+    public void setLastSavePath(Path lastSavePath) {
+        this.lastSavePath = lastSavePath;
+    }
+
+    public ResourceBundle getLocaleResourceBundle() {
+        return locale;
     }
 }

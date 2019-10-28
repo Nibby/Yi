@@ -13,10 +13,11 @@ import java.util.Optional;
  */
 public class AlertUtility {
 
-    public static Optional<ButtonType> showAlert(String content, String title, Alert.AlertType type, ButtonType... buttons) {
+    public static ButtonType showAlert(String content, String title, Alert.AlertType type, ButtonType... buttons) {
         Alert alert = new Alert(type, content, buttons);
         alert.setTitle(title);
-        return alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.orElse(null);
     }
 
 }
