@@ -5,7 +5,6 @@ import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.GameNode;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Pane;
@@ -31,12 +30,13 @@ import java.util.List;
  * importantly, stone shadows. Shadows are kept in their own layer for stone
  * animation purposes.
  *
+ * @author Kevin Yang
+ * created on 23 August 2019
  * @see BoardBackgroundCanvas
  *
  * <strong>Layer 2: BoardStaticCanvas</strong>
  * This layer draws all static objects on the go board. These include placed stones,
  * annotations.
- *
  * @see BoardStaticCanvas
  *
  * <strong>Layer 3: BoardInputCanvas</strong>
@@ -44,14 +44,10 @@ import java.util.List;
  * without redrawing the entire board. Furthermore, the input canvas serves as a
  * fine ground for stone placement animations (again without redrawing the rest
  * of the board).
- *
  * @see BoardInputCanvas
- *
+ * <p>
  * Note that the canvas themselves are solely concerned with the rendering. Most of the
  * logic behind the canvas are done here in the 'parent' class.
- *
- * @author Kevin Yang
- * created on 23 August 2019
  */
 public class GameBoard extends Pane implements GameListener {
 
@@ -120,16 +116,16 @@ public class GameBoard extends Pane implements GameListener {
     /**
      * Picks displayable game data from the current game node and add them to the
      * board for display.
-     *
+     * <p>
      * If the <pre>flush</pre> flag is false, then the board objects will retain
      * what it already has, provided that the game node contains the same element too.
      * This is done so that the boardObjects map doesn't have to be reset and rebuilt
      * each time.
-     *
+     * <p>
      * However, if the flush is set to true, then the entire boardObjects map is reset
      * and rebuilt from ground up.
      *
-     * @param node The current node data.
+     * @param node  The current node data.
      * @param flush Whether to clear existing object cache first.
      */
     public void updateBoardObjects(GameNode node, boolean flush, boolean newMove) {
@@ -270,6 +266,11 @@ public class GameBoard extends Pane implements GameListener {
         updateBoardObjects(currentMove, false, newMove);
 
         render();
+    }
+
+    @Override
+    public void gameModified(Game game) {
+
     }
 
     /*

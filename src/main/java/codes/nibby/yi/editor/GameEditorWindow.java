@@ -12,7 +12,6 @@ import codes.nibby.yi.editor.layout.AbstractLayout;
 import codes.nibby.yi.editor.layout.LayoutType;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
-import codes.nibby.yi.game.GameNode;
 import codes.nibby.yi.game.rules.GameRules;
 import codes.nibby.yi.io.GameFileParser;
 import codes.nibby.yi.io.GameParseException;
@@ -30,8 +29,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 

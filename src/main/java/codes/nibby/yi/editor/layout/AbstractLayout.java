@@ -24,25 +24,6 @@ public abstract class AbstractLayout {
         contentPane.setTop(getEditor().getToolBar());
     }
 
-    protected abstract BorderPane createLayout();
-
-    public void setGameTreePaneVisible(boolean flag) {
-
-    }
-
-    public void setGameCommentPaneVisible(boolean flag) {
-
-    }
-
-
-    GameEditorWindow getEditor() {
-        return editor;
-    }
-
-    public BorderPane getContentPane() {
-        return contentPane;
-    }
-
     /**
      * Returns a properly constructed perspective based on editor settings.
      *
@@ -62,5 +43,23 @@ public abstract class AbstractLayout {
             default:
                 throw new IllegalArgumentException("Bad perspective: " + p.name());
         }
+    }
+
+    protected abstract BorderPane createLayout();
+
+    public void setGameTreePaneVisible(boolean flag) {
+
+    }
+
+    public void setGameCommentPaneVisible(boolean flag) {
+
+    }
+
+    GameEditorWindow getEditor() {
+        return editor;
+    }
+
+    public BorderPane getContentPane() {
+        return contentPane;
     }
 }

@@ -20,9 +20,9 @@ import static codes.nibby.yi.io.SgfFile.Key.*;
  * Parses a smart game format file into a Game object.
  * Ported code from WeiqiTool (old Yi codebase from 4 Nov 2016)
  *
- * @see codes.nibby.yi.game.Game
  * @author Kevin Yang
  * Created on 24 October 2019
+ * @see codes.nibby.yi.game.Game
  */
 public class SgfFile extends AbstractGameFile {
 

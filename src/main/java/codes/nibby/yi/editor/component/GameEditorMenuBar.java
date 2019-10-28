@@ -3,8 +3,6 @@ package codes.nibby.yi.editor.component;
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.editor.layout.LayoutType;
-import javafx.collections.ObservableSet;
-import javafx.css.PseudoClass;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
@@ -14,7 +12,7 @@ import java.util.ResourceBundle;
 
 /**
  * The main toolbar accompanying the editor window.
- *
+ * <p>
  * TODO: Implement later
  *
  * @author Kevin Yang

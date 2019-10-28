@@ -24,19 +24,13 @@ public enum LayoutType {
      * A planned mode for now,
      * it is similar to the SIMPLE mode, but with more eye-candy
      * and controls to automate playback and game tree exploration.
-     *
      */
-    PRESENTER("layouts.presenter")
-    ;
+    PRESENTER("layouts.presenter");
 
     private String textKey;
 
     LayoutType(String textKey) {
         this.textKey = textKey;
-    }
-
-    public String getTextKey() {
-        return textKey;
     }
 
     public static LayoutType parse(String string) {
@@ -45,5 +39,9 @@ public enum LayoutType {
                 return p;
         }
         return null;
+    }
+
+    public String getTextKey() {
+        return textKey;
     }
 }

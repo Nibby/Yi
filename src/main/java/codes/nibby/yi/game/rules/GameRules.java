@@ -1,7 +1,6 @@
 package codes.nibby.yi.game.rules;
 
 import codes.nibby.yi.io.GameParseException;
-import jdk.jshell.spi.ExecutionControl;
 
 /**
  * A collection of pre-defined game rules.

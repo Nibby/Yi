@@ -32,5 +32,5 @@ public class GameMetadata {
     public String playerWhiteTeam;
 
     public String result;
-    
+
 }

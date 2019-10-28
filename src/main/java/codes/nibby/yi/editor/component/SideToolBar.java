@@ -1,24 +1,13 @@
 package codes.nibby.yi.editor.component;
 
-import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
-import codes.nibby.yi.game.Game;
-import codes.nibby.yi.game.rules.GameRules;
-import codes.nibby.yi.io.GameFileParser;
-import codes.nibby.yi.io.GameParseException;
-import codes.nibby.yi.io.UnsupportedFileTypeException;
-import codes.nibby.yi.utility.AlertUtility;
 import codes.nibby.yi.utility.UiUtility;
 import javafx.collections.FXCollections;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ResourceBundle;
 
 /**
  * The top level sidebar tool bar.

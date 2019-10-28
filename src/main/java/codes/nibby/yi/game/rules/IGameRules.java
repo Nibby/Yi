@@ -6,7 +6,7 @@ import codes.nibby.yi.game.GameOutcome;
 /**
  * Defines the set of rules that govern stone placement, capture and scoring.
  * This is the ancestor class for all GameRules, hence it is very generic.
- *
+ * <p>
  * Since Yi plans to support unconventional game rules, all standard rules
  * (e.g. Chinese, Japanese, Korean, Ing, New Zealand etc.) are implemented
  * as StandardGameRules.
@@ -20,8 +20,8 @@ public interface IGameRules {
      * Checks whether a proposed move at board position (x, y) is allowed.
      *
      * @param color Color of the Go stone.
-     * @param x X position of the stone on the Go board.
-     * @param y Y position of the stone on the Go board.
+     * @param x     X position of the stone on the Go board.
+     * @param y     Y position of the stone on the Go board.
      * @return
      */
     ProposalResult proposeMove(Game game, int color, int x, int y);
@@ -29,7 +29,7 @@ public interface IGameRules {
     /**
      * Formally submits a move to the game object.
      *
-     * @param game The game to append the new move.
+     * @param game     The game to append the new move.
      * @param proposal Data for the newly proposed move.
      * @return
      */
@@ -49,7 +49,6 @@ public interface IGameRules {
     float getKomi();
 
     /**
-     *
      * @return User-friendly name of the ruleset
      */
     String getName();

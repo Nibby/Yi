@@ -2,7 +2,6 @@ package codes.nibby.yi.editor.component;
 
 import codes.nibby.yi.board.BoardInputHintType;
 import codes.nibby.yi.board.BoardMetrics;
-import codes.nibby.yi.editor.EditorBoardController;
 import codes.nibby.yi.editor.EditorToolType;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
@@ -154,7 +153,7 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
         b.setPrefHeight(b.getPrefWidth());
         b.getStyleClass().add("editor_board_tb_toggle");
 
-        if(!icon.isEmpty()) {
+        if (!icon.isEmpty()) {
             InputStream inputStream = GameBoardToolBar.class.getResourceAsStream("/icons/" + icon + "_invert.png");
             ImageView icn = new ImageView(new Image(inputStream));
             icn.setFitWidth(b.getPrefWidth() - 10);
@@ -162,7 +161,7 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
             b.setGraphic(icn);
         }
 
-        if(group) {
+        if (group) {
             b.selectedProperty().addListener(e -> {
                 boolean selected = b.isSelected();
                 if (!selected) {
@@ -186,7 +185,7 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
             boolean selected = b.isSelected();
             if (!icon.isEmpty()) {
                 InputStream inputStream = GameBoardToolBar.class
-                        .getResourceAsStream("/icons/" + icon + ((selected) ? "" : "_invert")  + ".png");
+                        .getResourceAsStream("/icons/" + icon + ((selected) ? "" : "_invert") + ".png");
                 ImageView iconImage = new ImageView(new Image(inputStream));
                 iconImage.setFitHeight(b.getPrefHeight() - 10);
                 iconImage.setFitWidth(b.getPrefWidth() - 10);
@@ -205,5 +204,9 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
     @Override
     public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
         moveLabel.setText(" Move: " + currentMove.getMoveNumber());
+    }
+
+    @Override
+    public void gameModified(Game game) {
     }
 }

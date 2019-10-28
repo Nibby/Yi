@@ -8,10 +8,11 @@ import java.util.ResourceBundle;
 
 public class ChineseGameRules extends StandardGameRules {
 
-    ChineseGameRules() {}
+    ChineseGameRules() {
+    }
 
     @Override
-    public GameOutcome scoreGame(Game game){
+    public GameOutcome scoreGame(Game game) {
         throw new RuntimeException("Not implemented!");
     }
 

@@ -1,13 +1,10 @@
 package codes.nibby.yi.board;
 
-import javafx.scene.canvas.GraphicsContext;
-
-import java.awt.*;
 import java.util.Random;
 
 /**
  * Represents a renderable stone entity on the board.
- *
+ * <p>
  * "A go program should be just as aesthetically pleasing as
  * it is functional. The zen atmosphere and the arrangement of
  * of lines, circles and squares are part of what makes
@@ -22,17 +19,25 @@ public class Stone implements IRenderable {
     public static final int BLACK = 1;
     public static final int WHITE = 2;
 
-    /** Position on the go board. */
+    /**
+     * Position on the go board.
+     */
     private int x, y;
 
-    /** Color of the stone. */
+    /**
+     * Color of the stone.
+     */
     private int color;
 
-    /** The amount of wobbling left to perform. */
+    /**
+     * The amount of wobbling left to perform.
+     */
     private double wobble;
     private double wobbleMax;
 
-    /** Wobble offset. */
+    /**
+     * Wobble offset.
+     */
     private double wobbleX, wobbleY;
 
     /*
@@ -40,13 +45,24 @@ public class Stone implements IRenderable {
         off its original placement. These are the parameters that
         imitate this effect.
      */
-    /** Fuzzy placement offset. */
+    /**
+     * Fuzzy placement offset.
+     */
     private double fuzzyX = 0, fuzzyY = 0;
 
     public Stone(int color, int x, int y) {
         this.color = color;
         this.x = x;
         this.y = y;
+    }
+
+    public static int getOpponentColor(int color) {
+        if (color == NONE)
+            return -1;
+        else if (color == BLACK)
+            return WHITE;
+        else
+            return BLACK;
     }
 
     public void onPlace(GameBoard board) {
@@ -105,6 +121,10 @@ public class Stone implements IRenderable {
         return color;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     public boolean shouldWobble() {
         return wobble > 0d;
     }
@@ -123,18 +143,5 @@ public class Stone implements IRenderable {
 
     public double getFuzzyY() {
         return fuzzyY;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public static int getOpponentColor(int color) {
-        if (color == NONE)
-            return -1;
-        else if (color == BLACK)
-            return WHITE;
-        else
-            return BLACK;
     }
 }

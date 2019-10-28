@@ -3,7 +3,7 @@ package codes.nibby.yi.game;
 /**
  * A result block containing information about the final outcome of
  * the game after a scoring algorithm has been performed.
- *
+ * <p>
  * TODO: Implement this later! :)
  *
  * @author Kevin Yang
@@ -11,7 +11,9 @@ package codes.nibby.yi.game;
  */
 public class GameOutcome {
 
-    /** Winning stone color, see constants in <strong>Stone</strong> class */
+    /**
+     * Winning stone color, see constants in <strong>Stone</strong> class
+     */
     private int winner;
     private Type resultType;
     private float winAmount;

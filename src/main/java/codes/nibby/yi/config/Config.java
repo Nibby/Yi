@@ -14,7 +14,7 @@ import java.util.Scanner;
 /**
  * Loads and writes application settings to <i>config.json</i>.
  * Handles all the logic related to config.json.
- *
+ * <p>
  * TODO: Write saved data back to config.json
  *
  * @author Kevin Yang
@@ -22,25 +22,21 @@ import java.util.Scanner;
  */
 public class Config {
 
+    // Directories
+    protected static final String THEME_DIRECTORY = "themes";
+    protected static final String BOARD_THEME_DIRECTORY = "board_themes";
+    protected static final String UI_THEME_DIRECTORY = "ui_themes";
     // JSON keys
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_UI_THEME = "ui_theme";
-
     private static final String KEY_BOARD = "board";
     private static final String KEY_BOARD_THEME_USE = "use";
     private static final String KEY_BOARD_THEME_STONES = "stones";
     private static final String KEY_BOARD_ALLOW_STONE_DISPLACEMENT = "stone_displacement";
     private static final String KEY_BOARD_THEME_BACKGROUND = "background";
     private static final String KEY_BOARD_CURSOR = "cursor";
-
     private static final String KEY_EDITOR = "editor";
     private static final String KEY_EDITOR_PERSPECTIVE = "perspective";
-
-    // Directories
-    protected static final String THEME_DIRECTORY = "themes";
-    protected static final String BOARD_THEME_DIRECTORY = "board_themes";
-    protected static final String UI_THEME_DIRECTORY = "ui_themes";
-
     // The config.json document.
     private static JSONObject root;
 

@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 /**
  * A component that displays the comment text at each game node.
- *
+ * <p>
  * TODO: Implement later
  *
  * @author Kevin Yang

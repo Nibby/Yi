@@ -23,8 +23,8 @@ public class MarkupRenderer {
         switch (markup.getType()) {
             case TRIANGLE:
                 g.strokePolygon(
-                        new double[] { x + gridSize / 2, x + gridSize / 4, x + gridSize / 4 * 3 },
-                        new double[] { y + gridSize / 4, y + gridSize / 8 * 5, y + gridSize / 8 * 5 }, 3);
+                        new double[]{x + gridSize / 2, x + gridSize / 4, x + gridSize / 4 * 3},
+                        new double[]{y + gridSize / 4, y + gridSize / 8 * 5, y + gridSize / 8 * 5}, 3);
                 break;
             case SQUARE:
                 g.strokeRect(x + gridSize / 7 * 2, y + gridSize / 7 * 2, gridSize / 7 * 3, gridSize / 7 * 3);
