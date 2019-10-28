@@ -1,5 +1,6 @@
 package codes.nibby.yi.board;
 
+import codes.nibby.yi.Sound;
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.GameNode;
@@ -240,6 +241,7 @@ public class GameBoard extends Pane implements GameListener {
                                 }
                             }
                         }
+                        Sound.playStonePlacement(null);
                     }
                 }
 
