@@ -16,7 +16,7 @@ public class ColorUtility {
     }
 
     public static Color parseRGB_255(String[] rgb) {
-        String[] rgba = { rgb[0], rgb[1], rgb[2], "255" };
+        String[] rgba = {rgb[0], rgb[1], rgb[2], "255"};
         return parseRGBA_255(rgba);
     }
 
@@ -30,10 +30,14 @@ public class ColorUtility {
         double b = Double.parseDouble(rgba[2]) / 255d;
         double a = Double.parseDouble(rgba[3]) / 255d;
 
-        if (r > 1.0d) r = 1.0d;     if (r < 0.0d) r = 0.0d;
-        if (g > 1.0d) g = 1.0d;     if (g < 0.0d) g = 0.0d;
-        if (b > 1.0d) b = 1.0d;     if (b < 0.0d) b = 0.0d;
-        if (a > 1.0d) a = 1.0d;     if (a < 0.0d) a = 0.0d;
+        if (r > 1.0d) r = 1.0d;
+        if (r < 0.0d) r = 0.0d;
+        if (g > 1.0d) g = 1.0d;
+        if (g < 0.0d) g = 0.0d;
+        if (b > 1.0d) b = 1.0d;
+        if (b < 0.0d) b = 0.0d;
+        if (a > 1.0d) a = 1.0d;
+        if (a < 0.0d) a = 0.0d;
 
         return new Color(r, g, b, a);
     }

@@ -25,7 +25,7 @@ public class UiUtility {
         fc.setInitialDirectory(initialDirectory.toFile());
         // Game record file chooser
         FileChooser.ExtensionFilter filters[] = {
-            new FileChooser.ExtensionFilter("Go game formats (.sgf)", "*.sgf")
+                new FileChooser.ExtensionFilter("Go game formats (.sgf)", "*.sgf")
         };
         fc.getExtensionFilters().addAll(filters);
         fc.setSelectedExtensionFilter(filters[0]);

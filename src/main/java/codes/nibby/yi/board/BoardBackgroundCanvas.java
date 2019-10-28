@@ -19,7 +19,7 @@ import javafx.util.Duration;
  *     <li>Co-ordinate labels</li>
  *     <li>Stone shadows</li>
  * </ul>
- *
+ * <p>
  * Stone shadows are drawn in this layer because of stone placement
  * animations. Stones that are animated will be elevated to the
  * top-most layer (BoardInputCanvas). If shadows are included as
@@ -99,7 +99,7 @@ public class BoardBackgroundCanvas extends Canvas {
 
             // Board lines
             for (int x = 0; x < boardWidth; x++) {
-                g.strokeLine(metrics.getGridX(x),offsetY + gridOffsetY, metrics.getGridX(x),
+                g.strokeLine(metrics.getGridX(x), offsetY + gridOffsetY, metrics.getGridX(x),
                         metrics.getGridY(boardHeight - 1));
             }
 

@@ -2,9 +2,9 @@ package codes.nibby.yi.editor.layout;
 
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
+import codes.nibby.yi.editor.component.GameTreePane;
 import codes.nibby.yi.editor.component.GameTreeToolBar;
 import codes.nibby.yi.editor.component.MoveCommentPane;
-import codes.nibby.yi.editor.component.GameTreePane;
 import codes.nibby.yi.editor.component.SideToolBar;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;

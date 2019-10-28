@@ -2,7 +2,6 @@ package codes.nibby.yi.board;
 
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameNode;
-import codes.nibby.yi.game.Markup;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -28,7 +27,7 @@ public class BoardStaticCanvas extends Canvas {
     }
 
     public void render() {
-        g.clearRect(0,0, getWidth(), getHeight());
+        g.clearRect(0, 0, getWidth(), getHeight());
 
         List<Stone> staticStones = gameBoard.getStaticStones();
         for (Stone stone : staticStones) {

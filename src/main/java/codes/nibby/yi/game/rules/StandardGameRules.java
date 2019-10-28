@@ -5,7 +5,6 @@ import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -155,7 +154,7 @@ public abstract class StandardGameRules implements IGameRules {
         // Step 4: Final position, update game node data.
         //===========================
         newNode.setStoneData(gamePosition);
-        newNode.setCurrentMove(new int[] { x, y });
+        newNode.setCurrentMove(new int[]{x, y});
         newNode.setKoPoint(koPoint);
         newNode.addPrisonersBlack((color == Stone.BLACK) ? opponentCaptures : captures);
         newNode.addPrisonersWhite((color == Stone.BLACK) ? captures : opponentCaptures);
@@ -173,8 +172,8 @@ public abstract class StandardGameRules implements IGameRules {
     /**
      * Starting at a given point, find all the same color stones connected to it.
      *
-     * @param game Current game instance.
-     * @param point Current reference point.
+     * @param game     Current game instance.
+     * @param point    Current reference point.
      * @param position Current game (board) position.
      * @return A StoneString instance gathered from the reference point.
      */
@@ -184,7 +183,7 @@ public abstract class StandardGameRules implements IGameRules {
             return null;
 
         int color = position[point];
-        final int[] liberties = { 0 };
+        final int[] liberties = {0};
         List<Integer> stoneString = new ArrayList<>();
         List<Integer> visited = new ArrayList<>();
         Stack<Integer> seekStack = new Stack<>();

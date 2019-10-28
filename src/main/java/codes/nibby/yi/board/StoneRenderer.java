@@ -35,8 +35,8 @@ public class StoneRenderer {
     /**
      * Draws a stone texture onto a go board with stone wobble/fuzzy parameters.
      *
-     * @param g Board graphics context.
-     * @param stone Stone instance.
+     * @param g       Board graphics context.
+     * @param stone   Stone instance.
      * @param metrics Board metrics.
      */
     public static void renderTexture(GraphicsContext g, Stone stone, BoardMetrics metrics) {
@@ -56,11 +56,11 @@ public class StoneRenderer {
     /**
      * Draws a stone texture of custom color, size and position.
      *
-     * @param g Canvas graphics context.
+     * @param g     Canvas graphics context.
      * @param color Color of the Go stone.
-     * @param size Radius (in pixels) of the Go stone.
-     * @param x X draw position.
-     * @param y Y draw position.
+     * @param size  Radius (in pixels) of the Go stone.
+     * @param x     X draw position.
+     * @param y     Y draw position.
      */
     public static void renderTexture(GraphicsContext g, int color, double size, double x, double y) {
         StoneStyle stoneStyle = Config.getStoneStyle();
@@ -97,10 +97,10 @@ public class StoneRenderer {
     /**
      * Draws stone shadow at a custom position on the go board.
      *
-     * @param g Canvas graphics context.
+     * @param g       Canvas graphics context.
      * @param metrics Board metrics.
-     * @param x X draw position.
-     * @param y Y draw position.
+     * @param x       X draw position.
+     * @param y       Y draw position.
      */
     public static void renderShadow(GraphicsContext g, BoardMetrics metrics, double x, double y) {
         double size = metrics.getStoneSize();
@@ -110,10 +110,10 @@ public class StoneRenderer {
     /**
      * Draws a stone shadow of custom size on a custom canvas.
      *
-     * @param g Canvas graphics context.
+     * @param g    Canvas graphics context.
      * @param size Shadow size (equal to stone size).
-     * @param x X draw position.
-     * @param y Y draw position.
+     * @param x    X draw position.
+     * @param y    Y draw position.
      */
     public static void renderShadow(GraphicsContext g, double size, double x, double y) {
         shadow.setRadius(size / 8);
@@ -127,11 +127,11 @@ public class StoneRenderer {
     /**
      * Draws a fully rendered Go stone (texture + shadow) on one layer.
      *
-     * @param g Canvas graphics context.
+     * @param g     Canvas graphics context.
      * @param color Color of the go stone. Stone.BLACK | Stone.WHITE
-     * @param size Radius (in pixels) of the Go stone.
-     * @param x X draw position.
-     * @param y Y draw position.
+     * @param size  Radius (in pixels) of the Go stone.
+     * @param x     X draw position.
+     * @param y     Y draw position.
      */
     public static void renderTextureAndShadow(GraphicsContext g, int color, double size, double x, double y) {
         renderShadow(g, size, x, y);
@@ -144,12 +144,12 @@ public class StoneRenderer {
      */
     private static class CeramicStone {
 
-        static RadialGradient gradientWhite, gradientBlack;
         static final float rgFocusAngle = 250f;
         static final float rgFocusDistance = 0.1f;
-        static final float  rgCenterX = 0.35f;
-        static final float  rgCenterY = 0.35f;
+        static final float rgCenterX = 0.35f;
+        static final float rgCenterY = 0.35f;
         static final float rgRadius = 0.45f;
+        static RadialGradient gradientWhite, gradientBlack;
 
         static {
             shadow = new DropShadow();
@@ -163,8 +163,8 @@ public class StoneRenderer {
 
             gradientWhite = new RadialGradient(rgFocusAngle, rgFocusDistance, rgCenterX, rgCenterY, rgRadius,
                     true, CycleMethod.NO_CYCLE,
-                    new Stop(0d, Color.color(1d, 249d/255d, 235d/255d, 1d)),
-                    new Stop(0.99d, Color.color(230d/255d, 224d/255d, 211d/255d, 1d)));
+                    new Stop(0d, Color.color(1d, 249d / 255d, 235d / 255d, 1d)),
+                    new Stop(0.99d, Color.color(230d / 255d, 224d / 255d, 211d / 255d, 1d)));
 
         }
 

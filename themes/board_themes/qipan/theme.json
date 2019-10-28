@@ -1,7 +1,6 @@
 {
   "name": "QiPan Classic",
   "background": "blur.jpg",
-
   "board": {
     "texture": "board.jpg",
     "stone_black": "$APP_RENDERED",

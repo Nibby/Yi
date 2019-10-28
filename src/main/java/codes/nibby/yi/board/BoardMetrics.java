@@ -11,26 +11,38 @@ import codes.nibby.yi.game.Game;
  */
 public class BoardMetrics {
 
-    /** Pixels reserved for overlaid components. */
+    /**
+     * Pixels reserved for overlaid components.
+     */
     /*
         Allow some toolbars to be stacked on top of the game board
         for aesthetic purposes.
      */
     public static final int RESERVED_TOOLBAR_SIZE = 40;
 
-    /** Constant representing a top and left side board co-ordinate display. */
+    /**
+     * Constant representing a top and left side board co-ordinate display.
+     */
     public static final int LABEL_ORIENTATION_TOP_LEFT = 0;
 
-    /** Constant representing a top and right side board co-ordinate display. */
+    /**
+     * Constant representing a top and right side board co-ordinate display.
+     */
     public static final int LABEL_ORIENTATION_TOP_RIGHT = 1;
 
-    /** Constant representing a bottom and left side board co-ordinate display. */
+    /**
+     * Constant representing a bottom and left side board co-ordinate display.
+     */
     public static final int LABEL_ORIENTATION_BOTTOM_LEFT = 2;
 
-    /** Constant representing a bottom and right side board co-ordinate display. */
+    /**
+     * Constant representing a bottom and right side board co-ordinate display.
+     */
     public static final int LABEL_ORIENTATION_BOTTOM_RIGHT = 3;
 
-    /** Constant representing an all-sided board co-ordinate display. */
+    /**
+     * Constant representing an all-sided board co-ordinate display.
+     */
     public static final int LABEL_ORIENTATION_ALL = 4;
 
     // The order from which the numerical vertical coordinate column begins
@@ -40,51 +52,79 @@ public class BoardMetrics {
     public static final int LABEL_Y_ASCENDING = 0;
     public static final int LABEL_Y_DESCENDING = 1;
 
-    /** Diameter of a single stone, in pixels */
+    /**
+     * Diameter of a single stone, in pixels
+     */
     private double stoneSize;
 
-    /** Margin between stones, in pixels */
+    /**
+     * Margin between stones, in pixels
+     */
     private double stoneGap;
 
-    /**  */
+    /**
+     *
+     */
     private double offsetX;
     private double offsetY;
 
-    /** X offset position to start drawing board grid lines. */
+    /**
+     * X offset position to start drawing board grid lines.
+     */
     private double gridOffsetX;
 
-    /** Y offset position to start drawing board grid lines. */
+    /**
+     * Y offset position to start drawing board grid lines.
+     */
     private double gridOffsetY;
 
-    /**  */
+    /**
+     *
+     */
     private double gap;
 
-    /** */
+    /**
+     *
+     */
     private double drawWidth;
     private double drawHeight;
 
-    /** The lower of drawWidth and drawHeight. Used as a basis measurement for rest of the metrics. */
+    /**
+     * The lower of drawWidth and drawHeight. Used as a basis measurement for rest of the metrics.
+     */
     private double minSize;
 
-    /** The rectangular dimensions of each intersection. */
+    /**
+     * The rectangular dimensions of each intersection.
+     */
     private double gridSize;
 
-    /** Game board width. */
+    /**
+     * Game board width.
+     */
     private int boardWidth;
 
-    /** Game board height. */
+    /**
+     * Game board height.
+     */
     private int boardHeight;
 
     // TODO: Move this to BoardBackgroundCanvas
-    /** A reference flag for coordinate display. */
+    /**
+     * A reference flag for coordinate display.
+     */
     private boolean drawLabels = false;
 
     // TODO: Move this to BoardBackgroundCanvas
-    /** A reference parameter for coordinate alignment. */
+    /**
+     * A reference parameter for coordinate alignment.
+     */
     private int labelOrientation = LABEL_ORIENTATION_TOP_RIGHT;
 
     // TODO: Move this to BoardBackgroundCanvas
-    /** A reference flag for Y-axis coordinate reversal. */
+    /**
+     * A reference flag for Y-axis coordinate reversal.
+     */
     private int labelYOrder = LABEL_Y_ASCENDING;
 
     public void calibrate(GameBoard board) {

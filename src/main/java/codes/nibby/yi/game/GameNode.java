@@ -6,17 +6,17 @@ import java.util.List;
 /**
  * Represents a single game 'state' in the game tree.
  * Each node has 1 parent and 0+ children.
- *
+ * <p>
  * Internally the game states are stored as a string of <strong>m x n</strong> integers
  * where <strong>m</strong> is the board width and <strong>n</strong> is the board height.
- *
+ * <p>
  * The numbers on the state register represent:
  * <ul>
  *     <li><strong>0</strong>: Nothing</li>
  *     <li><strong>1</strong>: Black stone</li>
  *     <li><strong>2</strong>: White stone</li>
  * </ul>
- *
+ * <p>
  * The object for displayed stones on the board are found in <strong>Game</strong> class.
  *
  * @author Kevin Yang
@@ -34,24 +34,38 @@ public class GameNode {
     // Stone color
     private int color;
 
-    /** List of captures at this node. */
+    /**
+     * List of captures at this node.
+     */
     private int prisonersBlack, prisonersWhite;
-    /** Move comments */
+    /**
+     * Move comments
+     */
     private String comments = "";
-    /** Board labels, markers etc. */
+    /**
+     * Board labels, markers etc.
+     */
     private List<Markup> markups = new ArrayList<>();
 
-    /** The position of the ko square */
+    /**
+     * The position of the ko square
+     */
     private int koPoint = -1;
 
     // Game tree hierarchy
-    /** The parent node */
+    /**
+     * The parent node
+     */
     private GameNode parent = null;
 
-    /** Children nodes, with index 0 being the main variation child. */
+    /**
+     * Children nodes, with index 0 being the main variation child.
+     */
     private List<GameNode> children = new ArrayList<>();
 
-    /** Board stone positions at this point. */
+    /**
+     * Board stone positions at this point.
+     */
     private int[] stoneData;
 
     private Game game;
@@ -74,7 +88,7 @@ public class GameNode {
      * Append a child node to this node, with the option of making the child node
      * part of the main branch.
      *
-     * @param node Child node to be appended.
+     * @param node          Child node to be appended.
      * @param makeMainChild Whether to make child node part of the main variation.
      */
     public void addChild(GameNode node, boolean makeMainChild) {

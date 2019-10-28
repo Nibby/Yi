@@ -12,12 +12,43 @@ public final class Markup {
     private MarkupType type;
     private String arguments;
 
-    private Markup() { }
+    private Markup() {
+    }
 
     // TODO not implemented
     public static Markup parseSgf(int markType, String markerData) {
         System.out.println(markType + " => " + markerData);
         return null;
+    }
+
+    public static Markup triangle(int x, int y) {
+        return basicMarkup(MarkupType.TRIANGLE, x, y);
+    }
+
+    public static Markup circle(int x, int y) {
+        return basicMarkup(MarkupType.CIRCLE, x, y);
+    }
+
+    public static Markup square(int x, int y) {
+        return basicMarkup(MarkupType.SQUARE, x, y);
+    }
+
+    public static Markup cross(int x, int y) {
+        return basicMarkup(MarkupType.CROSS, x, y);
+    }
+
+    public static Markup label(int x, int y, String text) {
+        Markup markup = basicMarkup(MarkupType.LABEL, x, y);
+        markup.setArguments(text);
+        return markup;
+    }
+
+    private static Markup basicMarkup(MarkupType type, int x, int y) {
+        Markup markup = new Markup();
+        markup.setType(type);
+        markup.setX1(x);
+        markup.setY1(y);
+        return markup;
     }
 
     public int getX1() {
@@ -70,36 +101,6 @@ public final class Markup {
 
     public void render(double x, double y, double size) {
         // TODO implement later
-    }
-
-    public static Markup triangle(int x, int y) {
-        return basicMarkup(MarkupType.TRIANGLE, x, y);
-    }
-
-    public static Markup circle(int x, int y) {
-        return basicMarkup(MarkupType.CIRCLE, x, y);
-    }
-
-    public static Markup square(int x, int y) {
-        return basicMarkup(MarkupType.SQUARE, x, y);
-    }
-
-    public static Markup cross(int x, int y) {
-        return basicMarkup(MarkupType.CROSS, x, y);
-    }
-
-    public static Markup label(int x, int y, String text) {
-        Markup markup = basicMarkup(MarkupType.LABEL, x, y);
-        markup.setArguments(text);
-        return markup;
-    }
-
-    private static Markup basicMarkup(MarkupType type, int x, int y) {
-        Markup markup = new Markup();
-        markup.setType(type);
-        markup.setX1(x);
-        markup.setY1(y);
-        return markup;
     }
 
 

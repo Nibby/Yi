@@ -18,12 +18,12 @@ import java.util.*;
 /**
  * A component for displaying the game tree structure visually.
  * Accepts mouse and keyboard input to navigate the game states.
- *
+ * <p>
  * The tree pane is implemented using a GridPane, where each 'node'
  * is added as a separate 'NodeElement' element. TrackElements are
  * added where child branch exists to graphically indicate a branching
  * relationship.
- *
+ * <p>
  * TODO: Implement this later.
  *
  * @author Kevin Yang
@@ -68,8 +68,8 @@ public class GameTreePane extends GridPane implements GameListener {
      * end of the main variation. Child branches are constructed recursively this way.
      *
      * @param branchRoot The first node in the branch.
-     * @param startCol GridPane X co-ordinate of the first node.
-     * @param startRow GridPane Y co-ordinate of the first node.
+     * @param startCol   GridPane X co-ordinate of the first node.
+     * @param startRow   GridPane Y co-ordinate of the first node.
      */
     private void buildBranch(GameNode branchRoot, int startCol, int startRow) {
         int gridX = startCol;
@@ -121,12 +121,12 @@ public class GameTreePane extends GridPane implements GameListener {
             int index = firstNode.node.getParent().getChildren().indexOf(firstNode.node);
             boolean lastChild = firstNode.node.getParent().getChildren().size() - 1 == index;
             int trackType = lastChild ? 2 : 1;
-            TrackElement track = new TrackElement(VERTICAL, trackType, col,firstNode.gridY - 1);
+            TrackElement track = new TrackElement(VERTICAL, trackType, col, firstNode.gridY - 1);
             add(track, track.gridX, track.gridY);
         }
 
         layout.columnData.putIfAbsent(col, new ArrayList<>());
-        layout.columnData.get(col).add(new Integer[] { start, end });
+        layout.columnData.get(col).add(new Integer[]{start, end});
         for (NodeElement _node : branchNodes) {
             add(_node, col, _node.gridY);
         }
@@ -289,9 +289,8 @@ public class GameTreePane extends GridPane implements GameListener {
         private static final int TRACK_VERTICAL_LINE = 3;
         private static final int TRACK_VERTICAL_T = 4;
         private static final int TRACK_VERTICAL_CORNER = 5;
-
-        private int trackType;
         boolean debug = true;
+        private int trackType;
 
         private TrackElement(int orientation, int type, int col, int row) {
             super(col, row);
@@ -344,17 +343,17 @@ public class GameTreePane extends GridPane implements GameListener {
                     break;
                 case TRACK_HORIZONTAL_T:
                     g.strokeLine(0, getHeight() / 2, getWidth(), getHeight() / 2);
-                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth()/ 2, getHeight());
+                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth() / 2, getHeight());
                     break;
                 case TRACK_HORIZONTAL_CORNER:
                     g.strokeLine(0, getHeight() / 2, getWidth() / 2, getHeight() / 2);
-                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth()/ 2, getHeight());
+                    g.strokeLine(getWidth() / 2, getHeight() / 2, getWidth() / 2, getHeight());
                     break;
 
                 case TRACK_VERTICAL_LINE:
-                    g.strokeLine(getWidth() / 2, 0, getWidth()/ 2, getHeight());
+                    g.strokeLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
                     break;
-                    // TODO rest of the vertical lines
+                // TODO rest of the vertical lines
             }
             g.setLineWidth(1d);
         }
@@ -373,8 +372,8 @@ public class GameTreePane extends GridPane implements GameListener {
          * Checks if a given section does not have nodes.
          *
          * @param column The column index
-         * @param start Segment start index
-         * @param end Segment end index
+         * @param start  Segment start index
+         * @param end    Segment end index
          * @return Whether the segment is available for new branches.
          */
         private boolean isSegmentAvailable(int column, int start, int end) {

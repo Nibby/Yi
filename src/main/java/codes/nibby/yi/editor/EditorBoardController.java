@@ -29,12 +29,14 @@ public class EditorBoardController extends GameBoardController {
 
     @Override
     public void gameInitialized(Game game) {
-
     }
 
     @Override
     public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
+    }
 
+    @Override
+    public void gameModified(Game game) {
     }
 
     @Override
@@ -227,7 +229,7 @@ public class EditorBoardController extends GameBoardController {
         for (Markup markup : markups) {
             if (markup.getType() == MarkupType.LABEL) {
                 if (String.valueOf(i).equals(markup.getArguments()))
-                    i ++;
+                    i++;
             }
         }
 

@@ -2,7 +2,6 @@ package codes.nibby.yi.game;
 
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
-import jdk.jshell.spi.ExecutionControl;
 
 import java.util.*;
 
@@ -21,19 +20,29 @@ public class Game {
 
     private GameMetadata metadata;
 
-    /** Width of the go board. */
+    /**
+     * Width of the go board.
+     */
     private int boardWidth;
 
-    /** Height of the go board. */
+    /**
+     * Height of the go board.
+     */
     private int boardHeight;
 
-    /** The root of the game tree. */
+    /**
+     * The root of the game tree.
+     */
     private GameNode gameTree;
 
-    /** The current selected node in the game tree. */
+    /**
+     * The current selected node in the game tree.
+     */
     private GameNode currentNode;
 
-    /** Current rules governing the game. */
+    /**
+     * Current rules governing the game.
+     */
     private IGameRules ruleset;
 
     /**
@@ -42,8 +51,15 @@ public class Game {
      */
     private Map<Integer, GameNode> pastStates;
 
-    /** Listeners for the game. */
+    /**
+     * Listeners for the game.
+     */
     private List<GameListener> listeners = new ArrayList<>();
+
+    /**
+     * Whether the document has been modified since last save.
+     */
+    private boolean modified = false;
 
     public Game(IGameRules rules, int boardWidth, int boardHeight) {
         setRuleset(rules);
@@ -72,7 +88,7 @@ public class Game {
     /**
      * Checks whether a move can be played at (x, y), if yes, the move is played,
      * otherwise it is aborted.
-     *
+     * <p>
      * The color of the stone is determined by the result of <i>getNextMoveColor();</i>
      *
      * @param x X position on the board.
@@ -98,7 +114,7 @@ public class Game {
      * Updates the game to the a new node position.
      * TODO: The new node must be part of the game tree.
      *
-     * @param newNode The new currentNode
+     * @param newNode   The new currentNode
      * @param isNewMove Whether this node is the newest move played on the board.
      */
     public void setCurrentNode(GameNode newNode, boolean isNewMove) {
@@ -106,6 +122,8 @@ public class Game {
         this.currentNode = newNode;
 
         fireGameCurrentMoveUpdateEvent(newNode, isNewMove);
+        if (isNewMove)
+            setModified(true);
     }
 
     public void fireGameCurrentMoveUpdateEvent(GameNode node, boolean isNewMove) {
@@ -113,9 +131,14 @@ public class Game {
             l.gameCurrentMoveUpdate(node, isNewMove);
     }
 
+    public void fireGameModifiedEvent() {
+        for (GameListener l : listeners)
+            l.gameModified(this);
+    }
+
     /**
      * Constructs pastState from current node.
-     *
+     * <p>
      * This method takes an oldNode as reference. If oldNode is 1 step ahead
      * or behind the newNode then the algorithm won't reinitialise the entire
      * data structure.
@@ -155,24 +178,15 @@ public class Game {
     }
 
     /**
-     * Sets the game rules.
-     *
-     * @param rules Game rules to use.
-     */
-    public void setRuleset(IGameRules rules) {
-        this.ruleset = rules;
-    }
-
-    /**
      * Performs scoring on the position as given by <i>currentNode</i> and
      * returns the outcome of the game.
-     *
+     * <p>
      * TODO: Implement this later
+     *
      * @return Information regarding the outcome of the game.
-     * @throws ExecutionControl.NotImplementedException Not implemented!
      */
-    public GameOutcome getOutcome() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Not yet implemented!");
+    public GameOutcome getOutcome() throws RuntimeException {
+        throw new RuntimeException("Not yet implemented!");
     }
 
     /**
@@ -189,7 +203,7 @@ public class Game {
      * A destructive operation that resizes the go board.
      * Will reset game tree.
      *
-     * @param width New board width.
+     * @param width  New board width.
      * @param height New board height.
      */
     public void setBoardSize(int width, int height) {
@@ -213,12 +227,22 @@ public class Game {
         return currentNode;
     }
 
-    public void addGameListener(GameListener ... listener) {
+    public void addGameListener(GameListener... listener) {
         listeners.addAll(Arrays.asList(listener));
     }
 
     public IGameRules getRuleset() {
         return ruleset;
+    }
+
+    /**
+     * Sets the game rules.
+     *
+     * @param rules Game rules to use.
+     */
+    public void setRuleset(IGameRules rules) {
+        this.ruleset = rules;
+        setModified(true);
     }
 
     public GameNode createNextNode() {
@@ -228,6 +252,7 @@ public class Game {
         nextNode.setColor(getNextMoveColor());
         nextNode.setPrisonersBlack(currentNode.getPrisonersBlack());
         nextNode.setPrisonersWhite(currentNode.getPrisonersWhite());
+        setModified(true);
 
         return nextNode;
     }
@@ -308,5 +333,20 @@ public class Game {
 
     public List<GameListener> getGameListeners() {
         return listeners;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+
+        if (modified)
+            fireGameModifiedEvent();
+    }
+
+    public GameMetadata getMetadata() {
+        return metadata;
     }
 }

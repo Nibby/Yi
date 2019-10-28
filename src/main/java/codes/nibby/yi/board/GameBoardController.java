@@ -15,7 +15,8 @@ public abstract class GameBoardController implements GameListener {
 
     /**
      * Invoked by GameBoard class constructor.
-     * @param game Current game object
+     *
+     * @param game  Current game object
      * @param board Game board object
      */
     public void initialize(Game game, GameBoard board) {

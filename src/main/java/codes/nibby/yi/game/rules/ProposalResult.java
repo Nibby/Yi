@@ -4,19 +4,8 @@ import codes.nibby.yi.game.GameNode;
 
 public class ProposalResult {
 
-    public enum Type {
-        SUCCESS,
-        INVALID_KO,
-        INVALID_REPEATING,
-        INVALID_COLOR_MISMATCH,
-        INVALID_STONE_EXISTS,
-        INVALID_SUICIDE,
-        INVALID_UNKNOWN_ERROR,
-    }
-
     private Type type;
     private GameNode newNode;
-
     public ProposalResult(Type type) {
         this(type, null);
     }
@@ -32,5 +21,15 @@ public class ProposalResult {
 
     public Type getType() {
         return type;
+    }
+
+    public enum Type {
+        SUCCESS,
+        INVALID_KO,
+        INVALID_REPEATING,
+        INVALID_COLOR_MISMATCH,
+        INVALID_STONE_EXISTS,
+        INVALID_SUICIDE,
+        INVALID_UNKNOWN_ERROR,
     }
 }

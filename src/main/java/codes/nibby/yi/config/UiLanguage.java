@@ -1,6 +1,5 @@
 package codes.nibby.yi.config;
 
-import static codes.nibby.yi.io.IoConstants.*;
 import codes.nibby.yi.utility.AlertUtility;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -8,11 +7,9 @@ import javafx.scene.text.Font;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
+
+import static codes.nibby.yi.io.IoConstants.SEP;
 
 /**
  * Stores data of a selected language pack inside 'resources/lang' directory.
@@ -22,12 +19,10 @@ import java.util.*;
  */
 public class UiLanguage {
 
-    private static final int FONTS_USED = 1;
-    private static final String LANGUAGE_DIRECTORY = SEP + "lang" + SEP;
-
     // Font categories, used to access font array
     public static final int FONT_STANDARD = 0;
-
+    private static final int FONTS_USED = 1;
+    private static final String LANGUAGE_DIRECTORY = SEP + "lang" + SEP;
     private Font[] fonts;
     private Locale locale;
 
@@ -74,7 +69,7 @@ public class UiLanguage {
         // replaced by %20 instead).
         if (files == null) {
             AlertUtility.showAlert("Failed to load resource bundle for locale:" + this.locale.getDisplayScript()
-                    + "\nCheck that you are not on a partition whose name contains a space!",
+                            + "\nCheck that you are not on a partition whose name contains a space!",
                     "Conf -> UiLanguage", Alert.AlertType.ERROR, ButtonType.OK);
             System.exit(1);
         }
