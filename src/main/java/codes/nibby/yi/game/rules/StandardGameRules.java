@@ -53,7 +53,7 @@ public abstract class StandardGameRules implements IGameRules {
         // Step 2: Check for captures
         //===========================
         // First find the neighbors of the current point
-        List<Integer> neighbors = game.getNeighborIndices(x, y);
+        List<Integer> neighbors = game.getNeighboringIndices(x, y);
 
         // Keep track of where we've checked before
         List<Integer> checked = new ArrayList<>();
@@ -201,7 +201,7 @@ public abstract class StandardGameRules implements IGameRules {
                 visited.add(nextPoint);
             }
 
-            List<Integer> neighbors = game.getNeighborIndices(nextPoint);
+            List<Integer> neighbors = game.getNeighboringIndices(nextPoint);
             neighbors.forEach(pt -> {
                 // Seek the neighboring friendly stones
                 if (position[pt] == color && !visited.contains(pt)) {

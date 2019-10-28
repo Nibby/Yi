@@ -32,7 +32,7 @@ public class EditorBoardController extends GameBoardController {
     }
 
     @Override
-    public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
+    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
     }
 
     @Override

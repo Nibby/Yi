@@ -10,15 +10,19 @@ import codes.nibby.yi.io.GameParseException;
  */
 public class GameRules {
 
+    public static final GenericGameRules GENERIC = new GenericGameRules();
     public static final ChineseGameRules CHINESE = new ChineseGameRules();
 
-    public static IGameRules parse(String ruleset) throws GameParseException {
+    public static IGameRules getRuleset(String ruleset, boolean allowGeneric) throws GameParseException {
         ruleset = ruleset.toUpperCase();
         switch (ruleset) {
             case "CHINESE":
                 return CHINESE;
             default:
-                throw new GameParseException("Ruleset not implemented: " + ruleset);
+                if (!allowGeneric)
+                    throw new GameParseException("Unsupported ruleset: " + ruleset);
+                else
+                    return GENERIC;
         }
     }
 }

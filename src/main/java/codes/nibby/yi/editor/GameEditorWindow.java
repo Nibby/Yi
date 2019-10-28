@@ -15,6 +15,7 @@ import codes.nibby.yi.game.GameListener;
 import codes.nibby.yi.game.rules.GameRules;
 import codes.nibby.yi.io.GameFileParser;
 import codes.nibby.yi.io.GameParseException;
+import codes.nibby.yi.io.SgfFile;
 import codes.nibby.yi.io.UnsupportedFileTypeException;
 import codes.nibby.yi.utility.AlertUtility;
 import codes.nibby.yi.utility.UiUtility;
@@ -28,6 +29,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +54,10 @@ public class GameEditorWindow extends Stage {
 
     private AbstractLayout layout;
     private Scene scene;
+    private ResourceBundle locale;
 
     public GameEditorWindow() {
+        locale = Config.getLanguage().getResourceBundle("GameEditorWindow");
         controller = new EditorBoardController();
         initializeComponents();
         initializeScene();
@@ -96,9 +100,12 @@ public class GameEditorWindow extends Stage {
                 // TODO temporary: default to opening one file
                 if (files.get(0).isFile()) {
                     try {
-                        Game game = GameFileParser.parse(files.get(0));
-                        if (game != null)
+                        File file = files.get(0);
+                        Game game = GameFileParser.parse(file);
+                        if (game != null) {
+                            game.setLastSavePath(file.toPath());
                             setGame(game);
+                        }
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     } catch (GameParseException ex) {
@@ -147,10 +154,9 @@ public class GameEditorWindow extends Stage {
 
     public void createDocument() {
         if (game.isModified()) {
-            ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
             Optional<ButtonType> response =
-                    AlertUtility.showAlert(bundle.getString("alert.editor.confirm_save.content"),
-                            bundle.getString("alert.editor.confirm_save.title"),
+                    AlertUtility.showAlert(locale.getString("alert.editor.confirm_save.content"),
+                            locale.getString("alert.editor.confirm_save.title"),
                             Alert.AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 
             // TODO if cancel, return
@@ -161,31 +167,49 @@ public class GameEditorWindow extends Stage {
     }
 
     public void openDocument() {
-        FileChooser fc = UiUtility.createGameRecordOpenFileChooser("Open file", Paths.get(System.getProperty("user.home")));
+        FileChooser fc = UiUtility.createGameRecordOpenFileChooser(locale.getString("dialog.open_file.title"),
+                Paths.get(System.getProperty("user.dir")));
         File file = fc.showOpenDialog(this);
         try {
             Game game = GameFileParser.parse(file);
-            if (game != null)
+            if (game != null) {
+                game.setLastSavePath(file.toPath());
                 setGame(game);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (GameParseException ex) {
             ex.printStackTrace();
-
-            ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
-            AlertUtility.showAlert(bundle.getString("alert.exception.gameparse.content") + "\n\n" + ex.getMessage(),
-                    bundle.getString("alert.exception.gameparse.title"), Alert.AlertType.ERROR, ButtonType.OK);
+            AlertUtility.showAlert(locale.getString("alert.exception.gameparse.content")
+                            + "\n\n" + ex.getMessage(), locale.getString("alert.exception.gameparse.title"),
+                    Alert.AlertType.ERROR, ButtonType.OK);
         } catch (UnsupportedFileTypeException ex) {
             ex.printStackTrace();
+            AlertUtility.showAlert(locale.getString("alert.exception.unsupported_filetype.content"),
+                    locale.getString("alert.exception.unsupported_filetype.title"),
+                    Alert.AlertType.ERROR, ButtonType.OK);
         }
     }
 
-    public void saveDocument() {
+    public void saveDocument(boolean forceChoosePath) {
+        Path savePath = game.getLastSavePath();
+        if (savePath == null || forceChoosePath) {
+            Path defaultPath = savePath == null ? Paths.get(System.getProperty("user.dir")) : savePath;
+            FileChooser fc = UiUtility.createGameRecordOpenFileChooser(locale.getString("dialog.save_file.title"), defaultPath);
+            File selectedFile = fc.showSaveDialog(this);
 
-    }
+            // User cancelled save operation
+            if (selectedFile == null)
+                return;
+            savePath = selectedFile.toPath();
+        }
 
-    public void saveAsDocument() {
-
+        try {
+            SgfFile.write(savePath, game);
+            game.setLastSavePath(savePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public GameBoard getGameBoard() {
