@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -56,7 +57,6 @@ public class GameEditorWindow extends Stage {
         controller = new EditorBoardController();
         initializeComponents();
         initializeScene();
-        game.initialize();
 
         UiStylesheets.applyTo(scene);
     }
@@ -69,16 +69,17 @@ public class GameEditorWindow extends Stage {
     private void initializeComponents() {
         game = new Game(GameRules.CHINESE, 19, 19);
         boardToolBar = new GameBoardToolBar(this);
-        gameBoard  = new GameBoard(game, controller, boardToolBar);
+        gameBoard = new GameBoard(game, controller, boardToolBar);
         toolBar = new GameEditorMenuBar(this);
         gameTreePane = new GameTreePane(this);
         moveCommentPane = new MoveCommentPane(this);
 
         game.addGameListener(gameTreePane, moveCommentPane);
+        game.initialize();
     }
 
     private void initializeScene() {
-        setTitle(Yi.TITLE);
+        setTitle(game.getMetadata().gameName + " - " + Yi.TITLE);
 
         layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
@@ -144,7 +145,22 @@ public class GameEditorWindow extends Stage {
         gameBoard.updateBoardObjects(game.getCurrentNode(), true, true);
     }
 
-    public void showOpenFileDialog() {
+    public void createDocument() {
+        if (game.isModified()) {
+            ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
+            Optional<ButtonType> response =
+                    AlertUtility.showAlert(bundle.getString("alert.editor.confirm_save.content"),
+                            bundle.getString("alert.editor.confirm_save.title"),
+                            Alert.AlertType.CONFIRMATION, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+
+            // TODO if cancel, return
+        }
+
+        Game game = new Game(GameRules.CHINESE, 19, 19);
+        setGame(game);
+    }
+
+    public void openDocument() {
         FileChooser fc = UiUtility.createGameRecordOpenFileChooser("Open file", Paths.get(System.getProperty("user.home")));
         File file = fc.showOpenDialog(this);
         try {
@@ -162,6 +178,14 @@ public class GameEditorWindow extends Stage {
         } catch (UnsupportedFileTypeException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void saveDocument() {
+
+    }
+
+    public void saveAsDocument() {
+
     }
 
     public GameBoard getGameBoard() {

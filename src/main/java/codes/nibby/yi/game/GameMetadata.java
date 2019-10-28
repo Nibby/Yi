@@ -8,7 +8,7 @@ package codes.nibby.yi.game;
  */
 public class GameMetadata {
 
-    public String gameName;
+    public String gameName = "Untitled";
     public String eventName;
     public String round;
     public String ruleset;

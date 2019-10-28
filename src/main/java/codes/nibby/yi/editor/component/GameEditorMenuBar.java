@@ -4,6 +4,9 @@ import codes.nibby.yi.config.Config;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.editor.layout.LayoutType;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 
 import java.util.ArrayList;
@@ -35,9 +38,32 @@ public class GameEditorMenuBar extends BorderPane {
             {
                 // TODO: Implement functionality later
                 MenuItem itemNew = new MenuItem(lang.getString("menubar.file.new"));
+                if (System.getProperty("os.name").toLowerCase().contains("mac"))
+                    itemNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP));
+                else
+                    itemNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP));
+                itemNew.setOnAction(event -> editor.createDocument());
+
                 MenuItem itemOpen = new MenuItem(lang.getString("menubar.file.open"));
+                if (System.getProperty("os.name").toLowerCase().contains("mac"))
+                    itemOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP));
+                else
+                    itemOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP));
+                itemOpen.setOnAction(event -> editor.openDocument());
+
                 MenuItem itemSave = new MenuItem(lang.getString("menubar.file.save"));
+                if (System.getProperty("os.name").toLowerCase().contains("mac"))
+                    itemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP));
+                else
+                    itemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP));
+                itemSave.setOnAction(event -> editor.saveDocument());
+
                 MenuItem itemSaveAs = new MenuItem(lang.getString("menubar.file.save_as"));
+                if (System.getProperty("os.name").toLowerCase().contains("mac"))
+                    itemSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP));
+                else
+                    itemSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.DOWN, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP, KeyCombination.ModifierValue.UP));
+                itemSaveAs.setOnAction(event -> editor.saveAsDocument());
 
                 menuFile.getItems().addAll(itemNew, itemOpen, itemSave, itemSaveAs);
             }

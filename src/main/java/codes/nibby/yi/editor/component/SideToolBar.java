@@ -27,18 +27,12 @@ public class SideToolBar extends BorderPane {
         {
             Button btnNew = new Button("", UiUtility.getFxIcon("/icons/new_invert.png", iconSize, iconSize));
             btnNew.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                // TODO check if document needs saving
-//                ResourceBundle bundle = Config.getLanguage().getResourceBundle("GameEditorWindow");
-//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//                alert.setTitle(bundle.getString(""));
-
-                Game game = new Game(GameRules.CHINESE, 19, 19);
-                editorWindow.setGame(game);
+                editorWindow.createDocument();
             });
 
             Button btnOpen = new Button("", UiUtility.getFxIcon("/icons/open_invert.png", iconSize, iconSize));
             btnOpen.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                editorWindow.showOpenFileDialog();
+                editorWindow.openDocument();
             });
 
             Button btnSave = new Button("", UiUtility.getFxIcon("/icons/save_invert.png", iconSize, iconSize));
@@ -50,8 +44,8 @@ public class SideToolBar extends BorderPane {
 
         tbRight = new ToolBar();
         {
-            String[] perspectives = new String[] {
-                "Review", "AI Analysis", "Presentation"
+            String[] perspectives = new String[]{
+                    "Review", "AI Analysis", "Presentation"
             };
             ComboBox<String> comboPerspective = new ComboBox<>(FXCollections.observableArrayList(perspectives));
             comboPerspective.setEditable(false);

@@ -48,4 +48,8 @@ public class MoveCommentPane extends BorderPane implements GameListener {
     public void gameCurrentMoveUpdate(GameNode currentMove, boolean newMove) {
         textArea.setText(currentMove.getComments());
     }
+
+    @Override
+    public void gameModified(Game game) {
+    }
 }
