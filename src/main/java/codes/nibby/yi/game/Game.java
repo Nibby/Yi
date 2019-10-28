@@ -1,5 +1,6 @@
 package codes.nibby.yi.game;
 
+import codes.nibby.yi.board.GameBoard;
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
 import org.jetbrains.annotations.Nullable;
@@ -62,11 +63,6 @@ public class Game {
      * Whether the document has been modified since last save.
      */
     private boolean modified = false;
-
-    /**
-     * Path where the game was last saved.
-     */
-    private Path lastSavePath = null;
 
     public Game(IGameRules rules, int boardWidth, int boardHeight) {
         setRuleset(rules);
@@ -361,12 +357,8 @@ public class Game {
         fireNodeUpdateEvent(gameNode, false);
     }
 
-    @Nullable
-    public Path getLastSavePath() {
-        return lastSavePath;
-    }
-
-    public void setLastSavePath(Path lastSavePath) {
-        this.lastSavePath = lastSavePath;
+    public void removeListeners() {
+        for (int i = 0; i < listeners.size(); i++)
+            listeners.remove(0);
     }
 }

@@ -83,7 +83,6 @@ public class GameBoard extends Pane implements GameListener {
 
     public GameBoard(Game game, GameBoardController controller, ToolBar toolbar) {
         this.game = game;
-        this.game.addGameListener(this);
         this.controller = controller;
         this.controller.initialize(game, this);
         this.topToolBar = toolbar;
