@@ -110,7 +110,7 @@ public class GameTreePane extends GridPane implements GameListener {
         int col = startCol;
         NodeElement firstNode = branchNodes.get(0);
         while (!layout.isSegmentAvailable(col, start, end)) {
-            TrackElement track = new TrackElement(VERTICAL, 0, col,firstNode.gridY - 1);
+            TrackElement track = new TrackElement(VERTICAL, 0, col, firstNode.gridY - 1);
             add(track, track.gridX, track.gridY);
             col++;
         }
@@ -165,6 +165,11 @@ public class GameTreePane extends GridPane implements GameListener {
         }
 
         // TODO Keep the current node in the viewport
+    }
+
+    @Override
+    public void gameModified(Game game) {
+
     }
 
     private abstract static class AbstractElement extends Canvas {

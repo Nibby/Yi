@@ -96,6 +96,8 @@ public class GameNode {
             children.add(0, node);
         else
             children.add(node);
+
+        game.setModified(true);
     }
 
     public boolean hasChildren() {
@@ -115,8 +117,6 @@ public class GameNode {
     }
 
     /**
-     *
-     *
      * @return The distance to the root.
      */
     public int getMoveNumber() {
@@ -153,12 +153,12 @@ public class GameNode {
         this.stoneData = stoneData;
     }
 
-    public void setColor(int color) {
-        this.color = color;
-    }
-
     public int getColor() {
         return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public int[] getCurrentMove() {
@@ -189,16 +189,16 @@ public class GameNode {
         return prisonersWhite;
     }
 
+    public void setPrisonersWhite(int prisonersWhite) {
+        this.prisonersWhite = prisonersWhite;
+    }
+
     public void addPrisonersBlack(int blackPrisoners) {
         prisonersBlack += blackPrisoners;
     }
 
     public void addPrisonersWhite(int whitePrisoners) {
         prisonersWhite += whitePrisoners;
-    }
-
-    public void setPrisonersWhite(int prisonersWhite) {
-        this.prisonersWhite = prisonersWhite;
     }
 
     public String getComments() {
@@ -224,6 +224,7 @@ public class GameNode {
     public void addMarkup(Markup markup) {
         markups.add(markup);
         game.fireGameCurrentMoveUpdateEvent(this, false);
+        game.setModified(true);
     }
 
     public boolean hasMarkupAt(int x, int y, boolean shouldRemove) {
@@ -240,16 +241,18 @@ public class GameNode {
                 i++;
             }
         }
-        if (shouldRemove && removed)
+        if (shouldRemove && removed) {
             game.fireGameCurrentMoveUpdateEvent(this, false);
+            game.setModified(true);
+        }
         return removed;
-    }
-
-    public void setPass(boolean flag) {
-        pass = true;
     }
 
     public boolean isPass() {
         return pass;
+    }
+
+    public void setPass(boolean flag) {
+        pass = true;
     }
 }

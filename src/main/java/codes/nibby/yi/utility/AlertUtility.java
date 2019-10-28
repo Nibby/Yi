@@ -3,6 +3,8 @@ package codes.nibby.yi.utility;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.Optional;
+
 /**
  * The JavaFx alternative to swing's JOptionPane.showMessageDialog()
  *
@@ -11,10 +13,10 @@ import javafx.scene.control.ButtonType;
  */
 public class AlertUtility {
 
-    public static void showAlert(String content, String title, Alert.AlertType type, ButtonType ... buttons) {
+    public static Optional<ButtonType> showAlert(String content, String title, Alert.AlertType type, ButtonType... buttons) {
         Alert alert = new Alert(type, content, buttons);
         alert.setTitle(title);
-        alert.showAndWait();
+        return alert.showAndWait();
     }
 
 }
