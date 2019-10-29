@@ -57,17 +57,27 @@ public class BoardInputCanvas extends Canvas {
 
         // Draw all animated stones.
         List<Stone> animatedStones = gameBoard.getAnimatedStones();
+        GameNode node = gameBoard.getGame().getCurrentNode();
         boolean redraw = false;
+        Stone currentStone = null;
+        int[] currentMove = node.getCurrentMove();
         for (Stone stone : animatedStones) {
             stone.wobble();
             StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
-
             if (stone.shouldWobble())
                 redraw = true;
+            if (currentMove != null && stone.getX() == currentMove[0] && stone.getY() == currentMove[1])
+                currentStone = stone;
+        }
+
+        if (currentStone != null) {
+            int[] move = node.getCurrentMove();
+            Markup markup = Markup.circle(move[0], move[1]);
+            Color markerColor = node.getColor() == Game.COLOR_BLACK ? Color.WHITE : Color.BLACK;
+            MarkupRenderer.render(g, currentStone, markup, gameBoard.getMetrics(), markerColor);
         }
 
         // Draw board cursor
-        GameNode node = gameBoard.getGame().getCurrentNode();
         boolean drawCursor = mouseX >= 0 && mouseY >= 0 && !node.hasMarkupAt(mouseX, mouseY, false);
 
         if (drawCursor) {
