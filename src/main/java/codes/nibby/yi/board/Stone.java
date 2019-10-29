@@ -78,9 +78,8 @@ public class Stone implements IRenderable {
      */
     public void nudge(double xDiff, double yDiff, BoardMetrics metrics) {
         int factor = (int) (Math.random() * 2) - 2;
-        double margin = metrics.getStoneSize() / 20;
-        fuzzyX = Math.random() * margin * factor * xDiff;
-        fuzzyY = Math.random() * margin * factor * yDiff;
+        fuzzyX = Math.random() * factor * xDiff;
+        fuzzyY = Math.random() * factor * yDiff;
     }
 
     /**
