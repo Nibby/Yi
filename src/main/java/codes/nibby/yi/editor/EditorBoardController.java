@@ -164,14 +164,16 @@ public class EditorBoardController extends GameBoardController {
         super.mouseScrolled(notch);
         if (notch > 0) {
             GameNode node = getGame().getCurrentNode();
-            if (node.hasParent())
+            if (node.hasParent()) {
                 node = node.getParent();
-            getGame().setCurrentNode(node, false);
+                getGame().setCurrentNode(node, false);
+            }
         } else if (notch < 0) {
             GameNode node = getGame().getCurrentNode();
-            if (node.hasChildren())
+            if (node.hasChildren()) {
                 node = node.getChildren().get(0);
-            getGame().setCurrentNode(node, false);
+                getGame().setCurrentNode(node, false);
+            }
         }
     }
 
@@ -188,6 +190,20 @@ public class EditorBoardController extends GameBoardController {
     @Override
     public void keyPressed(KeyCode code) {
         super.keyPressed(code);
+
+        if (code.equals(KeyCode.UP)) {
+            GameNode node = getGame().getCurrentNode();
+            if (node.hasParent()) {
+                node = node.getParent();
+                getGame().setCurrentNode(node, false);
+            }
+        } else if (code.equals(KeyCode.DOWN)) {
+            GameNode node = getGame().getCurrentNode();
+            if (node.hasChildren()) {
+                node = node.getChildren().get(0);
+                getGame().setCurrentNode(node, false);
+            }
+        }
     }
 
     @Override
