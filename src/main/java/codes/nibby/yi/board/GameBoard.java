@@ -197,9 +197,6 @@ public class GameBoard extends Pane implements GameListener {
                         wobble = true;
 
                         // Displace the nearby stones (if fuzzy effect is on)
-                        // TODO: Use bigCollision parameter to determine sound effect
-                        boolean bigCollision = false;
-                        boolean snap = false;
                         List<Stone> wobbles = new ArrayList<>();
                         wobbles.add(stones[i]);
                         List<Integer> adjacentPoints = game.getNeighboringIndices(x, y);
@@ -215,19 +212,18 @@ public class GameBoard extends Pane implements GameListener {
                                         : (Math.random() + 0.1d) * STONE_WOBBLE_FACTOR / 2;
                                 if (Math.abs(s.getY() - y) == 1) {
                                     stones[i].setWobble(wobbleAmount);
-                                    snap = true;
                                 } else {
                                     s.setWobble(wobbleAmount);
                                     s.nudge(s.getX() - x, s.getY() - y, metrics);
                                 }
                                 wobbles.add(s);
                                 // Collision detection
+                                // TODO: rework this part, because it's giving some odd collision targets
                                 if ((int) (Math.random() * 5) < 2) {
                                     adjacentPoints = game.getNeighboringIndices(s.getX(), s.getY());
                                     List<Stone> adjacent2 = new ArrayList<>();
                                     adjacentPoints.forEach(pt -> adjacent2.add(stones[pt]));
-                                    if (adjacent2.size() >= 2)
-                                        bigCollision = true;
+
                                     for (Stone ss : adjacent2) {
                                         if (ss == null)
                                             continue;

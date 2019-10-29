@@ -43,8 +43,9 @@ public class StoneRenderer {
         int stoneColor = stone.getColor();
         double wobbleX = stone.getWobbleX();
         double wobbleY = stone.getWobbleY();
-        double fuzzyX = stone.getFuzzyX();
-        double fuzzyY = stone.getFuzzyY();
+        double margin = metrics.getStoneSize() / 20;
+        double fuzzyX = stone.getFuzzyX() * margin;
+        double fuzzyY = stone.getFuzzyY() * margin;
 
         double drawX = metrics.getBoardStoneX(stone.getX()) + wobbleX + fuzzyX;
         double drawY = metrics.getBoardStoneY(stone.getY()) + wobbleY + fuzzyY;
@@ -66,7 +67,7 @@ public class StoneRenderer {
         StoneStyle stoneStyle = Config.getStoneStyle();
 
         if (stoneStyle == null) {
-            // TODO: Make this more user friendly
+            // TODO: Make this more user friendly, and localised
             AlertUtility.showAlert("Unrecognized stone style.", "StoneRenderer Error",
                     Alert.AlertType.ERROR, ButtonType.OK);
             Yi.exit();
@@ -86,8 +87,9 @@ public class StoneRenderer {
     public static void renderShadow(GraphicsContext g, Stone stone, BoardMetrics metrics) {
         double wobbleX = stone.getWobbleX();
         double wobbleY = stone.getWobbleY();
-        double fuzzyX = stone.getFuzzyX();
-        double fuzzyY = stone.getFuzzyY();
+        double margin = metrics.getStoneSize() / 20;
+        double fuzzyX = stone.getFuzzyX() * margin;
+        double fuzzyY = stone.getFuzzyY() * margin;
 
         double drawX = metrics.getBoardStoneX(stone.getX()) + wobbleX + fuzzyX;
         double drawY = metrics.getBoardStoneY(stone.getY()) + wobbleY + fuzzyY;
