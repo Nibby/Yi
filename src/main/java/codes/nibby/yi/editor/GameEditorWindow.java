@@ -90,6 +90,8 @@ public class GameEditorWindow extends Stage {
         Pane root = layout.getContentPane();
         scene = new Scene(root, 820, 600);
         setScene(scene);
+        setMinWidth(820);
+        setMinHeight(600);
 
         scene.setOnDragDone(e -> {
             boolean success = false;

@@ -56,19 +56,19 @@ public class SideToolBar extends BorderPane {
             tbLeft.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveAs);
         }
         setCenter(tbLeft);
-
-        tbRight = new ToolBar();
-        {
-            String[] perspectives = new String[]{
-                locale.getString("perspectives.edit"),
-                locale.getString("perspectives.ai"),
-                locale.getString("perspectives.presentation"),
-            };
-            ComboBox<String> comboPerspective = new ComboBox<>(FXCollections.observableArrayList(perspectives));
-            comboPerspective.setEditable(false);
-            tbRight.getItems().addAll(comboPerspective);
-        }
-        setRight(tbRight);
+//
+//        tbRight = new ToolBar();
+//        {
+//            String[] perspectives = new String[]{
+//                locale.getString("perspectives.edit"),
+//                locale.getString("perspectives.ai"),
+//                locale.getString("perspectives.presentation"),
+//            };
+//            ComboBox<String> comboPerspective = new ComboBox<>(FXCollections.observableArrayList(perspectives));
+//            comboPerspective.setEditable(false);
+//            tbRight.getItems().addAll(comboPerspective);
+//        }
+//        setRight(tbRight);
 
         getStyleClass().add("editor_side_toolbar");
     }

@@ -5,8 +5,6 @@ import codes.nibby.yi.board.BoardMetrics;
 import codes.nibby.yi.editor.EditorToolType;
 import codes.nibby.yi.editor.GameEditorWindow;
 import codes.nibby.yi.game.Game;
-import codes.nibby.yi.game.GameListener;
-import codes.nibby.yi.game.GameNode;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -23,7 +21,7 @@ import java.io.InputStream;
  * @author Kevin Yang
  * Created on 29 August 2019
  */
-public class GameBoardToolBar extends ToolBar implements GameListener {
+public class GameBoardToolBar extends ToolBar {
 
     public static final int BUTTON_SIZE = BoardMetrics.RESERVED_TOOLBAR_SIZE - 15;
 
@@ -31,28 +29,28 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
 
     private Label moveLabel;
     private ToggleGroup annotationGroup;
-    private ToggleButton btnPlay;
-    private ToggleButton btnTriangle;
-    private ToggleButton btnCircle;
-    private ToggleButton btnSquare;
-    private ToggleButton btnCross;
-    private ToggleButton btnNumber;
-    private ToggleButton btnLetter;
-    private ToggleButton btnMarkBlack;
-    private ToggleButton btnMarkWhite;
-    private ToggleButton btnShowLabel;
+    private ToggleButton buttonPlay;
+    private ToggleButton buttonTriangle;
+    private ToggleButton buttonCircle;
+    private ToggleButton buttonSquare;
+    private ToggleButton buttonCross;
+    private ToggleButton buttonNumber;
+    private ToggleButton buttonLetter;
+    private ToggleButton buttonMarkBlack;
+    private ToggleButton buttonMarkWhite;
+    private ToggleButton buttonCoordinates;
+    private Button buttonShowTray;
 
     public GameBoardToolBar(GameEditorWindow editor) {
         this.editor = editor;
-        this.editor.getGame().addGameListener(this);
         annotationGroup = new ToggleGroup();
 
         Label lbTools = new Label("Tools: ");
         lbTools.getStyleClass().add("label");
         getItems().add(lbTools);
 
-        addToolButton(btnPlay = new ToggleButton(), "play", "Place stones", true);
-        btnPlay.selectedProperty().addListener(e -> {
+        addToolButton(buttonPlay = new ToggleButton(), "play", "Place stones", true);
+        buttonPlay.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.PLAY_MOVE);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.DYNAMIC);
@@ -62,15 +60,15 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
         lbSep1.getStyleClass().add("label");
         getItems().add(lbSep1);
 
-        addToolButton(btnMarkBlack = new ToggleButton(), "circle-thick", "Add black stones", true);
-        btnMarkBlack.selectedProperty().addListener(e -> {
+        addToolButton(buttonMarkBlack = new ToggleButton(), "circle-thick", "Add black stones", true);
+        buttonMarkBlack.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.ADD_HELPER_BLACK);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.STONE_BLACK);
         });
 
-        addToolButton(btnMarkWhite = new ToggleButton(), "circle-thick-fill", "Add white stones", true);
-        btnMarkWhite.selectedProperty().addListener(e -> {
+        addToolButton(buttonMarkWhite = new ToggleButton(), "circle-thick-fill", "Add white stones", true);
+        buttonMarkWhite.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.ADD_HELPER_WHITE);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.STONE_WHITE);
@@ -80,43 +78,43 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
         lbSep2.getStyleClass().add("label");
         getItems().add(lbSep2);
 
-        addToolButton(btnTriangle = new ToggleButton(), "triangle", "Triangle marker", true);
-        btnTriangle.selectedProperty().addListener(e -> {
+        addToolButton(buttonTriangle = new ToggleButton(), "triangle", "Triangle marker", true);
+        buttonTriangle.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.MARKUP_TRIANGLE);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_TRIANGLE);
         });
 
-        addToolButton(btnSquare = new ToggleButton(), "square", "Square marker", true);
-        btnSquare.selectedProperty().addListener(e -> {
+        addToolButton(buttonSquare = new ToggleButton(), "square", "Square marker", true);
+        buttonSquare.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.MARKUP_SQUARE);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_SQUARE);
         });
 
-        addToolButton(btnCircle = new ToggleButton(), "circle", "Circle marker", true);
-        btnCircle.selectedProperty().addListener(e -> {
+        addToolButton(buttonCircle = new ToggleButton(), "circle", "Circle marker", true);
+        buttonCircle.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.MARKUP_CIRCLE);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_CIRCLE);
         });
 
-        addToolButton(btnCross = new ToggleButton(), "cross", "Cross marker", true);
-        btnCross.selectedProperty().addListener(e -> {
+        addToolButton(buttonCross = new ToggleButton(), "cross", "Cross marker", true);
+        buttonCross.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.MARKUP_CROSS);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_CROSS);
         });
 
-        addToolButton(btnNumber = new ToggleButton("1"), "", "Number marker", true);
-        btnNumber.selectedProperty().addListener(e -> {
+        addToolButton(buttonNumber = new ToggleButton("1"), "", "Number marker", true);
+        buttonNumber.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.MARKUP_LABEL_NUMBER);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_LABEL);
         });
 
-        addToolButton(btnLetter = new ToggleButton("A"), "", "Letter marker", true);
-        btnLetter.selectedProperty().addListener(e -> {
+        addToolButton(buttonLetter = new ToggleButton("A"), "", "Letter marker", true);
+        buttonLetter.selectedProperty().addListener(e -> {
             editor.getController().setToolType(EditorToolType.MARKUP_LABEL_LETTER);
             if (editor.getGameBoard() != null)
                 editor.getGameBoard().setInputHint(BoardInputHintType.MARKUP_LABEL);
@@ -126,14 +124,35 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
         HBox.setHgrow(divider, Priority.ALWAYS);
         getItems().add(divider);
 
-        addToolButton(btnShowLabel = new ToggleButton(), "grid", "Show grid labels", false);
-        btnShowLabel.selectedProperty().addListener(e -> {
-//            editor.getGobanEditor().setDrawLabels(btnShowLabel.isSelected());
+        addToolButton(buttonCoordinates = new ToggleButton(), "grid", "Show grid labels", false);
+        buttonCoordinates.selectedProperty().addListener(e -> {
+//            editor.getGobanEditor().setDrawLabels(buttonShowLabel.isSelected());
         });
-        moveLabel = new Label(" Move: 0");
-        getItems().add(moveLabel);
 
-        annotationGroup.selectToggle(btnPlay);
+        // TODO somehow verify the intial stat
+
+        buttonShowTray = new Button("", null);
+        buttonShowTray.setPrefSize(BUTTON_SIZE, BUTTON_SIZE);
+        ImageView buttonShowTrayIcon = new ImageView(new Image(GameBoardToolBar.class.getResourceAsStream("/icons/arrow_down_invert.png")));
+        buttonShowTrayIcon.setFitWidth(BUTTON_SIZE);
+        buttonShowTrayIcon.setFitHeight(BUTTON_SIZE);
+        buttonShowTray.setGraphic(buttonShowTrayIcon);
+        buttonShowTray.setOnAction(evt -> {
+            boolean newState = !editor.getLayout().isShowingRightSidebar();
+            editor.getLayout().setShowRightSidebar(newState);
+            String iconPath;
+            if (newState == true)
+                iconPath = "/icons/arrow_down_invert.png";
+            else
+                iconPath = "/icons/arrow_right_invert.png";
+            ImageView icon = new ImageView(new Image(GameBoardToolBar.class.getResourceAsStream(iconPath)));
+            icon.setFitWidth(BUTTON_SIZE);
+            icon.setFitHeight(BUTTON_SIZE);
+            buttonShowTray.setGraphic(icon);
+        });
+        getItems().add(buttonShowTray);
+
+        annotationGroup.selectToggle(buttonPlay);
 
         getStyleClass().add("editor_board_tb");
         setMinHeight(BoardMetrics.RESERVED_TOOLBAR_SIZE);
@@ -194,19 +213,5 @@ public class GameBoardToolBar extends ToolBar implements GameListener {
             }
         });
         getItems().add(b);
-    }
-
-    @Override
-    public void gameInitialized(Game game) {
-        moveLabel.setText(" Move: " + game.getCurrentNode().getMoveNumber());
-    }
-
-    @Override
-    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
-        moveLabel.setText(" Move: " + currentMove.getMoveNumber());
-    }
-
-    @Override
-    public void gameModified(Game game) {
     }
 }
