@@ -21,9 +21,12 @@ public class ReviewLayout extends AbstractLayout {
 
     private SplitPane splitMain;
     private SplitPane splitSidebar;
+    private BorderPane rightSidebarPane;
 
     private BorderPane boardPane;
     private BorderPane content;
+
+    private double lastDividerLocation;
 
     public ReviewLayout(GameEditorWindow editor) {
         super(editor);
@@ -62,56 +65,54 @@ public class ReviewLayout extends AbstractLayout {
         treeTabPane.getTabs().add(treeTab);
 
         MoveCommentPane commentViewer = getEditor().getMoveCommentPane();
+        commentViewer.setMinHeight(120);
+        commentViewer.setPrefHeight(120);
         splitSidebar = new SplitPane(treeTabPane, commentViewer);
         splitSidebar.setOrientation(Orientation.VERTICAL);
         splitSidebar.setDividerPositions(0.7d);
 
-        BorderPane sidebar = new BorderPane();
-        sidebar.setCenter(splitSidebar);
+        rightSidebarPane = new BorderPane();
+        rightSidebarPane.setCenter(splitSidebar);
         SideToolBar sideToolBar = new SideToolBar(getEditor());
-        sidebar.setTop(sideToolBar);
+        rightSidebarPane.setTop(sideToolBar);
+        boolean visible = isShowingRightSidebar();
+        rightSidebarPane.setVisible(visible);
+        rightSidebarPane.setManaged(visible);
+        rightSidebarPane.setMinWidth(265);
 
         // Components in the centre
         boardPane = new BorderPane();
         boardPane.setCenter(getEditor().getGameBoard());
-        splitMain = new SplitPane(boardPane, sidebar);
+        boardPane.setMinWidth(600);
+        splitMain = new SplitPane(boardPane, rightSidebarPane);
         splitMain.setOrientation(Orientation.HORIZONTAL);
-        splitMain.setDividerPositions(0.685d);
+        lastDividerLocation = visible ? 0.685d : 1.0d;
+        splitMain.setDividerPositions(lastDividerLocation);
 
         content = new BorderPane();
         content.setCenter(splitMain);
+        content.widthProperty().addListener(evt -> {
+            if (isShowingRightSidebar()) {
+                splitMain.setDividerPosition(0, lastDividerLocation);
+            } else {
+                splitMain.setDividerPosition(0, 1.0d);
+            }
+
+        });
         return content;
     }
 
     @Override
-    public void setGameTreePaneVisible(boolean flag) {
-        super.setGameTreePaneVisible(flag);
-        GameTreePane treePane = getEditor().getGameTreePane();
-        treePane.setVisible(flag);
-        treePane.setManaged(flag);
+    public void setShowRightSidebar(boolean showRightSidebar) {
+        super.setShowRightSidebar(showRightSidebar);
 
-        updateSidebarState();
-    }
-
-    @Override
-    public void setGameCommentPaneVisible(boolean flag) {
-        super.setGameCommentPaneVisible(flag);
-        MoveCommentPane commentViewer = getEditor().getMoveCommentPane();
-        commentViewer.setVisible(flag);
-        commentViewer.setManaged(flag);
-
-        updateSidebarState();
-    }
-
-    /**
-     * Check if the sidebar needs to be displayed.
-     * It will be removed from the view if no components are visible inside.
-     */
-    private void updateSidebarState() {
-        boolean treeVisible = getEditor().getGameTreePane().isVisible();
-        boolean commentsVisible = getEditor().getMoveCommentPane().isVisible();
-        boolean shouldShow = treeVisible || commentsVisible;
-
-        splitSidebar.setVisible(shouldShow);
+        rightSidebarPane.setVisible(showRightSidebar);
+        rightSidebarPane.setManaged(showRightSidebar);
+        if (showRightSidebar) {
+            splitMain.setDividerPosition(0, lastDividerLocation);
+        } else {
+            lastDividerLocation = splitMain.getDividers().get(0).getPosition();
+            splitMain.setDividerPosition(0, 1.0d);
+        }
     }
 }

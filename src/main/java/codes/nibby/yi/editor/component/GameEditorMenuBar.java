@@ -94,13 +94,13 @@ public class GameEditorMenuBar extends BorderPane {
                 }
 
                 menuView.getItems().add(new SeparatorMenuItem());
-
-                CheckMenuItem chkGameTree = new CheckMenuItem(lang.getString("menubar.view.game_tree"));
-                chkGameTree.setOnAction(value -> editor.getLayout().setGameTreePaneVisible(chkGameTree.isSelected()));
-
-                CheckMenuItem chkMoveComments = new CheckMenuItem(lang.getString("menubar.view.move_comments"));
-                chkMoveComments.setOnAction(value -> editor.getLayout().setGameCommentPaneVisible(chkMoveComments.isSelected()));
-                menuView.getItems().addAll(chkGameTree, chkMoveComments);
+//
+//                CheckMenuItem chkGameTree = new CheckMenuItem(lang.getString("menubar.view.game_tree"));
+//                chkGameTree.setOnAction(value -> editor.getLayout().setGameTreePaneVisible(chkGameTree.isSelected()));
+//
+//                CheckMenuItem chkMoveComments = new CheckMenuItem(lang.getString("menubar.view.move_comments"));
+//                chkMoveComments.setOnAction(value -> editor.getLayout().setGameCommentPaneVisible(chkMoveComments.isSelected()));
+//                menuView.getItems().addAll(chkGameTree, chkMoveComments);
             }
 
             Menu menuHelp = new Menu(lang.getString("menubar.help"));

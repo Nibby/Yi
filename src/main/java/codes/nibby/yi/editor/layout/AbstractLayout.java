@@ -15,6 +15,11 @@ public abstract class AbstractLayout {
     private BorderPane contentPane;
     private GameEditorWindow editor;
 
+    private boolean showTopSidebar = false;
+    private boolean showLeftSidebar = false;
+    private boolean showRightSidebar = false;
+    private boolean showBottomSidebar = false;
+
     public AbstractLayout(GameEditorWindow editor) {
         this.editor = editor;
 
@@ -47,12 +52,36 @@ public abstract class AbstractLayout {
 
     protected abstract BorderPane createLayout();
 
-    public void setGameTreePaneVisible(boolean flag) {
-
+    public boolean isShowTopSidebar() {
+        return showTopSidebar;
     }
 
-    public void setGameCommentPaneVisible(boolean flag) {
+    public void setShowTopSidebar(boolean showTopSidebar) {
+        this.showTopSidebar = showTopSidebar;
+    }
 
+    public boolean isShowLeftSidebar() {
+        return showLeftSidebar;
+    }
+
+    public void setShowLeftSidebar(boolean showLeftSidebar) {
+        this.showLeftSidebar = showLeftSidebar;
+    }
+
+    public boolean isShowingRightSidebar() {
+        return showRightSidebar;
+    }
+
+    public void setShowRightSidebar(boolean showRightSidebar) {
+        this.showRightSidebar = showRightSidebar;
+    }
+
+    public boolean isShowBottomSidebar() {
+        return showBottomSidebar;
+    }
+
+    public void setShowBottomSidebar(boolean showBottomSidebar) {
+        this.showBottomSidebar = showBottomSidebar;
     }
 
     GameEditorWindow getEditor() {
