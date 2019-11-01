@@ -33,5 +33,4 @@ public class Yi extends Application {
         GameEditorWindow editor = new GameEditorWindow();
         editor.show();
     }
-
 }

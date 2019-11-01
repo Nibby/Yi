@@ -4,7 +4,6 @@ import codes.nibby.yi.Yi;
 import codes.nibby.yi.board.GameBoard;
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.config.UiStylesheets;
-import codes.nibby.yi.editor.component.GameBoardToolBar;
 import codes.nibby.yi.editor.component.GameEditorMenuBar;
 import codes.nibby.yi.editor.component.GameTreePane;
 import codes.nibby.yi.editor.component.MoveCommentPane;
@@ -49,7 +48,7 @@ public class GameEditorWindow extends Stage {
     private GameTreePane gameTreePane;
     private MoveCommentPane moveCommentPane;
     private GameEditorMenuBar toolBar;
-    private GameBoardToolBar boardToolBar;
+    private GameBoard.GameBoardToolBar boardToolBar;
 
     private AbstractLayout layout;
     private Scene scene;
@@ -73,7 +72,7 @@ public class GameEditorWindow extends Stage {
      */
     private void initializeComponents() {
         game = new Game(GameRules.CHINESE, 19, 19);
-        boardToolBar = new GameBoardToolBar(this);
+        boardToolBar = new GameBoard.GameBoardToolBar(this);
         gameBoard = new GameBoard(game, controller, boardToolBar);
         toolBar = new GameEditorMenuBar(this);
         gameTreePane = new GameTreePane(this);
@@ -88,10 +87,10 @@ public class GameEditorWindow extends Stage {
 
         layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
-        scene = new Scene(root, 820, 600);
+        scene = new Scene(root, 620, 640);
         setScene(scene);
-        setMinWidth(820);
-        setMinHeight(600);
+        setMinWidth(620);
+        setMinHeight(640);
 
         scene.setOnDragDone(e -> {
             boolean success = false;

@@ -56,7 +56,7 @@ public class SideToolBar extends BorderPane {
             tbLeft.getItems().addAll(buttonNew, buttonOpen, buttonSave, buttonSaveAs);
         }
         setCenter(tbLeft);
-//
+
 //        tbRight = new ToolBar();
 //        {
 //            String[] perspectives = new String[]{
