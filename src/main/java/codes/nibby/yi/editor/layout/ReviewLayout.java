@@ -43,12 +43,8 @@ public class ReviewLayout extends AbstractLayout {
         {
             treeScrollPane.setPannable(true);
             treeScrollPane.setCursor(Cursor.OPEN_HAND);
-            treeScrollPane.onMouseDraggedProperty().addListener(l -> {
-                treeScrollPane.setCursor(Cursor.CLOSED_HAND);
-            });
-            treeScrollPane.onMouseDragReleasedProperty().addListener(l -> {
-                treeScrollPane.setCursor(Cursor.OPEN_HAND);
-            });
+            treeScrollPane.onMouseDraggedProperty().addListener(l -> treeScrollPane.setCursor(Cursor.CLOSED_HAND));
+            treeScrollPane.onMouseDragReleasedProperty().addListener(l -> treeScrollPane.setCursor(Cursor.OPEN_HAND));
             treeScrollPane.setPadding(new Insets(2, 5, 2, 5));
             treePane.setScrollPane(treeScrollPane);
             treeScrollPane.getStyleClass().add("game_tree_scroll_pane");
@@ -92,12 +88,10 @@ public class ReviewLayout extends AbstractLayout {
         content = new BorderPane();
         content.setCenter(splitMain);
         content.widthProperty().addListener(evt -> {
-            if (isShowingRightSidebar()) {
+            if (isShowingRightSidebar())
                 splitMain.setDividerPosition(0, lastDividerLocation);
-            } else {
+            else
                 splitMain.setDividerPosition(0, 1.0d);
-            }
-
         });
         return content;
     }
@@ -110,9 +104,11 @@ public class ReviewLayout extends AbstractLayout {
         rightSidebarPane.setManaged(showRightSidebar);
         if (showRightSidebar) {
             splitMain.setDividerPosition(0, lastDividerLocation);
+            getEditor().setWidth(getEditor().getWidth() + rightSidebarPane.getWidth());
         } else {
             lastDividerLocation = splitMain.getDividers().get(0).getPosition();
             splitMain.setDividerPosition(0, 1.0d);
+            getEditor().setWidth(getEditor().getWidth() - rightSidebarPane.getWidth());
         }
     }
 }
