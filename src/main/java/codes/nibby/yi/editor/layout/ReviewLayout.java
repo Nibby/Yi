@@ -100,15 +100,17 @@ public class ReviewLayout extends AbstractLayout {
     public void setShowRightSidebar(boolean showRightSidebar) {
         super.setShowRightSidebar(showRightSidebar);
 
+        rightSidebarPane.setMinWidth(250);
+        rightSidebarPane.setPrefWidth(250);
         rightSidebarPane.setVisible(showRightSidebar);
         rightSidebarPane.setManaged(showRightSidebar);
         if (showRightSidebar) {
             splitMain.setDividerPosition(0, lastDividerLocation);
-            getEditor().setWidth(getEditor().getWidth() + rightSidebarPane.getWidth());
+            getEditor().setWidth(getEditor().getWidth() + rightSidebarPane.getPrefWidth());
         } else {
             lastDividerLocation = splitMain.getDividers().get(0).getPosition();
             splitMain.setDividerPosition(0, 1.0d);
-            getEditor().setWidth(getEditor().getWidth() - rightSidebarPane.getWidth());
+            getEditor().setWidth(getEditor().getWidth() - rightSidebarPane.getPrefWidth());
         }
     }
 }

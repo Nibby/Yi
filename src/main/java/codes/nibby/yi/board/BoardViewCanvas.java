@@ -9,8 +9,6 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-
 /**
  * Canvas for rendering elements currently present in the game node.
  * This layer draws:
@@ -42,7 +40,6 @@ public class BoardViewCanvas extends BoardCanvasLayer {
     @Override
     protected void _render(GraphicsContext g, Game game, GameBoard board) {
         g.clearRect(0, 0, getWidth(), getHeight());
-        System.out.println("draw");
 
         // TODO: Allow theme parameter override on these routines
         drawBackground(g, board);
