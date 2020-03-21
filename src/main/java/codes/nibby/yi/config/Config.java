@@ -37,6 +37,7 @@ public class Config {
     private static final String KEY_BOARD_CURSOR = "cursor";
     private static final String KEY_EDITOR = "editor";
     private static final String KEY_EDITOR_PERSPECTIVE = "perspective";
+
     // The config.json document.
     private static JSONObject root;
 

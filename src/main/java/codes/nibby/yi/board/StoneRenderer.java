@@ -126,6 +126,22 @@ public class StoneRenderer {
         g.setEffect(null);
     }
 
+    public static void renderTextureWithShadow(GraphicsContext g, Stone stone, BoardMetrics metrics) {
+        int stoneColor = stone.getColor();
+        double wobbleX = stone.getWobbleX();
+        double wobbleY = stone.getWobbleY();
+        double margin = metrics.getStoneSize() / 20;
+        double fuzzyX = stone.getFuzzyX() * margin;
+        double fuzzyY = stone.getFuzzyY() * margin;
+
+        double drawX = metrics.getBoardStoneX(stone.getX()) + wobbleX + fuzzyX;
+        double drawY = metrics.getBoardStoneY(stone.getY()) + wobbleY + fuzzyY;
+        double stoneSize = metrics.getStoneSize();
+
+        renderShadow(g, stoneSize, drawX, drawY);
+        renderTexture(g, stoneColor, stoneSize, drawX, drawY);
+    }
+
     /**
      * Draws a fully rendered Go stone (texture + shadow) on one layer.
      *
@@ -135,7 +151,7 @@ public class StoneRenderer {
      * @param x     X draw position.
      * @param y     Y draw position.
      */
-    public static void renderTextureAndShadow(GraphicsContext g, int color, double size, double x, double y) {
+    public static void renderTextureWithShadow(GraphicsContext g, int color, double size, double x, double y) {
         renderShadow(g, size, x, y);
         renderTexture(g, color, size, x, y);
     }

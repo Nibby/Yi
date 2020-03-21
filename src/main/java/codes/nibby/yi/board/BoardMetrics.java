@@ -127,15 +127,14 @@ public class BoardMetrics {
      */
     private int labelYOrder = LABEL_Y_ASCENDING;
 
-    public void calibrate(GameBoard board) {
+    public void calibrate(GameBoard board, int boardWidth, int boardHeight) {
         // TODO: Add a preference for coordinates to be displayed OUTSIDE of the board background
         // therefore need to adjust some spacing calculations below...
 
         // Amount of spacing between the start of the board background and the grid lines
         double margin = (!drawLabels) ? 10 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 45 : 30;
-        Game game = board.getGame();
-        this.boardWidth = game.getBoardWidth();
-        this.boardHeight = game.getBoardHeight();
+        this.boardWidth = boardWidth;
+        this.boardHeight = boardHeight;
         drawWidth = board.getWidth() - margin;
         drawHeight = board.getHeight() - margin;
         // Account for reserved topComponent

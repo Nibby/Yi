@@ -6,7 +6,6 @@ import codes.nibby.yi.game.GameNode;
 import codes.nibby.yi.game.Markup;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -14,31 +13,30 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * The top-most layer of the board canvas stack.
- * This layer handles:
- * <ul>
- *     <li>Peripheral input, propagates them to GameBoard parent</li>
- *     <li>Rendering cursor indicators</li>
- *     <li>Rendering animated stones (where contiguous redraw is required)</li>
- * </ul>
+ * Canvas for rendering user input prompts and cursors.
+ *
+ * @author Kevin Yang
+ * Created on 21 March 2020
  */
-public class BoardInputCanvas extends Canvas {
+public class BoardInputCanvas extends BoardCanvasLayer {
 
     private static final Color COLOR_BLACK = new Color(0d, 0d, 0d, 0.85d);
     private static final Color COLOR_WHITE = new Color(1d, 1d, 1d, 0.85d);
 
-    private GameBoard gameBoard;
-    private GraphicsContext g;
-
     private int mouseX = -1, mouseY = -1;
     private int lastMouseX = -1, lastMouseY = -1;
+    private GameBoardController controller;
 
-    public BoardInputCanvas(GameBoard gameBoard) {
-        this.gameBoard = gameBoard;
-        g = getGraphicsContext2D();
+    private WeakReference<Game> cachedGame;
+    private WeakReference<GameBoard> cachedGameBoard;
+
+    public BoardInputCanvas(GameBoard gameBoard, GameBoardController controller) {
+        this.controller = controller;
+        this.cachedGameBoard = new WeakReference<>(gameBoard);
 
         addEventHandler(MouseEvent.MOUSE_MOVED, this::mouseMoved);
         addEventHandler(MouseEvent.MOUSE_ENTERED, this::mouseEntered);
@@ -52,24 +50,93 @@ public class BoardInputCanvas extends Canvas {
         addEventHandler(KeyEvent.KEY_RELEASED, this::keyReleased);
     }
 
-    public void render() {
-        g.clearRect(0, 0, getWidth(), getHeight());
+    @Override
+    protected void _render(GraphicsContext g, Game game, GameBoard gameBoard) {
+        cachedGame = new WeakReference<>(game);
+        cachedGameBoard = new WeakReference<>(gameBoard);
 
+        g.clearRect(0, 0, getWidth(), getHeight());
+        boolean redrawNeeded = drawAnimatedStones(g, game, gameBoard);
+        boolean drawCursor = mouseX >= 0 && mouseY >= 0 && !game.getCurrentNode().hasMarkupAt(mouseX, mouseY, false);
+        if (drawCursor) {
+            drawCursor(g, game, gameBoard);
+        }
+
+        if (redrawNeeded) {
+            // TODO: Ugly, refactor me.
+            new Timeline(new KeyFrame(Duration.millis(40), e -> super.render(game, gameBoard))).play();
+        }
+    }
+
+    private void drawCursor(GraphicsContext g, Game game, GameBoard gameBoard) {
+        BoardCursorType cursorType = Config.getCursorType();
+        BoardMetrics metrics = gameBoard.getMetrics();
+        double w = metrics.getStoneSize() / 2;
+        double h = metrics.getStoneSize() / 2;
+        double x = metrics.getBoardStoneX(mouseX) + w / 2;
+        double y = metrics.getBoardStoneY(mouseY) + h / 2;
+        int nextColor = game.getNextMoveColor();
+        Stone[] stones = gameBoard.getAllRenderableStones();
+        Stone hover = stones[mouseX + mouseY * game.getBoardWidth()];
+        Color markupColor = hover != null && hover.getColor() == Game.COLOR_BLACK ? Color.WHITE : Color.BLACK;
+
+        g.setGlobalAlpha(0.65d);
+        BoardInputHintType inputHint = gameBoard.getInputHint();
+        if (inputHint.equals(BoardInputHintType.DYNAMIC)) {
+            if (hover == null) {
+                if (nextColor == Game.COLOR_BLACK)
+                    g.setFill(COLOR_BLACK);
+                else
+                    g.setFill(COLOR_WHITE);
+
+                switch (cursorType) {
+                    case CIRCLE:
+                        g.fillOval(x, y, w, h);
+                        break;
+                    case SQUARE:
+                        g.fillRect(x, y, w, h);
+                        break;
+                    case STONE:
+                        StoneRenderer.renderTexture(g, nextColor, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
+                        break;
+                }
+            }
+        } else if (inputHint.equals(BoardInputHintType.STONE_BLACK)) {
+            StoneRenderer.renderTexture(g, Game.COLOR_BLACK, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
+        } else if (inputHint.equals(BoardInputHintType.STONE_WHITE)) {
+            StoneRenderer.renderTexture(g, Game.COLOR_WHITE, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
+        } else if (inputHint.equals(BoardInputHintType.MARKUP_TRIANGLE)) {
+            MarkupRenderer.render(g, hover, Markup.triangle(mouseX, mouseY), metrics, markupColor);
+        } else if (inputHint.equals(BoardInputHintType.MARKUP_SQUARE)) {
+            MarkupRenderer.render(g, hover, Markup.square(mouseX, mouseY), metrics, markupColor);
+        } else if (inputHint.equals(BoardInputHintType.MARKUP_CIRCLE)) {
+            MarkupRenderer.render(g, hover, Markup.circle(mouseX, mouseY), metrics, markupColor);
+        } else if (inputHint.equals(BoardInputHintType.MARKUP_CROSS)) {
+            MarkupRenderer.render(g, hover, Markup.cross(mouseX, mouseY), metrics, markupColor);
+        } else if (inputHint.equals(BoardInputHintType.MARKUP_LABEL)) {
+            // TODO implement later
+        }
+
+        g.setGlobalAlpha(1.0d);
+    }
+
+    private boolean drawAnimatedStones(GraphicsContext g, Game game, GameBoard gameBoard) {
         // Draw all animated stones.
         List<Stone> animatedStones = gameBoard.getAnimatedStones();
-        GameNode node = gameBoard.getGame().getCurrentNode();
+        GameNode node = game.getCurrentNode();
         boolean redraw = false;
         Stone currentStone = null;
         int[] currentMove = node.getCurrentMove();
         for (Stone stone : animatedStones) {
             stone.wobble();
-            StoneRenderer.renderTexture(g, stone, gameBoard.getMetrics());
+            StoneRenderer.renderTextureWithShadow(g, stone, gameBoard.getMetrics());
             if (stone.shouldWobble())
                 redraw = true;
             if (currentMove != null && stone.getX() == currentMove[0] && stone.getY() == currentMove[1])
                 currentStone = stone;
         }
 
+        // Wobble the marker on the current stone as well
         if (currentStone != null) {
             int[] move = node.getCurrentMove();
             Markup markup = Markup.circle(move[0], move[1]);
@@ -77,82 +144,23 @@ public class BoardInputCanvas extends Canvas {
             MarkupRenderer.render(g, currentStone, markup, gameBoard.getMetrics(), markerColor);
         }
 
-        // Draw board cursor
-        boolean drawCursor = mouseX >= 0 && mouseY >= 0 && !node.hasMarkupAt(mouseX, mouseY, false);
-
-        if (drawCursor) {
-
-            BoardCursorType cursorType = Config.getCursorType();
-            BoardMetrics metrics = gameBoard.getMetrics();
-            double w = metrics.getStoneSize() / 2;
-            double h = metrics.getStoneSize() / 2;
-            double x = metrics.getBoardStoneX(mouseX) + w / 2;
-            double y = metrics.getBoardStoneY(mouseY) + h / 2;
-            int nextColor = gameBoard.getGame().getNextMoveColor();
-            Stone[] stones = gameBoard.getAllRenderableStones();
-            Stone hover = stones[mouseX + mouseY * gameBoard.getGame().getBoardWidth()];
-            Color markupColor = hover != null && hover.getColor() == Game.COLOR_BLACK ? Color.WHITE : Color.BLACK;
-
-            g.setGlobalAlpha(0.65d);
-            BoardInputHintType inputHint = gameBoard.getInputHint();
-            if (inputHint.equals(BoardInputHintType.DYNAMIC)) {
-                if (hover == null) {
-                    if (nextColor == Game.COLOR_BLACK)
-                        g.setFill(COLOR_BLACK);
-                    else
-                        g.setFill(COLOR_WHITE);
-
-                    switch (cursorType) {
-                        case CIRCLE:
-                            g.fillOval(x, y, w, h);
-                            break;
-                        case SQUARE:
-                            g.fillRect(x, y, w, h);
-                            break;
-                        case STONE:
-                            StoneRenderer.renderTexture(g, nextColor, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
-                            break;
-                    }
-                }
-            } else if (inputHint.equals(BoardInputHintType.STONE_BLACK)) {
-                StoneRenderer.renderTexture(g, Game.COLOR_BLACK, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
-            } else if (inputHint.equals(BoardInputHintType.STONE_WHITE)) {
-                StoneRenderer.renderTexture(g, Game.COLOR_WHITE, metrics.getStoneSize(), metrics.getBoardStoneX(mouseX), metrics.getBoardStoneY(mouseY));
-            } else if (inputHint.equals(BoardInputHintType.MARKUP_TRIANGLE)) {
-                MarkupRenderer.render(g, hover, Markup.triangle(mouseX, mouseY), metrics, markupColor);
-            } else if (inputHint.equals(BoardInputHintType.MARKUP_SQUARE)) {
-                MarkupRenderer.render(g, hover, Markup.square(mouseX, mouseY), metrics, markupColor);
-            } else if (inputHint.equals(BoardInputHintType.MARKUP_CIRCLE)) {
-                MarkupRenderer.render(g, hover, Markup.circle(mouseX, mouseY), metrics, markupColor);
-            } else if (inputHint.equals(BoardInputHintType.MARKUP_CROSS)) {
-                MarkupRenderer.render(g, hover, Markup.cross(mouseX, mouseY), metrics, markupColor);
-            } else if (inputHint.equals(BoardInputHintType.MARKUP_LABEL)) {
-                // TODO implement later
-            }
-
-            g.setGlobalAlpha(1.0d);
-        }
-
-
-        if (redraw) {
-            new Timeline(new KeyFrame(Duration.millis(40), e -> render())).play();
-        }
+        return redraw;
     }
 
     private void mouseMoved(MouseEvent evt) {
         requestFocus();
         updateMousePosition(evt);
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mouseMoved(mouseX, mouseY, lastMouseX, lastMouseY);
-        render();
+        if (controller != null)
+            controller.mouseMoved(mouseX, mouseY, lastMouseX, lastMouseY);
+        redrawIfPossible();
     }
 
     private void mouseEntered(MouseEvent evt) {
         requestFocus();
         updateMousePosition(evt);
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mouseEntered();
-        render();
+        if (controller != null)
+            controller.mouseEntered();
+        redrawIfPossible();
     }
 
     private void mouseExited(MouseEvent evt) {
@@ -160,48 +168,51 @@ public class BoardInputCanvas extends Canvas {
         mouseY = -1;
         lastMouseX = -1;
         lastMouseY = -1;
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mouseExited();
-        render();
+        if (controller != null)
+            controller.mouseExited();
+        redrawIfPossible();
     }
 
     private void mouseDragged(MouseEvent evt) {
         requestFocus();
         updateMousePosition(evt);
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mouseDragged(mouseX, mouseY, lastMouseX, lastMouseY, evt.getButton());
-        render();
+        if (controller != null)
+            controller.mouseDragged(mouseX, mouseY, lastMouseX, lastMouseY, evt.getButton());
+        redrawIfPossible();
     }
 
     private void mousePressed(MouseEvent evt) {
         requestFocus();
         updateMousePosition(evt);
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mousePressed(mouseX, mouseY, lastMouseX, lastMouseY, evt.getButton());
-        render();
+        if (controller != null)
+            controller.mousePressed(mouseX, mouseY, lastMouseX, lastMouseY, evt.getButton());
+        redrawIfPossible();
     }
 
     private void mouseReleased(MouseEvent evt) {
         requestFocus();
         updateMousePosition(evt);
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mouseReleased(mouseX, mouseY, lastMouseX, lastMouseY, evt.getButton());
-        render();
+        if (controller != null)
+            controller.mouseReleased(mouseX, mouseY, lastMouseX, lastMouseY, evt.getButton());
+        redrawIfPossible();
     }
 
     private void mouseScrolled(ScrollEvent evt) {
-        if (gameBoard.getController() != null)
-            gameBoard.getController().mouseScrolled(evt.getDeltaY());
+        if (controller != null)
+            controller.mouseScrolled(evt.getDeltaY());
+        redrawIfPossible();
     }
 
     private void keyPressed(KeyEvent evt) {
-        if (gameBoard.getController() != null)
-            gameBoard.getController().keyPressed(evt.getCode());
+        if (controller != null)
+            controller.keyPressed(evt.getCode());
+        redrawIfPossible();
     }
 
     private void keyReleased(KeyEvent evt) {
-        if (gameBoard.getController() != null)
-            gameBoard.getController().keyReleased(evt.getCode());
+        if (controller != null)
+            controller.keyReleased(evt.getCode());
+        redrawIfPossible();
     }
 
     /**
@@ -210,6 +221,10 @@ public class BoardInputCanvas extends Canvas {
      * @param evt Mouse event.
      */
     private void updateMousePosition(MouseEvent evt) {
+        GameBoard gameBoard = cachedGameBoard.get();
+        if (gameBoard == null)
+            return;
+
         BoardMetrics metrics = gameBoard.getMetrics();
         double offsetX = metrics.getOffsetX();
         double offsetY = metrics.getOffsetY();
@@ -234,5 +249,15 @@ public class BoardInputCanvas extends Canvas {
             lastMouseX = mouseX;
             lastMouseY = mouseY;
         }
+    }
+
+    private void redrawIfPossible() {
+        if (cachedGame != null && cachedGameBoard != null) {
+            render(cachedGame.get(), cachedGameBoard.get());
+        }
+    }
+
+    public void setController(GameBoardController controller) {
+        this.controller = controller;
     }
 }
