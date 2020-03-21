@@ -21,60 +21,40 @@ import javafx.util.Duration;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * The standard go board component used in the program.
  * This class manages all the graphical aspect of the <strong>Game</strong> object.
- * It consists of a stack of <strong>three</strong> canvas layers,
- * in draw order (back to front):
+ * It consists of a stack of canvas layers in draw order (back to front):
  *
  * <ol>
- *     <li>BoardBackgroundCanvas</li>
+ *     <li>BoardViewCanvas</li>
  *     <li>BoardInputCanvas</li>
- *     <li>BoardStaticCanvas</li>
  * </ol>
  *
- * <strong>Layer 1: BoardBackgroundCanvas</strong>
- * The first layer displays the grid, star points, coordinate labels, and most
- * importantly, stone shadows. Shadows are kept in their own layer for stone
- * animation purposes.
- *
- * @author Kevin Yang
- * created on 23 August 2019
- * @see BoardBackgroundCanvas
- *
- * <strong>Layer 2: BoardStaticCanvas</strong>
- * This layer draws all static objects on the go board. These include placed stones,
- * annotations.
- * @see BoardStaticCanvas
- *
- * <strong>Layer 3: BoardInputCanvas</strong>
- * The input canvas handles all mouse and keyboard input, redraw cursor indicators
- * without redrawing the entire board. Furthermore, the input canvas serves as a
- * fine ground for stone placement animations (again without redrawing the rest
- * of the board).
- * @see BoardInputCanvas
  * <p>
  * Note that the canvas themselves are solely concerned with the rendering. Most of the
- * logic behind the canvas are done here in the 'parent' class.
+ * input handling logic are done here in the container class.
+ * </p>
  */
 public class GameBoard extends Pane implements GameListener {
 
+    // TODO: Move me elsewhere.
     private static final double STONE_WOBBLE_FACTOR = 3d;
 
     /**
      * An optional fx component can be placed around the edges of the board
      * for aesthetic purposes. The board metrics will make space accordingly.
+     *
+     * TODO: This is a hack, refactor me.
      */
     private ToolBar topToolBar;
 
-    /*
-        The three stacked canvas layers
-     */
-    private BoardBackgroundCanvas canvasBg;
-    private BoardStaticCanvas canvasStatic;
-    private BoardInputCanvas canvasInput;
+    private final BoardViewCanvas canvasView;
+    private final BoardInputCanvas canvasInput;
+    private final List<BoardCanvasLayer> canvasLayers;
 
     // Board render parameters
     private BoardMetrics metrics;
@@ -96,20 +76,22 @@ public class GameBoard extends Pane implements GameListener {
         this.controller.initialize(game, this);
         this.topToolBar = toolbar;
         this.metrics = new BoardMetrics();
-        this.metrics.calibrate(this);
 
         int capacity = game.getBoardWidth() * game.getBoardHeight();
         this.stones = new Stone[capacity];
         this.stonesAnimated = new ArrayList<>();
         this.stonesStatic = new ArrayList<>();
-        canvasBg = new BoardBackgroundCanvas(this);
-        canvasStatic = new BoardStaticCanvas(this);
-        canvasInput = new BoardInputCanvas(this);
-        getChildren().add(0, canvasBg);
-        getChildren().add(1, canvasStatic);
-        getChildren().add(2, canvasInput);
+
+        List<BoardCanvasLayer> canvasToUse = new ArrayList<>();
+        {
+            canvasToUse.add(canvasView = new BoardViewCanvas());
+            canvasToUse.add(canvasInput = new BoardInputCanvas(this, controller));
+        }
+        canvasLayers = Collections.unmodifiableList(canvasToUse);
+        canvasLayers.forEach(canvas -> getChildren().add(canvas));
+
         if (getTopToolBar() != null) {
-            getChildren().add(3, topToolBar);
+            getChildren().add(canvasToUse.size(), topToolBar);
             StackPane.setAlignment(topToolBar, Pos.TOP_CENTER);
         }
 
@@ -120,6 +102,7 @@ public class GameBoard extends Pane implements GameListener {
          */
         widthProperty().addListener(e -> updateSize(getWidth(), getHeight()));
         heightProperty().addListener(e -> updateSize(getWidth(), getHeight()));
+        updateSize(getWidth(), getHeight());
     }
 
     /**
@@ -147,7 +130,7 @@ public class GameBoard extends Pane implements GameListener {
 
         // First scan through the stone data on the current node
         int[] nodeStoneData = node.getStoneData();
-        int boardWidth = getGame().getBoardWidth();
+        int boardWidth = game.getBoardWidth();
 
         for (int i = 0; i < nodeStoneData.length; i++) {
             int x = i % boardWidth;
@@ -288,23 +271,19 @@ public class GameBoard extends Pane implements GameListener {
         layoutChildren();
         if (topToolBar != null)
             topToolBar.setPrefWidth(width);
-        metrics.calibrate(this);
+        metrics.calibrate(this, game.getBoardWidth(), game.getBoardHeight());
         render();
     }
 
     public void render() {
-        canvasBg.render();
-        canvasStatic.render();
-        canvasInput.render();
+        canvasLayers.forEach(canvas -> canvas.render(game, this));
     }
 
     @Override
     protected void layoutChildren() {
         super.layoutChildren();
 
-        adjustBounds(canvasBg);
-        adjustBounds(canvasStatic);
-        adjustBounds(canvasInput);
+        canvasLayers.forEach(this::adjustBounds);
     }
 
     private void adjustBounds(Canvas canvas) {
@@ -327,24 +306,8 @@ public class GameBoard extends Pane implements GameListener {
         this.controller = controller;
     }
 
-    public Game getGame() {
-        return game;
-    }
-
     public void setGame(Game game) {
         this.game = game;
-    }
-
-    protected BoardInputCanvas getInputCanvas() {
-        return canvasInput;
-    }
-
-    protected BoardStaticCanvas getStaticCanvas() {
-        return canvasStatic;
-    }
-
-    protected BoardBackgroundCanvas getBackgroundCanvas() {
-        return canvasBg;
     }
 
     public BoardMetrics getMetrics() {
