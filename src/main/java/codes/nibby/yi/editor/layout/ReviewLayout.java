@@ -79,6 +79,7 @@ public class ReviewLayout extends AbstractLayout {
         // Components in the centre
         boardPane = new BorderPane();
         boardPane.setCenter(getEditor().getGameBoard());
+        boardPane.setTop(getEditor().getEditActionsToolbar());
         boardPane.setMinWidth(600);
         splitMain = new SplitPane(boardPane, rightSidebarPane);
         splitMain.setOrientation(Orientation.HORIZONTAL);

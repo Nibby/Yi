@@ -26,7 +26,7 @@ public abstract class AbstractLayout {
         contentPane = createLayout();
         if (contentPane == null)
             contentPane = new BorderPane();
-        contentPane.setTop(getEditor().getToolBar());
+        contentPane.setTop(getEditor().getEditActionsToolbar());
     }
 
     /**

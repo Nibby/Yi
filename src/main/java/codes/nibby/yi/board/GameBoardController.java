@@ -2,27 +2,25 @@ package codes.nibby.yi.board;
 
 import codes.nibby.yi.game.Game;
 import codes.nibby.yi.game.GameListener;
+import codes.nibby.yi.game.GameNode;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 /**
- * Synchronises information between GameBoard display and Game object.
+ * Handles user input from game board. It is important to invoke {@link #setBoard(GameBoard)} once
+ * the controller has been added to a game board.
  */
 public abstract class GameBoardController implements GameListener {
 
-    private Game game;
-    private GameBoard board;
+    private WeakReference<GameBoard> board;
 
-    /**
-     * Invoked by GameBoard class constructor.
-     *
-     * @param game  Current game object
-     * @param board Game board object
-     */
-    public void initialize(Game game, GameBoard board) {
-        this.board = board;
-        this.game = game;
-        this.game.addGameListener(this);
+    void setBoard(GameBoard board) {
+        this.board = new WeakReference<>(board);
     }
 
     public void mouseMoved(int x, int y, int oldX, int oldY) {
@@ -61,11 +59,14 @@ public abstract class GameBoardController implements GameListener {
 
     }
 
-    public Game getGame() {
-        return game;
+    protected Game getGame() {
+        return getBoard().getGame();
     }
 
+    @NotNull
     public GameBoard getBoard() {
-        return board;
+        GameBoard gameBoard = board.get();
+        assert gameBoard != null : "gameBoard is null! Make sure to call .setBoard() when the controller is added to the board.";
+        return gameBoard;
     }
 }

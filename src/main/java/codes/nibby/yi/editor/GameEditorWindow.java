@@ -2,8 +2,11 @@ package codes.nibby.yi.editor;
 
 import codes.nibby.yi.Yi;
 import codes.nibby.yi.board.GameBoard;
+import codes.nibby.yi.board.GameBoardController;
+import codes.nibby.yi.common.LazyObject;
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.config.UiStylesheets;
+import codes.nibby.yi.editor.component.GameEditActionsToolbar;
 import codes.nibby.yi.editor.component.GameEditorMenuBar;
 import codes.nibby.yi.editor.component.GameTreePane;
 import codes.nibby.yi.editor.component.MoveCommentPane;
@@ -21,6 +24,7 @@ import codes.nibby.yi.utility.UiUtility;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -43,12 +47,13 @@ import java.util.ResourceBundle;
 public class GameEditorWindow extends Stage {
 
     private Game game;
-    private GameBoard gameBoard;
-    private EditorBoardController controller;
-    private GameTreePane gameTreePane;
-    private MoveCommentPane moveCommentPane;
-    private GameEditorMenuBar toolBar;
-    private GameBoard.GameBoardToolBar boardToolBar;
+    private DefaultEditorController controller;
+
+    private LazyObject<GameBoard> gameBoard;
+    private LazyObject<GameTreePane> gameTreePane;
+    private LazyObject<MoveCommentPane> moveCommentPane;
+    private LazyObject<GameEditorMenuBar> toolBar;
+    private LazyObject<GameEditActionsToolbar> editActionsToolbar;
 
     private AbstractLayout layout;
     private Scene scene;
@@ -58,68 +63,53 @@ public class GameEditorWindow extends Stage {
 
     public GameEditorWindow() {
         locale = Config.getLanguage().getResourceBundle("GameEditorWindow");
-        controller = new EditorBoardController();
-        initializeComponents();
-        initializeScene();
-
-        UiStylesheets.applyTo(scene);
-    }
-
-    /*
-        Instantiates all the required objects for the window.
-        The components are not added to the scene, that is
-        handled by the perspective manager.
-     */
-    private void initializeComponents() {
         game = new Game(GameRules.CHINESE, 19, 19);
-        boardToolBar = new GameBoard.GameBoardToolBar(this);
-        gameBoard = new GameBoard(game, controller, boardToolBar);
-        toolBar = new GameEditorMenuBar(this);
-        gameTreePane = new GameTreePane(this);
-        moveCommentPane = new MoveCommentPane(this);
+        controller = new DefaultEditorController();
 
-        game.addGameListener(gameBoard, gameTreePane, moveCommentPane);
+        editActionsToolbar = new LazyObject<>(() -> new GameEditActionsToolbar(this));
+        gameBoard = new LazyObject<>(() -> new GameBoard(game, controller));
+        toolBar = new LazyObject<>(() -> new GameEditorMenuBar(this));
+        gameTreePane = new LazyObject<>(() -> new GameTreePane(this));
+        moveCommentPane = new LazyObject<>(() -> new MoveCommentPane(this));
+
         game.initialize();
-    }
 
-    private void initializeScene() {
-        setTitle(game.getMetadata().gameName + " - " + Yi.TITLE);
-
+        // Layout
         layout = AbstractLayout.generate(this);
         Pane root = layout.getContentPane();
         scene = new Scene(root, 620, 640);
+        scene.setOnDragDone(this::handleDragAndDrop);
         setScene(scene);
         setMinWidth(620);
         setMinHeight(640);
+        setTitle(game.getMetadata().gameName + " - " + Yi.TITLE);
+        UiStylesheets.applyTo(scene);
+    }
 
-        scene.setOnDragDone(e -> {
-            boolean success = false;
-            if (e.getDragboard().hasFiles()) {
-                e.acceptTransferModes(TransferMode.ANY);
-                success = true;
-                // TODO ask the user what to do on multiple file drag?
-                List<File> files = e.getDragboard().getFiles();
-                // TODO temporary: default to opening one file
-                if (files.get(0).isFile()) {
-                    try {
-                        File file = files.get(0);
-                        Game game = GameFileParser.parse(file);
-                        if (game != null) {
-                            setLastSavePath(file.toPath());
-                            setGame(game);
-                        }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (GameParseException ex) {
-                        ex.printStackTrace();
-                    } catch (UnsupportedFileTypeException ex) {
-                        ex.printStackTrace();
+    private void handleDragAndDrop(DragEvent e) {
+        boolean success = false;
+        if (e.getDragboard().hasFiles()) {
+            e.acceptTransferModes(TransferMode.ANY);
+            success = true;
+            // TODO ask the user what to do on multiple file drag?
+            List<File> files = e.getDragboard().getFiles();
+            // TODO temporary: default to opening one file
+            if (files.get(0).isFile()) {
+                try {
+                    File file = files.get(0);
+                    Game game = GameFileParser.parse(file);
+                    if (game != null) {
+                        setLastSavePath(file.toPath());
+                        setGame(game);
                     }
+                } catch (IOException | GameParseException | UnsupportedFileTypeException ex) {
+                    // TODO: Better exception handling
+                    ex.printStackTrace();
                 }
             }
-            e.setDropCompleted(success);
-            e.consume();
-        });
+        }
+        e.setDropCompleted(success);
+        e.consume();
     }
 
     public LayoutType getPerspective() {
@@ -142,16 +132,17 @@ public class GameEditorWindow extends Stage {
     }
 
     public void setGame(Game game) {
-        for (GameListener listener : this.game.getGameListeners()) {
+        for (GameListener listener : this.game.getActiveGameListeners()) {
             game.addGameListener(listener);
         }
         this.game.removeListeners();
 
         this.game = game;
-        this.gameBoard.setGame(game);
         game.initialize();
-        this.controller.initialize(game, this.gameBoard);
-        gameBoard.updateBoardObjects(game.getCurrentNode(), true, true);
+
+        if (gameBoard.isInitialized()) {
+            this.gameBoard.getOrInitialize().updateBoardObjects(game.getCurrentNode(), true, true);
+        }
     }
 
     public void createDocument() {
@@ -220,22 +211,22 @@ public class GameEditorWindow extends Stage {
     }
 
     public GameBoard getGameBoard() {
-        return gameBoard;
+        return gameBoard.getOrInitialize();
     }
 
     public GameTreePane getGameTreePane() {
-        return gameTreePane;
+        return gameTreePane.getOrInitialize();
     }
 
     public MoveCommentPane getMoveCommentPane() {
-        return moveCommentPane;
+        return moveCommentPane.getOrInitialize();
     }
 
-    public GameEditorMenuBar getToolBar() {
-        return toolBar;
+    public GameEditActionsToolbar getEditActionsToolbar() {
+        return editActionsToolbar.getOrInitialize();
     }
 
-    public EditorBoardController getController() {
+    public DefaultEditorController getController() {
         return controller;
     }
 

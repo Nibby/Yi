@@ -1,12 +1,11 @@
 package codes.nibby.yi.game;
 
-import codes.nibby.yi.board.GameBoard;
 import codes.nibby.yi.game.rules.IGameRules;
 import codes.nibby.yi.game.rules.ProposalResult;
-import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
+import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The core representation for a Go 'game'. This class contains all the
@@ -57,7 +56,7 @@ public class Game {
     /**
      * Listeners for the game.
      */
-    private List<GameListener> listeners = new ArrayList<>();
+    private List<WeakReference<GameListener>> listeners = new ArrayList<>();
 
     /**
      * Whether the document has been modified since last save.
@@ -84,8 +83,9 @@ public class Game {
      * Resets the game state. All nodes will be deleted.
      */
     public void initialize() {
-        for (GameListener l : listeners)
-            l.gameInitialized(this);
+        for (GameListener listener : getActiveGameListeners()) {
+            listener.gameInitialized(this);
+        }
     }
 
     /**
@@ -130,13 +130,15 @@ public class Game {
     }
 
     private void fireNodeUpdateEvent(GameNode node, boolean isNewMove) {
-        for (GameListener l : listeners)
-            l.gameNodeUpdated(node, isNewMove);
+        for (GameListener listener : getActiveGameListeners()) {
+            listener.gameNodeUpdated(this, node, isNewMove);
+        }
     }
 
     private void fireGameModifiedEvent() {
-        for (GameListener l : listeners)
-            l.gameModified(this);
+        for (GameListener listener : getActiveGameListeners()) {
+            listener.gameModified(this);
+        }
     }
 
     /**
@@ -231,7 +233,8 @@ public class Game {
     }
 
     public void addGameListener(GameListener... listener) {
-        listeners.addAll(Arrays.asList(listener));
+        List<WeakReference<GameListener>> weakReferenceList = Arrays.stream(listener).map(WeakReference::new).collect(Collectors.toList());
+        listeners.addAll(weakReferenceList);
     }
 
     public IGameRules getRuleset() {
@@ -334,8 +337,27 @@ public class Game {
         return false;
     }
 
-    public List<GameListener> getGameListeners() {
-        return listeners;
+    /**
+     * Retrieves the list of currently active game listeners. Invoking this method
+     * will also clean up any weakly referenced listeners that has been garbage
+     * collected. These will not be part of the results returned.
+     *
+     * @return List of currently active game listeners.
+     */
+    public List<GameListener> getActiveGameListeners() {
+        List<GameListener> result = new ArrayList<>();
+        for (int i = 0; i < listeners.size();) {
+            WeakReference<GameListener> weakReference = listeners.get(i);
+            GameListener reference = weakReference.get();
+            if (reference == null)
+                listeners.remove(i);
+            else {
+                result.add(reference);
+                ++i;
+            }
+        }
+
+        return result;
     }
 
     public boolean isModified() {
