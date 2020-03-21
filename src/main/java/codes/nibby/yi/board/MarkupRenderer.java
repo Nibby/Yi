@@ -10,6 +10,7 @@ public class MarkupRenderer {
     public static void render(GraphicsContext g, Stone stone, Markup markup, BoardMetrics metrics, Color color) {
         g.setFill(color);
         g.setStroke(color);
+        double originalLineWidth = g.getLineWidth();
         g.setLineWidth(2d);
 
         int x1 = markup.getX1();
@@ -57,6 +58,7 @@ public class MarkupRenderer {
                 // TODO implement later
                 break;
         }
+        g.setLineWidth(originalLineWidth);
     }
 
 }

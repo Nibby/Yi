@@ -2,19 +2,14 @@ package codes.nibby.yi.board;
 
 import codes.nibby.yi.config.Config;
 import codes.nibby.yi.game.Game;
-import codes.nibby.yi.game.GameNode;
 import codes.nibby.yi.game.Markup;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * Canvas for rendering user input prompts and cursors.
@@ -56,15 +51,10 @@ public class BoardInputCanvas extends BoardCanvasLayer {
         cachedGameBoard = new WeakReference<>(gameBoard);
 
         g.clearRect(0, 0, getWidth(), getHeight());
-        boolean redrawNeeded = drawAnimatedStones(g, game, gameBoard);
         boolean drawCursor = mouseX >= 0 && mouseY >= 0 && !game.getCurrentNode().hasMarkupAt(mouseX, mouseY, false);
+
         if (drawCursor) {
             drawCursor(g, game, gameBoard);
-        }
-
-        if (redrawNeeded) {
-            // TODO: Ugly, refactor me.
-            new Timeline(new KeyFrame(Duration.millis(40), e -> super.render(game, gameBoard))).play();
         }
     }
 
@@ -118,33 +108,6 @@ public class BoardInputCanvas extends BoardCanvasLayer {
         }
 
         g.setGlobalAlpha(1.0d);
-    }
-
-    private boolean drawAnimatedStones(GraphicsContext g, Game game, GameBoard gameBoard) {
-        // Draw all animated stones.
-        List<Stone> animatedStones = gameBoard.getAnimatedStones();
-        GameNode node = game.getCurrentNode();
-        boolean redraw = false;
-        Stone currentStone = null;
-        int[] currentMove = node.getCurrentMove();
-        for (Stone stone : animatedStones) {
-            stone.wobble();
-            StoneRenderer.renderTextureWithShadow(g, stone, gameBoard.getMetrics());
-            if (stone.shouldWobble())
-                redraw = true;
-            if (currentMove != null && stone.getX() == currentMove[0] && stone.getY() == currentMove[1])
-                currentStone = stone;
-        }
-
-        // Wobble the marker on the current stone as well
-        if (currentStone != null) {
-            int[] move = node.getCurrentMove();
-            Markup markup = Markup.circle(move[0], move[1]);
-            Color markerColor = node.getColor() == Game.COLOR_BLACK ? Color.WHITE : Color.BLACK;
-            MarkupRenderer.render(g, currentStone, markup, gameBoard.getMetrics(), markerColor);
-        }
-
-        return redraw;
     }
 
     private void mouseMoved(MouseEvent evt) {

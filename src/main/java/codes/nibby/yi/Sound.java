@@ -70,7 +70,7 @@ public class Sound {
     }
 
     public static AudioClip loadAudio(Type type, String res) {
-        AudioClip clip = null;
+        AudioClip clip;
         try {
             clip = new AudioClip(Sound.class.getResource(res).toURI().toString());
             AUDIO_DB.putIfAbsent(type, new ArrayList<>());
