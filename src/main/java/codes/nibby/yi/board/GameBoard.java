@@ -67,7 +67,6 @@ public class GameBoard extends Pane implements GameListener {
 
     // A list of renderable objects (sourced from game.currentNode)
     private Stone[] stones;
-    private List<Stone> stonesStatic, stonesAnimated;
     private BoardInputHintType inputHint = BoardInputHintType.DYNAMIC;
 
     public GameBoard(Game game, GameBoardController controller, ToolBar toolbar) {
@@ -79,8 +78,6 @@ public class GameBoard extends Pane implements GameListener {
 
         int capacity = game.getBoardWidth() * game.getBoardHeight();
         this.stones = new Stone[capacity];
-        this.stonesAnimated = new ArrayList<>();
-        this.stonesStatic = new ArrayList<>();
 
         List<BoardCanvasLayer> canvasToUse = new ArrayList<>();
         {
@@ -125,8 +122,6 @@ public class GameBoard extends Pane implements GameListener {
             int capacity = game.getBoardWidth() * game.getBoardHeight();
             this.stones = new Stone[capacity];
         }
-        stonesStatic.clear();
-        stonesAnimated.clear();
 
         // First scan through the stone data on the current node
         int[] nodeStoneData = node.getStoneData();
@@ -176,69 +171,10 @@ public class GameBoard extends Pane implements GameListener {
                         stones[i] = new Stone(Stone.WHITE, x, y);
                     break;
             }
-
-            // TODO: Adjust this later
-            if (stones[i] != null) {
-                // Check if it's a brand new move. If so, wobble it if applicable.
-                boolean wobble = false;
-                if (newMove) {
-                    int[] move = node.getCurrentMove();
-                    if (x == move[0] && y == move[1]) {
-                        stones[i].setWobble(STONE_WOBBLE_FACTOR);
-                        stonesAnimated.add(stones[i]);
-                        wobble = true;
-
-                        // Displace the nearby stones (if fuzzy effect is on)
-                        List<Stone> wobbles = new ArrayList<>();
-                        wobbles.add(stones[i]);
-                        List<Integer> adjacentPoints = game.getNeighboringIndices(x, y);
-                        List<Stone> adjacent = new ArrayList<>();
-                        adjacentPoints.forEach(pt -> adjacent.add(stones[pt]));
-                        for (Stone s : adjacent) {
-                            if (s == null)
-                                continue;
-
-                            if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
-                                double wobbleAmount = (Math.abs(s.getY() - y) == 1)
-                                        ? STONE_WOBBLE_FACTOR
-                                        : (Math.random() + 0.1d) * STONE_WOBBLE_FACTOR / 2;
-                                if (Math.abs(s.getY() - y) == 1) {
-                                    stones[i].setWobble(wobbleAmount);
-                                } else {
-                                    s.setWobble(wobbleAmount);
-                                    s.nudge(s.getX() - x, s.getY() - y, metrics);
-                                }
-                                wobbles.add(s);
-                                // Collision detection
-                                // TODO: rework this part, because it's giving some odd collision targets
-                                if ((int) (Math.random() * 5) < 2) {
-                                    adjacentPoints = game.getNeighboringIndices(s.getX(), s.getY());
-                                    List<Stone> adjacent2 = new ArrayList<>();
-                                    adjacentPoints.forEach(pt -> adjacent2.add(stones[pt]));
-
-                                    for (Stone ss : adjacent2) {
-                                        if (ss == null)
-                                            continue;
-                                        if (ss.equals(stones[i]) || ss.equals(s))
-                                            continue;
-                                        ss.setWobble((Math.random() + 0.1d) * STONE_WOBBLE_FACTOR / 2);
-                                        ss.nudge(s.getX() - x, s.getY() - y, metrics);
-                                        wobbles.add(ss);
-                                    }
-                                }
-                            }
-                        }
-                        Sound.playStonePlacement(null);
-                    }
-                }
-
-                if (!wobble) {
-                    if (stones[i].shouldWobble())
-                        stonesAnimated.add(stones[i]);
-                    else
-                        stonesStatic.add(stones[i]);
-                }
-            }
+        }
+        // TODO: Adjust this later
+        if (newMove) {
+            Sound.playStonePlacement(null);
         }
     }
 
@@ -316,14 +252,6 @@ public class GameBoard extends Pane implements GameListener {
 
     public Stone[] getAllRenderableStones() {
         return stones;
-    }
-
-    public List<Stone> getStaticStones() {
-        return stonesStatic;
-    }
-
-    public List<Stone> getAnimatedStones() {
-        return stonesAnimated;
     }
 
     public ToolBar getTopToolBar() {

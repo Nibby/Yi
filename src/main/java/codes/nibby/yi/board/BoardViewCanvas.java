@@ -42,21 +42,23 @@ public class BoardViewCanvas extends BoardCanvasLayer {
     @Override
     protected void _render(GraphicsContext g, Game game, GameBoard board) {
         g.clearRect(0, 0, getWidth(), getHeight());
+        System.out.println("draw");
 
         // TODO: Allow theme parameter override on these routines
-        if (Config.getBoardTheme().shouldDrawBackground()) {
-            drawBackground(g, board);
-        }
+        drawBackground(g, board);
         drawGameBoard(g, board);
         drawStones(g, board, game);
     }
 
     private void drawStones(GraphicsContext g, GameBoard gameBoard, Game game) {
         final GameNode currentNode = game.getCurrentNode();
-        List<Stone> staticStones = gameBoard.getStaticStones();
+        Stone[] stones = gameBoard.getAllRenderableStones();
         Stone currentStone = null;
         int[] currentMove = currentNode.getCurrentMove();
-        for (Stone stone : staticStones) {
+        for (Stone stone : stones) {
+            if (stone == null)
+                continue;
+
             StoneRenderer.renderTextureWithShadow(g, stone, gameBoard.getMetrics());
             if (currentMove != null && stone.getX() == currentMove[0] && stone.getY() == currentMove[1])
                 currentStone = stone;
@@ -115,6 +117,7 @@ public class BoardViewCanvas extends BoardCanvasLayer {
             // TODO: Allow theme parameter override
             g.setFill(Config.getBoardTheme().getGridColor());
             g.setStroke(Config.getBoardTheme().getGridColor());
+            g.setLineWidth(1d);
 
             // Board lines
             for (int xx = 0; xx < boardWidth; xx++) {
@@ -164,7 +167,9 @@ public class BoardViewCanvas extends BoardCanvasLayer {
     }
 
     private void drawBackground(GraphicsContext g, GameBoard gameBoard) {
-        Image backgroundTexture = Config.getBoardTheme().getBoardBackgroundTexture();
-        g.drawImage(backgroundTexture, 0, 0, getWidth(), getHeight());
+        if (Config.getBoardTheme().shouldDrawBackground()) {
+            Image backgroundTexture = Config.getBoardTheme().getBoardBackgroundTexture();
+            g.drawImage(backgroundTexture, 0, 0, getWidth(), getHeight());
+        }
     }
 }
