@@ -1,7 +1,5 @@
 package codes.nibby.yi.board;
 
-import codes.nibby.yi.game.Game;
-
 /**
  * A collection of variables that is used to calculate various component spacings
  * on the rendered go board.
@@ -137,10 +135,7 @@ public class BoardMetrics {
         this.boardHeight = boardHeight;
         drawWidth = board.getWidth() - margin;
         drawHeight = board.getHeight() - margin;
-        // Account for reserved topComponent
-        if (board.getTopToolBar() != null) {
-            drawHeight -= RESERVED_TOOLBAR_SIZE;
-        }
+
         minSize = Math.min(drawWidth, drawHeight);
         stoneSize = (minSize - 50) / Math.max(boardWidth, boardHeight);
         stoneGap = stoneSize / 30d;
@@ -149,9 +144,7 @@ public class BoardMetrics {
         // TODO potentially want to shift these according to arrangement of nearby panes
         offsetX = board.getWidth() / 2 - (boardWidth - 1) * gridSize / 2;
         offsetY = board.getHeight() / 2 - (boardHeight - 1) * gridSize / 2;
-        if (board.getTopToolBar() != null) {
-            offsetY += (double) RESERVED_TOOLBAR_SIZE / 2;
-        }
+
         gridOffsetX = drawLabels ? (labelOrientation == LABEL_ORIENTATION_ALL) ? 40 : 20 : 0;
         gridOffsetY = drawLabels ? (labelOrientation == LABEL_ORIENTATION_ALL) ? 40 : 20 : 0;
         gap = drawLabels ? stoneSize / stoneGap / 11 : 0;

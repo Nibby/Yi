@@ -40,26 +40,26 @@ public class GameTreePane extends GridPane implements GameListener {
     private Map<GameNode, NodeElement> nodeMap;
     private ElementLayout layout;
     private GameEditorWindow editor;
-    private Game game;
     private NodeElement currentNodeUi;
     private ScrollPane scrollPane;
 
     public GameTreePane(GameEditorWindow editor) {
         this.editor = editor;
+        this.editor.getGame().addGameListener(this);
     }
 
     /**
      * Clears all previous elements on the tree and reconstruct
      * from scratch.
      */
-    private void rebuildTree() {
+    private void rebuildTree(Game game) {
         nodeMap = new HashMap<>();
         layout = new ElementLayout();
         getChildren().clear();
         currentNodeUi = null;
         GameNode current = game.getGameTree();
         int row = 0, col = 0;
-        buildBranch(current, row, col);
+        buildBranch(game, current, row, col);
         getStyleClass().add("game_tree");
     }
 
@@ -71,7 +71,7 @@ public class GameTreePane extends GridPane implements GameListener {
      * @param startCol   GridPane X co-ordinate of the first node.
      * @param startRow   GridPane Y co-ordinate of the first node.
      */
-    private void buildBranch(GameNode branchRoot, int startCol, int startRow) {
+    private void buildBranch(Game game, GameNode branchRoot, int startCol, int startRow) {
         int gridX = startCol;
         int gridY = startRow;
 
@@ -135,7 +135,7 @@ public class GameTreePane extends GridPane implements GameListener {
         while (!childNodes.isEmpty()) {
             GameNode node = childNodes.pop();
             int index = node.getParent().getChildren().indexOf(node);
-            buildBranch(node, col + index, node.getMoveNumber());
+            buildBranch(game, node, col + index, node.getMoveNumber());
         }
     }
 
@@ -144,8 +144,7 @@ public class GameTreePane extends GridPane implements GameListener {
     }
 
     public void setGame(Game game) {
-        this.game = game;
-        rebuildTree();
+        rebuildTree(game);
     }
 
     @Override
@@ -154,14 +153,14 @@ public class GameTreePane extends GridPane implements GameListener {
     }
 
     @Override
-    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
+    public void gameNodeUpdated(Game game, GameNode currentMove, boolean newMove) {
         if (!newMove) {
             currentNodeUi.render();
             currentNodeUi = nodeMap.get(currentMove);
             currentNodeUi.render();
         } else {
             // TODO temporary. Ideally new moves are appended to the existing structure.
-            rebuildTree();
+            rebuildTree(game);
         }
 
         // TODO Keep the current node in the viewport

@@ -25,6 +25,7 @@ public class MoveCommentPane extends BorderPane implements GameListener {
 
     public MoveCommentPane(GameEditorWindow editor) {
         this.editor = editor;
+        this.editor.getGame().addGameListener(this);
         this.textArea = new TextArea();
         textArea.setWrapText(true);
         textArea.setOnKeyTyped(e -> {
@@ -45,7 +46,7 @@ public class MoveCommentPane extends BorderPane implements GameListener {
     }
 
     @Override
-    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
+    public void gameNodeUpdated(Game game, GameNode currentMove, boolean newMove) {
         textArea.setText(currentMove.getComments());
     }
 

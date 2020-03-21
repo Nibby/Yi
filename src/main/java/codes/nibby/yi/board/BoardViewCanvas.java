@@ -92,12 +92,6 @@ public class BoardViewCanvas extends BoardCanvasLayer {
         double x = getWidth() / 2 - width / 2;
         double y = getHeight() / 2 - height / 2;
 
-        // TODO: Move me to a better place.
-        uglyHackForToolbar: {
-            if (gameBoard.getTopToolBar() != null)
-                y += (double) BoardMetrics.RESERVED_TOOLBAR_SIZE / 2;
-        }
-
         g.setEffect(TEXTURE_SHADOW);
         g.setFill(TEXTURE_SHADOW_COLOR);
         g.fillRect(x - TEXTURE_SHADOW_MARGIN, y - TEXTURE_SHADOW_MARGIN,

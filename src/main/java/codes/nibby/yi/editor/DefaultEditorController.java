@@ -18,7 +18,7 @@ import java.util.List;
  * @author Kevin Yang
  * Created on 27 August 2019
  */
-public class EditorBoardController extends GameBoardController {
+public class DefaultEditorController extends GameBoardController {
 
     private static final int MARKUP_MODE_ADD = 0;
     private static final int MARKUP_MODE_REMOVE = 1;
@@ -32,17 +32,11 @@ public class EditorBoardController extends GameBoardController {
     }
 
     @Override
-    public void gameNodeUpdated(GameNode currentMove, boolean newMove) {
+    public void gameNodeUpdated(Game game, GameNode currentMove, boolean newMove) {
     }
 
     @Override
     public void gameModified(Game game) {
-    }
-
-    @Override
-    public void initialize(Game game, GameBoard board) {
-        super.initialize(game, board);
-
     }
 
     @Override
