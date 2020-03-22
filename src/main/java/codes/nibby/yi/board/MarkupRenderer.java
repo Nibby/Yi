@@ -11,15 +11,13 @@ public class MarkupRenderer {
         g.setFill(color);
         g.setStroke(color);
         double originalLineWidth = g.getLineWidth();
-        g.setLineWidth(2d);
-
         int x1 = markup.getX1();
         int y1 = markup.getY1();
 
         double x = metrics.getBoardStoneX(x1);
         double y = metrics.getBoardStoneY(y1);
         double gridSize = metrics.getGridSize();
-
+        g.setLineWidth(gridSize / 16d);
 
         switch (markup.getType()) {
             case TRIANGLE:
@@ -31,7 +29,7 @@ public class MarkupRenderer {
                 g.strokeRect(x + gridSize / 7 * 2, y + gridSize / 7 * 2, gridSize / 7 * 3, gridSize / 7 * 3);
                 break;
             case CIRCLE:
-                g.strokeOval(x + gridSize / 4, y + gridSize / 4, gridSize / 2, gridSize / 2);
+                g.strokeOval(x + gridSize / 4 - 0.3d, y + gridSize / 4 - 0.3d, gridSize / 2, gridSize / 2);
                 break;
             case CROSS:
                 g.strokeLine(x + gridSize / 4, y + gridSize / 4, x + gridSize / 4 * 3, y + gridSize / 4 * 3);
