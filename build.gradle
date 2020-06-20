@@ -1,13 +1,24 @@
 plugins {
     id 'java'
+    id 'idea'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
-group 'codes.nibby.qipan'
+group 'codes.nibby.yi'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.11
+mainClassName = 'codes.nibby.yi.Yi'
+
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+compileTestJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
 
 repositories {
     jcenter()
@@ -15,9 +26,11 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'org.json:json:20171018'
-    compileOnly 'org.jetbrains:annotations:17.0.0'
+    implementation 'org.json:json:20171018'
+    implementation 'org.jetbrains:annotations:17.0.0'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
 }
 
 javafx {
@@ -25,4 +38,28 @@ javafx {
     modules = ['javafx.controls', 'javafx.media']
 }
 
-mainClassName = 'codes.nibby.yi.Yi'
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test']
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    maxHeapSize '1G'
+    maxParallelForks 1
+
+    testClassesDirs = sourceSets.test.output
+}
