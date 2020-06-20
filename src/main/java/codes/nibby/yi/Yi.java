@@ -1,36 +1,27 @@
 package codes.nibby.yi;
 
-import codes.nibby.yi.editor.GameEditorWindow;
+import codes.nibby.yi.gui.board.GameBoard;
+import codes.nibby.yi.settings.Settings;
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-/**
- * Main application class.
- *
- * @author Kevin Yang
- * Created on 24 August 2019
- */
 public class Yi extends Application {
 
-    public static final String NAME = "Yi";
-    public static final String VERSION = "v0.5";
-    public static final String TITLE = NAME;
-    public static final String CHARSET = "UTF-16";
+    private static Stage primaryStage;
 
-    public static final String PATH_CONFIG = "config.json";
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Settings.load();
+
+        GameBoard board = new GameBoard();
+        Scene scene = new Scene(board.getComponent(), 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    public static void exit() {
-        System.exit(0);
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        System.setProperty("file.encoding", CHARSET);
-        GameEditorWindow editor = new GameEditorWindow();
-        editor.show();
     }
 }
