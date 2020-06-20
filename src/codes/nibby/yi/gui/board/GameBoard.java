@@ -1,15 +1,14 @@
 package codes.nibby.yi.gui.board;
 
+import codes.nibby.yi.model.GoGame;
 import javafx.scene.Parent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 
 import java.util.Stack;
 
 public final class GameBoard {
 
-    private final BorderPane component;
-    private final StackPane contentStackPane;
+    private final Pane component;
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
@@ -18,29 +17,41 @@ public final class GameBoard {
         content.push(new GameBoardGameCanvas());
         content.push(new GameBoardInputCanvas());
 
-        contentStackPane = new StackPane();
-        contentStackPane.getChildren().addAll(content);
-        contentStackPane.widthProperty().addListener(newWidth -> this.updateSize());
-        contentStackPane.heightProperty().addListener(newHeight -> this.updateSize());
+        component = new Pane() {
+            @Override
+            protected void layoutChildren() {
+                super.layoutChildren();
 
-        component = new BorderPane();
-        component.setCenter(contentStackPane);
+                final double x = snappedLeftInset();
+                final double y = snappedTopInset();
+                final double w = snapSizeX(getWidth()) - x - snappedRightInset();
+                final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
+
+                manager.onBoardSizeUpdate(w, h);
+
+                content.forEach(canvas -> {
+                    canvas.setLayoutX(x);
+                    canvas.setLayoutY(y);
+                    canvas.setWidth(w);
+                    canvas.setHeight(h);
+                });
+
+                renderAll();
+            }
+        };
+        component.getChildren().addAll(content);
     }
 
-    private void updateSize() {
-        double boardWidth = contentStackPane.getWidth();
-        double boardHeight = contentStackPane.getHeight();
+    private void renderAll() {
+        content.forEach(canvas -> canvas.render(manager));
+    }
 
-        manager.onBoardSizeUpdate(boardWidth, boardHeight);
+    public void initialize(GoGame game) {
+        manager.onGameInitialize(game);
+    }
 
-        content.forEach(canvas -> {
-            canvas.setLayoutX(0);
-            canvas.setLayoutY(0);
-            canvas.setWidth(boardWidth);
-            canvas.setHeight(boardHeight);
-
-            canvas.render(manager);
-        });
+    public void update(GoGame game) {
+        manager.onGameUpdate(game);
     }
 
     public Parent getComponent() {
