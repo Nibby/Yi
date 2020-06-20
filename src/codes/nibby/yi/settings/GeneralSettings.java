@@ -2,7 +2,11 @@ package codes.nibby.yi.settings;
 
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 final class GeneralSettings extends SettingsModule {
@@ -38,7 +42,16 @@ final class GeneralSettings extends SettingsModule {
 
     @Override
     public void save() {
+        JSONObject settings = new JSONObject();
+        settings.put(KEY_BOARD_THEME_DIRECTORY, GameBoardThemeSettings.getDefaultThemeDirectory());
 
+        Path file = Paths.get(settingsFile);
+        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+            writer.write(settings.toString(4));
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void useAndSaveDefaults() {
