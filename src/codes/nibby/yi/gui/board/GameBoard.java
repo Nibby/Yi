@@ -14,7 +14,7 @@ public final class GameBoard {
     private final GameBoardManager manager = new GameBoardManager();
 
     public GameBoard() {
-        content.push(new GameBoardGameCanvas());
+        content.push(new GameBoardMainCanvas());
         content.push(new GameBoardInputCanvas());
 
         component = new Pane() {
