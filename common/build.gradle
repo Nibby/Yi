@@ -2,6 +2,8 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.3.72"
 }
 
+buildDir = '../build/common'
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
 }
