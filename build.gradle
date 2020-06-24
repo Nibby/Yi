@@ -1,65 +1,14 @@
 plugins {
-    id 'java'
     id 'idea'
-    id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 group 'codes.nibby.yi'
 version '1.0-SNAPSHOT'
 
-mainClassName = 'codes.nibby.yi.Yi'
 
-compileJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
-}
-
-compileTestJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
-}
-
-repositories {
-    jcenter()
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.json:json:20171018'
-    implementation 'org.jetbrains:annotations:17.0.0'
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
-}
-
-javafx {
-    version = "11.0.2"
-    modules = ['javafx.controls', 'javafx.media']
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-
-        resources {
-            srcDirs = ['resources']
-        }
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
     }
-
-    test {
-        java {
-            srcDirs = ['test']
-        }
-    }
-}
-
-test {
-    useJUnitPlatform()
-    maxHeapSize '1G'
-    maxParallelForks 1
-
-    testClassesDirs = sourceSets.test.output
 }
