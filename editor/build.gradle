@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+mainClassName = 'codes.nibby.yi.editor.Main'
+
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+compileTestJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+dependencies {
+    compile project(':common')
+
+    implementation 'org.json:json:20171018'
+    implementation 'org.jetbrains:annotations:17.0.0'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
+}
+
+javafx {
+    version = "11.0.2"
+    modules = ['javafx.controls', 'javafx.media']
+}
+
+test {
+    useJUnitPlatform()
+    maxHeapSize '1G'
+    maxParallelForks 1
+
+    testClassesDirs = sourceSets.test.output
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir('src/java')
+        }
+
+        resources {
+            srcDir('resources')
+        }
+    }
+
+    test {
+        java {
+            srcDir('test')
+        }
+    }
+}
