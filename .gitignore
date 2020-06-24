@@ -194,7 +194,7 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 ### Gradle Patch ###
-**/build/
+**/build/*
 
 # End of https://www.gitignore.io/api/java,linux,macos,gradle,windows,intellij
 

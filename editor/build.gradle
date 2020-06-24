@@ -5,6 +5,7 @@ plugins {
 }
 
 mainClassName = 'codes.nibby.yi.editor.Main'
+buildDir = '../build/editor'
 
 compileJava {
     sourceCompatibility = 11
