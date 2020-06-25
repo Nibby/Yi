@@ -1,7 +1,8 @@
 package codes.nibby.yi.editor;
 
+import codes.nibby.yi.common.GoGame;
+import codes.nibby.yi.common.ruleset.Ruleset;
 import codes.nibby.yi.editor.gui.board.GameBoard;
-import codes.nibby.yi.editor.model.GoGame;
 import codes.nibby.yi.editor.settings.Settings;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -14,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Settings.load();
-        GoGame game = new GoGame(19, 19);
+        GoGame game = new GoGame(19, 19, Ruleset.CHINESE);
 
         GameBoard board = new GameBoard();
         board.initialize(game);

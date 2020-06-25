@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.editor.model.GoGame;
+import codes.nibby.yi.common.GoGame;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 
