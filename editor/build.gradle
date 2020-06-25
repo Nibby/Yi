@@ -24,8 +24,6 @@ javafx {
 
 test {
     useJUnitPlatform()
-    maxHeapSize '1G'
-    maxParallelForks 1
 
     testClassesDirs = sourceSets.test.output
 }

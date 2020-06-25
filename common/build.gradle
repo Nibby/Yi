@@ -6,7 +6,7 @@ buildDir = '../build/common'
 def globalConfigurations = rootProject.ext
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     testImplementation globalConfigurations.commonDependencies.testImplementation
     testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
@@ -28,4 +28,13 @@ sourceSets {
             srcDirs = ['test/unit', 'test/integration']
         }
     }
+}
+
+compileKotlin.kotlinOptions.jvmTarget = "11"
+compileTestKotlin.kotlinOptions.jvmTarget = "11"
+
+test {
+    useJUnitPlatform()
+
+    testClassesDirs = sourceSets.test.output
 }
