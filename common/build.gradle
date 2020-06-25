@@ -3,9 +3,13 @@ plugins {
 }
 
 buildDir = '../build/common'
+def globalConfigurations = rootProject.ext
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    testImplementation globalConfigurations.commonDependencies.testImplementation
+    testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
 }
 
 sourceSets {
@@ -21,7 +25,7 @@ sourceSets {
 
     test {
         java {
-            srcDir('src/test')
+            srcDirs = ['test/unit', 'test/integration']
         }
     }
 }

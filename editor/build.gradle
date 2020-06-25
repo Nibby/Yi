@@ -1,5 +1,3 @@
-import java.nio.file.Files
-
 plugins {
     id 'java'
     id 'application'
@@ -7,6 +5,7 @@ plugins {
 }
 
 buildDir = '../build/editor'
+def globalConfigurations = rootProject.ext
 
 dependencies {
     compile project(':common')
@@ -14,8 +13,8 @@ dependencies {
     implementation 'org.json:json:20171018'
     implementation 'org.jetbrains:annotations:17.0.0'
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
+    testImplementation globalConfigurations.commonDependencies.testImplementation
+    testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
 }
 
 javafx {
@@ -44,7 +43,7 @@ sourceSets {
 
     test {
         java {
-            srcDir('test')
+            srcDirs = ['test/unit', 'test/integration']
         }
     }
 }
