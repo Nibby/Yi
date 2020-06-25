@@ -1,0 +1,9 @@
+{
+  "stoneShadowSize": 4,
+  "stoneShadowBlur": 2,
+  "stoneShadowColor": "80,80,80,0.33",
+  "boardGridThickness": 1,
+  "boardGridColor": "255,0,0",
+  "boardImage": "board.jpg",
+  "backgroundImage": "tatami.jpg"
+}
