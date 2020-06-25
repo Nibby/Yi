@@ -1,3 +1,5 @@
+import java.nio.file.Paths
+
 plugins {
     id 'java'
     id 'application'
@@ -47,6 +49,8 @@ sourceSets {
 }
 
 application {
-    executableDir('temp')
+    def workingDirectory = Paths.get(System.getProperty("user.dir")).resolve("temp").toString()
+
     mainClassName('codes.nibby.yi.editor.Main')
+    applicationDefaultJvmArgs = ["-Duser.dir=$workingDirectory"]
 }

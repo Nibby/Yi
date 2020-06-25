@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.editor.model.GoGame;
+import codes.nibby.yi.common.GoGame;
 
 final class GameBoardManager {
 
@@ -8,7 +8,7 @@ final class GameBoardManager {
     final GameBoardSize sizes = new GameBoardSize();
 
     void onGameInitialize(GoGame game) {
-        state.initialize(game.getGridsHorizontal(), game.getGridsVertical());
+        state.initialize(game.getBoardWidth(), game.getBoardHeight());
     }
 
     void onBoardSizeUpdate(double newBoardWidth, double newBoardHeight) {
