@@ -1,21 +1,12 @@
+import java.nio.file.Files
+
 plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
-mainClassName = 'codes.nibby.yi.editor.Main'
 buildDir = '../build/editor'
-
-compileJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
-}
-
-compileTestJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
-}
 
 dependencies {
     compile project(':common')
@@ -56,4 +47,9 @@ sourceSets {
             srcDir('test')
         }
     }
+}
+
+application {
+    executableDir('temp')
+    mainClassName('codes.nibby.yi.editor.Main')
 }
