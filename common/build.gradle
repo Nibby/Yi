@@ -15,13 +15,13 @@ sourceSets {
         }
 
         resources {
-            srcDir('resources')
+            srcDir('src/resources')
         }
     }
 
     test {
         java {
-            srcDir('test')
+            srcDir('src/test')
         }
     }
 }

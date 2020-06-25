@@ -1,10 +1,20 @@
 plugins {
+    id 'java'
     id 'idea'
 }
 
 group 'codes.nibby.yi'
 version '1.0-SNAPSHOT'
 
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+compileTestJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
 
 allprojects {
     repositories {
