@@ -5,6 +5,4 @@ package codes.nibby.yi.weiqi
  */
 object GoGameStateHelper {
 
-
-
 }
