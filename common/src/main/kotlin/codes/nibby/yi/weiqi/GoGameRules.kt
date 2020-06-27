@@ -1,6 +1,6 @@
 package codes.nibby.yi.weiqi
 
-enum class GameRules {
+enum class GoGameRules {
     CHINESE {
         override fun getRulesHandler() = ChineseRulesHandler()
     };
