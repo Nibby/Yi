@@ -42,7 +42,6 @@
     <content url="file://$MODULE_DIR$/../../../common/src/kotlin" />
     <content url="file://$MODULE_DIR$/../../../common/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../../common/src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../common/src/main/resources" type="java-resource" />
     </content>
     <content url="file://$MODULE_DIR$/../../../common/src/resources" />
     <orderEntry type="inheritedJdk" />
