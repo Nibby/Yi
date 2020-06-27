@@ -1,6 +1,5 @@
 package codes.nibby.yi.weiqi
 
-import codes.nibby.yi.common.GameState
 import codes.nibby.yi.common.MoveNode
 
 /**
@@ -20,9 +19,7 @@ import codes.nibby.yi.common.MoveNode
  */
 class GoGameState(private val gameModel: GoGameModel,
                   val gamePosition: GoGamePosition,
-                  val representedNode: MoveNode<GameStateDelta>,
+                  val representedNode: MoveNode<GameStateUpdate>,
                   val prisonersWhite: Int,
-                  val prisonersBlack: Int)
-    : GameState {
-
-}
+                  val prisonersBlack: Int,
+                  val stateHash: Long)

@@ -10,4 +10,6 @@ interface StateHasher {
      */
     fun calculateStateHash(state: GoGameState): Long
 
+    fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long
+
 }

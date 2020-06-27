@@ -3,14 +3,15 @@ package codes.nibby.yi.weiqi
 import java.lang.IllegalStateException
 import kotlin.random.Random
 
-class ZobristHasher constructor(private val intersectionCount: Int) : StateHasher {
+class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) : StateHasher {
 
+    private val intersectionCount = boardWidth * boardHeight
     private var hashLookup = Array<Long>(intersectionCount * GoStoneColor.values().size) { 0 }
 
     init {
         val usedNumbers: HashSet<Long> = HashSet()
 
-        for (state in 0 until GoStoneColor.values().size) {
+        for (state in GoStoneColor.values().indices) {
             for (index in 0 until intersectionCount) {
                 var uniqueStateHash = Random.nextLong()
                 var retries = 0
@@ -25,7 +26,7 @@ class ZobristHasher constructor(private val intersectionCount: Int) : StateHashe
                         throw IllegalStateException("Too many collisions generating unique state hash")
                 }
 
-                val hashStateIndex = getHashTableIndex(state.toByte(), index)
+                val hashStateIndex = state.toByte() * intersectionCount + index
                 hashLookup[hashStateIndex] = uniqueStateHash
                 usedNumbers.add(uniqueStateHash)
             }
@@ -37,14 +38,29 @@ class ZobristHasher constructor(private val intersectionCount: Int) : StateHashe
         var hash = 0L
 
         position.intersectionState.forEachIndexed { stonePosition, stoneColor ->
-            val intersectionHash = hashLookup[getHashTableIndex(stoneColor.index, stonePosition)]
+            val intersectionHash = getHashValue(stoneColor, stonePosition)
             hash = hash xor intersectionHash
         }
 
         return hash
     }
 
-    private fun getHashTableIndex(state: Byte, position: Int): Int {
-        return state * intersectionCount + position
+    override fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long {
+        var newHash = currentStateHash
+
+        stoneUpdates.forEach { update ->
+            val updateHash = getHashValue(update)
+            newHash = newHash xor updateHash
+        }
+
+        return newHash
+    }
+
+    private fun getHashValue(data: StoneData): Long {
+        return getHashValue(data.stoneColor, data.x + data.y * boardWidth)
+    }
+
+    private fun getHashValue(color: GoStoneColor, position: Int): Long {
+        return hashLookup[color.index * intersectionCount + position]
     }
 }

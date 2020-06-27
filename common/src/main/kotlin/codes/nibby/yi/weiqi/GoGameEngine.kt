@@ -1,9 +1,8 @@
 package codes.nibby.yi.weiqi
 
-import codes.nibby.yi.common.BoardGameEngine
 import codes.nibby.yi.common.MoveNode
 
-class GoGameEngine(game: GoGameModel) : BoardGameEngine<GameStateDelta>(game) {
+class GoGameEngine(val gameModel: GoGameModel) {
 
     /**
      * Represents the result of a request to submit a move to the game tree.
@@ -12,7 +11,7 @@ class GoGameEngine(game: GoGameModel) : BoardGameEngine<GameStateDelta>(game) {
      * @param newNode The move node that is created from the request, may be null if the request is in violation of game rules.
      * @param played true if [newNode] has already been appended to the game tree.
      */
-    class MoveSubmitResult constructor(val validationResult: MoveValidationResult, val newNode: MoveNode<GameStateDelta>?, val played: Boolean)
+    class MoveSubmitResult constructor(val validationResult: MoveValidationResult, val newNode: MoveNode<GameStateUpdate>?, val played: Boolean)
 
     /**
      * Forcefully submit a move to the game tree without validating it against the game rules. Use this method with prudence, as
@@ -20,7 +19,7 @@ class GoGameEngine(game: GoGameModel) : BoardGameEngine<GameStateDelta>(game) {
      */
     fun forcePlayMove(game: GoGameModel, x: Int, y: Int, color: GoStoneColor): MoveSubmitResult {
         val validationAndNewNode = GoMoveHelper.createMoveNode(game, false, StoneData(x, y, color))
-        val newNode: MoveNode<GameStateDelta>? = validationAndNewNode.second
+        val newNode: MoveNode<GameStateUpdate>? = validationAndNewNode.second
         playMove(newNode!!)
 
         return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
@@ -36,7 +35,7 @@ class GoGameEngine(game: GoGameModel) : BoardGameEngine<GameStateDelta>(game) {
         val validationAndNewNode = GoMoveHelper.createMoveNode(game, true, StoneData(x, y, color))
 
         val validationResult = validationAndNewNode.first
-        val newNode: MoveNode<GameStateDelta>? = validationAndNewNode.second
+        val newNode: MoveNode<GameStateUpdate>? = validationAndNewNode.second
 
         if (validationResult == MoveValidationResult.OK) {
             playMove(newNode!!) // New node should not be null if validation result checks out
@@ -52,7 +51,7 @@ class GoGameEngine(game: GoGameModel) : BoardGameEngine<GameStateDelta>(game) {
      */
     fun validateMove(game: GoGameModel, x: Int, y: Int, color: GoStoneColor): MoveValidationResult {
         val proposedMove = StoneData(x, y, color)
-        val validationAndDelta = GoMoveHelper.validateAndCreateDelta(game, game.currentNode, proposedMove)
+        val validationAndDelta = GoMoveHelper.validateAndCreateDelta(game, gameModel.currentNode, proposedMove)
 
         return validationAndDelta.first
     }
@@ -61,8 +60,13 @@ class GoGameEngine(game: GoGameModel) : BoardGameEngine<GameStateDelta>(game) {
      * Appends the move node after the current position in the game tree. If the
      * node has not been validated by [validateMove], it may corrupt the game state.
      */
-    private fun playMove(newNode: MoveNode<GameStateDelta>) {
-        game.appendNode(newNode)
+    private fun playMove(newNode: MoveNode<GameStateUpdate>) {
+        gameModel.appendNewNode(newNode)
+        setCurrentNode(newNode)
+    }
+
+    private fun setCurrentNode(newNode: MoveNode<GameStateUpdate>) {
+        gameModel.currentNode = newNode
     }
 
 }
