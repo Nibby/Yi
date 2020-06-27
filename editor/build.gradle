@@ -49,7 +49,7 @@ sourceSets {
 }
 
 application {
-    def workingDirectory = Paths.get(System.getProperty("user.dir")).resolve("temp").toString()
+    def workingDirectory = Paths.get(System.getProperty("user.dir")).getParent().resolve("temp").toString()
 
     mainClassName('codes.nibby.yi.editor.Main')
     applicationDefaultJvmArgs = ["-Duser.dir=$workingDirectory"]

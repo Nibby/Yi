@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.common.GoGame;
+import codes.nibby.yi.weiqi.GoGameModel;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 
@@ -46,11 +46,11 @@ public final class GameBoard {
         content.forEach(canvas -> canvas.render(manager));
     }
 
-    public void initialize(GoGame game) {
+    public void initialize(GoGameModel game) {
         manager.onGameInitialize(game);
     }
 
-    public void update(GoGame game) {
+    public void update(GoGameModel game) {
         manager.onGameUpdate(game);
     }
 
