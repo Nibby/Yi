@@ -1,8 +1,7 @@
 package codes.nibby.yi.weiqi
 
-import codes.nibby.yi.common.MoveNode
 import codes.nibby.yi.common.GameState
-import java.lang.IllegalArgumentException
+import codes.nibby.yi.common.MoveNode
 
 /**
  * Represents the game position at a given [MoveNode]. Yi's implementation of game position is based on an incremental model.
@@ -11,19 +10,19 @@ import java.lang.IllegalArgumentException
  *
  * To obtain the full game state at a given [MoveNode], use [GoGameStateHelper]
  *
+ * @param gameModel The game model the game state belongs to
+ * @param gamePosition The board stone configuration represented by this state
+ * @param representedNode The [MoveNode] this game state represents
+ * @param prisonersBlack Number of prisoners black has captured at this point
+ * @param prisonersWhite Number of prisoners white has captured at this point
+ *
  * @see GoGameStateHelper
  */
-class GoGameState(private val gameModel: GoGameModel, private val boardPosition: Array<Intersection>, val prisonersWhite: Int, val prisonersBlack: Int) : GameState {
-
-    fun getIntersection(x: Int, y:Int): Intersection {
-        val boardWidth = gameModel.boardWidth
-        val boardHeight = gameModel.boardHeight
-        val positionIndex = x + y * boardWidth
-
-        if (positionIndex < 0 || positionIndex >= boardWidth * boardHeight)
-            throw IllegalArgumentException("Position out of bounds! Board size is $boardWidth x $boardHeight, accessing $x x $y")
-
-        return boardPosition[positionIndex]
-    }
+class GoGameState(private val gameModel: GoGameModel,
+                  val gamePosition: GoGamePosition,
+                  val representedNode: MoveNode<GameStateDelta>,
+                  val prisonersWhite: Int,
+                  val prisonersBlack: Int)
+    : GameState {
 
 }

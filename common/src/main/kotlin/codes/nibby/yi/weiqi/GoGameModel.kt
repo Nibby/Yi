@@ -7,6 +7,6 @@ import codes.nibby.yi.common.MoveTree
 class GoGameModel(val boardWidth: Int, val boardHeight: Int, rules: GoGameRules)
     : BoardGameModel<GameStateDelta>(rules.getRulesHandler(), MoveTree(MoveNode())) {
 
-
+    fun getIntersectionCount() = boardWidth * boardHeight
 
 }
