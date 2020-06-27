@@ -1,13 +1,13 @@
 package codes.nibby.yi.weiqi
 
-class ChineseRulesHandler : GoGameRulesHandler() {
+class NewZealandRulesHandler : GoGameRulesHandler() {
 
     override fun getKomi(): Float {
-        return 7.5f
+        return 7F
     }
 
     override fun allowSuicideMoves(): Boolean {
-        return false
+        return true
     }
 
 }

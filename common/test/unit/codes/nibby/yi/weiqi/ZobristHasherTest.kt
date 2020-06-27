@@ -9,10 +9,10 @@ class ZobristHasherTest {
     @Test
     fun `identical hash for empty board position`() {
         val gameModel = GoGameModel(3, 3, GoGameRules.CHINESE)
-        val zobrist = ZobristHasher(gameModel.getIntersectionCount())
+        val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(3, 3)
         val currentNode = gameModel.currentNode
-        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0)
+        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, 0)
 
         val firstHash = zobrist.calculateStateHash(state)
         val secondHash = zobrist.calculateStateHash(state)
@@ -24,7 +24,7 @@ class ZobristHasherTest {
     fun `identical hash for some arbitrary board position`() {
         val gameModel = GoGameModel(3, 3, GoGameRules.CHINESE)
         val currentNode = gameModel.currentNode
-        val zobrist = ZobristHasher(gameModel.getIntersectionCount())
+        val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(3, 3)
 
         // Randomize the game position
@@ -47,7 +47,7 @@ class ZobristHasherTest {
             }
         }
 
-        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0)
+        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, 0)
 
         // Hash twice
         val firstHash = zobrist.calculateStateHash(state)

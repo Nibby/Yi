@@ -1,4 +1,4 @@
-package codes.nibby.yi.common
+package codes.nibby.yi.exception
 
 /**
  * Thrown when an attempted action is a violation of game rules.
