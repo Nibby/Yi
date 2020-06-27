@@ -8,8 +8,11 @@ import codes.nibby.yi.common.MoveNode
  *
  * @param primaryMove The main move represented by the [MoveNode]
  * @param captures The stones on the board that is captured
- * @param helpers The stones to be added to the board
+ * @param helpersAdded The stones to be added to the board
  */
-class GameStateDelta constructor(val primaryMove: Intersection,
-                                 val captures: Set<Intersection>,
-                                 val helpers: Set<Intersection>)
+class GameStateDelta constructor(val primaryMove: StoneData?,
+                                 val captures: Set<StoneData>,
+                                 val helpersAdded: Set<StoneData>,
+                                 val helpersRemoved: Set<Int>,
+                                 val illegalKoMove: Int,
+                                 val illegalRepeatMove: Int)
