@@ -25,6 +25,8 @@ open class MoveNode<NodeData> constructor() {
     var data: NodeData? = null
         internal set
 
+    var position: Int = 0
+
     constructor(data: NodeData) : this() {
         this.data = data;
     }
@@ -44,7 +46,7 @@ open class MoveNode<NodeData> constructor() {
     fun isLeaf(): Boolean = parent != null && children.size == 0
 
     fun getDistanceToRoot(): Int {
-        return getPathToRoot().size - 1 // Exclude root itself
+        return position
     }
 
     fun getPathToRoot(): LinkedList<MoveNode<NodeData>> {
@@ -60,4 +62,8 @@ open class MoveNode<NodeData> constructor() {
     }
 
     fun getTreeRoot(): MoveNode<NodeData>? = root
+
+    override fun toString(): String {
+        return "Node (" + getDistanceToRoot() + "): " + data.toString()
+    }
 }

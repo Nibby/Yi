@@ -9,6 +9,7 @@ import codes.nibby.yi.common.MoveNode
  * @param primaryMove The main move represented by the [MoveNode]
  * @param captures The stones on the board that are captured
  * @param stateHash A hash code representing the current game state (not just the delta)
+ * @param helperStoneUpdates Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
  */
 class GameStateUpdate(val type: Type,
                       val primaryMove: StoneData?,

@@ -29,6 +29,7 @@ open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
         child.parent = parent
 
         child.root = rootNode
+        child.position = parent.position + 1
     }
 
     /**

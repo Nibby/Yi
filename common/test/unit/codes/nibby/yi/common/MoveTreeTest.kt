@@ -181,4 +181,22 @@ class MoveTreeTest {
             treeA.appendNode(treeA.rootNode)
         }
     }
+
+    @Test
+    fun `root node has correct position`() {
+        val treeA = MoveTree<Data>()
+
+        Assertions.assertEquals(0, treeA.rootNode.position)
+        Assertions.assertEquals(0, treeA.rootNode.getDistanceToRoot())
+    }
+
+    @Test
+    fun `child node has correct position`() {
+        val treeA = MoveTree<Data>()
+        val child1 = MoveNode<Data>()
+        treeA.appendNode(child1)
+
+        Assertions.assertEquals(1, child1.position)
+        Assertions.assertEquals(1, child1.getDistanceToRoot())
+    }
 }
