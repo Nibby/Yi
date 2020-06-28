@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.weiqi.GoGameModel;
+import codes.nibby.yi.go.GoGameModel;
 
 final class GameBoardManager {
 

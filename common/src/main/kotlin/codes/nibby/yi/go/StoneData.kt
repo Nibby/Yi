@@ -1,4 +1,4 @@
-package codes.nibby.yi.weiqi
+package codes.nibby.yi.go
 
 /**
  * Represents a point on the game board

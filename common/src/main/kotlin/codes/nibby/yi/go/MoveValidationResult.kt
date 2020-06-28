@@ -1,4 +1,4 @@
-package codes.nibby.yi.weiqi
+package codes.nibby.yi.go
 
 enum class MoveValidationResult {
 

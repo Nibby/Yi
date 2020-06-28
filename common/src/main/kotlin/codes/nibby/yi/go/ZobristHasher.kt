@@ -1,4 +1,4 @@
-package codes.nibby.yi.weiqi
+package codes.nibby.yi.go
 
 import java.lang.IllegalStateException
 import kotlin.random.Random

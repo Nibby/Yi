@@ -2,8 +2,8 @@ package codes.nibby.yi.editor;
 
 import codes.nibby.yi.editor.gui.board.GameBoard;
 import codes.nibby.yi.editor.settings.Settings;
-import codes.nibby.yi.weiqi.GoGameRules;
-import codes.nibby.yi.weiqi.GoGameModel;
+import codes.nibby.yi.go.GoGameRules;
+import codes.nibby.yi.go.GoGameModel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
