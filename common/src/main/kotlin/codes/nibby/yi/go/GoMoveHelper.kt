@@ -1,4 +1,4 @@
-package codes.nibby.yi.weiqi
+package codes.nibby.yi.go
 
 import codes.nibby.yi.common.MoveNode
 import java.util.*
