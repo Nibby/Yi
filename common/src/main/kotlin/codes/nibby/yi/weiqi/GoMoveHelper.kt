@@ -11,20 +11,6 @@ import kotlin.collections.HashSet
 internal object GoMoveHelper {
 
     /**
-     * Same as [createMoveNode] except the new move node is created at the current position defined by [gameModel]
-     *
-     * @param gameModel The game to create the new move for.
-     * @param validateAgainstRules Whether to validate the move against the game rules first. If this is non-null, and the proposed move is not
-     *                             in compliance with game rules, then no new node be created.
-     * @param proposedMove Information pertaining to the proposed move, see [StoneData]
-     */
-    fun createMoveNode(gameModel: GoGameModel, validateAgainstRules: Boolean, proposedMove: StoneData)
-            : Pair<MoveValidationResult, MoveNode<GameStateUpdate>?> {
-
-        return createMoveNode(gameModel, gameModel.currentNode, validateAgainstRules, proposedMove)
-    }
-
-    /**
      * Creates a new move node from the proposed move at a specified game position. If [validateBeforeCreate] is true, this method will first check
      * if the proposed move complies with the game rules before creating the new node.
      *
@@ -36,14 +22,14 @@ internal object GoMoveHelper {
      *                             then no new node be created.
      * @param proposedMove Information pertaining to the proposed move, see [StoneData]
      */
-    fun createMoveNode(gameModel: GoGameModel, currentPosition: MoveNode<GameStateUpdate>, validateBeforeCreate: Boolean, proposedMove: StoneData)
+    fun createMoveNodeForProposedMove(gameModel: GoGameModel, currentPosition: MoveNode<GameStateUpdate>, validateBeforeCreate: Boolean, proposedMove: StoneData)
             : Pair<MoveValidationResult, MoveNode<GameStateUpdate>?> {
 
         var validationResult = MoveValidationResult.OK
         val update: GameStateUpdate?
 
         if (validateBeforeCreate) {
-            val validationAndDelta = validateAndCreateDelta(gameModel, currentPosition, proposedMove)
+            val validationAndDelta = validateProposedMoveAndCreateStateUpdate(gameModel, currentPosition, proposedMove)
             validationResult = validationAndDelta.first
 
             if (validationResult != MoveValidationResult.OK) {
@@ -52,10 +38,20 @@ internal object GoMoveHelper {
 
             update = validationAndDelta.second!!
         } else {
-            update = GameStateUpdateFactory.createPrimaryMoveUpdate(proposedMove, HashSet(), 0)
+            update = GameStateUpdateFactory.createForProposedMove(proposedMove, HashSet(), 0)
         }
 
         return Pair(validationResult, MoveNode(update))
+    }
+
+    fun createMoveNodeForPass(gameModel: GoGameModel, currentPosition: MoveNode<GameStateUpdate>) : MoveNode<GameStateUpdate> {
+        val passStateUpdate = GameStateUpdateFactory.createForPassMove(currentPosition.data!!.stateHash)
+        return MoveNode(passStateUpdate)
+    }
+
+    fun createMoveNodeForResignation(gameModel: GoGameModel, currentPosition: MoveNode<GameStateUpdate>) : MoveNode<GameStateUpdate> {
+        val resignStateUpdate = GameStateUpdateFactory.createForResignationMove(currentPosition.data!!.stateHash)
+        return MoveNode(resignStateUpdate)
     }
 
     /**
@@ -66,7 +62,7 @@ internal object GoMoveHelper {
      * @param currentNode The position at which the new move will be validated
      * @param proposedMove Information pertaining to the proposed move, see [StoneData]
      */
-    fun validateAndCreateDelta(gameModel: GoGameModel, currentNode: MoveNode<GameStateUpdate>, proposedMove: StoneData)
+    fun validateProposedMoveAndCreateStateUpdate(gameModel: GoGameModel, currentNode: MoveNode<GameStateUpdate>, proposedMove: StoneData)
             : Pair<MoveValidationResult, GameStateUpdate?> {
 
         val proposedMovePosition = proposedMove.getIndex(gameModel.boardWidth)
@@ -87,13 +83,13 @@ internal object GoMoveHelper {
             Procedure reference: https://www.red-bean.com/sgf/ff5/m_vs_ax.htm
          */
 
-        // Step 1: Overwrite
+        // Overwrite
         // Create a copy of the current position, overwrite the intersection at the proposed move location with the proposed
         // stone color
         val testGamePosition = currentGamePosition.intersectionState.copyOf(currentGamePosition.intersectionState.size)
         testGamePosition[proposedMovePosition] = proposedMove.stoneColor
 
-        // Step 2: Check for captures
+        // Check for captures:
         // Scan the intersections directly adjacent to the proposed move and obtain up to four strings of connected stones
         // First check if any strings of the opponent color will be captured (i.e. have zero liberty) upon playing the proposed move. (capture)
         // Next check if any strings of the same color as the proposed move has zero liberties upon playing the proposed move. (suicide)
@@ -129,7 +125,8 @@ internal object GoMoveHelper {
         stoneUpdates.add(proposedMove)
 
         val newStateHash = gameModel.stateHasher.calculateUpdateHash(currentNode.data!!.stateHash, stoneUpdates)
-        val update = GameStateUpdateFactory.createPrimaryMoveUpdate(proposedMove, capturedStones, newStateHash)
+        val update = GameStateUpdateFactory.createForProposedMove(proposedMove, capturedStones, newStateHash)
+
         return Pair(MoveValidationResult.OK, update)
     }
 
@@ -169,11 +166,12 @@ internal object GoMoveHelper {
     private fun getString(x: Int, y:Int, gameModel: GoGameModel, testPosition: Array<GoStoneColor?>): StoneString? {
         var string: StoneString? = null
 
-        val inBounds = x >= 0 && x < gameModel.boardWidth && y >= 0 && y < gameModel.boardHeight
-        val nonEmpty = testPosition[x + y * gameModel.boardWidth] != GoStoneColor.NONE
+        if (x >= 0 && x < gameModel.boardWidth && y >= 0 && y < gameModel.boardHeight) {
+            val nonEmpty = testPosition[x + y * gameModel.boardWidth] != GoStoneColor.NONE
 
-        if (inBounds && nonEmpty) {
-            string = StoneString(x, y, testPosition, gameModel.boardWidth, gameModel.boardHeight)
+            if (nonEmpty) {
+                string = StoneString(x, y, testPosition, gameModel.boardWidth, gameModel.boardHeight)
+            }
         }
 
         return string
@@ -182,7 +180,7 @@ internal object GoMoveHelper {
     /**
      * Represents a group of stones of the same color that is adjacently connected.
      */
-    private class StoneString(startX: Int, startY: Int, boardPosition: Array<GoStoneColor?>, private val boardWidth: Int, boardHeight: Int) {
+    private class StoneString(startX: Int, startY: Int, boardPosition: Array<GoStoneColor?>, private val boardWidth: Int, private val boardHeight: Int) {
         // Intersections on the board that are empty and adjacent to the stones in this string
         val liberties = HashSet<Int>()
         val stones = HashSet<Int>()
@@ -204,6 +202,10 @@ internal object GoMoveHelper {
 
                 while (toVisit.size > 0) {
                     val currentStonePosition = toVisit.iterator().next()
+
+                    toVisit.remove(currentStonePosition)
+                    visited.add(currentStonePosition)
+
                     val x = currentStonePosition % boardWidth
                     val y = currentStonePosition / boardWidth
 
@@ -213,45 +215,33 @@ internal object GoMoveHelper {
                         stones.add(currentStonePosition)
 
                         // Find adjacent intersections
-                        var up: StoneData? = null
-                        var down: StoneData? = null
-                        var left: StoneData? = null
-                        var right: StoneData? = null
+                        val up: StoneData? = getNeighbour(x, y - 1, boardPosition, visited)
+                        val down: StoneData? = getNeighbour(x, y + 1, boardPosition, visited)
+                        val left: StoneData? = getNeighbour(x - 1, y, boardPosition, visited)
+                        val right: StoneData? = getNeighbour(x + 1, y, boardPosition, visited)
 
-                        // Assert that the position of each GoStoneColor is non-null because the copied position
-                        // is of the same size as the original position, so no new element should be inserted.
-                        if (x - 1 >= 0) {
-                            left = StoneData(x - 1, y, boardPosition[getIndex(x - 1, y)]!!)
-                        }
-
-                        if (x + 1 < boardWidth) {
-                            right = StoneData(x + 1, y, boardPosition[getIndex(x + 1, y)]!!)
-                        }
-
-                        if (y - 1 >= 0) {
-                            up = StoneData(x, y - 1, boardPosition[getIndex(x, y - 1)]!!)
-                        }
-
-                        if (y + 1 < boardHeight) {
-                            down = StoneData(x, y + 1, boardPosition[getIndex(x, y + 1)]!!)
-                        }
-
-                        processNeighbor(stringColor, up, visited, toVisit)
-                        processNeighbor(stringColor, down, visited, toVisit)
-                        processNeighbor(stringColor, left, visited, toVisit)
-                        processNeighbor(stringColor, right, visited, toVisit)
+                        processNeighbour(stringColor, up, visited, toVisit)
+                        processNeighbour(stringColor, down, visited, toVisit)
+                        processNeighbour(stringColor, left, visited, toVisit)
+                        processNeighbour(stringColor, right, visited, toVisit)
                     }
                 }
             }
         }
 
-        private fun processNeighbor(stringColor: GoStoneColor, neighbor: StoneData?, visited: HashSet<Int>, toVisit: HashSet<Int>) {
+        private fun getNeighbour(x: Int, y: Int, boardPosition: Array<GoStoneColor?>, visited: HashSet<Int>): StoneData? {
+            if (x < 0 || x >= boardWidth || y < 0 || y >= boardHeight || visited.contains(getIndex(x, y)))
+                return null
+
+            return StoneData(x, y, boardPosition[getIndex(x, y)]!!)
+        }
+
+        private fun processNeighbour(stringColor: GoStoneColor, neighbor: StoneData?, visited: HashSet<Int>, toVisit: HashSet<Int>) {
             neighbor?.let {
                 val position = neighbor.getIndex(boardWidth)
-                visited.add(position)
 
                 val color = neighbor.stoneColor
-                if (color == stringColor) {
+                if (color != GoStoneColor.NONE && color == stringColor) {
                     toVisit.add(position)
                 }
                 if (color == GoStoneColor.NONE) {

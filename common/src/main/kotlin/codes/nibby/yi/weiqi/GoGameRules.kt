@@ -6,6 +6,6 @@ enum class GoGameRules {
         override fun getRulesHandler() = ChineseRulesHandler()
     };
 
-    abstract fun getRulesHandler(): GoGameRulesHandler;
+    abstract fun getRulesHandler(): GoGameRulesHandler
 
 }

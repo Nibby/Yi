@@ -12,4 +12,8 @@ interface StateHasher {
 
     fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long
 
+    fun getEmptyStateHash(): Long {
+        return 0
+    }
+
 }
