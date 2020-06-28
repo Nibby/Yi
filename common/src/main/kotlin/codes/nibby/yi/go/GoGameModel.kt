@@ -2,6 +2,7 @@ package codes.nibby.yi.go
 
 import codes.nibby.yi.common.MoveNode
 import codes.nibby.yi.common.MoveTree
+import codes.nibby.yi.go.rules.GoGameRulesHandler
 import java.util.*
 
 class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler) {
