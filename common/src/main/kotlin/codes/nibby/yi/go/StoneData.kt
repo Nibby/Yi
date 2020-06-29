@@ -1,5 +1,7 @@
 package codes.nibby.yi.go
 
+import java.util.*
+
 /**
  * Represents a point on the game board
  */
@@ -16,7 +18,7 @@ class StoneData constructor(val x: Int, val y: Int, val stoneColor: GoStoneColor
     }
 
     override fun hashCode(): Int {
-        return arrayOf(x, y, stoneColor).hashCode()
+        return Objects.hash(x, y, stoneColor)
     }
 
     override fun toString(): String {
