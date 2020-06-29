@@ -5,7 +5,7 @@ import codes.nibby.yi.common.MoveTree
 import codes.nibby.yi.go.rules.GoGameRulesHandler
 import java.util.*
 
-class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler) {
+class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler, val stateHasher: StateHasher) {
 
     internal val moveTree = MoveTree<GameStateUpdate>()
 
@@ -14,11 +14,17 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
             if (!moveTree.isDescendant(value))
                 throw IllegalArgumentException("Node does not belong to the model game tree")
 
-            this.stateHashHistory = value.getPathToRoot().map { item -> item.data!!.stateHash }
             field = value
-        }
 
-    internal val stateHasher: StateHasher = ZobristHasher(boardWidth, boardHeight)
+            val nodeHistory = value.getPathToRoot()
+            if (nodeHistory.size > 1) {
+                // Only count non-root and primary move updates for unique state
+                val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size)
+                                                    .filter { state -> state.data!!.type == GameStateUpdate.Type.MOVE_PLAYED }
+
+                this.stateHashHistory = uniqueStateHistory.map { item -> item.data!!.stateHash }
+            }
+        }
 
     private var stateHashHistory: List<Long> = LinkedList()
 
@@ -26,7 +32,9 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(stateHasher.getEmptyStateHash())
     }
 
-    constructor(boardWidth: Int, boardHeight: Int, rules: GoGameRules) : this(boardWidth, boardHeight, rules.getRulesHandler())
+    constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler) : this(boardWidth, boardHeight, rulesHandler, ZobristHasher(boardWidth, boardHeight))
+
+    constructor(boardWidth: Int, boardHeight: Int, rules: GoGameRules) : this(boardWidth, boardHeight, rules.getRulesHandler(), ZobristHasher(boardWidth, boardHeight))
 
     /**
      * Forcefully submit a move to the game tree without validating it against the game rules. Use this method with prudence, as
@@ -131,4 +139,10 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
 
     fun getIntersectionCount() = boardWidth * boardHeight
 
+    /**
+     * Returns a copy of the state hash history that led up to the current state.
+     */
+    fun getStateHashHistory(): List<Long> {
+        return ArrayList(stateHashHistory)
+    }
 }
