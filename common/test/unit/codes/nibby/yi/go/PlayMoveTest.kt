@@ -3,7 +3,6 @@ package codes.nibby.yi.go
 import codes.nibby.yi.go.rules.GoGameRulesHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.time.Duration
 
 class PlayMoveTest {
 
