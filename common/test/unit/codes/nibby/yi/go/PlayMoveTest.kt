@@ -57,12 +57,11 @@ class PlayMoveTest {
         val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
 
         // Play black stone in the corner
-        model.playMove(0, 0)
-
-        // Play two white stones to capture it
-        model.playMove(1, 0) // white removes a liberty
-        model.playPass()
-        model.playMove(0, 1) // white removes last liberty, stone at 0,0 should be captured now
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(1, 0)  // white removes a liberty
+                .pass()
+                .playMove(0, 1) // white removes last liberty, stone at 0,0 should be captured now
 
         val gameState = model.resolveGameState(model.currentNode)
         Assertions.assertEquals(1, gameState.prisonersWhite)
@@ -74,16 +73,19 @@ class PlayMoveTest {
         val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
 
         // Black plays three stones along the 1st column, white surrounds it on the 2nd column
-        model.playMove(0, 0)
-        model.playMove(1, 0)
-        model.playMove(0, 1)
-        model.playMove(1, 1)
-        model.playMove(0, 2)
-        model.playMove(1, 2) // After white plays this move, the three black stones on the left column should be all captured
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(1, 0)
+                .playMove(0, 1)
+                .playMove(1, 1)
+                .playMove(0, 2)
+                .playMove(1, 2) // After white plays this move, the three black stones on the left column should be all captured
 
         val currentState = model.resolveGameState(model.currentNode)
 
         Assertions.assertEquals(3, currentState.prisonersWhite)
+
+        // Check that stones are actually captured
         Assertions.assertEquals(GoStoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 0))
         Assertions.assertEquals(GoStoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 1))
         Assertions.assertEquals(GoStoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 2))
@@ -96,8 +98,9 @@ class PlayMoveTest {
     fun `game model state hash is correct after playing two legal moves`() {
         val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
-        model.playMove(0, 0)
-        model.playMove(1, 0)
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(1, 0)
 
         val stateHashHistory = model.getStateHashHistory()
 
@@ -110,8 +113,9 @@ class PlayMoveTest {
     fun `game model state hash ignores pass moves`() {
         val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
-        model.playMove(0, 0)
-        model.playPass()
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .pass()
 
         val stateHashHistory = model.getStateHashHistory()
 
@@ -123,8 +127,9 @@ class PlayMoveTest {
     fun `game model state hash ignores resignation moves`() {
         val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
-        model.playMove(0, 0)
-        model.playResign()
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .resign()
 
         val stateHashHistory = model.getStateHashHistory()
 
@@ -136,13 +141,14 @@ class PlayMoveTest {
     fun `ko recapture is illegal`() {
         val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
 
-        model.playMove(0, 0)
-        model.playMove(1, 0)
-        model.playMove(1, 1)
-        model.playMove(0, 1) // white captures black at 0,0
-        model.playMove(2, 0) // black sets up atari on 1,0 stone
-        model.playPass() // white passes so black can capture 1,0 by playing at 0,0
-        model.playMove(0, 0) // black captures and starts ko
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(1, 0)
+                .playMove(1, 1)
+                .playMove(0, 1) // white captures black at 0,0
+                .playMove(2, 0) // black sets up atari on 1,0 stone
+                .pass() // white passes so black can capture 1,0 by playing at 0,0
+                .playMove(0, 0) // black captures and starts ko
 
         // This move should now be illegal because 1,0 was just captured
         val submitResult = model.playMove(1, 0)
@@ -154,9 +160,10 @@ class PlayMoveTest {
     fun `suicidal move not allowed on rules that prohibit suicide`() {
         val model = GoGameModel(2, 2, TestingGameRulesNoSuicide())
 
-        model.playMove(1, 0)
-        model.playPass()
-        model.playMove(0, 1)
+        model.beginMoveSequence()
+                .playMove(1, 0)
+                .pass()
+                .playMove(0, 1)
 
         val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
 
@@ -167,19 +174,19 @@ class PlayMoveTest {
     fun `suicidal move is playable on rules that allow suicide`() {
         val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed())
 
-        model.playMove(1, 0)
-        model.playPass()
-        model.playMove(0, 1)
+        model.beginMoveSequence()
+                .playMove(1, 0)
+                .pass()
+                .playMove(0, 1)
 
         val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
 
         Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
     }
 
-
     @Test
     fun `board position repeat is illegal`() {
-        TODO("Confirm the exact mechanism of whole board position repeat.")
+        // TODO: Confirm the exact mechanism of whole board position repeat.
     }
 
 
