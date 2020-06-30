@@ -17,16 +17,6 @@ class GameStateUpdate(val type: Type,
                       val stateHash: Long,
                       val helperStoneUpdates: HashSet<StoneData>) {
 
-    fun getStoneUpdates(): Set<StoneData> {
-        val result = HashSet<StoneData>()
-
-        primaryMove?.let { result.add(it) }
-        result.addAll(captures)
-        result.addAll(helperStoneUpdates)
-
-        return result
-    }
-
     enum class Type {
         MOVE_PLAYED,
         HELPER_STONE_EDIT,
