@@ -37,20 +37,21 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     constructor(boardWidth: Int, boardHeight: Int, rules: GoGameRules) : this(boardWidth, boardHeight, rules.getRulesHandler(), ZobristHasher(boardWidth, boardHeight))
 
     /**
-     * Forcefully submit a move to the game tree without validating it against the game rules. Use this method with prudence, as
-     * it may result in an erroneous game state.
+     * Returns a handler to play a series of moves in succession. This is the recommended approach when submitting multiple
+     * moves to the game model with the assumption that each move must be submitted successfully.
+     *
+     * @see MoveSequence
      */
-    fun playMoveIgnoringRules(x: Int, y: Int): MoveSubmitResult {
-        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, currentNode, false, StoneData(x, y, getNextTurnStoneColor()))
-        val newNode: MoveNode<GameStateUpdate>? = validationAndNewNode.second
-        submitMoveNode(newNode!!)
-
-        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+    fun beginMoveSequence(): MoveSequence {
+        return MoveSequence(this)
     }
 
     /**
      * First checks if the move can be played at the current game position in compliance with the game rules. If successful,
      * appends a new node to the game tree.
+     *
+     * If the move is not compliant with the game rules, the method will fail silently without submitting any new node to
+     * the game tree. To play a sequence of moves ensuring each move is played correctly, use [beginMoveSequence] instead.
      *
      * @return The result of the request. See [MoveSubmitResult] for more information.
      */
@@ -63,7 +64,20 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         if (validationResult == MoveValidationResult.OK) {
             submitMoveNode(newNode!!) // New node should not be null if validation result checks out
         }
+
         return MoveSubmitResult(validationResult, newNode, validationResult == MoveValidationResult.OK)
+    }
+
+    /**
+     * Forcefully submit a move to the game tree without validating it against the game rules. Use this method with prudence, as
+     * it may result in an erroneous game state.
+     */
+    fun playMoveIgnoringRules(x: Int, y: Int): MoveSubmitResult {
+        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, currentNode, false, StoneData(x, y, getNextTurnStoneColor()))
+        val newNode: MoveNode<GameStateUpdate>? = validationAndNewNode.second
+        submitMoveNode(newNode!!)
+
+        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
     }
 
     /**
