@@ -15,18 +15,11 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
                 throw IllegalArgumentException("Node does not belong to the model game tree")
 
             field = value
-
-            val nodeHistory = value.getPathToRoot()
-            if (nodeHistory.size > 1) {
-                // Only count non-root and primary move updates for unique state
-                val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size)
-                                                    .filter { state -> state.data!!.type == GameStateUpdate.Type.MOVE_PLAYED }
-
-                this.stateHashHistory = uniqueStateHistory.map { item -> item.data!!.stateHash }
-            }
+            onCurrentNodeUpdate(currentNode)
         }
 
     private var stateHashHistory: List<Long> = LinkedList()
+    private var stateCache = WeakHashMap<Int, GoGameState>()
 
     init {
         moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(stateHasher.getEmptyStateHash())
@@ -105,7 +98,17 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
     }
 
-    fun resolveGameState(gameNode: MoveNode<GameStateUpdate>): GoGameState {
+    fun getGameState(gameNode: MoveNode<GameStateUpdate>): GoGameState {
+        if (!moveTree.isDescendant(gameNode))
+            throw IllegalArgumentException("Game node is not part of this move tree")
+
+        val moveNumber = gameNode.getDistanceToRoot()
+
+        this.stateCache[moveNumber]?.let {
+            return it
+        }
+
+        // Only perform state resolution if we don't have a cached position
         val positionState = GoGamePosition(boardWidth, boardHeight)
 
         var prisonersWhite = 0
@@ -123,16 +126,10 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
             }
         }
 
-        return GoGameState(this, positionState, gameNode, prisonersWhite, prisonersBlack, currentStateHash)
-    }
+        val gameState = GoGameState(this, positionState, gameNode, prisonersWhite, prisonersBlack, currentStateHash)
+        this.stateCache[gameNode.getDistanceToRoot()] = gameState
 
-    /**
-     * Appends the move node after the current position in the game tree. If the
-     * node has not been validated by [validateMoveAgainstRules], it may corrupt the game state.
-     */
-    private fun submitMoveNode(newNode: MoveNode<GameStateUpdate>) {
-        appendNewNode(newNode)
-        currentNode = newNode
+        return gameState
     }
 
     fun getCurrentMoveNumber(): Int {
@@ -147,10 +144,6 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         return rules.getStoneColorForTurn(getNextMoveNumber())
     }
 
-    private fun appendNewNode(newNode: MoveNode<GameStateUpdate>) {
-        moveTree.appendNode(currentNode, newNode)
-    }
-
     fun getIntersectionCount() = boardWidth * boardHeight
 
     /**
@@ -158,5 +151,28 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
      */
     fun getStateHashHistory(): List<Long> {
         return ArrayList(stateHashHistory)
+    }
+
+    /**
+     * Appends the move node after the current position in the game tree. If the
+     * node has not been validated by [validateMoveAgainstRules], it may corrupt the game state.
+     */
+    private fun submitMoveNode(newNode: MoveNode<GameStateUpdate>) {
+        appendNewNode(newNode)
+        currentNode = newNode
+    }
+
+    private fun appendNewNode(newNode: MoveNode<GameStateUpdate>) {
+        moveTree.appendNode(currentNode, newNode)
+    }
+
+    private fun onCurrentNodeUpdate(currentNode: MoveNode<GameStateUpdate>) {
+        val nodeHistory = currentNode.getPathToRoot()
+        if (nodeHistory.size > 1) {
+            // Only count non-root and primary move updates for unique state
+            val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size).filter { state -> state.data!!.type == GameStateUpdate.Type.MOVE_PLAYED }
+
+            this.stateHashHistory = uniqueStateHistory.map { item -> item.data!!.stateHash }
+        }
     }
 }
