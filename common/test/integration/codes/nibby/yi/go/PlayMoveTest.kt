@@ -215,22 +215,34 @@ class PlayMoveTest {
     fun `ko recapture is illegal`() {
         val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
 
-        Assertions.assertTimeout(Duration.ofMillis(2)) {
+        Assertions.assertTimeout(Duration.ofMillis(40)) {
             model.playMove(0, 0)
             model.playMove(1, 0)
             model.playMove(1, 1)
             model.playMove(0, 1) // white captures black at 0,0
             model.playMove(2, 0) // black sets up atari on 1,0 stone
             model.playPass() // white passes so black can capture 1,0 by playing at 0,0
-            model.playMove(0, 0)
+            model.playMove(0, 0) // black captures and starts ko
 
             // This move should now be illegal because 1,0 was just captured
             val submitResult = model.playMove(1, 0)
 
-            Assertions.assertEquals(MoveValidationResult.ERROR_INVALID_KO_RECAPTURE, submitResult.validationResult)
+            Assertions.assertEquals(MoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
+        }
+    }
 
-            // TODO: Make sure that the state is correct, and that white did not play the capture
+    @Test
+    fun `suicidal move not allowed on rules that prohibit suicide`() {
+        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide())
 
+        Assertions.assertTimeout(Duration.ofMillis(40)) {
+            model.playMove(1, 0)
+            model.playPass()
+            model.playMove(0, 1)
+
+            val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
+
+            Assertions.assertEquals(MoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
         }
     }
 

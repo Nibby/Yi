@@ -93,24 +93,29 @@ internal object GoMoveHelper {
         // Scan the intersections directly adjacent to the proposed move and obtain up to four strings of connected stones
         // First check if any strings of the opponent color will be captured (i.e. have zero liberty) upon playing the proposed move. (capture)
         // Next check if any strings of the same color as the proposed move has zero liberties upon playing the proposed move. (suicide)
-
         val x = proposedMove.x
         val y = proposedMove.y
 
-        val stringUp: StoneString? = getString(x, y - 1, gameModel, testGamePosition)
-        val stringDown: StoneString? = getString(x, y + 1, gameModel, testGamePosition)
-        val stringLeft: StoneString? = getString(x - 1, y, gameModel, testGamePosition)
-        val stringRight: StoneString? = getString(x + 1, y, gameModel, testGamePosition)
+        // Check for captures
+        val strings = HashSet<StoneString>()
 
-        val friendlyStrings = HashSet<StoneString>()
+        addStringIfNotVisitedAlready(x, y - 1, strings, gameModel, testGamePosition)
+        addStringIfNotVisitedAlready(x, y + 1, strings, gameModel, testGamePosition)
+        addStringIfNotVisitedAlready(x - 1, y, strings, gameModel, testGamePosition)
+        addStringIfNotVisitedAlready(x + 1, y, strings, gameModel, testGamePosition)
+        addStringIfNotVisitedAlready(x, y, strings, gameModel, testGamePosition)
+
         val opponentStrings = HashSet<StoneString>()
 
+        // Check for self capture
+        val friendlyStrings = HashSet<StoneString>()
+
         // Sets values for the two buckets above
-        coalesceStrings(proposedMove.stoneColor, friendlyStrings, opponentStrings, stringUp, stringLeft, stringDown, stringRight)
+        collateStrings(proposedMove.stoneColor, friendlyStrings, opponentStrings, strings)
 
         val capturedStones = HashSet<StoneData>()
         val capturesOfOpponent = getCaptures(opponentStrings, gameModel)
-        val capturesOfSelf = getCaptures(friendlyStrings, gameModel)
+        val capturesOfSelf = if (capturesOfOpponent.isEmpty()) getCaptures(friendlyStrings, gameModel) else HashSet() // If we capture opponent first, then even if the played move has no liberties, it's not a self capture
 
         if (capturesOfOpponent.size == 0 && capturesOfSelf.size > 0 && !gameModel.rules.allowSuicideMoves()) {
             // Suicide
@@ -125,9 +130,43 @@ internal object GoMoveHelper {
         stoneUpdates.add(proposedMove)
 
         val newStateHash = gameModel.stateHasher.calculateUpdateHash(currentNode.data!!.stateHash, stoneUpdates)
-        val update = GameStateUpdateFactory.createForProposedMove(proposedMove, capturedStones, newStateHash)
+        val stateHashHistory = gameModel.getStateHashHistory()
 
+        // Check if this new state repeats past board positions
+        if (stateHashHistory.contains(newStateHash)) {
+            // Determine the reason of repetition. The two important distinction is an illegal ko recapture vs generic position repeat.
+            // An illegal ko recapture is an immediate repetition of currentNode.parent state (2 states ago from the perspective of the new node)
+            // Whereas a generic position repeat is a repetition of any state other than a ko recapture.
+            val newStatePosition = stateHashHistory.size
+            val repeatHashPosition = stateHashHistory.indexOf(newStateHash)
+
+            if (newStatePosition - repeatHashPosition == 2) {
+                // Lastly, make sure we're trying to capture 1 opponent stone this turn and during opponent's capture, it's also 1 stone, and
+                // that captured stone is at the same location we're trying to play.
+                val lastKoRecaptureCapturedStones = currentNode.data!!.captures
+
+                // Be as concise as possible because edge case 1x1 board self-capture can also result in the same conditions
+                // and it does not qualify as a ko recapture.
+                if (lastKoRecaptureCapturedStones.size == 1
+                        && lastKoRecaptureCapturedStones.iterator().next() == proposedMove
+                        && currentNode.data!!.primaryMove!!.stoneColor == proposedMove.stoneColor.getOpponent()) {
+                    return Pair(MoveValidationResult.ERROR_KO_RECAPTURE, null)
+                }
+            }
+
+            return Pair(MoveValidationResult.ERROR_POSITION_REPEAT, null)
+        }
+
+        val update = GameStateUpdateFactory.createForProposedMove(proposedMove, capturedStones, newStateHash)
         return Pair(MoveValidationResult.OK, update)
+    }
+
+    private fun addStringIfNotVisitedAlready(x: Int, y: Int, strings: HashSet<StoneString>, gameModel: GoGameModel, testPosition: Array<GoStoneColor?>) {
+        // Check if this intersection is already part of an existing string
+        if (strings.stream().anyMatch { string -> string.stones.contains(x + y * gameModel.boardWidth) })
+            return
+
+        getString(x, y, gameModel, testPosition)?.let { strings.add(it) }
     }
 
     private fun getCaptures(strings: HashSet<StoneString>, gameModel: GoGameModel): HashSet<StoneData> {
@@ -150,16 +189,14 @@ internal object GoMoveHelper {
     /**
      * Sorts an array of [StoneString] into friendly and opponent buckets, and merge strings that are equal.
      */
-    private fun coalesceStrings(friendlyColor: GoStoneColor, friendlyStrings: HashSet<StoneString>, opponentStrings: HashSet<StoneString>, vararg strings: StoneString?) {
+    private fun collateStrings(friendlyColor: GoStoneColor, friendlyStrings: HashSet<StoneString>, opponentStrings: HashSet<StoneString>, strings: HashSet<StoneString>) {
         val uniqueStrings = strings.toSet() // Exploits the property of set that elements must be unique
 
         uniqueStrings.forEach { string ->
-            string?.let {
-                if (it.color == friendlyColor)
-                    friendlyStrings.add(it)
-                else
-                    opponentStrings.add(it)
-            }
+            if (string.color == friendlyColor)
+                friendlyStrings.add(string)
+            else
+                opponentStrings.add(string)
         }
     }
 
