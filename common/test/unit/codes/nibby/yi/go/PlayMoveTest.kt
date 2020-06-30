@@ -6,66 +6,6 @@ import org.junit.jupiter.api.Test
 
 class PlayMoveTest {
 
-    // Only supports a 2x2 board for testing purposes
-    private class TestingFourIntersectionXORHasher() : StateHasher {
-
-        // Uses the first four bits of a 'byte' to represent unique hash values for each intersection state
-        // bit format: SS PP, where S = stone color, P = intersection position
-        //
-        // state table: 00 = empty intersection
-        //              01 = black stone
-        //              10 = white stone
-        //              11 = [ unused ]
-        //
-        // position: 00 = (0,0)
-        //           01 = (0,1)
-        //           10 = (1,0)
-        //           11 = (1,1)
-
-        val hashes = arrayOf(
-                0, 1, 2, 3,
-                4, 5, 6, 7,
-                8, 9, 10, 11
-        )
-
-        override fun calculateStateHash(state: GoGameState): Long {
-            val position = state.gamePosition
-            var stateHash = 0L
-
-            for (intersection in 0..3) {
-                val stoneColor = position.getStoneColorAt(intersection)
-                val stateId = stoneColor.index
-                val hash = hashes[stateId * 4 + intersection].toLong()
-
-                stateHash = stateHash xor hash
-            }
-            return stateHash
-        }
-
-        override fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long {
-            var newHash = currentStateHash
-            stoneUpdates.forEach { update ->
-                newHash = newHash xor getHash(update.stoneColor.index, update.x + update.y * 2)
-            }
-
-            return newHash
-        }
-
-        fun getHash(stateId: Byte, position: Int): Long {
-            return hashes[stateId * 4 + position].toLong()
-        }
-    }
-
-    private class TestingGameRulesNoSuicide : GoGameRulesHandler() {
-        override fun getKomi(): Float = 6.5F
-        override fun allowSuicideMoves(): Boolean = false
-    }
-
-    private class TestingGameRulesSuicideAllowed : GoGameRulesHandler() {
-        override fun getKomi(): Float = 6.5F
-        override fun allowSuicideMoves(): Boolean = true
-    }
-
     @Test
     fun `play first legal move has correct move tree state`() {
         val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
@@ -239,11 +179,67 @@ class PlayMoveTest {
 
     @Test
     fun `board position repeat is illegal`() {
-
+        TODO("Confirm the exact mechanism of whole board position repeat.")
     }
 
-    @Test
-    fun `suicide works properly on one stone`() {
 
+    // Only supports a 2x2 board for testing purposes
+    private class TestingFourIntersectionXORHasher() : StateHasher {
+
+        // Uses the first four bits of a 'byte' to represent unique hash values for each intersection state
+        // bit format: SS PP, where S = stone color, P = intersection position
+        //
+        // state table: 00 = empty intersection
+        //              01 = black stone
+        //              10 = white stone
+        //              11 = [ unused ]
+        //
+        // position: 00 = (0,0)
+        //           01 = (0,1)
+        //           10 = (1,0)
+        //           11 = (1,1)
+
+        val hashes = arrayOf(
+                0, 1, 2, 3,
+                4, 5, 6, 7,
+                8, 9, 10, 11
+        )
+
+        override fun calculateStateHash(state: GoGameState): Long {
+            val position = state.gamePosition
+            var stateHash = 0L
+
+            for (intersection in 0..3) {
+                val stoneColor = position.getStoneColorAt(intersection)
+                val stateId = stoneColor.index
+                val hash = hashes[stateId * 4 + intersection].toLong()
+
+                stateHash = stateHash xor hash
+            }
+            return stateHash
+        }
+
+        override fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long {
+            var newHash = currentStateHash
+            stoneUpdates.forEach { update ->
+                newHash = newHash xor getHash(update.stoneColor.index, update.x + update.y * 2)
+            }
+
+            return newHash
+        }
+
+        fun getHash(stateId: Byte, position: Int): Long {
+            return hashes[stateId * 4 + position].toLong()
+        }
+    }
+
+    private class TestingGameRulesNoSuicide : GoGameRulesHandler() {
+        override fun getKomi(): Float = 6.5F
+        override fun allowSuicideMoves(): Boolean = false
+    }
+
+    private class TestingGameRulesSuicideAllowed : GoGameRulesHandler() {
+        override fun getKomi(): Float = 6.5F
+        override fun allowSuicideMoves(): Boolean = true
     }
 }
