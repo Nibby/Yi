@@ -74,7 +74,7 @@ internal object GoMoveHelper {
         if (expectedStoneColorThisTurn != proposedMove.stoneColor)
             return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)
 
-        val currentGameState = gameModel.resolveGameState(currentNode)
+        val currentGameState = gameModel.getGameState(currentNode)
         val currentGamePosition = currentGameState.gamePosition
         if (currentGamePosition.getStoneColorAt(proposedMovePosition) != GoStoneColor.NONE)
             return Pair(MoveValidationResult.ERROR_NON_EMPTY_INTERSECTION, null)

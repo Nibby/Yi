@@ -33,7 +33,7 @@ class PlayMoveTest {
         val moveSubmitResult = model.playMove(0, 0)
         val newNode = moveSubmitResult.moveNode
 
-        val firstMoveGameState = model.resolveGameState(newNode!!)
+        val firstMoveGameState = model.getGameState(newNode!!)
         val stoneColorAtPlayedMove = firstMoveGameState.gamePosition.getStoneColorAt(0, 0)
 
         Assertions.assertEquals(GoStoneColor.BLACK, stoneColorAtPlayedMove)
@@ -46,7 +46,7 @@ class PlayMoveTest {
         val moveSubmitResult = model.playMove(0, 0)
         val newNode = moveSubmitResult.moveNode
 
-        val firstMoveGameState = model.resolveGameState(newNode!!)
+        val firstMoveGameState = model.getGameState(newNode!!)
         val stoneColorAtPlayedMove = firstMoveGameState.gamePosition.getStoneColorAt(0, 0)
 
         Assertions.assertEquals(GoStoneColor.BLACK, stoneColorAtPlayedMove)
@@ -63,7 +63,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1) // white removes last liberty, stone at 0,0 should be captured now
 
-        val gameState = model.resolveGameState(model.currentNode)
+        val gameState = model.getGameState(model.currentNode)
         Assertions.assertEquals(1, gameState.prisonersWhite)
         Assertions.assertEquals(GoStoneColor.NONE, gameState.gamePosition.getStoneColorAt(0, 0))
     }
@@ -81,7 +81,7 @@ class PlayMoveTest {
                 .playMove(0, 2)
                 .playMove(1, 2) // After white plays this move, the three black stones on the left column should be all captured
 
-        val currentState = model.resolveGameState(model.currentNode)
+        val currentState = model.getGameState(model.currentNode)
 
         Assertions.assertEquals(3, currentState.prisonersWhite)
 
