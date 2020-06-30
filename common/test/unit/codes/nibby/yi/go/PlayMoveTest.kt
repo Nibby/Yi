@@ -224,6 +224,20 @@ class PlayMoveTest {
     }
 
     @Test
+    fun `suicidal move is playable on rules that allow suicide`() {
+        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed())
+
+        model.playMove(1, 0)
+        model.playPass()
+        model.playMove(0, 1)
+
+        val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
+
+        Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
+    }
+
+
+    @Test
     fun `board position repeat is illegal`() {
 
     }
