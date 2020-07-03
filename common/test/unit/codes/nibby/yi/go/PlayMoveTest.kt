@@ -257,9 +257,9 @@ class PlayMoveTest {
                 8, 9, 10, 11
         )
 
-        override fun calculateStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
+        override fun computeStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
             val position = state.gamePosition
-            var stateHash = getEmptyStateHash(boardWidth, boardHeight)
+            var stateHash = computeEmptyPositionHash(boardWidth, boardHeight)
 
             for (intersection in 0..3) {
                 val stoneColor = position.getStoneColorAt(intersection)
@@ -271,8 +271,8 @@ class PlayMoveTest {
             return stateHash
         }
 
-        override fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long {
-            var newHash = currentStateHash
+        override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<StoneData>): Long {
+            var newHash = lastStateHash
             stoneUpdates.forEach { update ->
                 newHash = newHash xor getHash(update.stoneColor.index, update.x + update.y * 2)
             }

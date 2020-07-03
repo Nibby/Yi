@@ -65,7 +65,7 @@ internal object GoMoveHelper {
     fun validateProposedMoveAndCreateStateUpdate(gameModel: GoGameModel, currentNode: MoveNode<GameStateUpdate>, proposedMove: StoneData)
             : Pair<MoveValidationResult, GameStateUpdate?> {
 
-        val proposedMovePosition = proposedMove.getIndex(gameModel.boardWidth)
+        val proposedMovePosition = proposedMove.getPosition(gameModel.boardWidth)
         if (proposedMovePosition < 0 || proposedMovePosition >= gameModel.getIntersectionCount())
             return Pair(MoveValidationResult.ERROR_POSITION_OUT_OF_BOUNDS, null)
 
@@ -144,7 +144,7 @@ internal object GoMoveHelper {
             stoneUpdates.remove(proposedMove)
         }
 
-        val newStateHash = gameModel.stateHasher.calculateUpdateHash(currentNode.data!!.stateHash, stoneUpdates)
+        val newStateHash = gameModel.stateHasher.computeUpdateHash(currentNode.data!!.stateHash, stoneUpdates)
         val stateHashHistory = gameModel.getStateHashHistory()
 
         // Check if this new state repeats past board positions
@@ -298,7 +298,7 @@ internal object GoMoveHelper {
 
         private fun processNeighbour(stringColor: GoStoneColor, neighbor: StoneData?, visited: HashSet<Int>, toVisit: HashSet<Int>) {
             neighbor?.let {
-                val position = neighbor.getIndex(boardWidth)
+                val position = neighbor.getPosition(boardWidth)
 
                 val color = neighbor.stoneColor
                 if (color != GoStoneColor.NONE && color == stringColor) {
