@@ -138,6 +138,22 @@ class PlayMoveTest {
     }
 
     @Test
+    fun `played move with no liberty but captures opponent stones is allowed`() {
+        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
+
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .pass()
+                .playMove(1, 0)
+                .pass()
+                .playMove(0, 1);
+
+        val result = model.playMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
+
+        Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
+    }
+
+    @Test
     fun `ko recapture is illegal`() {
         val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
 
