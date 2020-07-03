@@ -3,11 +3,11 @@ package codes.nibby.yi.editor.utilities;
 /**
  * A collection of miscellaneous utilities.
  */
-public final class Utilities {
+public final class ComparisonUtilities {
 
     public static final double EPSILON = 0.000005d;
 
-    private Utilities() { }
+    private ComparisonUtilities() { }
 
     /**
      * Tests whether two double values are roughly equal, accounting for an accepted amount of precision loss.
