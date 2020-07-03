@@ -2,20 +2,24 @@ package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.go.GoGameModel;
 
+/**
+ * Main controller class for {@link GameBoardCanvas} state. Receives UI and game events and manages the interaction
+ * of subcomponents within the game module.
+ */
 final class GameBoardManager {
 
-    final GameBoardModel state = new GameBoardModel();
-    final GameBoardSize sizes = new GameBoardSize();
+    final GameBoardModel model = new GameBoardModel();
+    final GameBoardSize size = new GameBoardSize();
 
     void onGameInitialize(GoGameModel game) {
-        state.initialize(game);
+        model.initialize(game);
     }
 
     void onBoardSizeUpdate(double newBoardWidth, double newBoardHeight, GoGameModel game) {
-        sizes.recalculate(newBoardWidth, newBoardHeight, game.getBoardWidth(), game.getBoardHeight());
+        size.recalculate(newBoardWidth, newBoardHeight, game.getBoardWidth(), game.getBoardHeight());
     }
 
     void onGameUpdate(GoGameModel game) {
-
+        model.update(game);
     }
 }

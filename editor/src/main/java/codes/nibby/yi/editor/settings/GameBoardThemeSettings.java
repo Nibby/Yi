@@ -66,9 +66,9 @@ public final class GameBoardThemeSettings extends SettingsModule {
     private void loadFromJson(Path themeDirectory, JSONObject themeSettings) {
         stoneShadowSize = themeSettings.getDouble(KEY_STONE_SHADOW_SIZE);
         stoneShadowBlur = themeSettings.getDouble(KEY_STONE_SHADOW_BLUR);
-        stoneShadowColor = toColor(themeSettings.getString(KEY_STONE_SHADOW_COLOR));
+        parseColor(themeSettings.getString(KEY_STONE_SHADOW_COLOR)).ifPresent(color -> stoneShadowColor = color);
         boardGridThickness = themeSettings.getDouble(KEY_BOARD_GRID_THICKNESS);
-        boardGridColor = toColor(themeSettings.getString(KEY_BOARD_GRID_COLOR));
+        parseColor(themeSettings.getString(KEY_BOARD_GRID_COLOR)).ifPresent(color -> boardGridColor = color);
 
         loadOptionalImage(themeDirectory, themeSettings, KEY_BLACK_STONE_IMAGE).ifPresent(image -> blackStoneImage = image);
         loadOptionalImage(themeDirectory, themeSettings, KEY_WHITE_STONE_IMAGE).ifPresent(image -> whiteStoneImage = image);
@@ -76,7 +76,13 @@ public final class GameBoardThemeSettings extends SettingsModule {
         loadOptionalImage(themeDirectory, themeSettings, KEY_BACKGROUND_IMAGE).ifPresent(image -> backgroundImage = image);
     }
 
-    private Color toColor(String colorString) {
+    /**
+     * Converts a String of format "R,G,B,a" to a {@link Color} object.
+     *
+     * @param colorString The color string to parse
+     * @return The color object representation
+     */
+    private Optional<Color> parseColor(String colorString) {
         String[] segments = colorString.split(",");
         if (segments.length >= 3) {
             int r = Integer.parseInt(segments[0]);
@@ -91,11 +97,19 @@ public final class GameBoardThemeSettings extends SettingsModule {
             double gg = trimToBounds(g / 255d);
             double bb = trimToBounds(b / 255d);
             double aa = trimToBounds(a);
-            return new Color(rr, gg, bb, aa);
+            return Optional.of(new Color(rr, gg, bb, aa));
         }
-        return null;
+        return Optional.empty();
     }
 
+    /**
+     * Ensures that a given colorValue does not exceed permitted range.
+     * Numbers near boundaries (difference less than {@link codes.nibby.yi.editor.utilities.ComparisonUtilities#EPSILON}
+     * will be rounded accordingly.
+     *
+     * @param colorValue Color value to format
+     * @return Trimmed color value bounded between 0 to 1.0 inclusive.
+     */
     private double trimToBounds(double colorValue) {
         final double epsilon = 0.00005d;
 

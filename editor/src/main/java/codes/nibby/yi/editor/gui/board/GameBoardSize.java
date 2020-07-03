@@ -4,15 +4,15 @@ import codes.nibby.yi.editor.utilities.ComparisonUtilities;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Manages the size parameters for drawing the game board.
+ * Manages the size parameters for drawing the game board. Properties in this class are usually dynamically calculated depending on
+ * the dimension of the game board canvas. For that reason, many properties use a hard-coded percentage rather than some constant value.
+ *
+ * The percentage is usually taken from the shorter side of a boundary (i.e. {@code Math.min(a, b) * percentage}.
  */
 final class GameBoardSize {
 
     private double canvasWidth;
     private double canvasHeight;
-
-    // width/height size of the game board, >1 = width > height, <1 = width > height
-    private double boardWidthToHeightRatio;
 
     // Expressed as a percentage of total canvas width/height
     private final double percentageThicknessOfBoardBorder = 0.02d;
@@ -27,13 +27,12 @@ final class GameBoardSize {
     private Rectangle coordinateLabelBounds;
     private Rectangle gridBounds;
     private final double percentageGridLineThickness = 0.00125d;
-    private double stoneSize;
 
-    /**
-     * These are percentages of gridBounds.
-     */
+    // These are percentages of gridBounds.
+    // TODO: Properly implement stone rendering and size calculation
     private double percentageStoneDiameter;
     private final double percentageStoneGap = 0.008d; // Space between two adjacent stones
+    private double stoneSize;
 
     /**
      * Recalculates the board sizing using standard margins.

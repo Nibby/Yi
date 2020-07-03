@@ -4,18 +4,24 @@ import codes.nibby.yi.go.GoGameModel;
 import codes.nibby.yi.go.GoGamePosition;
 import codes.nibby.yi.go.GoGameState;
 
-public final class GameBoardModel {
+/**
+ * Wraps the current {@link GoGameModel} and provide game information to other board classes.
+ */
+final class GameBoardModel {
 
     private GoGameModel gameModel;
-
     private GoGameState currentGameState;
 
     public void initialize(GoGameModel gameModel) {
         this.gameModel = gameModel;
-        update();
+        update(gameModel);
     }
 
-    public void update() {
+    public void update(GoGameModel gameModel) {
+        if (this.gameModel != gameModel) {
+            this.gameModel = gameModel;
+        }
+
         this.currentGameState = this.gameModel.getCurrentGameState();
     }
 
