@@ -113,13 +113,20 @@ internal object GoMoveHelper {
         // Sets values for the two buckets above
         collateStrings(proposedMove.stoneColor, friendlyStrings, opponentStrings, strings)
 
+        var moveIsSuicidal = false
         val capturedStones = HashSet<StoneData>()
-        val capturesOfOpponent = getCaptures(opponentStrings, gameModel)
-        val capturesOfSelf = if (capturesOfOpponent.isEmpty()) getCaptures(friendlyStrings, gameModel) else HashSet() // If we capture opponent first, then even if the played move has no liberties, it's not a self capture
+        val capturesOfOpponent = getCapturesAndUpdateGamePosition(testGamePosition, opponentStrings, gameModel.boardWidth)
+        val capturesOfSelf = if (capturesOfOpponent.isEmpty())
+                                getCapturesAndUpdateGamePosition(testGamePosition, friendlyStrings, gameModel.boardWidth)
+                             else
+                                HashSet() // If we capture opponent first, then even if the played move has no liberties, it's not a self capture
 
-        if (capturesOfOpponent.size == 0 && capturesOfSelf.size > 0 && !gameModel.rules.allowSuicideMoves()) {
-            // Suicide
-            return Pair(MoveValidationResult.ERROR_MOVE_SUICIDAL, null)
+        if (capturesOfOpponent.size == 0 && capturesOfSelf.size > 0) {
+            moveIsSuicidal = true
+
+            if (!gameModel.rules.allowSuicideMoves()) {
+                return Pair(MoveValidationResult.ERROR_MOVE_SUICIDAL, null)
+            }
         }
 
         capturedStones.addAll(capturesOfOpponent)
@@ -127,7 +134,15 @@ internal object GoMoveHelper {
 
         // Play move success
         val stoneUpdates = HashSet<StoneData>(capturedStones)
-        stoneUpdates.add(proposedMove)
+        if (!moveIsSuicidal) {
+            stoneUpdates.add(proposedMove)
+        } else {
+            // This move is part of the group that is captured, but we do not include it in stoneUpdates
+            // because the net difference between the currentNode board state and the next state produced by this move
+            // is the existing string (excluding the new move) being removed off the board. This way we ensure the
+            // hasher is in the correct state.
+            stoneUpdates.remove(proposedMove)
+        }
 
         val newStateHash = gameModel.stateHasher.calculateUpdateHash(currentNode.data!!.stateHash, stoneUpdates)
         val stateHashHistory = gameModel.getStateHashHistory()
@@ -169,15 +184,23 @@ internal object GoMoveHelper {
         getString(x, y, gameModel, testPosition)?.let { strings.add(it) }
     }
 
-    private fun getCaptures(strings: HashSet<StoneString>, gameModel: GoGameModel): HashSet<StoneData> {
+    private fun getCapturesAndUpdateGamePosition(gamePosition: Array<GoStoneColor?>, strings: HashSet<StoneString>, boardWidth: Int): HashSet<StoneData> {
         val captures = HashSet<StoneData>()
 
         strings.forEach { string ->
             // String is captured
             if (string.liberties.size == 0) {
-                string.stones.stream().forEach { position ->
-                    val stoneX = position % gameModel.boardWidth
-                    val stoneY = position / gameModel.boardHeight
+                string.stones.stream().forEach { stonePosition ->
+                    val stoneX = stonePosition % boardWidth
+                    val stoneY = stonePosition / boardWidth
+                    val stoneAtPosition = gamePosition[stoneX + stoneY * boardWidth]
+
+                    if (stoneAtPosition != string.color)
+                        throw IllegalStateException("The stone color at ($stoneX, $stoneY) does not match captured stone at the same position." +
+                                " gamePosition: $stoneAtPosition stringColor: ${string.color} ")
+
+                    // Erase the captured stone from the position
+                    gamePosition[stoneX + stoneY * boardWidth] = GoStoneColor.NONE
                     captures.add(StoneData(stoneX, stoneY, string.color))
                 }
             }
