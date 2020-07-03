@@ -81,7 +81,7 @@ public final class GameBoardSizeTest {
 
         Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
 
-        testFitCorrect(new Rectangle(0, 25, 100, 75), fit);
+        testFitCorrect(new Rectangle(0, 25, 100, 50), fit);
     }
 
     @Test
@@ -91,7 +91,7 @@ public final class GameBoardSizeTest {
 
         Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
 
-        testFitCorrect(new Rectangle(25, 0, 75, 100), fit);
+        testFitCorrect(new Rectangle(25, 0, 50, 100), fit);
     }
 
     @Test
@@ -101,7 +101,7 @@ public final class GameBoardSizeTest {
 
         Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
 
-        testFitCorrect(new Rectangle(50, 0, 150, 100), fit);
+        testFitCorrect(new Rectangle(50, 0, 100, 100), fit);
     }
 
     @Test
@@ -121,7 +121,7 @@ public final class GameBoardSizeTest {
 
         Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
 
-        testFitCorrect(new Rectangle(75, 0, 125, 100), fit);
+        testFitCorrect(new Rectangle(75, 0, 50, 100), fit);
     }
 
     @Test
@@ -131,7 +131,7 @@ public final class GameBoardSizeTest {
 
         Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
 
-        testFitCorrect(new Rectangle(0, 50, 100, 150), fit);
+        testFitCorrect(new Rectangle(0, 50, 100, 100), fit);
     }
 
     @Test
@@ -141,7 +141,7 @@ public final class GameBoardSizeTest {
 
         Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
 
-        testFitCorrect(new Rectangle(0, 75, 100, 125), fit);
+        testFitCorrect(new Rectangle(0, 75, 100, 50), fit);
     }
 
     @Test
