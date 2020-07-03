@@ -3,6 +3,9 @@ package codes.nibby.yi.editor.gui.board;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+/**
+ * Represents one rendered content layer on the board.
+ */
 abstract class GameBoardCanvas extends Canvas {
 
     private GraphicsContext graphics;

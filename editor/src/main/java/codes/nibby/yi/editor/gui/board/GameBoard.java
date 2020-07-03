@@ -6,6 +6,10 @@ import javafx.scene.layout.Pane;
 
 import java.util.Stack;
 
+/**
+ * The core interface component that handles the display of the game board, as well as user input to browse
+ * and edit {@link GoGameModel} data.
+ */
 public final class GameBoard {
 
     private final Pane component;
@@ -49,15 +53,38 @@ public final class GameBoard {
         content.forEach(canvas -> canvas.render(manager));
     }
 
+    /**
+     * Invoked when the game board should display a new game model.
+     *
+     * @param game The game model to subscribe to
+     */
     public void initialize(GoGameModel game) {
         this.gameModel = game;
         manager.onGameInitialize(game);
     }
 
+    /**
+     * Invoked when there is an update to the {@link GoGameModel}. The model must
+     * be identical to the model that was last {@link #initialize(GoGameModel) initialized}.
+     * <p/>
+     * To change the model used by this game board, call {@link #initialize(GoGameModel)} with
+     * the new model.
+     *
+     * @param game The last game model used to initialize the game board
+     * @throws IllegalArgumentException If {@param game} is not the last model used to initialize the game board.
+     */
     public void update(GoGameModel game) {
+        if (this.gameModel != game) {
+            throw new IllegalArgumentException("Unrecognised game model");
+        }
+
         manager.onGameUpdate(game);
     }
 
+    /**
+     *
+     * @return The JavaFx container used to display the game board
+     */
     public Parent getComponent() {
         return component;
     }

@@ -45,21 +45,21 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderBorderAndShadow(GraphicsContext g, GameBoardManager manager) {
-            BOARD_BORDER_SHADOW.setRadius(manager.sizes.getShadowRadius());
-            BOARD_BORDER_SHADOW.setOffsetX(manager.sizes.getShadowOffsetXInPixels());
-            BOARD_BORDER_SHADOW.setOffsetY(manager.sizes.getShadowOffsetYInPixels());
+            BOARD_BORDER_SHADOW.setRadius(manager.size.getShadowRadius());
+            BOARD_BORDER_SHADOW.setOffsetX(manager.size.getShadowOffsetXInPixels());
+            BOARD_BORDER_SHADOW.setOffsetY(manager.size.getShadowOffsetYInPixels());
             BOARD_BORDER_SHADOW.setColor(Color.color(0d, 0d, 0d, 0.5d));
 
             g.setEffect(BOARD_BORDER_SHADOW);
             g.setFill(BOARD_BORDER_COLOR);
 
-            Rectangle borderBounds = manager.sizes.getBoardBorderBounds();
+            Rectangle borderBounds = manager.size.getBoardBorderBounds();
             g.fillRect(borderBounds.getX(), borderBounds.getY(), borderBounds.getWidth(), borderBounds.getHeight());
             g.setEffect(null);
         }
 
         private static void renderBoardTexture(GraphicsContext g, GameBoardManager manager) {
-            Rectangle boardBounds = manager.sizes.getBoardBounds();
+            Rectangle boardBounds = manager.size.getBoardBounds();
             g.drawImage(Settings.boardTheme.getBoardImage(), boardBounds.getX(), boardBounds.getY(), boardBounds.getWidth(), boardBounds.getHeight());
         }
 
@@ -73,21 +73,21 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             g.setStroke(lineColor);
 
             double originalLineWidth = g.getLineWidth();
-            double gridLineThickness = manager.sizes.getGridLineThicknessInPixels();
+            double gridLineThickness = manager.size.getGridLineThicknessInPixels();
             g.setLineWidth(gridLineThickness);
 
-            double stoneSize = manager.sizes.getStoneSizeInPixels();
+            double stoneSize = manager.size.getStoneSizeInPixels();
             double offset = stoneSize / 2; // Okay to calculate this here since it's more related to rendering than sizing
-            Rectangle gridBounds = manager.sizes.getGridBounds();
+            Rectangle gridBounds = manager.size.getGridBounds();
 
-            for (int lineNumber = 0; lineNumber < manager.state.getBoardWidth(); ++lineNumber) {
+            for (int lineNumber = 0; lineNumber < manager.model.getBoardWidth(); ++lineNumber) {
                 g.strokeLine(getRenderedGridX(lineNumber, manager, offset, 0),
                              gridBounds.getY() + offset,
                              getRenderedGridX(lineNumber, manager, offset, 0),
                              gridBounds.getY() + gridBounds.getHeight() - stoneSize + offset);
             }
 
-            for (int lineNumber = 0; lineNumber < manager.state.getBoardHeight(); ++lineNumber) {
+            for (int lineNumber = 0; lineNumber < manager.model.getBoardHeight(); ++lineNumber) {
                 g.strokeLine(gridBounds.getX() + offset,
                              getRenderedGridY(lineNumber, manager, offset, 0),
                              gridBounds.getX() + gridBounds.getWidth() - stoneSize + offset,
@@ -101,8 +101,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
         private static void renderStarPoints(GraphicsContext g, GameBoardManager manager, double gridOffset, double lineWidth) {
             // Number of intersections on the game board, not sizing
-            int gameBoardWidth = manager.state.getBoardWidth();
-            int gameBoardHeight = manager.state.getBoardHeight();
+            int gameBoardWidth = manager.model.getBoardWidth();
+            int gameBoardHeight = manager.model.getBoardHeight();
 
             var starPointPositions = StarPointPosition.get(gameBoardWidth, gameBoardHeight);
             double starPointDiameter = lineWidth * 6d;
@@ -119,13 +119,13 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static double getRenderedGridX(int gridX, GameBoardManager manager, double gridOffset, double objectSize) {
-            return manager.sizes.getGridBounds().getX() + gridOffset
-                    + manager.sizes.getStoneSizeInPixels() * gridX - objectSize / 2;
+            return manager.size.getGridBounds().getX() + gridOffset
+                    + manager.size.getStoneSizeInPixels() * gridX - objectSize / 2;
         }
 
         private static double getRenderedGridY(int gridY, GameBoardManager manager, double gridOffset, double objectSize) {
-            return manager.sizes.getGridBounds().getY() + gridOffset
-                    + manager.sizes.getStoneSizeInPixels() * gridY - objectSize / 2;
+            return manager.size.getGridBounds().getY() + gridOffset
+                    + manager.size.getStoneSizeInPixels() * gridY - objectSize / 2;
         }
 
 //        private static double getStoneX(int gridX, GameBoardManager manager, double gridOffset) {
