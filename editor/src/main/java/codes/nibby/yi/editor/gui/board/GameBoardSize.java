@@ -70,7 +70,7 @@ final class GameBoardSize {
         // Fit the largest bounds of the same aspect ratio as (gridWidth x gridHeight) to ensure grids can be drawn as perfect squares
         // Board content size
         Rectangle boardContainerBounds = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
-        boardBorderBounds = center(boardContainerBounds, clip(0, 0, lowestSize, lowestSize, marginSize));
+        boardBorderBounds = center(boardContainerBounds, clip(boardContainerBounds, marginSize));
         boardBounds = center(boardContainerBounds, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
 
         // Coordinate labels
