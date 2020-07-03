@@ -12,6 +12,7 @@ public final class GameBoard {
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
+    private GoGameModel gameModel;
 
     public GameBoard() {
         content.push(new GameBoardMainCanvas());
@@ -22,21 +23,23 @@ public final class GameBoard {
             protected void layoutChildren() {
                 super.layoutChildren();
 
-                final double x = snappedLeftInset();
-                final double y = snappedTopInset();
-                final double w = snapSizeX(getWidth()) - x - snappedRightInset();
-                final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
+                if (gameModel != null) {
+                    final double x = snappedLeftInset();
+                    final double y = snappedTopInset();
+                    final double w = snapSizeX(getWidth()) - x - snappedRightInset();
+                    final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
 
-                manager.onBoardSizeUpdate(w, h);
+                    manager.onBoardSizeUpdate(w, h, gameModel);
 
-                content.forEach(canvas -> {
-                    canvas.setLayoutX(x);
-                    canvas.setLayoutY(y);
-                    canvas.setWidth(w);
-                    canvas.setHeight(h);
-                });
+                    content.forEach(canvas -> {
+                        canvas.setLayoutX(x);
+                        canvas.setLayoutY(y);
+                        canvas.setWidth(w);
+                        canvas.setHeight(h);
+                    });
 
-                renderAll();
+                    renderAll();
+                }
             }
         };
         component.getChildren().addAll(content);
@@ -47,6 +50,7 @@ public final class GameBoard {
     }
 
     public void initialize(GoGameModel game) {
+        this.gameModel = game;
         manager.onGameInitialize(game);
     }
 
