@@ -15,8 +15,8 @@ final class GameBoardManager {
         model.initialize(game);
     }
 
-    void onBoardSizeUpdate(double newBoardWidth, double newBoardHeight, GoGameModel game) {
-        size.recalculate(newBoardWidth, newBoardHeight, game.getBoardWidth(), game.getBoardHeight());
+    void onBoardSizeUpdate(double componentWidth, double componentHeight, GoGameModel game) {
+        size.recalculate(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight());
     }
 
     void onGameUpdate(GoGameModel game) {

@@ -146,7 +146,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
               _9x9(point(2, 2, 9),                     point(6, 2, 9),
                                      point(4,  4, 9),
-                   point(2, 8, 9),                     point(8, 8, 9));
+                   point(2, 6, 9),                     point(6, 6, 9));
 
 
             private Set<Integer> points;
