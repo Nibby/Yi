@@ -22,7 +22,8 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     private var stateCache = WeakHashMap<Int, GoGameState>()
 
     init {
-        moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(stateHasher.getEmptyStateHash())
+        val emptyStateHash = stateHasher.getEmptyStateHash(boardWidth, boardHeight)
+        moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(emptyStateHash)
     }
 
     constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler) : this(boardWidth, boardHeight, rulesHandler, ZobristHasher(boardWidth, boardHeight))
@@ -114,7 +115,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         var prisonersWhite = 0
         var prisonersBlack = 0
 
-        var currentStateHash = stateHasher.getEmptyStateHash()
+        var currentStateHash = stateHasher.getEmptyStateHash(boardWidth, boardHeight)
 
         // Build the board state by traversing the history and apply the delta from root up to gameNode
         gameNode.getPathToRoot().forEach { node ->
@@ -170,7 +171,8 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         val nodeHistory = currentNode.getPathToRoot()
         if (nodeHistory.size > 1) {
             // Only count non-root and primary move updates for unique state
-            val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size).filter { state -> state.data!!.type == GameStateUpdate.Type.MOVE_PLAYED }
+            val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size)
+                                                .filter { state -> state.data!!.type == GameStateUpdate.Type.MOVE_PLAYED }
 
             this.stateHashHistory = uniqueStateHistory.map { item -> item.data!!.stateHash }
         }

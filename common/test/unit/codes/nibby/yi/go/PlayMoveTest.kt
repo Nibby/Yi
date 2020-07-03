@@ -172,21 +172,50 @@ class PlayMoveTest {
 
     @Test
     fun `suicidal move is playable on rules that allow suicide`() {
-        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed())
+        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(1, 0)
                 .pass()
                 .playMove(0, 1)
+                .pass()
+                .playMove(1, 1)
+                .pass()
 
-        val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
+        val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties
 
         Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
     }
 
     @Test
-    fun `board position repeat is illegal`() {
-        // TODO: Confirm the exact mechanism of whole board position repeat.
+    fun `board position repeat is illegal on 1x1`() {
+        val model = GoGameModel(1, 1, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+
+        model.beginMoveSequence()
+                .playMove(0, 0)
+
+        val result = model.playMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
+
+        Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
+    }
+
+    @Test
+    fun `board position repeat is illegal on 2x2`() {
+        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .pass()
+                .playMove(1, 0)
+                .pass()
+                .playMove(0, 1)
+                .pass()
+                .playMove(1, 1) // After playing this move black's entire group is self-captured. This move is not a board state repeat (of root empty state) because that doesn't count as a valid unique state.
+                .pass()
+
+        val result = model.playMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
+
+        Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
     }
 
 
@@ -212,9 +241,9 @@ class PlayMoveTest {
                 8, 9, 10, 11
         )
 
-        override fun calculateStateHash(state: GoGameState): Long {
+        override fun calculateStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
             val position = state.gamePosition
-            var stateHash = 0L
+            var stateHash = getEmptyStateHash(boardWidth, boardHeight)
 
             for (intersection in 0..3) {
                 val stoneColor = position.getStoneColorAt(intersection)

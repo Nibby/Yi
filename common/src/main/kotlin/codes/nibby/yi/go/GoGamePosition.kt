@@ -1,6 +1,6 @@
 package codes.nibby.yi.go
 
-class GoGamePosition(val boardWidth: Int, val boardHeight: Int) {
+class GoGamePosition(private val boardWidth: Int, boardHeight: Int) {
 
     val intersectionState = Array(boardWidth * boardHeight) { GoStoneColor.NONE }
 
@@ -24,5 +24,9 @@ class GoGamePosition(val boardWidth: Int, val boardHeight: Int) {
 
     fun getStoneColorAt(position: Int): GoStoneColor {
         return intersectionState[position]
+    }
+
+    internal fun setStoneColorAt(x: Int, y: Int, stoneColor: GoStoneColor) {
+        intersectionState[x + y * boardWidth] = stoneColor
     }
 }

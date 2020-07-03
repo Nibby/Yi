@@ -33,9 +33,9 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
         }
     }
 
-    override fun calculateStateHash(state: GoGameState): Long {
+    override fun calculateStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
         val position = state.gamePosition
-        var hash = getEmptyStateHash()
+        var hash = getEmptyStateHash(boardWidth, boardHeight)
 
         position.intersectionState.forEachIndexed { stonePosition, stoneColor ->
             val intersectionHash = getHashValue(stoneColor, stonePosition)
