@@ -62,9 +62,9 @@ final class GameBoardSize {
         double marginSize = lowestSize * percentageMarginFromEdge;
 
         Rectangle stage = new Rectangle(0, 0, this.canvasWidth, canvasHeight);
-        Rectangle boardContainer = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
-        boardBorderBounds = center(boardContainer, clip(0, 0, lowestSize, lowestSize, marginSize));
-        boardBounds = center(boardContainer, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
+        Rectangle boardContainerBounds = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
+        boardBorderBounds = center(boardContainerBounds, clip(0, 0, lowestSize, lowestSize, marginSize));
+        boardBounds = center(boardContainerBounds, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
 
         // TODO: Make this configurable and actually draw it.
 //        percentagePaddingForCoordinateLabels = 0.1d;
@@ -185,7 +185,7 @@ final class GameBoardSize {
         double fitX = container.getX() + container.getWidth() / 2 - fitWidth / 2;
         double fitY = container.getY() + container.getHeight() / 2 - fitHeight / 2;
 
-        return new Rectangle(fitX + fitInsets, fitY + fitInsets, fitX + fitWidth - 2 * fitInsets, fitY + fitHeight - 2 * fitInsets);
+        return new Rectangle(fitX + fitInsets, fitY + fitInsets, fitWidth - 2 * fitInsets, fitHeight - 2 * fitInsets);
     }
 
     /**
