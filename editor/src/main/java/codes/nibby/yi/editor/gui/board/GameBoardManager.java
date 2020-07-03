@@ -4,11 +4,11 @@ import codes.nibby.yi.go.GoGameModel;
 
 final class GameBoardManager {
 
-    final GameBoardState state = new GameBoardState();
+    final GameBoardModel state = new GameBoardModel();
     final GameBoardSize sizes = new GameBoardSize();
 
     void onGameInitialize(GoGameModel game) {
-        state.initialize(game.getBoardWidth(), game.getBoardHeight());
+        state.initialize(game);
     }
 
     void onBoardSizeUpdate(double newBoardWidth, double newBoardHeight, GoGameModel game) {

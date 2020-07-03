@@ -19,10 +19,15 @@ final class GameBoardSize {
     private Rectangle boardBorderBounds;
     private Rectangle boardBounds;
 
-    private double percentagePaddingForCoordinateLabels; // A percentage of board dimensions rather than total size
-    private double pixelPaddingForCoordinateLabels;
-
+    // These are percentages of the shorter side of board dimensions rather than total size
+    private final double percentageShadowBlurRadius = 0.015d;
+    private final double percentageShadowOffset = 0.012d;
+    private final double percentagePaddingForCoordinateLabels = 0.02d;
+    private final double percentagePaddingBetweenLabelsAndGrid = 0.02d;
+    private Rectangle coordinateLabelBounds;
     private Rectangle gridBounds;
+    private final double percentageGridLineThickness = 0.00125d;
+    private double stoneSize;
 
     /**
      * These are percentages of gridBounds.
@@ -62,12 +67,29 @@ final class GameBoardSize {
         double marginSize = lowestSize * percentageMarginFromEdge;
 
         Rectangle stage = new Rectangle(0, 0, this.canvasWidth, canvasHeight);
+
+        // Fit the largest bounds of the same aspect ratio as (gridWidth x gridHeight) to ensure grids can be drawn as perfect squares
+        // Board content size
         Rectangle boardContainerBounds = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
         boardBorderBounds = center(boardContainerBounds, clip(0, 0, lowestSize, lowestSize, marginSize));
         boardBounds = center(boardContainerBounds, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
 
-        // TODO: Make this configurable and actually draw it.
-//        percentagePaddingForCoordinateLabels = 0.1d;
+        // Coordinate labels
+        // TODO: Depending on the co-ordinate label position, the padding size may vary
+        //       Finalise this later
+        coordinateLabelBounds = center(boardBounds, clip(boardBounds, getPaddingForCoordinateLabelsInPixels()));
+
+        // TODO: This may not be at the center of the coordinate bounds if the labels are not showing in all 4 sides
+        double pixelPaddingBetweenLabelsAndGrid = percentagePaddingBetweenLabelsAndGrid * Math.min(coordinateLabelBounds.getWidth(), coordinateLabelBounds.getHeight());
+        gridBounds = center(coordinateLabelBounds, clip(coordinateLabelBounds, pixelPaddingBetweenLabelsAndGrid));
+
+        // Check that the stone size is (approximately) square
+        double stoneWidth = gridBounds.getWidth() / gridWidth;
+        double stoneHeight = gridBounds.getHeight() / gridHeight;
+
+        assert ComparisonUtilities.doubleEquals(stoneWidth, stoneHeight);
+
+        stoneSize = (stoneWidth + stoneHeight) / 2;
     }
 
     /**
@@ -84,14 +106,6 @@ final class GameBoardSize {
      */
     public Rectangle getBoardBorderBounds() {
         return boardBorderBounds;
-    }
-
-    /**
-     *
-     * @return The amount of pixels between the edge of the game board image and the start of the grids.
-     */
-    public double getPaddingForCoordinateLabels() {
-        return pixelPaddingForCoordinateLabels;
     }
 
     /**
@@ -114,8 +128,64 @@ final class GameBoardSize {
      *
      * @return The thickness of the border around the game board in pixel units.
      */
-    public double getPixelThicknessOfBoardBorder() {
+    public double getThicknessOfBoardBorderInPixels() {
         return percentageThicknessOfBoardBorder;
+    }
+
+    /**
+     *
+     * @return The amount of pixels between the edge of the game board image and the start of the grids.
+     */
+    public double getPaddingForCoordinateLabelsInPixels() {
+        return percentagePaddingForCoordinateLabels * getBoardBoundsPercentageMetric();
+    }
+
+    /**
+     *
+     * @return The blur factor of the shadow effect used to paint board component border
+     */
+    public double getShadowRadius() {
+        return percentageShadowBlurRadius * getBoardBoundsPercentageMetric();
+    }
+
+    /**
+     *
+     * @return The amount of x-offset on the board component border shadow
+     */
+    public double getShadowOffsetXInPixels() {
+        return percentageShadowOffset * getBoardBounds().getWidth();
+    }
+
+    /**
+     *
+     * @return The amount of y-offset on the board component border shadow
+     */
+    public double getShadowOffsetYInPixels() {
+        return percentageShadowOffset * getBoardBounds().getHeight();
+    }
+
+    /**
+     *
+     * @return The side of {@link #boardBounds} used to calculate percentages related to the board component.
+     */
+    private double getBoardBoundsPercentageMetric() {
+        return Math.min(boardBounds.getWidth(), boardBounds.getHeight());
+    }
+
+    /**
+     *
+     * @return The square dimension of a rendered Go stone, in pixels.
+     */
+    public double getStoneSizeInPixels() {
+        return stoneSize;
+    }
+
+    /**
+     *
+     * @return The thickness, in pixel units, of the line used to draw the board grids.
+     */
+    public double getGridLineThicknessInPixels() {
+        return percentageGridLineThickness * getBoardBoundsPercentageMetric();
     }
 
     /**
