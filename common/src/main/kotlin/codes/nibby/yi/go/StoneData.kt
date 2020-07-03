@@ -3,11 +3,14 @@ package codes.nibby.yi.go
 import java.util.*
 
 /**
- * Represents a point on the game board
+ * A tuple that describes the state of a position.
  */
 class StoneData constructor(val x: Int, val y: Int, val stoneColor: GoStoneColor) {
 
-    fun getIndex(boardWidth: Int) = x + y * boardWidth
+    /**
+     * @return index-based position representation of this stone.
+     */
+    fun getPosition(boardWidth: Int) = x + y * boardWidth
 
     override fun equals(other: Any?): Boolean {
         if (other is StoneData) {

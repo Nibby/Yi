@@ -1,5 +1,8 @@
 package codes.nibby.yi.go
 
+/**
+ * Handles the creation of [GameStateUpdate] depending on the context.
+ */
 internal object GameStateUpdateFactory {
 
     fun createForProposedMove(primaryMove: StoneData, captures: HashSet<StoneData>, stateHash: Long): GameStateUpdate

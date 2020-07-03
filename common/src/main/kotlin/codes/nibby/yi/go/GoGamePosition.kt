@@ -7,12 +7,12 @@ class GoGamePosition(private val boardWidth: Int, boardHeight: Int) {
     fun apply(update: GameStateUpdate) {
         // Apply primary move
         if (update.primaryMove != null) {
-            val primaryMove = update.primaryMove.getIndex(boardWidth)
+            val primaryMove = update.primaryMove.getPosition(boardWidth)
             intersectionState[primaryMove] = update.primaryMove.stoneColor
         }
 
         // Apply captures
-        update.captures.forEach { intersectionState[it.getIndex(boardWidth)] = GoStoneColor.NONE }
+        update.captures.forEach { intersectionState[it.getPosition(boardWidth)] = GoStoneColor.NONE }
 
         // Apply helper stone updates
         update.helperStoneUpdates.forEach { intersectionState[it.x + it.y * boardWidth] = it.stoneColor }

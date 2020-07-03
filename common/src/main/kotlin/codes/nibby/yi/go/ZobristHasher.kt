@@ -3,6 +3,11 @@ package codes.nibby.yi.go
 import java.lang.IllegalStateException
 import kotlin.random.Random
 
+/**
+ * A simple XOR state hasher for [GoGameState].
+ * <p/>
+ * See https://en.wikipedia.org/wiki/Zobrist_hashing for more information.
+ */
 class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) : StateHasher {
 
     private val intersectionCount = boardWidth * boardHeight
@@ -33,9 +38,9 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
         }
     }
 
-    override fun calculateStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
+    override fun computeStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
         val position = state.gamePosition
-        var hash = getEmptyStateHash(boardWidth, boardHeight)
+        var hash = computeEmptyPositionHash(boardWidth, boardHeight)
 
         position.intersectionState.forEachIndexed { stonePosition, stoneColor ->
             val intersectionHash = getHashValue(stoneColor, stonePosition)
@@ -45,8 +50,8 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
         return hash
     }
 
-    override fun calculateUpdateHash(currentStateHash: Long, stoneUpdates: Set<StoneData>): Long {
-        var newHash = currentStateHash
+    override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<StoneData>): Long {
+        var newHash = lastStateHash
 
         stoneUpdates.forEach { update ->
             val updateHash = getHashValue(update)

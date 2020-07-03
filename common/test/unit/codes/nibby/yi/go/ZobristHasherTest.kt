@@ -16,8 +16,8 @@ class ZobristHasherTest {
         val currentNode = gameModel.currentNode
         val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, 0)
 
-        val firstHash = zobrist.calculateStateHash(state, boardWidth, boardHeight)
-        val secondHash = zobrist.calculateStateHash(state, boardWidth, boardHeight)
+        val firstHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
+        val secondHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
 
         Assertions.assertEquals(firstHash, secondHash)
     }
@@ -54,8 +54,8 @@ class ZobristHasherTest {
         val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, 0)
 
         // Hash twice
-        val firstHash = zobrist.calculateStateHash(state, boardWidth, boardHeight)
-        val secondHash = zobrist.calculateStateHash(state, boardWidth, boardHeight)
+        val firstHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
+        val secondHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
 
         Assertions.assertEquals(firstHash, secondHash)
     }

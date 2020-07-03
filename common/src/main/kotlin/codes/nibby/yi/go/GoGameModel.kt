@@ -5,6 +5,13 @@ import codes.nibby.yi.common.MoveTree
 import codes.nibby.yi.go.rules.GoGameRulesHandler
 import java.util.*
 
+/**
+ * Represents one game of Go.
+ *
+ * //TODO: Explain the GameStateUpdate system
+ * //TODO: Explain organisation internally, esp. how state is calculated and retrieved
+ * //TODO: Explain how to submit moves
+ */
 class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler, val stateHasher: StateHasher) {
 
     internal val moveTree = MoveTree<GameStateUpdate>()
@@ -22,7 +29,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     private var stateCache = WeakHashMap<Int, GoGameState>()
 
     init {
-        val emptyStateHash = stateHasher.getEmptyStateHash(boardWidth, boardHeight)
+        val emptyStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
         moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(emptyStateHash)
     }
 
@@ -119,7 +126,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         var prisonersWhite = 0
         var prisonersBlack = 0
 
-        var currentStateHash = stateHasher.getEmptyStateHash(boardWidth, boardHeight)
+        var currentStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
 
         // Build the board state by traversing the history and apply the delta from root up to gameNode
         gameNode.getPathToRoot().forEach { node ->
