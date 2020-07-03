@@ -1,5 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
+import codes.nibby.yi.editor.utilities.ComparisonUtilities;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -9,6 +10,9 @@ final class GameBoardSize {
 
     private double canvasWidth;
     private double canvasHeight;
+
+    // width/height size of the game board, >1 = width > height, <1 = width > height
+    private double boardWidthToHeightRatio;
 
     // Expressed as a percentage of total canvas width/height
     private final double percentageThicknessOfBoardBorder = 0.02d;
@@ -31,9 +35,11 @@ final class GameBoardSize {
      *
      * @param componentWidth Width of the board canvas
      * @param componentHeight Height of the board canvas
+     * @param gridWidth Number of board intersections horizontally
+     * @param gridHeight Number of board intersections vertically
      */
-    void recalculate(double componentWidth, double componentHeight) {
-        recalculate(componentWidth, componentHeight, 0.02d);
+    void recalculate(double componentWidth, double componentHeight, int gridWidth, int gridHeight) {
+        recalculate(componentWidth, componentHeight, gridWidth, gridHeight, 0.02d);
     }
 
     /**
@@ -42,19 +48,23 @@ final class GameBoardSize {
      *
      * @param componentWidth Width of the board canvas
      * @param componentHeight Height of the board canvas
+     * @param gridWidth Number of board intersections horizontally
+     * @param gridHeight Number of board intersections vertically
      * @param percentageMarginFromEdge Percentage of canvas component size dedicated to the margin
      */
-    void recalculate(double componentWidth, double componentHeight, double percentageMarginFromEdge) {
+    void recalculate(double componentWidth, double componentHeight, int gridWidth, int gridHeight, double percentageMarginFromEdge) {
         this.canvasWidth = componentWidth;
         this.canvasHeight = componentHeight;
+
+        double gridWidthToHeightRatio = (double) gridWidth / (double) gridHeight;
+
         double lowestSize = Math.min(this.canvasWidth, canvasHeight);
         double marginSize = lowestSize * percentageMarginFromEdge;
 
         Rectangle stage = new Rectangle(0, 0, this.canvasWidth, canvasHeight);
-        // TODO: What if vertical != horizontal for board size?
-        //       This can happen if board size is not square, i.e. 15x3
-        boardBorderBounds = center(stage, clip(0, 0, lowestSize, lowestSize, marginSize));
-        boardBounds = center(stage, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
+        Rectangle boardContainer = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
+        boardBorderBounds = center(boardContainer, clip(0, 0, lowestSize, lowestSize, marginSize));
+        boardBounds = center(boardContainer, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
 
         // TODO: Make this configurable and actually draw it.
 //        percentagePaddingForCoordinateLabels = 0.1d;
@@ -115,10 +125,67 @@ final class GameBoardSize {
      * @param component The component to center
      * @return The bounds of the component after it is centered
      */
-    private Rectangle center(Rectangle container, Rectangle component) {
+    static Rectangle center(Rectangle container, Rectangle component) {
         double x = container.getX() + container.getWidth() / 2 - component.getWidth() / 2;
         double y = container.getY() + container.getHeight() / 2 - component.getHeight() / 2;
         return new Rectangle(x, y, component.getWidth(), component.getHeight());
+    }
+
+    /**
+     * Finds the largest rectangle with the given width to height ratio that can fit inside the container.
+     *
+     * @param container The container to fit the rectangle within
+     * @param targetWidthToHeightRatio The width to height ratio of the fitted rectangle
+     * @param percentageInsets Amount of margin for the fitted rectangle on each side, expressed as a percentage of the shorter side of the container.
+     *                         For example, 0.05d (5%) on a 100x200 container means a margin of 5px on all sides of the fitted rectangle.
+     * @return The largest rectangle within the container that complies with the target width to height ratio
+     */
+    static Rectangle centerFit(Rectangle container, double targetWidthToHeightRatio, double percentageInsets) {
+        boolean containerWidthWider = container.getWidth() > container.getHeight();
+        boolean fitWidthWider = targetWidthToHeightRatio > 1;
+
+        double containerWidth = container.getWidth() - container.getX();
+        double containerHeight = container.getHeight() - container.getY();
+
+        if (containerWidth < ComparisonUtilities.EPSILON || containerHeight < ComparisonUtilities.EPSILON) {
+            // Fail silently, cannot fit because size is too small.
+            return new Rectangle(container.getX(), container.getY(), 0, 0);
+        }
+
+        double fitInsets;
+
+        if (containerWidthWider) {
+            fitInsets = container.getHeight() * percentageInsets;
+        } else {
+            fitInsets = container.getWidth() * percentageInsets;
+        }
+
+        double fitWidth, fitHeight;
+        double scaleFactor;
+
+        if (fitWidthWider) {
+            // If fit by width, component size is constrained by height
+            fitWidth = container.getWidth();
+            fitHeight = fitWidth / targetWidthToHeightRatio;
+
+            scaleFactor = fitHeight / container.getHeight();
+        } else {
+            // If fit by height, component size is constrained by width
+            fitHeight = container.getHeight();
+            fitWidth = fitHeight * targetWidthToHeightRatio;
+
+            scaleFactor = fitWidth / container.getWidth();
+        }
+
+        if (scaleFactor > 1d) {
+            fitWidth /= scaleFactor;
+            fitHeight /= scaleFactor;
+        }
+
+        double fitX = container.getX() + container.getWidth() / 2 - fitWidth / 2;
+        double fitY = container.getY() + container.getHeight() / 2 - fitHeight / 2;
+
+        return new Rectangle(fitX + fitInsets, fitY + fitInsets, fitX + fitWidth - 2 * fitInsets, fitY + fitHeight - 2 * fitInsets);
     }
 
     /**
@@ -129,7 +196,7 @@ final class GameBoardSize {
      * @param insets Amount to trim from all sides on the bounds, in pixel units
      * @return The clipped bounds
      */
-    private Rectangle clip(Rectangle bounds, double insets) {
+    static Rectangle clip(Rectangle bounds, double insets) {
         return clip(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), insets);
     }
 
@@ -144,7 +211,7 @@ final class GameBoardSize {
      * @param insets Amount to trim from all sides on the bounds, in pixel units
      * @return The clipped bounds
      */
-    private Rectangle clip(double x, double y, double w, double h, double insets) {
+    static Rectangle clip(double x, double y, double w, double h, double insets) {
         return clip(x, y, w, h, insets, insets, insets, insets);
     }
 
@@ -163,7 +230,7 @@ final class GameBoardSize {
      * @param insetBottom Amount to trim from bottom of the rectangle, in pixel units
      * @return The clipped bounds
      */
-    private Rectangle clip(double x, double y, double w, double h, double insetLeft, double insetTop, double insetRight, double insetBottom) {
+    static Rectangle clip(double x, double y, double w, double h, double insetLeft, double insetTop, double insetRight, double insetBottom) {
         double newX, newY, newWidth, newHeight;
 
         newX = x + insetLeft;
