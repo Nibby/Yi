@@ -99,6 +99,10 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
     }
 
+    fun getCurrentGameState(): GoGameState {
+        return getGameState(currentNode)
+    }
+
     fun getGameState(gameNode: MoveNode<GameStateUpdate>): GoGameState {
         if (!moveTree.isDescendant(gameNode))
             throw IllegalArgumentException("Game node is not part of this move tree")
