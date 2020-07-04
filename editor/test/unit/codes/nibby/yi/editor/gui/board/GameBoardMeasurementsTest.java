@@ -2,14 +2,11 @@ package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.utilities.ComparisonUtilities;
 import javafx.scene.shape.Rectangle;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class GameBoardSizeTest {
+public final class GameBoardMeasurementsTest {
 
     // TODO: These tests have been temporarily disabled because of frequent game board layout changes.
     //       Add them back once the board design has been finalized.

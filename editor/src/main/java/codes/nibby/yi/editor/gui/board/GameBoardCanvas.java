@@ -1,5 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
+import codes.nibby.yi.go.GoGameModel;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -8,10 +9,12 @@ import javafx.scene.canvas.GraphicsContext;
  */
 abstract class GameBoardCanvas extends Canvas {
 
-    private GraphicsContext graphics;
+    private final GraphicsContext graphics;
+    protected final GameBoardManager manager;
 
-    GameBoardCanvas() {
+    GameBoardCanvas(GameBoardManager manager) {
         this.graphics = getGraphicsContext2D();
+        this.manager = manager;
     }
 
     void render(GameBoardManager manager) {
@@ -20,4 +23,7 @@ abstract class GameBoardCanvas extends Canvas {
 
     protected abstract void _render(GraphicsContext g, GameBoardManager manager);
 
+    public abstract void onGameModelSet(GoGameModel model, GameBoardManager manager);
+
+    public abstract void onGameUpdate(GoGameModel game, GameBoardManager manager);
 }

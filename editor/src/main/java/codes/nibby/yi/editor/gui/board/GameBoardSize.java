@@ -2,6 +2,8 @@ package codes.nibby.yi.editor.gui.board;
 
 import javafx.scene.shape.Rectangle;
 
+import java.util.Optional;
+
 /**
  * Manages the size parameters for drawing the game board. Properties in this class are usually dynamically calculated depending on
  * the dimension of the game board canvas. For that reason, many properties use a hard-coded percentage rather than some constant value.
@@ -113,6 +115,65 @@ final class GameBoardSize {
         }
 
         return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, containerStrategy);
+    }
+
+    /**
+     * 
+     * @see #getGridRenderPosition(int, int, double, double)
+     */
+    public double[] getGridRenderPosition(int gridX, int gridY, double objectSize) {
+        return getGridRenderPosition(gridX, gridY, objectSize, objectSize);
+    }
+
+    /**
+     * Returns the drawing position of logical position (gridX, gridY) for an object of size objectWidth by objectHeight.
+     * The returned position will automatically be adjusted such that drawing an object of this size will make the intersection
+     * at the center of the object.
+     * <p/>
+     * To convert a drawing position to logical board position, see {@link #getGridLogicalPosition(double, double)}
+     *
+     * @param gridX Logical x position on the game board
+     * @param gridY Logical y position on the game board
+     * @param objectWidth The draw width of the object on this intersection
+     * @param objectHeight The draw height of the object on this intersection
+     * @return Size 2 array consisting of { drawX, drawY } co-ordinates in that order
+     */
+    public double[] getGridRenderPosition(int gridX, int gridY, double objectWidth, double objectHeight) {
+        Rectangle gridBounds = getGridBounds();
+
+        double x = gridBounds.getX() + getGridUnitSizeInPixels() * gridX - objectWidth / 2;
+        double y = gridBounds.getY() + getGridUnitSizeInPixels() * gridY - objectHeight / 2;
+
+        return new double[] { x, y };
+    }
+
+    /**
+     * From a given render (or mouse) position, returns the logical board intersection the position corresponds to.
+     *
+     * @param x Drawn x position
+     * @param y Drawn y position
+     * @return The logical board intersection represented by the provided draw position, or {@link Optional#empty()} if
+     *         the position is not within grid boundaries.
+     */
+    public Optional<int[]> getGridLogicalPosition(double x, double y) {
+        Rectangle gridBounds = getGridBounds();
+
+        double normalizedX = x - gridBounds.getX();
+        double normalizedY = y - gridBounds.getY();
+
+        if (normalizedX < -getGridUnitSizeInPixels() / 2
+                || normalizedY < -getGridUnitSizeInPixels() / 2
+                || normalizedX > gridBounds.getWidth() + getGridUnitSizeInPixels() / 2
+                || normalizedY > gridBounds.getHeight() + getGridUnitSizeInPixels() / 2) {
+            return Optional.empty();
+        }
+
+        int logicalX = (int) Math.round(normalizedX / getGridUnitSizeInPixels());
+        int logicalY = (int) Math.round(normalizedY / getGridUnitSizeInPixels());
+
+        int[] logicalPosition = new int[] { logicalX, logicalY };
+
+        return Optional.of(logicalPosition);
     }
 
     /**
