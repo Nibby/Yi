@@ -14,6 +14,8 @@ public final class GameBoardModel {
     private GoGameModel gameModel;
     private GoGameState currentGameState;
 
+    GameBoardModel() { }
+
     public void setGameModel(GoGameModel gameModel) {
         this.gameModel = gameModel;
         update(gameModel);

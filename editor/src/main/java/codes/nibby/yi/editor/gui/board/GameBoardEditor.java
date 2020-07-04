@@ -16,6 +16,8 @@ public final class GameBoardEditor {
 
     private boolean editable = false;
 
+    GameBoardEditor() { }
+
     public void recordAndApply(Undoable undoable, GameBoardManager manager) {
         var gameModel = getGameModelOrCrash(manager);
 
