@@ -6,6 +6,6 @@ import codes.nibby.yi.exception.GameRulesException
  * An exception thrown to represent a submitted move is illegal and cannot be played.
  */
 class SubmitMoveException : GameRulesException {
-    constructor() : super()
-    constructor(s: String?) : super(s)
+    constructor(validationResult: MoveValidationResult, message: String?) : super(validationResult, message)
+    constructor(validationResult: MoveValidationResult) : super(validationResult)
 }

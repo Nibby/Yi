@@ -10,7 +10,7 @@ import java.util.Optional;
  *
  * The percentage is usually taken from the shorter side of a boundary (i.e. {@code Math.min(a, b) * percentage}.
  */
-final class GameBoardSize {
+public final class GameBoardSize {
 
     private LayoutRectangle boardBorderBounds;
     private LayoutRectangle boardBounds;

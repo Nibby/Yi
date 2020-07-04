@@ -14,7 +14,7 @@ class MoveSequence constructor(private val game: GoGameModel) {
     fun playMove(x: Int, y:Int): MoveSequence {
         val result = game.playMove(x, y)
         if (result.validationResult != MoveValidationResult.OK) {
-            throw GameRulesException("Cannot play move ($x, $y) at node position ${game.currentNode.getDistanceToRoot()}: ${result.validationResult}")
+            throw GameRulesException(result.validationResult, "Cannot play move ($x, $y) at node position ${game.currentNode.getDistanceToRoot()}: ${result.validationResult}")
         }
         return this
     }

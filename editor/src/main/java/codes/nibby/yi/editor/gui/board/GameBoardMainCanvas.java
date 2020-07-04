@@ -2,6 +2,7 @@ package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.settings.Settings;
 import codes.nibby.yi.go.GoGameModel;
+import codes.nibby.yi.go.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -31,10 +32,6 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
         BoardRenderer.render(g, manager);
         StoneRenderer.render(g, manager);
-    }
-
-    private void renderStones(GraphicsContext g, GameBoardManager manager) {
-
     }
 
     private static final class BoardRenderer {
@@ -205,7 +202,28 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class StoneRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            //TODO: Implement later
+            //TODO: Temporary code, polish later
+
+            var gamePosition = manager.model.getCurrentGamePosition();
+            GoStoneColor[] boardState = gamePosition.getIntersectionState();
+
+            for (int i = 0; i < boardState.length; ++i) {
+                GoStoneColor state = boardState[i];
+                Color color = null;
+
+                if (state == GoStoneColor.BLACK)
+                    color = Color.BLACK;
+                else if (state == GoStoneColor.WHITE)
+                    color = Color.WHITE;
+
+                if (color != null) {
+                    int boardWidth = manager.model.getBoardWidth();
+                    double stoneSize = manager.size.getStoneSizeInPixels();
+                    double[] pos = manager.size.getGridRenderPosition(i % boardWidth, i / boardWidth, stoneSize);
+                    g.setFill(color);
+                    g.fillOval(pos[0], pos[1], stoneSize, stoneSize);
+                }
+            }
         }
     }
 }

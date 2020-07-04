@@ -1,13 +1,12 @@
 package codes.nibby.yi.exception
 
+import codes.nibby.yi.go.MoveValidationResult
+
 /**
  * Thrown when an attempted action is a violation of game rules.
  */
-open class GameRulesException : IllegalStateException {
+open class GameRulesException constructor(val validationResult: MoveValidationResult, message: String?): IllegalStateException(message) {
 
-    constructor() : super()
-    constructor(s: String?) : super(s)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+    constructor(validationResult: MoveValidationResult) : this(validationResult, "")
 
 }
