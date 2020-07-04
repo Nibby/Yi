@@ -42,8 +42,8 @@ final class GameBoardSize {
      * @param gridWidth Number of board intersections horizontally
      * @param gridHeight Number of board intersections vertically
      */
-    void recalculate(double componentWidth, double componentHeight, int gridWidth, int gridHeight) {
-        recalculate(componentWidth, componentHeight, gridWidth, gridHeight, 0.02d);
+    void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight) {
+        compute(componentWidth, componentHeight, gridWidth, gridHeight, 0.02d);
     }
 
     /**
@@ -56,7 +56,7 @@ final class GameBoardSize {
      * @param gridHeight Number of board intersections vertically
      * @param percentageMarginFromEdge Percentage of canvas component size dedicated to the margin
      */
-    void recalculate(double componentWidth, double componentHeight, int gridWidth, int gridHeight, double percentageMarginFromEdge) {
+    void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight, double percentageMarginFromEdge) {
         this.canvasWidth = componentWidth;
         this.canvasHeight = componentHeight;
 
