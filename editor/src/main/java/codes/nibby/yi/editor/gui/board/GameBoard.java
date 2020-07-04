@@ -19,8 +19,8 @@ public final class GameBoard {
     private GoGameModel gameModel;
 
     public GameBoard() {
-        content.push(new GameBoardMainCanvas());
-        content.push(new GameBoardInputCanvas());
+        content.push(new GameBoardMainCanvas(manager));
+        content.push(new GameBoardInputCanvas(manager));
 
         component = new Pane() {
             @Override
@@ -58,16 +58,18 @@ public final class GameBoard {
      *
      * @param game The game model to subscribe to
      */
-    public void initialize(GoGameModel game) {
+    public void setModel(GoGameModel game) {
         this.gameModel = game;
-        manager.onGameInitialize(game);
+
+        manager.onGameModelSet(game);
+        content.forEach(canvas -> canvas.onGameModelSet(game, manager));
     }
 
     /**
      * Invoked when there is an update to the {@link GoGameModel}. The model must
-     * be identical to the model that was last {@link #initialize(GoGameModel) initialized}.
+     * be identical to the model that was last {@link #setModel(GoGameModel) initialized}.
      * <p/>
-     * To change the model used by this game board, call {@link #initialize(GoGameModel)} with
+     * To change the model used by this game board, call {@link #setModel(GoGameModel)} with
      * the new model.
      *
      * @param game The last game model used to initialize the game board
@@ -79,6 +81,9 @@ public final class GameBoard {
         }
 
         manager.onGameUpdate(game);
+        content.forEach(canvas -> canvas.onGameUpdate(game, manager));
+
+        renderAll();
     }
 
     /**

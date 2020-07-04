@@ -18,7 +18,7 @@ public class Main extends Application {
         GoGameModel game = new GoGameModel(19, 19, GoGameRules.CHINESE);
 
         GameBoard board = new GameBoard();
-        board.initialize(game);
+        board.setModel(game);
 
         Scene scene = new Scene(board.getComponent(), 800, 600);
         primaryStage.setScene(scene);

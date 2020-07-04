@@ -10,14 +10,15 @@ final class GameBoardManager {
 
     final GameBoardModel model = new GameBoardModel();
     final GameBoardSize size = new GameBoardSize();
-    final GameBoardViewOptions viewOptions = new GameBoardViewOptions();
+    final GameBoardView view = new GameBoardView();
+    final GameBoardEditor edit = new GameBoardEditor();
 
-    void onGameInitialize(GoGameModel game) {
+    void onGameModelSet(GoGameModel game) {
         model.initialize(game);
     }
 
     void onBoardSizeUpdate(double componentWidth, double componentHeight, GoGameModel game) {
-        size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), viewOptions.getCoordinateLabelPosition());
+        size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.getCoordinateLabelPosition());
     }
 
     void onGameUpdate(GoGameModel game) {

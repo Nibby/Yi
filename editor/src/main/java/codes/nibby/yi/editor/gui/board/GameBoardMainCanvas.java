@@ -1,6 +1,7 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.settings.Settings;
+import codes.nibby.yi.go.GoGameModel;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
  * For quick-repaint objects, use {@link GameBoardInputCanvas}.
  */
 final class GameBoardMainCanvas extends GameBoardCanvas {
+
+    GameBoardMainCanvas(GameBoardManager manager) {
+        super(manager);
+    }
 
     @Override
     protected void _render(GraphicsContext g, GameBoardManager manager) {
@@ -79,17 +84,17 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             Rectangle gridBounds = manager.size.getGridBounds();
 
             for (int lineNumber = 0; lineNumber < manager.model.getBoardWidth(); ++lineNumber) {
-                g.strokeLine(getRenderedGridX(lineNumber, manager, 0),
-                             gridBounds.getY(),
-                             getRenderedGridX(lineNumber, manager, 0),
-                             gridBounds.getY() + gridBounds.getHeight());
+                double[] drawXY = manager.size.getGridRenderPosition(lineNumber, 0, 0);
+                double x = drawXY[0];
+
+                g.strokeLine(x, gridBounds.getY(), x, gridBounds.getY() + gridBounds.getHeight());
             }
 
             for (int lineNumber = 0; lineNumber < manager.model.getBoardHeight(); ++lineNumber) {
-                g.strokeLine(gridBounds.getX(),
-                             getRenderedGridY(lineNumber, manager, 0),
-                             gridBounds.getX() + gridBounds.getWidth(),
-                             getRenderedGridY(lineNumber, manager, 0));
+                double[] drawXY = manager.size.getGridRenderPosition(0, lineNumber, 0);
+                double y = drawXY[1];
+
+                g.strokeLine(gridBounds.getX(), y, gridBounds.getX() + gridBounds.getWidth(), y);
             }
 
             renderStarPoints(g, manager, gridLineThickness);
@@ -122,21 +127,10 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 int x = starPointPosition % gameBoardWidth;
                 int y = starPointPosition / gameBoardWidth;
 
-                g.fillOval(getRenderedGridX(x, manager, starPointDiameter),
-                           getRenderedGridY(y, manager, starPointDiameter),
-                           starPointDiameter,
-                           starPointDiameter);
+                double[] drawXY = manager.size.getGridRenderPosition(x, y, starPointDiameter);
+
+                g.fillOval(drawXY[0], drawXY[1], starPointDiameter, starPointDiameter);
             }
-        }
-
-        private static double getRenderedGridX(int gridX, GameBoardManager manager, double objectSize) {
-            return manager.size.getGridBounds().getX()
-                    + manager.size.getGridUnitSizeInPixels() * gridX - objectSize / 2;
-        }
-
-        private static double getRenderedGridY(int gridY, GameBoardManager manager, double objectSize) {
-            return manager.size.getGridBounds().getY()
-                    + manager.size.getGridUnitSizeInPixels() * gridY - objectSize / 2;
         }
 
         enum StarPointPosition {
@@ -196,6 +190,16 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 return Collections.emptySet();
             }
         }
+    }
+
+    @Override
+    public void onGameModelSet(GoGameModel model, GameBoardManager manager) {
+
+    }
+
+    @Override
+    public void onGameUpdate(GoGameModel game, GameBoardManager manager) {
+
     }
 
     private static final class StoneRenderer {
