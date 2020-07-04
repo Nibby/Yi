@@ -83,7 +83,7 @@ public final class GameBoardSize {
         double stoneSizeFromHeight = scaledGridBounds.getHeight() / (gridHeight-1);
         gridUnitSize = Math.min(stoneSizeFromWidth, stoneSizeFromHeight);
         // Space between two adjacent stones, expressed as a percentage of grid unit size
-        double percentageStoneGap = 0.1d;
+        double percentageStoneGap = 0.01d;
         stoneGapSize = gridUnitSize * percentageStoneGap;
         stoneSize = gridUnitSize - stoneGapSize;
         gridBounds = scaledGridBounds;
