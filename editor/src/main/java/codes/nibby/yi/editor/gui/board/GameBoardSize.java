@@ -92,7 +92,8 @@ final class GameBoardSize {
         boardBorderBounds = boardBounds.addParentWithMargin(percentageThicknessOfBoardBorder * Math.min(boardBounds.getWidth(), boardBounds.getHeight()));
 
         // Rescale everything. All the objects are referenced internally by LayoutRectangle, so the entire hierarchy will be updated
-        boardBorderBounds.rescale(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), percentageMarginFromEdge);
+        double marginFromEdgeInPixels = percentageMarginFromEdge * Math.min(stage.getWidth(), stage.getHeight());
+        boardBorderBounds.rescaleAndFinalize(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), marginFromEdgeInPixels, 1.0d);
 
         // Now we can finally calculate the correct stone size
         double stoneSizeFromWidth = scaledGridBounds.getWidth() / gridWidth;
@@ -102,6 +103,8 @@ final class GameBoardSize {
         stoneSize = gridUnitSize - stoneGapSize;
 
         // Re-calculate the grid bounds using the square stone size
+        // Unfortunately this will not be part of the layout rectangle hierarchy. But at this point
+        // we should no longer have to use that anymore.
         gridBounds = center(boardBounds, new LayoutRectangle(gridUnitSize * (gridWidth - 1), gridUnitSize * (gridHeight - 1)));
     }
 
@@ -119,7 +122,8 @@ final class GameBoardSize {
         private double marginTop = 0;
         private double marginRight = 0;
         private double marginBottom = 0;
-        private double offsetX = 0, offsetY = 0;
+
+        private boolean finalized = false;
 
         public LayoutRectangle(double width, double height) {
             super(width, height);
@@ -131,6 +135,8 @@ final class GameBoardSize {
 
         // Creates a parent whose size is identical to the current rectangle and rescales existing content according to the margins
         public LayoutRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
+            assertNotFinalized();
+
             this.marginLeft = marginLeft;
             this.marginTop = marginTop;
             this.marginRight = marginRight;
@@ -143,9 +149,8 @@ final class GameBoardSize {
             return parent;
         }
 
-        public void offsetContents(double x, double y) {
-            this.offsetX = x;
-            this.offsetY = y;
+        private void offsetContents(double x, double y) {
+            assertNotFinalized();
 
             setX(getX() + x);
             setY(getY() + y);
@@ -155,11 +160,32 @@ final class GameBoardSize {
             }
         }
 
-        public void rescale(double xStart, double yStart, double containerWidth, double containerHeight, double fitMarginPercentage) {
+        /**
+         * Scales all the contents within this rectangle to an appropriate size while preserving width to height ratio and
+         * centers the scaled version inside the component bounds.
+         * <p/>
+         * Additionally, marks this rectangle and its entire sub-hierarchy as finalized. This means no more changes can
+         * be made to this rectangle and its hierarchy after this operation.
+         *
+         * @param containerX Container bounds to center this component within
+         * @param containerY Container bounds to center this component within
+         * @param containerWidth Container bounds to center this component within
+         * @param containerHeight Container bounds to center this component within
+         * @param parentScale Scale used to transform parent rectangle dimensions
+         */
+        public void rescaleAndFinalize(double containerX, double containerY, double containerWidth, double containerHeight, double margin, double parentScale) {
+            assertNotFinalized();
+
             double originalWidth = getWidth();
             double widthToHeightRatio = getWidth() / getHeight();
 
-            Rectangle fitBounds = centerFit(new Rectangle(xStart, yStart, containerWidth, containerHeight), widthToHeightRatio, fitMarginPercentage);
+            double fitContainerX = containerX + marginLeft * parentScale + margin;
+            double fitContainerY = containerY + marginTop * parentScale + margin;
+            double fitContainerWidth = containerWidth - (marginLeft + marginRight) * parentScale - margin * 2;
+            double fitContainerHeight = containerHeight - (marginTop + marginBottom) * parentScale - margin * 2;
+            Rectangle fitContainerBounds = new Rectangle(fitContainerX, fitContainerY, fitContainerWidth, fitContainerHeight);
+
+            Rectangle fitBounds = centerFit(fitContainerBounds, widthToHeightRatio, 0);
             double fitScale = fitBounds.getWidth() / originalWidth;
 
             setWidth(fitBounds.getWidth());
@@ -167,9 +193,15 @@ final class GameBoardSize {
             setX(fitBounds.getX());
             setY(fitBounds.getY());
 
+            finalized = true;
+
             if (child != null) {
-                child.rescale(getX() + (offsetX) * fitScale, getY() + offsetY * fitScale, this.getWidth() - (marginLeft + marginRight) * fitScale, this.getHeight() - (marginTop + marginBottom) * fitScale, fitMarginPercentage);
+                child.rescaleAndFinalize(getX(), getY(), this.getWidth(), this.getHeight(), 0, fitScale);
             }
+        }
+
+        private void assertNotFinalized() {
+            assert !finalized : "Cannot modify layout rectangle after it has been finalized!";
         }
     }
 
