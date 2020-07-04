@@ -16,16 +16,17 @@ final class GameBoardSize {
 
     // Expressed as a percentage of total canvas width/height
     private final double percentageThicknessOfBoardBorder = 0.02d;
-    private Rectangle boardBorderBounds;
-    private Rectangle boardBounds;
+    private CompoundRectangle boardBorderBounds;
+    private CompoundRectangle boardBounds;
 
     // These are percentages of the shorter side of board dimensions rather than total size
     private final double percentageShadowBlurRadius = 0.015d;
     private final double percentageShadowOffset = 0.012d;
     private final double percentagePaddingForCoordinateLabels = 0.02d;
     private final double percentagePaddingBetweenLabelsAndGrid = 0.02d;
-    private Rectangle coordinateLabelBounds;
+    private CompoundRectangle coordinateLabelBounds;
     private Rectangle gridBounds;
+    private CompoundRectangle stoneBounds;
     private final double percentageGridLineThickness = 0.00125d;
 
     // These are percentages of gridBounds.
@@ -62,33 +63,132 @@ final class GameBoardSize {
 
         double gridWidthToHeightRatio = (double) gridWidth / (double) gridHeight;
 
-        double lowestSize = Math.min(this.canvasWidth, canvasHeight);
-        double marginSize = lowestSize * percentageMarginFromEdge;
-
         Rectangle stage = new Rectangle(0, 0, this.canvasWidth, canvasHeight);
 
-        // Fit the largest bounds of the same aspect ratio as (gridWidth x gridHeight) to ensure grids can be drawn as perfect squares
-        // Board content size
-        Rectangle boardContainerBounds = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
-        boardBorderBounds = center(boardContainerBounds, clip(boardContainerBounds, marginSize));
-        boardBounds = center(boardContainerBounds, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
+        Rectangle gridFitRatio = centerFit(stage, gridWidthToHeightRatio, 0d);
+        double scaledStoneSizeFromWidth = gridFitRatio.getWidth() / gridWidth;
+        double scaledStoneSizeFromHeight = gridFitRatio.getHeight() / gridHeight;
+        double scaledStoneSize = Math.min(scaledStoneSizeFromWidth, scaledStoneSizeFromHeight);
 
-        // Coordinate labels
-        // TODO: Depending on the co-ordinate label position, the padding size may vary
-        //       Finalise this later
-        coordinateLabelBounds = center(boardBounds, clip(boardBounds, getPaddingForCoordinateLabelsInPixels()));
+        CompoundRectangle scaledGridBounds = new CompoundRectangle(scaledStoneSize * gridWidth, scaledStoneSize * gridHeight);
 
-        // TODO: This may not be at the center of the coordinate bounds if the labels are not showing in all 4 sides
-        double pixelPaddingBetweenLabelsAndGrid = percentagePaddingBetweenLabelsAndGrid * Math.min(coordinateLabelBounds.getWidth(), coordinateLabelBounds.getHeight());
-        gridBounds = center(coordinateLabelBounds, clip(coordinateLabelBounds, pixelPaddingBetweenLabelsAndGrid));
+        stoneBounds = scaledGridBounds.addParentWithMargin(scaledStoneSize);
+        boardBounds = stoneBounds;
+        boardBorderBounds = boardBounds.addParentWithMargin(20d);
+        boardBorderBounds.rescale(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), percentageMarginFromEdge);
 
-        // Check that the stone size is (approximately) square
-        double stoneWidth = gridBounds.getWidth() / gridWidth;
-        double stoneHeight = gridBounds.getHeight() / gridHeight;
+        double stoneSizeFromWidth = scaledGridBounds.getWidth() / gridWidth;
+        double stoneSizeFromHeight = scaledGridBounds.getHeight() / gridHeight;
+        stoneSize = Math.min(stoneSizeFromWidth, stoneSizeFromHeight);
 
-        assert ComparisonUtilities.doubleEquals(stoneWidth, stoneHeight);
+        gridBounds = center(boardBounds, new CompoundRectangle(stoneSize * (gridWidth - 1), stoneSize * (gridHeight - 1)));
 
-        stoneSize = (stoneWidth + stoneHeight) / 2;
+//        double gridWidthToHeightRatio = (double) gridWidth / (double) gridHeight;
+//
+//        double lowestSize = Math.min(this.canvasWidth, canvasHeight);
+//        double marginSize = lowestSize * percentageMarginFromEdge;
+//
+
+//
+//        // Fit the largest bounds of the same aspect ratio as (gridWidth x gridHeight) to ensure grids can be drawn as perfect squares
+//        // Board content size
+//        Rectangle boardContainerBounds = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
+//        boardBorderBounds = center(boardContainerBounds, clip(boardContainerBounds, marginSize));
+//        boardBounds = center(boardContainerBounds, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
+//
+//        // Coordinate labels
+//        // TODO: Depending on the co-ordinate label position, the padding size may vary
+//        //       Finalise this later
+//        coordinateLabelBounds = center(boardBounds, clip(boardBounds, getPaddingForCoordinateLabelsInPixels()));
+//
+//        // TODO: This may not be at the center of the coordinate bounds if the labels are not showing in all 4 sides
+//        double pixelPaddingBetweenLabelsAndGrid = percentagePaddingBetweenLabelsAndGrid * Math.min(coordinateLabelBounds.getWidth(), coordinateLabelBounds.getHeight());
+//        gridBounds = center(coordinateLabelBounds, clip(coordinateLabelBounds, pixelPaddingBetweenLabelsAndGrid));
+//
+//        // Check that the stone size is (approximately) square
+//        double stoneWidth = gridBounds.getWidth() / gridWidth;
+//        double stoneHeight = gridBounds.getHeight() / gridHeight;
+//
+//        assert ComparisonUtilities.doubleEquals(stoneWidth, stoneHeight);
+//
+//        stoneSize = (stoneWidth + stoneHeight) / 2;
+    }
+
+    /**
+     * A rectangle with one child hierarchy. The child rectangle is assumed to be fully contained within this rectangle.
+     * When the parent rectangle is rescaled, the child will also be rescaled accordingly.
+     * <p/>
+     * Each rectangle should have a (x, y) position at (0, 0). Use {@link #getTranslated(double, double)} to obtain a
+     * translated copy of the rectangle.
+     */
+    private static class CompoundRectangle extends Rectangle {
+
+        private CompoundRectangle child;
+
+        private double marginLeft = 0;
+        private double marginTop = 0;
+        private double marginRight = 0;
+        private double marginBottom = 0;
+        private double offsetX = 0, offsetY = 0;
+
+        public CompoundRectangle(double width, double height) {
+            super(width, height);
+        }
+
+        private CompoundRectangle(double x, double y, double width, double height) {
+            super(x, y, width, height);
+        }
+
+        public CompoundRectangle addParentWithMargin(double marginOnAllSides) {
+            return addParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
+        }
+
+        // Creates a parent whose size is identical to the current rectangle and rescales existing content according to the margins
+        public CompoundRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
+            this.marginLeft = marginLeft;
+            this.marginTop = marginTop;
+            this.marginRight = marginRight;
+            this.marginBottom = marginBottom;
+
+            var parent = new CompoundRectangle(0, 0, getWidth() + marginLeft + marginRight, getHeight() + marginTop + marginBottom);
+            offsetContents(marginLeft, marginTop);
+            parent.child = this;
+
+            return parent;
+        }
+
+//        public CompoundRectangle getTranslated(double x, double y) {
+
+//        }
+
+        public void offsetContents(double x, double y) {
+            this.offsetX = x;
+            this.offsetY = y;
+
+            setX(getX() + x);
+            setY(getY() + y);
+
+            if (child != null) {
+                child.offsetContents(x, y);
+            }
+        }
+
+        public void rescale(double xStart, double yStart, double containerWidth, double containerHeight, double fitMarginPercentage) {
+            double originalWidth = getWidth();
+            double widthToHeightRatio = getWidth() / getHeight();
+
+            Rectangle fitBounds = centerFit(new Rectangle(xStart, yStart, containerWidth, containerHeight), widthToHeightRatio, fitMarginPercentage);
+            double fitScale = fitBounds.getWidth() / originalWidth;
+
+            setWidth(fitBounds.getWidth());
+            setHeight(fitBounds.getHeight());
+            setX(fitBounds.getX());
+            setY(fitBounds.getY());
+
+            if (child != null) {
+                child.rescale(getX() + (offsetX) * fitScale, getY() + offsetY * fitScale, this.getWidth() - (marginLeft + marginRight) * fitScale, this.getHeight() - (marginTop + marginBottom) * fitScale, fitMarginPercentage);
+            }
+        }
     }
 
     /**
@@ -213,14 +313,6 @@ final class GameBoardSize {
     static Rectangle centerFit(Rectangle container, double targetWidthToHeightRatio, double percentageInsets) {
         boolean containerWidthWider = container.getWidth() > container.getHeight();
         boolean fitWidthWider = targetWidthToHeightRatio > 1;
-
-        double containerWidth = container.getWidth() - container.getX();
-        double containerHeight = container.getHeight() - container.getY();
-
-        if (containerWidth < ComparisonUtilities.EPSILON || containerHeight < ComparisonUtilities.EPSILON) {
-            // Fail silently, cannot fit because size is too small.
-            return new Rectangle(container.getX(), container.getY(), 0, 0);
-        }
 
         double fitInsets;
 
