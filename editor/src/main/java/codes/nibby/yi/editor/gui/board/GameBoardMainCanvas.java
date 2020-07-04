@@ -206,23 +206,15 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
             var gamePosition = manager.model.getCurrentGamePosition();
             GoStoneColor[] boardState = gamePosition.getIntersectionState();
+            int boardWidth = manager.model.getBoardWidth();
 
             for (int i = 0; i < boardState.length; ++i) {
                 GoStoneColor state = boardState[i];
-                Color color = null;
 
-                if (state == GoStoneColor.BLACK)
-                    color = Color.BLACK;
-                else if (state == GoStoneColor.WHITE)
-                    color = Color.WHITE;
+                int x = i % boardWidth;
+                int y = i / boardWidth;
 
-                if (color != null) {
-                    int boardWidth = manager.model.getBoardWidth();
-                    double stoneSize = manager.size.getStoneSizeInPixels();
-                    double[] pos = manager.size.getGridRenderPosition(i % boardWidth, i / boardWidth, stoneSize);
-                    g.setFill(color);
-                    g.fillOval(pos[0], pos[1], stoneSize, stoneSize);
-                }
+                PresetStoneStyle.getDefaultValue().render(g, manager, state, x, y);
             }
         }
     }

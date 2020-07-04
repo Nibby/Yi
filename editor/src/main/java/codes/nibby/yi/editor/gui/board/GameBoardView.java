@@ -5,6 +5,7 @@ public final class GameBoardView {
     GameBoardView() { }
 
     private CoordinateLabelPosition coordinateLabelPosition = CoordinateLabelPosition.getDefaultValue();
+    private PresetStoneStyle presetStoneStyle = PresetStoneStyle.getDefaultValue();
 
     public CoordinateLabelPosition getCoordinateLabelPosition() {
         return coordinateLabelPosition;

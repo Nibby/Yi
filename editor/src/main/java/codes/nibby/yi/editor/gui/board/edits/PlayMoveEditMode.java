@@ -20,6 +20,11 @@ final class PlayMoveEditMode implements EditMode {
 
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
+        if (manager.model.getCurrentGamePosition().getStoneColorAt(gridX, gridY) != GoStoneColor.NONE) {
+            // A stone already exists here, don't draw cursor.
+            return;
+        }
+
         var nextTurnStoneColor = manager.model.getNextTurnStoneColor();
         Color cursorColor = null;
 
