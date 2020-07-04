@@ -1,4 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
-public class StoneRenderer {
+// TODO: Allow custom stone image override stone texture
+final class StoneRenderer {
+
 }

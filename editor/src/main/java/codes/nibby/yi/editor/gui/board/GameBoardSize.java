@@ -24,6 +24,9 @@ public final class GameBoardSize {
     private double stoneSize;
     private double gridUnitSize; // Size of the stone + gap at each intersection
 
+    private double stoneShadowRadius;
+    private double stoneShadowOffset;
+
     GameBoardSize() { }
 
     /**
@@ -84,6 +87,9 @@ public final class GameBoardSize {
         stoneGapSize = gridUnitSize * percentageStoneGap;
         stoneSize = gridUnitSize - stoneGapSize;
         gridBounds = scaledGridBounds;
+
+        stoneShadowRadius = stoneSize / 8d;
+        stoneShadowOffset = stoneSizeFromHeight / 12d;
     }
 
     /*
@@ -117,6 +123,18 @@ public final class GameBoardSize {
         }
 
         return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, containerStrategy);
+    }
+
+    public double getStoneShadowRadius() {
+        return stoneShadowRadius;
+    }
+
+    public double getStoneShadowOffset() {
+        return stoneShadowOffset;
+    }
+
+    public double[] getStoneRenderPosition(int gridX, int gridY) {
+        return getGridRenderPosition(gridX, gridY, getStoneSizeInPixels());
     }
 
     /**
