@@ -2,6 +2,11 @@ package codes.nibby.yi.go
 
 class GoGamePosition(private val boardWidth: Int, boardHeight: Int) {
 
+    init {
+        if (boardWidth < 1 || boardHeight < 1)
+            throw IllegalArgumentException("Invalid board dimensions: $boardWidth x $boardHeight")
+    }
+
     val intersectionState = Array(boardWidth * boardHeight) { GoStoneColor.NONE }
 
     fun apply(update: GameStateUpdate) {

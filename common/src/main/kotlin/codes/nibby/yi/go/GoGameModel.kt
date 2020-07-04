@@ -29,6 +29,9 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     private var stateCache = WeakHashMap<Int, GoGameState>()
 
     init {
+        if (boardWidth < 1 || boardHeight < 1)
+            throw IllegalArgumentException("Invalid board dimensions: $boardWidth x $boardHeight")
+
         val emptyStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
         moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(emptyStateHash)
     }
