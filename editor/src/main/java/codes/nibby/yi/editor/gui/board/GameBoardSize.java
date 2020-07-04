@@ -184,7 +184,8 @@ final class GameBoardSize {
      * @return The thickness, in pixel units, of the line used to draw the board grids.
      */
     public double getGridLineThicknessInPixels() {
-        return percentageGridLineThickness * getBoardBoundsPercentageMetric();
+        double thickness = percentageGridLineThickness * getBoardBoundsPercentageMetric();
+        return Math.max(1d, thickness);
     }
 
     /**
