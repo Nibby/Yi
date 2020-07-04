@@ -15,16 +15,13 @@ public final class PlayMoveEdit extends UndoableEdit {
     }
 
     @Override
-    public boolean rollbackEdit(GoGameModel gameModel) {
-        if (submittedNode == null)
-            throw new IllegalStateException("Edit was never applied to the game model");
-
+    protected boolean _rollbackEdit(GoGameModel gameModel) {
         // TODO: Implement later
         return false;
     }
 
     @Override
-    public boolean performEdit(GoGameModel gameModel) {
+    protected boolean _performEdit(GoGameModel gameModel) {
         MoveSubmitResult moveSubmitResult = gameModel.playMove(moveX, moveY);
         MoveValidationResult validationResult = moveSubmitResult.getValidationResult();
 
@@ -36,5 +33,10 @@ public final class PlayMoveEdit extends UndoableEdit {
         submittedNode = moveSubmitResult.getMoveNode();
 
         return true;
+    }
+
+    @Override
+    protected boolean canRollback() {
+        return submittedNode != null;
     }
 }
