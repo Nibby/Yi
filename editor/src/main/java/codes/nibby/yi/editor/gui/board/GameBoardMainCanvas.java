@@ -181,8 +181,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             private static Set<Integer> getDefault(int boardWidth, int boardHeight) {
                 // If the dimension is odd, return the centre intersection as a star point
                 if (boardWidth % 2 == 1 && boardHeight % 2 == 1) {
-                    int x = (boardWidth - 1) / 2 + 1;
-                    int y = (boardHeight - 1) / 2 + 1;
+                    int x = (boardWidth - 1) / 2;
+                    int y = (boardHeight - 1) / 2;
                     return Collections.singleton(x + y * boardWidth);
                 }
 
