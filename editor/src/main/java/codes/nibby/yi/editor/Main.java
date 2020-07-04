@@ -15,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Settings.load();
-        GoGameModel game = new GoGameModel(13, 13, GoGameRules.CHINESE);
+        GoGameModel game = new GoGameModel(13, 25, GoGameRules.CHINESE);
 
         GameBoard board = new GameBoard();
         board.initialize(game);

@@ -77,29 +77,32 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             g.setLineWidth(gridLineThickness);
 
             double stoneSize = manager.size.getStoneSizeInPixels();
-            double offset = stoneSize / 2; // Okay to calculate this here since it's more related to rendering than sizing
             Rectangle gridBounds = manager.size.getGridBounds();
 
             for (int lineNumber = 0; lineNumber < manager.model.getBoardWidth(); ++lineNumber) {
-                g.strokeLine(getRenderedGridX(lineNumber, manager, offset, 0),
-                             gridBounds.getY() + offset,
-                             getRenderedGridX(lineNumber, manager, offset, 0),
-                             gridBounds.getY() + gridBounds.getHeight() - stoneSize + offset);
+                g.strokeLine(getRenderedGridX(lineNumber, manager, 0),
+                             gridBounds.getY(),
+                             getRenderedGridX(lineNumber, manager, 0),
+                             gridBounds.getY() + gridBounds.getHeight());
             }
-
+//
             for (int lineNumber = 0; lineNumber < manager.model.getBoardHeight(); ++lineNumber) {
-                g.strokeLine(gridBounds.getX() + offset,
-                             getRenderedGridY(lineNumber, manager, offset, 0),
-                             gridBounds.getX() + gridBounds.getWidth() - stoneSize + offset,
-                             getRenderedGridY(lineNumber, manager, offset, 0));
+                g.strokeLine(gridBounds.getX(),
+                             getRenderedGridY(lineNumber, manager, 0),
+                             gridBounds.getX() + gridBounds.getWidth(),
+                             getRenderedGridY(lineNumber, manager, 0));
             }
 
-            renderStarPoints(g, manager, offset, gridLineThickness);
+            renderStarPoints(g, manager, gridLineThickness);
 
             g.setLineWidth(originalLineWidth);
+
+            // Debugging
+//            g.setStroke(Color.RED);
+//            g.strokeRect(gridBounds.getX(), gridBounds.getY(), gridBounds.getWidth(), gridBounds.getHeight());
         }
 
-        private static void renderStarPoints(GraphicsContext g, GameBoardManager manager, double gridOffset, double lineWidth) {
+        private static void renderStarPoints(GraphicsContext g, GameBoardManager manager, double lineWidth) {
             // Number of intersections on the game board, not sizing
             int gameBoardWidth = manager.model.getBoardWidth();
             int gameBoardHeight = manager.model.getBoardHeight();
@@ -111,20 +114,20 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 int x = starPointPosition % gameBoardWidth;
                 int y = starPointPosition / gameBoardWidth;
 
-                g.fillOval(getRenderedGridX(x, manager, gridOffset, starPointDiameter),
-                           getRenderedGridY(y, manager, gridOffset, starPointDiameter),
+                g.fillOval(getRenderedGridX(x, manager, starPointDiameter),
+                           getRenderedGridY(y, manager, starPointDiameter),
                            starPointDiameter,
                            starPointDiameter);
             }
         }
 
-        private static double getRenderedGridX(int gridX, GameBoardManager manager, double gridOffset, double objectSize) {
-            return manager.size.getGridBounds().getX() + gridOffset
+        private static double getRenderedGridX(int gridX, GameBoardManager manager, double objectSize) {
+            return manager.size.getGridBounds().getX()
                     + manager.size.getStoneSizeInPixels() * gridX - objectSize / 2;
         }
 
-        private static double getRenderedGridY(int gridY, GameBoardManager manager, double gridOffset, double objectSize) {
-            return manager.size.getGridBounds().getY() + gridOffset
+        private static double getRenderedGridY(int gridY, GameBoardManager manager, double objectSize) {
+            return manager.size.getGridBounds().getY()
                     + manager.size.getStoneSizeInPixels() * gridY - objectSize / 2;
         }
 
