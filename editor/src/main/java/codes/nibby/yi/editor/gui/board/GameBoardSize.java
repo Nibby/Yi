@@ -10,43 +10,17 @@ import javafx.scene.shape.Rectangle;
  */
 final class GameBoardSize {
 
-    private double canvasWidth;
-    private double canvasHeight;
-
-    // Expressed as a percentage of total canvas width/height
-    private final double percentageThicknessOfBoardBorder = 0.02d;
     private LayoutRectangle boardBorderBounds;
     private LayoutRectangle boardBounds;
 
-    // These are percentages of the shorter side of board dimensions rather than total size
-    private final double percentageShadowBlurRadius = 0.015d;
     private final double percentageShadowOffset = 0.012d;
-    private final double percentagePaddingForCoordinateLabels = 0.02d;
-    private final double percentagePaddingBetweenLabelsAndGrid = 0.02d;
     private LayoutRectangle coordinateLabelBounds;
     private Rectangle gridBounds;
-    private LayoutRectangle stoneBounds;
-    private final double percentageGridLineThickness = 0.00125d;
 
     // These are percentages of gridBounds.
-    // TODO: Properly implement stone rendering and size calculation
-    private double percentageStoneDiameter;
-    private final double percentageStoneGap = 0.1d; // Space between two adjacent stones, expressed as a percentage of grid unit size
     private double stoneGapSize;
     private double stoneSize;
     private double gridUnitSize; // Size of the stone + gap at each intersection
-
-    /**
-     * Recalculates the board sizing using standard margins.
-     *
-     * @param componentWidth Width of the board canvas
-     * @param componentHeight Height of the board canvas
-     * @param gridWidth Number of board intersections horizontally
-     * @param gridHeight Number of board intersections vertically
-     */
-    void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight) {
-        compute(componentWidth, componentHeight, gridWidth, gridHeight, 0.02d);
-    }
 
     /**
      * Recalculates the board sizing using a custom margin. The margin is the space between the edges of the canvas to the start of the
@@ -56,13 +30,9 @@ final class GameBoardSize {
      * @param componentHeight Height of the board canvas
      * @param gridWidth Number of board intersections horizontally
      * @param gridHeight Number of board intersections vertically
-     * @param percentageMarginFromEdge Percentage of canvas component size dedicated to the margin
      */
-    void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight, double percentageMarginFromEdge) {
-        this.canvasWidth = componentWidth;
-        this.canvasHeight = componentHeight;
-
-        Rectangle stage = new Rectangle(0, 0, this.canvasWidth, canvasHeight);
+    void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight, CoordinateLabelPosition coordinateLabelPosition) {
+        Rectangle stage = new Rectangle(0, 0, componentWidth, componentHeight);
 
         // Overview:
         // =========
@@ -80,32 +50,69 @@ final class GameBoardSize {
 
         // We need to calculate a scaled version of stone size at this point to maintain the correct board ratio
         Rectangle gridFitRatio = centerFit(stage, (double) gridWidth / (double) gridHeight, 0d);
-        double scaledStoneSizeFromWidth = gridFitRatio.getWidth() / gridWidth;
-        double scaledStoneSizeFromHeight = gridFitRatio.getHeight() / gridHeight;
-        double scaledStoneSize = Math.min(scaledStoneSizeFromWidth, scaledStoneSizeFromHeight);
 
-        LayoutRectangle scaledGridBounds = new LayoutRectangle(scaledStoneSize * gridWidth, scaledStoneSize * gridHeight);
+        // Doesn't really matter the size of the grid bounds at this point, the proportion is what matters.
+        // We will scale everything to the correct size later.
+        LayoutRectangle scaledGridBounds = new LayoutRectangle(gridFitRatio.getWidth(), gridFitRatio.getHeight());
+        double percentageMarginBetweenLabelsAndGrid = 0.05d;
+        LayoutRectangle gridSpacingBounds = scaledGridBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenLabelsAndGrid, scaledGridBounds));
 
-        stoneBounds = scaledGridBounds.addParentWithMargin(scaledStoneSize);
-        // TODO: Calculate coordinate label bounds
-        boardBounds = stoneBounds; // TODO: Temporary until coordinate spaces are calculated properly
-        boardBorderBounds = boardBounds.addParentWithMargin(percentageThicknessOfBoardBorder * Math.min(boardBounds.getWidth(), boardBounds.getHeight()));
+        coordinateLabelBounds = computeCoordinateLabelBounds(gridSpacingBounds, coordinateLabelPosition);
+
+        double percentageMarginBetweenBoardEdgeAndLabels = 0.01d;
+        boardBounds = coordinateLabelBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenBoardEdgeAndLabels, coordinateLabelBounds));
+        // Expressed as a percentage of total canvas width/height
+        double percentageThicknessOfBoardBorder = 0.02d;
+        boardBorderBounds = boardBounds.createParentWithMargin(getPixelValue(percentageThicknessOfBoardBorder, boardBounds));
 
         // Rescale everything. All the objects are referenced internally by LayoutRectangle, so the entire hierarchy will be updated
+        // These are percentages of the shorter side of board dimensions rather than total size
+        double percentageMarginFromEdge = 0.02d;
         double marginFromEdgeInPixels = percentageMarginFromEdge * Math.min(stage.getWidth(), stage.getHeight());
-        boardBorderBounds.rescaleAndFinalize(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), marginFromEdgeInPixels, 1.0d);
+        boardBorderBounds.rescaleAndFinalize(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), marginFromEdgeInPixels, 1.0d, true);
 
         // Now we can finally calculate the correct stone size
-        double stoneSizeFromWidth = scaledGridBounds.getWidth() / gridWidth;
-        double stoneSizeFromHeight = scaledGridBounds.getHeight() / gridHeight;
+        double stoneSizeFromWidth = scaledGridBounds.getWidth() / (gridWidth-1);
+        double stoneSizeFromHeight = scaledGridBounds.getHeight() / (gridHeight-1);
         gridUnitSize = Math.min(stoneSizeFromWidth, stoneSizeFromHeight);
+        // Space between two adjacent stones, expressed as a percentage of grid unit size
+        double percentageStoneGap = 0.1d;
         stoneGapSize = gridUnitSize * percentageStoneGap;
         stoneSize = gridUnitSize - stoneGapSize;
+        gridBounds = scaledGridBounds;
+    }
 
-        // Re-calculate the grid bounds using the square stone size
-        // Unfortunately this will not be part of the layout rectangle hierarchy. But at this point
-        // we should no longer have to use that anymore.
-        gridBounds = center(boardBounds, new LayoutRectangle(gridUnitSize * (gridWidth - 1), gridUnitSize * (gridHeight - 1)));
+    /*
+        Determines how the grid boundaries are arranged within the game board based on the co-ordinate label orientation.
+     */
+    private LayoutRectangle computeCoordinateLabelBounds(LayoutRectangle gridBounds, CoordinateLabelPosition coordinateLabelPosition) {
+        double marginLeft = 0, marginTop = 0, marginBottom = 0, marginRight = 0;
+        double minSide = Math.min(gridBounds.getWidth(), gridBounds.getHeight());
+        double percentageMarginForCoordinateLabels = 0.03d;
+        double hasMargin = percentageMarginForCoordinateLabels * minSide;
+        LayoutRectangle.ContainerStrategy containerStrategy;
+
+        if (coordinateLabelPosition == CoordinateLabelPosition.NONE) {
+            return gridBounds;
+        } else if (coordinateLabelPosition == CoordinateLabelPosition.TOP_AND_LEFT) {
+            containerStrategy = LayoutRectangle.ContainerStrategy.CLAMP_BOTTOM_RIGHT;
+            marginBottom = hasMargin;
+            marginRight = hasMargin;
+        } else if (coordinateLabelPosition == CoordinateLabelPosition.BOTTOM_AND_RIGHT) {
+            containerStrategy = LayoutRectangle.ContainerStrategy.CLAMP_TOP_LEFT;
+            marginTop = hasMargin;
+            marginLeft = hasMargin;
+        } else if (coordinateLabelPosition == CoordinateLabelPosition.ALL_SIDES) {
+            marginTop = hasMargin;
+            marginLeft = hasMargin;
+            marginBottom = hasMargin;
+            marginRight = hasMargin;
+            containerStrategy = LayoutRectangle.ContainerStrategy.CENTER;
+        } else {
+            throw new IllegalStateException("Unimplemented coordinate label position: " + coordinateLabelPosition);
+        }
+
+        return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, containerStrategy);
     }
 
     /**
@@ -126,6 +133,14 @@ final class GameBoardSize {
 
     /**
      *
+     * @return The drawing boundaries for the game co-ordinates
+     */
+    public Rectangle getCoordinateLabelBounds() {
+        return coordinateLabelBounds;
+    }
+
+    /**
+     *
      * @return The drawing boundaries for the grid of intersections.
      */
     public Rectangle getGridBounds() {
@@ -134,33 +149,10 @@ final class GameBoardSize {
 
     /**
      *
-     * @return The drawing boundaries for the entire canvas component
-     */
-    public Rectangle getCanvasBounds() {
-        return new Rectangle(0, 0, canvasWidth, canvasHeight);
-    }
-
-    /**
-     *
-     * @return The thickness of the border around the game board in pixel units.
-     */
-    public double getThicknessOfBoardBorderInPixels() {
-        return percentageThicknessOfBoardBorder;
-    }
-
-    /**
-     *
-     * @return The amount of pixels between the edge of the game board image and the start of the grids.
-     */
-    public double getPaddingForCoordinateLabelsInPixels() {
-        return percentagePaddingForCoordinateLabels * getBoardBoundsPercentageMetric();
-    }
-
-    /**
-     *
      * @return The blur factor of the shadow effect used to paint board component border
      */
     public double getShadowRadius() {
+        final double percentageShadowBlurRadius = 0.015d;
         return percentageShadowBlurRadius * getBoardBoundsPercentageMetric();
     }
 
@@ -201,6 +193,7 @@ final class GameBoardSize {
      * @return The thickness, in pixel units, of the line used to draw the board grids.
      */
     public double getGridLineThicknessInPixels() {
+        double percentageGridLineThickness = 0.00125d;
         double thickness = percentageGridLineThickness * getBoardBoundsPercentageMetric();
         return Math.max(1d, thickness);
     }
@@ -211,6 +204,10 @@ final class GameBoardSize {
 
     public double getGridUnitSizeInPixels() {
         return gridUnitSize;
+    }
+
+    private double getPixelValue(double percentage, Rectangle rectangle) {
+        return percentage * Math.min(rectangle.getWidth(), rectangle.getHeight());
     }
 
     /**
@@ -336,12 +333,19 @@ final class GameBoardSize {
      */
     private static class LayoutRectangle extends Rectangle {
 
+        enum ContainerStrategy {
+            CENTER,
+            CLAMP_BOTTOM_RIGHT,
+            CLAMP_TOP_LEFT
+        }
+
         private LayoutRectangle child;
 
         private double marginLeft = 0;
         private double marginTop = 0;
         private double marginRight = 0;
         private double marginBottom = 0;
+        private ContainerStrategy containerStrategy = ContainerStrategy.CENTER;
 
         private boolean finalized = false;
 
@@ -349,21 +353,61 @@ final class GameBoardSize {
             super(width, height);
         }
 
-        public LayoutRectangle addParentWithMargin(double marginOnAllSides) {
-            return addParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
+        /**
+         *
+         * @see #createParentWithMargin(double, double, double, double, ContainerStrategy)
+         */
+        public LayoutRectangle createParentWithMargin(double marginOnAllSides) {
+            return createParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
         }
 
-        // Creates a parent whose size is identical to the current rectangle and rescales existing content according to the margins
-        public LayoutRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
+        /**
+         * 
+         * @see #createParentWithMargin(double, double, double, double, ContainerStrategy)
+         */
+        public LayoutRectangle createParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
+            return createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, ContainerStrategy.CENTER);
+        }
+
+        /**
+         * Create and return a parent for this rectangle whose child is set to this instance. The parent will fully contain the child
+         * rectangle and have its position starting at (0, 0). The child position will be updated with the margin data depending on the
+         * container strategy.
+         *
+         * @param marginLeft Space to the left of the child before reaching left edge of parent
+         * @param marginTop Space above the child before reaching top edge of parent
+         * @param marginRight Space to the right of the child before reaching the right edge of parent
+         * @param marginBottom Space to the bottom of the child before reaching the bottom edge of parent
+         * @param strategy How the child fits inside the parent. It is set to {@link ContainerStrategy#CENTER} by default, which means the
+         *                 child will be centered in the parent bounds.
+         *
+         * @return The parent rectangle for this instance.
+         */
+        private LayoutRectangle createParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom, ContainerStrategy strategy) {
             assertNotFinalized();
 
             this.marginLeft = marginLeft;
             this.marginTop = marginTop;
             this.marginRight = marginRight;
             this.marginBottom = marginBottom;
+            this.containerStrategy = strategy;
 
             var parent = new LayoutRectangle(getWidth() + marginLeft + marginRight, getHeight() + marginTop + marginBottom);
-            offsetContents(marginLeft, marginTop);
+
+            switch (strategy) {
+                case CENTER:
+                    offsetContents(marginLeft, marginTop);
+                    break;
+                case CLAMP_BOTTOM_RIGHT:
+                    offsetContents(marginLeft + marginRight, marginTop + marginBottom);
+                    break;
+                case CLAMP_TOP_LEFT:
+                    // No offset
+                    break;
+                default:
+                    throw new IllegalStateException("Unsupported container strategy: " + strategy);
+            }
+
             parent.child = this;
 
             return parent;
@@ -393,16 +437,21 @@ final class GameBoardSize {
          * @param containerHeight Container bounds to center this component within
          * @param parentScale Scale used to transform parent rectangle dimensions
          */
-        public void rescaleAndFinalize(double containerX, double containerY, double containerWidth, double containerHeight, double margin, double parentScale) {
+        public void rescaleAndFinalize(double containerX, double containerY, double containerWidth, double containerHeight, double margin, double parentScale, boolean firstIteration) {
             assertNotFinalized();
 
             double originalWidth = getWidth();
             double widthToHeightRatio = getWidth() / getHeight();
 
-            double fitContainerX = containerX + marginLeft * parentScale + margin;
-            double fitContainerY = containerY + marginTop * parentScale + margin;
-            double fitContainerWidth = containerWidth - (marginLeft + marginRight) * parentScale - margin * 2;
-            double fitContainerHeight = containerHeight - (marginTop + marginBottom) * parentScale - margin * 2;
+            this.marginLeft *= parentScale;
+            this.marginTop *= parentScale;
+            this.marginRight *= parentScale;
+            this.marginBottom *= parentScale;
+
+            double fitContainerX = containerX + marginLeft + margin;
+            double fitContainerY = containerY + marginTop + margin;
+            double fitContainerWidth = containerWidth - (marginLeft + marginRight) - margin * 2;
+            double fitContainerHeight = containerHeight - (marginTop + marginBottom) - margin * 2;
             Rectangle fitContainerBounds = new Rectangle(fitContainerX, fitContainerY, fitContainerWidth, fitContainerHeight);
 
             Rectangle fitBounds = centerFit(fitContainerBounds, widthToHeightRatio, 0);
@@ -410,13 +459,34 @@ final class GameBoardSize {
 
             setWidth(fitBounds.getWidth());
             setHeight(fitBounds.getHeight());
-            setX(fitBounds.getX());
-            setY(fitBounds.getY());
+
+            switch (containerStrategy) {
+                case CENTER:
+                    setX(fitBounds.getX());
+                    setY(fitBounds.getY());
+                    break;
+                case CLAMP_TOP_LEFT:
+                    // If first iteration, it will clamp to (0, 0) of the stage if we don't snap to fitBounds.
+                    if (firstIteration) {
+                        setX(fitBounds.getWidth());
+                        setY(fitBounds.getHeight());
+                    } else {
+                        setX(containerX);
+                        setY(containerY);
+                    }
+                    break;
+                case CLAMP_BOTTOM_RIGHT:
+                    setX(containerX + containerWidth - fitBounds.getWidth());
+                    setY(containerY + containerHeight - fitBounds.getHeight());
+                    break;
+                default:
+                    throw new IllegalStateException("Unsupported container strategy: " + containerStrategy);
+            }
 
             finalized = true;
 
             if (child != null) {
-                child.rescaleAndFinalize(getX(), getY(), this.getWidth(), this.getHeight(), 0, fitScale);
+                child.rescaleAndFinalize(getX(), getY(), this.getWidth(), this.getHeight(), 0, fitScale, false);
             }
         }
 
