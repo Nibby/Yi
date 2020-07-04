@@ -2,19 +2,25 @@ package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.go.GoGameModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Main controller class for {@link GameBoardCanvas} state. Receives UI and game events and manages the interaction
  * of subcomponents within the game module.
  */
-final class GameBoardManager {
+public final class GameBoardManager {
 
-    final GameBoardModel model = new GameBoardModel();
-    final GameBoardSize size = new GameBoardSize();
-    final GameBoardView view = new GameBoardView();
-    final GameBoardEditor edit = new GameBoardEditor();
+    public final GameBoardModel model = new GameBoardModel();
+    public final GameBoardSize size = new GameBoardSize();
+    public final GameBoardView view = new GameBoardView();
+    public final GameBoardEditor edit = new GameBoardEditor();
+
+    private List<Runnable> gameUpdateListeners = new ArrayList<>();
 
     void onGameModelSet(GoGameModel game) {
-        model.initialize(game);
+        model.setGameModel(game);
+        edit.setEditable(true);
     }
 
     void onBoardSizeUpdate(double componentWidth, double componentHeight, GoGameModel game) {
@@ -23,5 +29,14 @@ final class GameBoardManager {
 
     void onGameUpdate(GoGameModel game) {
         model.update(game);
+        fireGameUpdateEvent();
+    }
+
+    void addGameUpdateListener(Runnable listener) {
+        gameUpdateListeners.add(listener);
+    }
+
+    void fireGameUpdateEvent() {
+        gameUpdateListeners.forEach(Runnable::run);
     }
 }

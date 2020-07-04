@@ -3,16 +3,18 @@ package codes.nibby.yi.editor.gui.board;
 import codes.nibby.yi.go.GoGameModel;
 import codes.nibby.yi.go.GoGamePosition;
 import codes.nibby.yi.go.GoGameState;
+import codes.nibby.yi.go.GoStoneColor;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Wraps the current {@link GoGameModel} and provide game information to other board classes.
  */
-final class GameBoardModel {
+public final class GameBoardModel {
 
     private GoGameModel gameModel;
     private GoGameState currentGameState;
 
-    public void initialize(GoGameModel gameModel) {
+    public void setGameModel(GoGameModel gameModel) {
         this.gameModel = gameModel;
         update(gameModel);
     }
@@ -39,5 +41,21 @@ final class GameBoardModel {
 
     public int getBoardHeight() {
         return gameModel.getBoardHeight();
+    }
+
+    public GoStoneColor getNextTurnStoneColor() {
+        return gameModel.getNextTurnStoneColor();
+    }
+
+    public int getCurrentMoveNumber() {
+        return gameModel.getCurrentMoveNumber();
+    }
+
+    public int getNextMoveNumber() {
+        return gameModel.getNextMoveNumber();
+    }
+
+    @Nullable GoGameModel getGameModel() {
+        return gameModel;
     }
 }

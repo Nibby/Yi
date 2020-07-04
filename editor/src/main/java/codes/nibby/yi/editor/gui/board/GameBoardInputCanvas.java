@@ -1,11 +1,11 @@
 package codes.nibby.yi.editor.gui.board;
 
+import codes.nibby.yi.editor.gui.board.edits.EditMode;
 import codes.nibby.yi.go.GoGameModel;
 import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 
 import java.util.Optional;
 
@@ -16,7 +16,9 @@ import java.util.Optional;
 final class GameBoardInputCanvas extends GameBoardCanvas {
 
     private int cursorX = 0, cursorY = 0;
-    private boolean drawCursor = false;
+    private boolean renderCursor = false;
+
+    private EditMode editMode = EditMode.PLAY_MOVE;
 
     GameBoardInputCanvas(GameBoardManager manager) {
         super(manager);
@@ -29,11 +31,9 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     protected void _render(GraphicsContext g, GameBoardManager manager) {
         g.clearRect(0, 0, getWidth(), getHeight());
         
-        if (drawCursor) {
-            g.setStroke(Color.BLACK);
-            double stoneSize = manager.size.getStoneSizeInPixels();
-            double[] position = manager.size.getGridRenderPosition(cursorX, cursorY, stoneSize);
-            g.fillOval(position[0], position[1], stoneSize, stoneSize);
+        if (renderCursor) {
+            editMode.getMouseCursor().ifPresent(this::setCursor);
+            editMode.renderGridCursor(g, manager, cursorX, cursorY);
         }
     }
 
@@ -51,9 +51,12 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (!manager.edit.isEditable()) {
             return;
         }
+        retrieveCursorPosition(e.getX(), e.getY());
 
-        if (e.getEventType() == MouseEvent.MOUSE_MOVED) {
-            onMouseMove(e);
+        if (renderCursor) {
+            if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
+                editMode.onMousePress(manager, cursorX, cursorY);
+            }
         }
 
         render(manager);
@@ -76,8 +79,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     public void onMouseMove(MouseEvent e) {
-        Optional<int[]> cursorPosition = manager.size.getGridLogicalPosition(e.getX(), e.getY());
-        cursorPosition.ifPresentOrElse(this::setCursorPosition, this::clearCursorPosition);
+        retrieveCursorPosition(e.getX(), e.getY());
     }
 
     public void onMouseClick(MouseEvent e) {
@@ -105,12 +107,17 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     private void clearCursorPosition() {
-        drawCursor = false;
+        renderCursor = false;
     }
 
     private void setCursorPosition(int[] logicalPosition) {
-        drawCursor = true;
+        renderCursor = true;
         cursorX = logicalPosition[0];
         cursorY = logicalPosition[1];
+    }
+
+    private void retrieveCursorPosition(double mouseX, double mouseY) {
+        Optional<int[]> cursorPosition = manager.size.getGridLogicalPosition(mouseX, mouseY);
+        cursorPosition.ifPresentOrElse(this::setCursorPosition, this::clearCursorPosition);
     }
 }
