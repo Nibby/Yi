@@ -109,103 +109,6 @@ final class GameBoardSize {
     }
 
     /**
-     * A rectangle with one child hierarchy. The child rectangle is assumed to be fully contained within this rectangle.
-     * When the parent rectangle is rescaled, the child will also be rescaled accordingly.
-     * <p/>
-     * Each rectangle should have a (x, y) position at (0, 0).
-     */
-    private static class LayoutRectangle extends Rectangle {
-
-        private LayoutRectangle child;
-
-        private double marginLeft = 0;
-        private double marginTop = 0;
-        private double marginRight = 0;
-        private double marginBottom = 0;
-
-        private boolean finalized = false;
-
-        public LayoutRectangle(double width, double height) {
-            super(width, height);
-        }
-
-        public LayoutRectangle addParentWithMargin(double marginOnAllSides) {
-            return addParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
-        }
-
-        // Creates a parent whose size is identical to the current rectangle and rescales existing content according to the margins
-        public LayoutRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
-            assertNotFinalized();
-
-            this.marginLeft = marginLeft;
-            this.marginTop = marginTop;
-            this.marginRight = marginRight;
-            this.marginBottom = marginBottom;
-
-            var parent = new LayoutRectangle(getWidth() + marginLeft + marginRight, getHeight() + marginTop + marginBottom);
-            offsetContents(marginLeft, marginTop);
-            parent.child = this;
-
-            return parent;
-        }
-
-        private void offsetContents(double x, double y) {
-            assertNotFinalized();
-
-            setX(getX() + x);
-            setY(getY() + y);
-
-            if (child != null) {
-                child.offsetContents(x, y);
-            }
-        }
-
-        /**
-         * Scales all the contents within this rectangle to an appropriate size while preserving width to height ratio and
-         * centers the scaled version inside the component bounds.
-         * <p/>
-         * Additionally, marks this rectangle and its entire sub-hierarchy as finalized. This means no more changes can
-         * be made to this rectangle and its hierarchy after this operation.
-         *
-         * @param containerX Container bounds to center this component within
-         * @param containerY Container bounds to center this component within
-         * @param containerWidth Container bounds to center this component within
-         * @param containerHeight Container bounds to center this component within
-         * @param parentScale Scale used to transform parent rectangle dimensions
-         */
-        public void rescaleAndFinalize(double containerX, double containerY, double containerWidth, double containerHeight, double margin, double parentScale) {
-            assertNotFinalized();
-
-            double originalWidth = getWidth();
-            double widthToHeightRatio = getWidth() / getHeight();
-
-            double fitContainerX = containerX + marginLeft * parentScale + margin;
-            double fitContainerY = containerY + marginTop * parentScale + margin;
-            double fitContainerWidth = containerWidth - (marginLeft + marginRight) * parentScale - margin * 2;
-            double fitContainerHeight = containerHeight - (marginTop + marginBottom) * parentScale - margin * 2;
-            Rectangle fitContainerBounds = new Rectangle(fitContainerX, fitContainerY, fitContainerWidth, fitContainerHeight);
-
-            Rectangle fitBounds = centerFit(fitContainerBounds, widthToHeightRatio, 0);
-            double fitScale = fitBounds.getWidth() / originalWidth;
-
-            setWidth(fitBounds.getWidth());
-            setHeight(fitBounds.getHeight());
-            setX(fitBounds.getX());
-            setY(fitBounds.getY());
-
-            finalized = true;
-
-            if (child != null) {
-                child.rescaleAndFinalize(getX(), getY(), this.getWidth(), this.getHeight(), 0, fitScale);
-            }
-        }
-
-        private void assertNotFinalized() {
-            assert !finalized : "Cannot modify layout rectangle after it has been finalized!";
-        }
-    }
-
-    /**
      *
      * @return The drawing boundaries for the game board image
      */
@@ -423,5 +326,102 @@ final class GameBoardSize {
         newHeight = h - (insetTop + insetBottom);
 
         return new Rectangle(newX, newY, newWidth, newHeight);
+    }
+
+    /**
+     * A rectangle with one child hierarchy. The child rectangle is assumed to be fully contained within this rectangle.
+     * When the parent rectangle is rescaled, the child will also be rescaled accordingly.
+     * <p/>
+     * Each rectangle should have a (x, y) position at (0, 0).
+     */
+    private static class LayoutRectangle extends Rectangle {
+
+        private LayoutRectangle child;
+
+        private double marginLeft = 0;
+        private double marginTop = 0;
+        private double marginRight = 0;
+        private double marginBottom = 0;
+
+        private boolean finalized = false;
+
+        public LayoutRectangle(double width, double height) {
+            super(width, height);
+        }
+
+        public LayoutRectangle addParentWithMargin(double marginOnAllSides) {
+            return addParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
+        }
+
+        // Creates a parent whose size is identical to the current rectangle and rescales existing content according to the margins
+        public LayoutRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
+            assertNotFinalized();
+
+            this.marginLeft = marginLeft;
+            this.marginTop = marginTop;
+            this.marginRight = marginRight;
+            this.marginBottom = marginBottom;
+
+            var parent = new LayoutRectangle(getWidth() + marginLeft + marginRight, getHeight() + marginTop + marginBottom);
+            offsetContents(marginLeft, marginTop);
+            parent.child = this;
+
+            return parent;
+        }
+
+        private void offsetContents(double x, double y) {
+            assertNotFinalized();
+
+            setX(getX() + x);
+            setY(getY() + y);
+
+            if (child != null) {
+                child.offsetContents(x, y);
+            }
+        }
+
+        /**
+         * Scales all the contents within this rectangle to an appropriate size while preserving width to height ratio and
+         * centers the scaled version inside the component bounds.
+         * <p/>
+         * Additionally, marks this rectangle and its entire sub-hierarchy as finalized. This means no more changes can
+         * be made to this rectangle and its hierarchy after this operation.
+         *
+         * @param containerX Container bounds to center this component within
+         * @param containerY Container bounds to center this component within
+         * @param containerWidth Container bounds to center this component within
+         * @param containerHeight Container bounds to center this component within
+         * @param parentScale Scale used to transform parent rectangle dimensions
+         */
+        public void rescaleAndFinalize(double containerX, double containerY, double containerWidth, double containerHeight, double margin, double parentScale) {
+            assertNotFinalized();
+
+            double originalWidth = getWidth();
+            double widthToHeightRatio = getWidth() / getHeight();
+
+            double fitContainerX = containerX + marginLeft * parentScale + margin;
+            double fitContainerY = containerY + marginTop * parentScale + margin;
+            double fitContainerWidth = containerWidth - (marginLeft + marginRight) * parentScale - margin * 2;
+            double fitContainerHeight = containerHeight - (marginTop + marginBottom) * parentScale - margin * 2;
+            Rectangle fitContainerBounds = new Rectangle(fitContainerX, fitContainerY, fitContainerWidth, fitContainerHeight);
+
+            Rectangle fitBounds = centerFit(fitContainerBounds, widthToHeightRatio, 0);
+            double fitScale = fitBounds.getWidth() / originalWidth;
+
+            setWidth(fitBounds.getWidth());
+            setHeight(fitBounds.getHeight());
+            setX(fitBounds.getX());
+            setY(fitBounds.getY());
+
+            finalized = true;
+
+            if (child != null) {
+                child.rescaleAndFinalize(getX(), getY(), this.getWidth(), this.getHeight(), 0, fitScale);
+            }
+        }
+
+        private void assertNotFinalized() {
+            assert !finalized : "Cannot modify layout rectangle after it has been finalized!";
+        }
     }
 }
