@@ -97,6 +97,12 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             g.setLineWidth(originalLineWidth);
 
             // Debugging
+//            manager.viewOptions.setCoordinateLabelPosition(CoordinateLabelPosition.ALL_SIDES);
+//
+//            g.setStroke(Color.BLUE);
+//            var coordinates = manager.size.getCoordinateLabelBounds();
+//            g.strokeRect(coordinates.getX(), coordinates.getY(), coordinates.getWidth(), coordinates.getHeight());
+//
 //            g.setStroke(Color.RED);
 //            g.strokeRect(gridBounds.getX(), gridBounds.getY(), gridBounds.getWidth(), gridBounds.getHeight());
 //            double size = manager.size.getStoneSizeInPixels();
