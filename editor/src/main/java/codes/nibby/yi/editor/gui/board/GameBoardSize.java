@@ -1,6 +1,5 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.editor.utilities.ComparisonUtilities;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -16,24 +15,26 @@ final class GameBoardSize {
 
     // Expressed as a percentage of total canvas width/height
     private final double percentageThicknessOfBoardBorder = 0.02d;
-    private CompoundRectangle boardBorderBounds;
-    private CompoundRectangle boardBounds;
+    private LayoutRectangle boardBorderBounds;
+    private LayoutRectangle boardBounds;
 
     // These are percentages of the shorter side of board dimensions rather than total size
     private final double percentageShadowBlurRadius = 0.015d;
     private final double percentageShadowOffset = 0.012d;
     private final double percentagePaddingForCoordinateLabels = 0.02d;
     private final double percentagePaddingBetweenLabelsAndGrid = 0.02d;
-    private CompoundRectangle coordinateLabelBounds;
+    private LayoutRectangle coordinateLabelBounds;
     private Rectangle gridBounds;
-    private CompoundRectangle stoneBounds;
+    private LayoutRectangle stoneBounds;
     private final double percentageGridLineThickness = 0.00125d;
 
     // These are percentages of gridBounds.
     // TODO: Properly implement stone rendering and size calculation
     private double percentageStoneDiameter;
-    private final double percentageStoneGap = 0.008d; // Space between two adjacent stones
+    private final double percentageStoneGap = 0.1d; // Space between two adjacent stones, expressed as a percentage of grid unit size
+    private double stoneGapSize;
     private double stoneSize;
+    private double gridUnitSize; // Size of the stone + gap at each intersection
 
     /**
      * Recalculates the board sizing using standard margins.
@@ -61,69 +62,58 @@ final class GameBoardSize {
         this.canvasWidth = componentWidth;
         this.canvasHeight = componentHeight;
 
-        double gridWidthToHeightRatio = (double) gridWidth / (double) gridHeight;
-
         Rectangle stage = new Rectangle(0, 0, this.canvasWidth, canvasHeight);
 
-        Rectangle gridFitRatio = centerFit(stage, gridWidthToHeightRatio, 0d);
+        // Overview:
+        // =========
+        // Start by approximating a reasonable size of the go board based on the total intersection width-to-height ratio,
+        // then we find the maximum rectangle inside the stage of such ratio, which serves as the basis of the grid intersections.
+        // This should give us a good starting point for estimating a square stone size and board scale appropriate for the current
+        // stage dimensions.
+        //
+        // It is a lot easier to preserve rectangle proportions incrementally (i.e. by adding spacing around an existing known size) than
+        // than to subtract from an existing component, we adopt the former approach. First we define the correct ratio of the board
+        // intersection area (which ensures the stone size is square), then we expand from this region to obtain co-ordinate label bounds,
+        // board bounds, board border bounds etc. The sizing of these boundaries will overflow the viewport (stage) at this point, but
+        // we will re-scale them at the final step, making the top-level container fit within the stage (and rescale all inner components based on the
+        // scale value).
+
+        // We need to calculate a scaled version of stone size at this point to maintain the correct board ratio
+        Rectangle gridFitRatio = centerFit(stage, (double) gridWidth / (double) gridHeight, 0d);
         double scaledStoneSizeFromWidth = gridFitRatio.getWidth() / gridWidth;
         double scaledStoneSizeFromHeight = gridFitRatio.getHeight() / gridHeight;
         double scaledStoneSize = Math.min(scaledStoneSizeFromWidth, scaledStoneSizeFromHeight);
 
-        CompoundRectangle scaledGridBounds = new CompoundRectangle(scaledStoneSize * gridWidth, scaledStoneSize * gridHeight);
+        LayoutRectangle scaledGridBounds = new LayoutRectangle(scaledStoneSize * gridWidth, scaledStoneSize * gridHeight);
 
         stoneBounds = scaledGridBounds.addParentWithMargin(scaledStoneSize);
-        boardBounds = stoneBounds;
-        boardBorderBounds = boardBounds.addParentWithMargin(20d);
+        // TODO: Calculate coordinate label bounds
+        boardBounds = stoneBounds; // TODO: Temporary until coordinate spaces are calculated properly
+        boardBorderBounds = boardBounds.addParentWithMargin(percentageThicknessOfBoardBorder * Math.min(boardBounds.getWidth(), boardBounds.getHeight()));
+
+        // Rescale everything. All the objects are referenced internally by LayoutRectangle, so the entire hierarchy will be updated
         boardBorderBounds.rescale(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), percentageMarginFromEdge);
 
+        // Now we can finally calculate the correct stone size
         double stoneSizeFromWidth = scaledGridBounds.getWidth() / gridWidth;
         double stoneSizeFromHeight = scaledGridBounds.getHeight() / gridHeight;
-        stoneSize = Math.min(stoneSizeFromWidth, stoneSizeFromHeight);
+        gridUnitSize = Math.min(stoneSizeFromWidth, stoneSizeFromHeight);
+        stoneGapSize = gridUnitSize * percentageStoneGap;
+        stoneSize = gridUnitSize - stoneGapSize;
 
-        gridBounds = center(boardBounds, new CompoundRectangle(stoneSize * (gridWidth - 1), stoneSize * (gridHeight - 1)));
-
-//        double gridWidthToHeightRatio = (double) gridWidth / (double) gridHeight;
-//
-//        double lowestSize = Math.min(this.canvasWidth, canvasHeight);
-//        double marginSize = lowestSize * percentageMarginFromEdge;
-//
-
-//
-//        // Fit the largest bounds of the same aspect ratio as (gridWidth x gridHeight) to ensure grids can be drawn as perfect squares
-//        // Board content size
-//        Rectangle boardContainerBounds = centerFit(stage, gridWidthToHeightRatio, percentageMarginFromEdge);
-//        boardBorderBounds = center(boardContainerBounds, clip(boardContainerBounds, marginSize));
-//        boardBounds = center(boardContainerBounds, clip(boardBorderBounds, percentageThicknessOfBoardBorder * lowestSize));
-//
-//        // Coordinate labels
-//        // TODO: Depending on the co-ordinate label position, the padding size may vary
-//        //       Finalise this later
-//        coordinateLabelBounds = center(boardBounds, clip(boardBounds, getPaddingForCoordinateLabelsInPixels()));
-//
-//        // TODO: This may not be at the center of the coordinate bounds if the labels are not showing in all 4 sides
-//        double pixelPaddingBetweenLabelsAndGrid = percentagePaddingBetweenLabelsAndGrid * Math.min(coordinateLabelBounds.getWidth(), coordinateLabelBounds.getHeight());
-//        gridBounds = center(coordinateLabelBounds, clip(coordinateLabelBounds, pixelPaddingBetweenLabelsAndGrid));
-//
-//        // Check that the stone size is (approximately) square
-//        double stoneWidth = gridBounds.getWidth() / gridWidth;
-//        double stoneHeight = gridBounds.getHeight() / gridHeight;
-//
-//        assert ComparisonUtilities.doubleEquals(stoneWidth, stoneHeight);
-//
-//        stoneSize = (stoneWidth + stoneHeight) / 2;
+        // Re-calculate the grid bounds using the square stone size
+        gridBounds = center(boardBounds, new LayoutRectangle(gridUnitSize * (gridWidth - 1), gridUnitSize * (gridHeight - 1)));
     }
 
     /**
      * A rectangle with one child hierarchy. The child rectangle is assumed to be fully contained within this rectangle.
      * When the parent rectangle is rescaled, the child will also be rescaled accordingly.
      * <p/>
-     * Each rectangle should have a (x, y) position at (0, 0). Use {@link #getTranslated(double, double)} to obtain a
-     * translated copy of the rectangle.
+     * Each rectangle should have a (x, y) position at (0, 0).
      */
-    private static class CompoundRectangle extends Rectangle {
+    private static class LayoutRectangle extends Rectangle {
 
-        private CompoundRectangle child;
+        private LayoutRectangle child;
 
         private double marginLeft = 0;
         private double marginTop = 0;
@@ -131,35 +121,27 @@ final class GameBoardSize {
         private double marginBottom = 0;
         private double offsetX = 0, offsetY = 0;
 
-        public CompoundRectangle(double width, double height) {
+        public LayoutRectangle(double width, double height) {
             super(width, height);
         }
 
-        private CompoundRectangle(double x, double y, double width, double height) {
-            super(x, y, width, height);
-        }
-
-        public CompoundRectangle addParentWithMargin(double marginOnAllSides) {
+        public LayoutRectangle addParentWithMargin(double marginOnAllSides) {
             return addParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
         }
 
         // Creates a parent whose size is identical to the current rectangle and rescales existing content according to the margins
-        public CompoundRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
+        public LayoutRectangle addParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
             this.marginLeft = marginLeft;
             this.marginTop = marginTop;
             this.marginRight = marginRight;
             this.marginBottom = marginBottom;
 
-            var parent = new CompoundRectangle(0, 0, getWidth() + marginLeft + marginRight, getHeight() + marginTop + marginBottom);
+            var parent = new LayoutRectangle(getWidth() + marginLeft + marginRight, getHeight() + marginTop + marginBottom);
             offsetContents(marginLeft, marginTop);
             parent.child = this;
 
             return parent;
         }
-
-//        public CompoundRectangle getTranslated(double x, double y) {
-
-//        }
 
         public void offsetContents(double x, double y) {
             this.offsetX = x;
@@ -286,6 +268,14 @@ final class GameBoardSize {
     public double getGridLineThicknessInPixels() {
         double thickness = percentageGridLineThickness * getBoardBoundsPercentageMetric();
         return Math.max(1d, thickness);
+    }
+
+    public double getStoneGapSizeInPixels() {
+        return stoneGapSize;
+    }
+
+    public double getGridUnitSizeInPixels() {
+        return gridUnitSize;
     }
 
     /**

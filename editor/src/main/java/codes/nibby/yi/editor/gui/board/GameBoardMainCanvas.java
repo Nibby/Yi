@@ -76,7 +76,6 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             double gridLineThickness = manager.size.getGridLineThicknessInPixels();
             g.setLineWidth(gridLineThickness);
 
-            double stoneSize = manager.size.getStoneSizeInPixels();
             Rectangle gridBounds = manager.size.getGridBounds();
 
             for (int lineNumber = 0; lineNumber < manager.model.getBoardWidth(); ++lineNumber) {
@@ -85,7 +84,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                              getRenderedGridX(lineNumber, manager, 0),
                              gridBounds.getY() + gridBounds.getHeight());
             }
-//
+
             for (int lineNumber = 0; lineNumber < manager.model.getBoardHeight(); ++lineNumber) {
                 g.strokeLine(gridBounds.getX(),
                              getRenderedGridY(lineNumber, manager, 0),
@@ -100,6 +99,9 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             // Debugging
 //            g.setStroke(Color.RED);
 //            g.strokeRect(gridBounds.getX(), gridBounds.getY(), gridBounds.getWidth(), gridBounds.getHeight());
+//            double size = manager.size.getStoneSizeInPixels();
+//            g.strokeOval(getRenderedGridX(0, manager, size), getRenderedGridY(0, manager, size), size, size);
+//            g.strokeOval(getRenderedGridX(0, manager, size), getRenderedGridY(1, manager, size), size, size);
         }
 
         private static void renderStarPoints(GraphicsContext g, GameBoardManager manager, double lineWidth) {
@@ -123,17 +125,13 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
         private static double getRenderedGridX(int gridX, GameBoardManager manager, double objectSize) {
             return manager.size.getGridBounds().getX()
-                    + manager.size.getStoneSizeInPixels() * gridX - objectSize / 2;
+                    + manager.size.getGridUnitSizeInPixels() * gridX - objectSize / 2;
         }
 
         private static double getRenderedGridY(int gridY, GameBoardManager manager, double objectSize) {
             return manager.size.getGridBounds().getY()
-                    + manager.size.getStoneSizeInPixels() * gridY - objectSize / 2;
+                    + manager.size.getGridUnitSizeInPixels() * gridY - objectSize / 2;
         }
-
-//        private static double getStoneX(int gridX, GameBoardManager manager, double gridOffset) {
-//            return getGridX()
-//        }
 
         enum StarPointPosition {
 
