@@ -18,6 +18,8 @@ public final class GameBoardManager {
 
     private List<Runnable> gameUpdateListeners = new ArrayList<>();
 
+    GameBoardManager() { }
+
     void onGameModelSet(GoGameModel game) {
         model.setGameModel(game);
         edit.setEditable(true);

@@ -1,6 +1,8 @@
 package codes.nibby.yi.editor.gui.board;
 
-public class GameBoardView {
+public final class GameBoardView {
+
+    GameBoardView() { }
 
     private CoordinateLabelPosition coordinateLabelPosition = CoordinateLabelPosition.getDefaultValue();
 

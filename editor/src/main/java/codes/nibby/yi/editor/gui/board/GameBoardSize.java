@@ -24,6 +24,8 @@ public final class GameBoardSize {
     private double stoneSize;
     private double gridUnitSize; // Size of the stone + gap at each intersection
 
+    GameBoardSize() { }
+
     /**
      * Recalculates the board sizing using a custom margin. The margin is the space between the edges of the canvas to the start of the
      * game board.
