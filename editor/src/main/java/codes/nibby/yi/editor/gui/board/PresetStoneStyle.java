@@ -24,23 +24,22 @@ public enum PresetStoneStyle {
         DropShadow dropShadow = null;
 
         @Override
-        public void renderWhite(GraphicsContext g, GameBoardManager manager, double x, double y, double size) {
+        public void _render(GraphicsContext g, GameBoardManager manager, GoStoneColor color, double x, double y, double size) {
             updateDropShadowIfNecessary(manager);
 
-            g.setFill(whiteGradient);
-            g.setEffect(dropShadow);
-            g.fillOval(x, y, size, size);
-            g.setEffect(null);
-        }
+            RadialGradient gradient = null;
 
-        @Override
-        public void renderBlack(GraphicsContext g, GameBoardManager manager, double x, double y, double size) {
-            updateDropShadowIfNecessary(manager);
+            if (color == GoStoneColor.BLACK)
+                gradient = blackGradient;
+            if (color == GoStoneColor.WHITE)
+                gradient = whiteGradient;
 
-            g.setFill(blackGradient);
-            g.setEffect(dropShadow);
-            g.fillOval(x, y, size, size);
-            g.setEffect(null);
+            if (gradient != null) {
+                g.setFill(gradient);
+                g.setEffect(dropShadow);
+                g.fillOval(x, y, size, size);
+                g.setEffect(null);
+            }
         }
 
         private void updateDropShadowIfNecessary(GameBoardManager manager) {
@@ -63,8 +62,7 @@ public enum PresetStoneStyle {
         }
     };
 
-    public abstract void renderWhite(GraphicsContext g, GameBoardManager manager, double x, double y, double size);
-    public abstract void renderBlack(GraphicsContext g, GameBoardManager manager, double x, double y, double size);
+    protected abstract void _render(GraphicsContext g, GameBoardManager manager, GoStoneColor color, double x, double y, double size);
 
     public void render(GraphicsContext g, GameBoardManager manager, GoStoneColor color, int gridX, int gridY) {
         double stoneSize = manager.size.getStoneSizeInPixels();
@@ -72,11 +70,7 @@ public enum PresetStoneStyle {
         double x = position[0];
         double y = position[1];
 
-        if (color == GoStoneColor.BLACK) {
-            renderBlack(g, manager, x, y, stoneSize);
-        } else if (color == GoStoneColor.WHITE) {
-            renderWhite(g, manager, x, y, stoneSize);
-        }
+        _render(g, manager, color, x, y, stoneSize);
     }
 
     public static PresetStoneStyle getDefaultValue() {
