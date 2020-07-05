@@ -17,6 +17,6 @@ public enum CoordinateLabelPosition {
     }
 
     public static CoordinateLabelPosition getDefaultValue() {
-        return ALL_SIDES;
+        return NONE;
     }
 }
