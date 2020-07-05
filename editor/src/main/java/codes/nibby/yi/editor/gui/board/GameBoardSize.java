@@ -15,7 +15,7 @@ public final class GameBoardSize {
     private LayoutRectangle boardBorderBounds;
     private LayoutRectangle boardBounds;
 
-    private final double percentageShadowOffset = 0.012d;
+    private final double percentageBoardShadowOffset = 0.012d;
     private LayoutRectangle coordinateLabelBounds;
     private Rectangle gridBounds;
 
@@ -89,7 +89,7 @@ public final class GameBoardSize {
         gridBounds = scaledGridBounds;
 
         stoneShadowRadius = stoneSize / 8d;
-        stoneShadowOffset = stoneSizeFromHeight / 12d;
+        stoneShadowOffset = stoneSize / 16d;
     }
 
     /*
@@ -239,18 +239,10 @@ public final class GameBoardSize {
 
     /**
      *
-     * @return The amount of x-offset on the board component border shadow
+     * @return The amount of offset in both x and y direction of the board border shadow
      */
-    public double getShadowOffsetXInPixels() {
-        return percentageShadowOffset * getBoardBounds().getWidth();
-    }
-
-    /**
-     *
-     * @return The amount of y-offset on the board component border shadow
-     */
-    public double getShadowOffsetYInPixels() {
-        return percentageShadowOffset * getBoardBounds().getHeight();
+    public double getBoardBorderShadowOffsetInPixels() {
+        return percentageBoardShadowOffset * getBoardBounds().getHeight();
     }
 
     /**

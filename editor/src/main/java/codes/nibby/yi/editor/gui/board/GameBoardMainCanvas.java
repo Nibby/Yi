@@ -47,9 +47,11 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderBorderAndShadow(GraphicsContext g, GameBoardManager manager) {
+            double borderOffset = manager.size.getBoardBorderShadowOffsetInPixels();
+
             BOARD_BORDER_SHADOW.setRadius(manager.size.getShadowRadius());
-            BOARD_BORDER_SHADOW.setOffsetX(manager.size.getShadowOffsetXInPixels());
-            BOARD_BORDER_SHADOW.setOffsetY(manager.size.getShadowOffsetYInPixels());
+            BOARD_BORDER_SHADOW.setOffsetX(borderOffset);
+            BOARD_BORDER_SHADOW.setOffsetY(borderOffset);
             BOARD_BORDER_SHADOW.setColor(Color.color(0d, 0d, 0d, 0.5d));
 
             g.setEffect(BOARD_BORDER_SHADOW);
