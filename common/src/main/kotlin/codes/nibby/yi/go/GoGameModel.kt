@@ -147,6 +147,10 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         return gameState
     }
 
+    fun getAnnotationsOnThisMove(): Set<Annotation> {
+        return currentNode.data!!.annotationsOnThisNode
+    }
+
     fun getCurrentMoveNumber(): Int {
         return currentNode.getDistanceToRoot()
     }
