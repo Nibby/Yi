@@ -3,6 +3,7 @@ package codes.nibby.yi.go
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.collections.HashSet
 
 class ZobristHasherTest {
 
@@ -14,7 +15,7 @@ class ZobristHasherTest {
         val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(boardWidth, boardHeight)
         val currentNode = gameModel.currentNode
-        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, 0)
+        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, HashSet(), 0)
 
         val firstHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
         val secondHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
@@ -51,7 +52,7 @@ class ZobristHasherTest {
             }
         }
 
-        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, 0)
+        val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, HashSet(), 0)
 
         // Hash twice
         val firstHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
