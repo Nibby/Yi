@@ -65,6 +65,10 @@ public final class GameBoard {
         content.forEach(canvas -> canvas.onGameModelSet(game, manager));
     }
 
+    public void setEditable(boolean editable) {
+        manager.edit.setEditable(editable);
+    }
+
     /**
      * Invoked when there is an update to the {@link GoGameModel}. The model must
      * be identical to the model that was last {@link #setModel(GoGameModel) initialized}.
