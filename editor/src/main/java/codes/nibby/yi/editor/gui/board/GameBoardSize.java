@@ -22,7 +22,6 @@ public final class GameBoardSize {
     // These are percentages of gridBounds.
     private double stoneGapSize;
     private double stoneSize;
-    private double pointAnnotationSize;
     private double gridUnitSize; // Size of the stone + gap at each intersection
 
     private double stoneShadowRadius;
@@ -87,7 +86,6 @@ public final class GameBoardSize {
         double percentageStoneGap = 0.01d;
         stoneGapSize = gridUnitSize * percentageStoneGap;
         stoneSize = gridUnitSize - stoneGapSize;
-        pointAnnotationSize = stoneSize / 4 * 3;
         gridBounds = scaledGridBounds;
 
         stoneShadowRadius = stoneSize / 8d;
@@ -133,10 +131,6 @@ public final class GameBoardSize {
 
     public double getStoneShadowOffset() {
         return stoneShadowOffset;
-    }
-
-    public double[] getPointAnnotationRenderPosition(int gridX, int gridY) {
-        return getGridRenderPosition(gridX, gridY, pointAnnotationSize);
     }
 
     public double[] getStoneRenderPosition(int gridX, int gridY) {
