@@ -4,6 +4,7 @@ import codes.nibby.yi.common.MoveNode
 import codes.nibby.yi.common.MoveTree
 import codes.nibby.yi.go.rules.GoGameRulesHandler
 import java.util.*
+import kotlin.collections.HashSet
 
 /**
  * Represents one game of Go.
@@ -130,9 +131,12 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         var prisonersBlack = 0
 
         var currentStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
+        var annotations = HashSet<Annotation>();
 
         // Build the board state by traversing the history and apply the delta from root up to gameNode
-        gameNode.getPathToRoot().forEach { node ->
+        val pathToRoot = gameNode.getPathToRoot()
+
+        pathToRoot.forEach { node ->
             node.data?.let { stateUpdate ->
                 positionState.apply(stateUpdate)
                 prisonersWhite += stateUpdate.captures.stream().filter { capture -> capture.stoneColor == GoStoneColor.BLACK }.count().toInt()
@@ -141,10 +145,20 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
             }
         }
 
-        val gameState = GoGameState(this, positionState, gameNode, prisonersWhite, prisonersBlack, currentStateHash)
+        annotations = pathToRoot.last.data!!.annotationsOnThisNode;
+
+        val gameState = GoGameState(this, positionState, gameNode, prisonersWhite, prisonersBlack, annotations, currentStateHash)
         this.stateCache[gameNode.getDistanceToRoot()] = gameState
 
         return gameState
+    }
+
+    fun addAnnotationOnThisMove(annotation: Annotation) {
+        addAnnotationsOnThisMove(annotation)
+    }
+
+    fun addAnnotationsOnThisMove(vararg annotations: Annotation) {
+        annotations.forEach { currentNode.data!!.annotationsOnThisNode.add(it) }
     }
 
     fun getAnnotationsOnThisMove(): Set<Annotation> {

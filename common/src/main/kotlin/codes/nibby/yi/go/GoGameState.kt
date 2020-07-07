@@ -14,6 +14,7 @@ import codes.nibby.yi.common.MoveNode
  * @param representedNode The [MoveNode] this game state represents
  * @param prisonersBlack Number of prisoners black has captured at this point
  * @param prisonersWhite Number of prisoners white has captured at this point
+ * @param annotations The annotations present in this state
  *
  * @see GoGameStateHelper
  */
@@ -22,4 +23,5 @@ class GoGameState(private val gameModel: GoGameModel,
                   val representedNode: MoveNode<GameStateUpdate>,
                   val prisonersWhite: Int,
                   val prisonersBlack: Int,
+                  val annotations: Set<Annotation>,
                   val stateHash: Long)
