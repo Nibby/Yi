@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 /**
  * Handles the creation of [GameStateUpdate] depending on the context.

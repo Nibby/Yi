@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board.edits;
 
-import codes.nibby.yi.go.GoGameModel;
+import codes.nibby.go.GoGameModel;
 
 /**
  * Represents an edit made to the game model by the user.

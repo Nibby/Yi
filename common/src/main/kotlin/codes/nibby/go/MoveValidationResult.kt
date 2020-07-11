@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 /**
  * Represents the outcome of a result validation of a proposed move. Constants in this enum determine

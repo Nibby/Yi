@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board.edits;
 
-import codes.nibby.yi.go.GoGameModel;
+import codes.nibby.go.GoGameModel;
 
 public abstract class UndoableEdit implements Undoable {
 

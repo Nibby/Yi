@@ -1,9 +1,9 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.settings.Settings;
-import codes.nibby.yi.go.Annotation;
-import codes.nibby.yi.go.GoGameModel;
-import codes.nibby.yi.go.GoStoneColor;
+import codes.nibby.go.Annotation;
+import codes.nibby.go.GoGameModel;
+import codes.nibby.go.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;

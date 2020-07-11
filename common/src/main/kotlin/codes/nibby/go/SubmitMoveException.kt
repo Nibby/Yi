@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 /**
  * An exception thrown to represent a submitted move is illegal and cannot be played.

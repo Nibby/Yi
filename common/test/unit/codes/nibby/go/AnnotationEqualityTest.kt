@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

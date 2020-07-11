@@ -1,7 +1,7 @@
 package codes.nibby.yi.common
 
-import codes.nibby.yi.go.GoStoneColor
-import codes.nibby.yi.go.StoneData
+import codes.nibby.go.GoStoneColor
+import codes.nibby.go.StoneData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

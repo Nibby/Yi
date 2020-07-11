@@ -1,6 +1,6 @@
-package codes.nibby.yi.go.rules
+package codes.nibby.go.rules
 
-import codes.nibby.yi.go.GoStoneColor
+import codes.nibby.go.GoStoneColor
 
 abstract class GoGameRulesHandler {
 

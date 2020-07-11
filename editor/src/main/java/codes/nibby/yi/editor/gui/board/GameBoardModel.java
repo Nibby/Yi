@@ -1,9 +1,9 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.go.GoGameModel;
-import codes.nibby.yi.go.GoGamePosition;
-import codes.nibby.yi.go.GoGameState;
-import codes.nibby.yi.go.GoStoneColor;
+import codes.nibby.go.GoGameModel;
+import codes.nibby.go.GoGamePosition;
+import codes.nibby.go.GoGameState;
+import codes.nibby.go.GoStoneColor;
 import org.jetbrains.annotations.Nullable;
 
 /**

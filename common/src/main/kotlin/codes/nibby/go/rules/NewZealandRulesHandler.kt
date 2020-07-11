@@ -1,6 +1,4 @@
-package codes.nibby.yi.go.rules
-
-import codes.nibby.yi.go.rules.GoGameRulesHandler
+package codes.nibby.go.rules
 
 class NewZealandRulesHandler : GoGameRulesHandler() {
 

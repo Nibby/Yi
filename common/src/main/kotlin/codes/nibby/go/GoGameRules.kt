@@ -1,7 +1,7 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
-import codes.nibby.yi.go.rules.ChineseRulesHandler
-import codes.nibby.yi.go.rules.GoGameRulesHandler
+import codes.nibby.go.rules.ChineseRulesHandler
+import codes.nibby.go.rules.GoGameRulesHandler
 
 enum class GoGameRules {
 
