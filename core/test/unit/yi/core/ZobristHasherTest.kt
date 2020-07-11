@@ -12,7 +12,7 @@ class ZobristHasherTest {
         val boardWidth = 3;
         val boardHeight = 3;
         val gameModel = GoGameModel(boardWidth, boardHeight, GoGameRules.CHINESE)
-        val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
+        val zobrist = GoZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(boardWidth, boardHeight)
         val currentNode = gameModel.currentNode
         val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, HashSet(), 0)
@@ -29,7 +29,7 @@ class ZobristHasherTest {
         val boardHeight = 3;
         val gameModel = GoGameModel(boardWidth, boardHeight, GoGameRules.CHINESE)
         val currentNode = gameModel.currentNode
-        val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
+        val zobrist = GoZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(boardWidth, boardHeight)
 
         // Randomize the game position

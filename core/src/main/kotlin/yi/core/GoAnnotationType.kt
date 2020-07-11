@@ -1,6 +1,6 @@
 package yi.core
 
-enum class AnnotationType {
+enum class GoAnnotationType {
 
     CIRCLE,
     TRIANGLE,

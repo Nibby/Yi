@@ -9,12 +9,12 @@ package yi.core
  * @param stateHash A hash code representing the current game state (not just the delta)
  * @param helperStoneUpdates Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
  */
-class GameStateUpdate(val type: Type,
-                      val primaryMove: StoneData?,
-                      val captures: Set<StoneData>,
-                      val stateHash: Long,
-                      val helperStoneUpdates: HashSet<StoneData>,
-                      val annotationsOnThisNode: HashSet<Annotation>) {
+class GoGameStateUpdate(val type: Type,
+                        val primaryMove: GoStoneData?,
+                        val captures: Set<GoStoneData>,
+                        val stateHash: Long,
+                        val helperStoneUpdates: HashSet<GoStoneData>,
+                        val annotationsOnThisNode: HashSet<GoAnnotation>) {
 
     enum class Type {
         MOVE_PLAYED,

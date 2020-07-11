@@ -1,7 +1,7 @@
 package yi.editor.gui.board;
 
 import yi.editor.settings.Settings;
-import yi.core.Annotation;
+import yi.core.GoAnnotation;
 import yi.core.GoGameModel;
 import yi.core.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
@@ -226,9 +226,9 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardAnnotationRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            Set<Annotation> annotations = manager.model.getCurrentGameState().getAnnotations();
+            Set<GoAnnotation> annotations = manager.model.getCurrentGameState().getAnnotations();
 
-            for (Annotation annotation : annotations) {
+            for (GoAnnotation annotation : annotations) {
                 AnnotationRenderer.render(annotation, g, manager);
             }
         }
