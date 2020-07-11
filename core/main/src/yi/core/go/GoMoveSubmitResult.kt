@@ -1,4 +1,6 @@
-package yi.core
+package yi.core.go
+
+import yi.core.MoveNode
 
 /**
  * Represents the result of a request to submit a move to the game tree.
@@ -7,7 +9,7 @@ package yi.core
  * @param moveNode The move node that is created from the request, may be null if the request is in violation of game rules.
  * @param played true if [moveNode] has already been appended to the game tree.
  */
-class MoveSubmitResult constructor(val validationResult: GoMoveValidationResult, val moveNode: MoveNode<GoGameStateUpdate>?, val played: Boolean) {
+class GoMoveSubmitResult constructor(val validationResult: GoMoveValidationResult, val moveNode: MoveNode<GoGameStateUpdate>?, val played: Boolean) {
 
     override fun toString(): String {
         return "status: ${validationResult.name} played: $played node: ${moveNode.toString()}"

@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 /**
  * Thrown when an attempted action is a violation of game rules.

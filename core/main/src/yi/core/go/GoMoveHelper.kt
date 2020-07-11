@@ -1,5 +1,6 @@
-package yi.core
+package yi.core.go
 
+import yi.core.MoveNode
 import java.util.*
 import kotlin.collections.HashSet
 

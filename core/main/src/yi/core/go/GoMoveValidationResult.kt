@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 /**
  * Represents the outcome of a result validation of a proposed move. Constants in this enum determine
