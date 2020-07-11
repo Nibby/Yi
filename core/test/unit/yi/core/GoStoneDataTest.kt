@@ -2,6 +2,8 @@ package yi.core
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import yi.core.go.GoStoneColor
+import yi.core.go.GoStoneData
 
 class GoStoneDataTest {
 

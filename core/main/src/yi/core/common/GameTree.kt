@@ -1,21 +1,21 @@
-package yi.core
+package yi.core.common
 
-open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
+open class GameTree<NodeData> constructor(rootNode: GameNode<NodeData>) {
 
-    internal var rootNode: MoveNode<NodeData> = rootNode
+    internal var rootNode: GameNode<NodeData> = rootNode
 
     init {
         this.rootNode.markAsRoot()
     }
 
-    constructor() : this(MoveNode())
+    constructor() : this(GameNode())
 
     /**
      * Appends a child node to a parent node in the tree.
      *
      * @throws IllegalArgumentException if parent is part of another tree, child already has a parent, child is a root node, or parent == child
      */
-    fun appendNode(parent: MoveNode<NodeData>, child: MoveNode<NodeData>) {
+    fun appendNode(parent: GameNode<NodeData>, child: GameNode<NodeData>) {
         if (!isDescendant(parent))
             throw IllegalArgumentException("Parent node is not descendent of this move tree")
         if (child.parent != null)
@@ -38,7 +38,7 @@ open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
      *
      * @throws IllegalArgumentException see kotlin docs for [appendNode]
      */
-    fun appendNode(child: MoveNode<NodeData>) {
+    fun appendNode(child: GameNode<NodeData>) {
         appendNode(rootNode, child)
     }
 
@@ -51,7 +51,7 @@ open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
      * @param node The node to be removed from the game tree
      * @throws IllegalArgumentException If the node to be removed does not belong to this tree
      */
-    fun removeNode(node: MoveNode<NodeData>) {
+    fun removeNode(node: GameNode<NodeData>) {
         if (!isDescendant(node))
             throw IllegalArgumentException("Cannot remove a node that is not part of this move tree")
 
@@ -69,7 +69,7 @@ open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
      * @throws IllegalArgumentException If the node to be removed does not belong to this tree
      */
     @Suppress("UNCHECKED_CAST") // Should be safe to cast as NodeType inherits from GameNode
-    fun removeNodeSubtree(node: MoveNode<NodeData>) {
+    fun removeNodeSubtree(node: GameNode<NodeData>) {
         if (!isDescendant(node))
             throw IllegalArgumentException("Cannot remove a node that is not part of this move tree")
 
@@ -84,7 +84,7 @@ open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
      * @param node The node to check
      * @return true if the node is belongs to this tree
      */
-    fun isDescendant(node: MoveNode<NodeData>): Boolean {
+    fun isDescendant(node: GameNode<NodeData>): Boolean {
         return node.root == rootNode
     }
 }

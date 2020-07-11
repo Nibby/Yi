@@ -1,8 +1,8 @@
 package yi.editor.gui.board;
 
+import yi.core.go.GoAnnotation;
+import yi.core.go.GoStoneColor;
 import yi.editor.utilities.ShapeUtilities;
-import yi.core.GoAnnotation;
-import yi.core.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

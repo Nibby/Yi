@@ -1,7 +1,7 @@
 package yi.editor.gui.board.edits;
 
+import yi.core.go.GoStoneColor;
 import yi.editor.gui.board.GameBoardManager;
-import yi.core.GoStoneColor;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

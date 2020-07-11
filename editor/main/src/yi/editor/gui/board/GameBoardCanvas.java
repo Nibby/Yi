@@ -1,8 +1,8 @@
 package yi.editor.gui.board;
 
-import yi.core.GoGameModel;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import yi.core.go.GoGameModel;
 
 /**
  * Represents one rendered content layer on the board.

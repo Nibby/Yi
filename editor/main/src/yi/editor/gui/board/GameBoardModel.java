@@ -1,10 +1,10 @@
 package yi.editor.gui.board;
 
-import yi.core.GoGameModel;
-import yi.core.GoGamePosition;
-import yi.core.GoGameState;
-import yi.core.GoStoneColor;
 import org.jetbrains.annotations.Nullable;
+import yi.core.go.GoGameModel;
+import yi.core.go.GoGamePosition;
+import yi.core.go.GoGameState;
+import yi.core.go.GoStoneColor;
 
 /**
  * Wraps the current {@link GoGameModel} and provide game information to other board classes.

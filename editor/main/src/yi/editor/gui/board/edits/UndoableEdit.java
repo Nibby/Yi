@@ -1,6 +1,6 @@
 package yi.editor.gui.board.edits;
 
-import yi.core.GoGameModel;
+import yi.core.go.GoGameModel;
 
 public abstract class UndoableEdit implements Undoable {
 

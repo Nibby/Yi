@@ -1,8 +1,9 @@
 package yi.core
 
-import yi.core.rules.GoGameRulesHandler
+import yi.core.go.rules.GoGameRulesHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import yi.core.go.*
 
 class PlayMoveTest {
 
@@ -12,7 +13,7 @@ class PlayMoveTest {
 
         val result = model.playMove(0, 0)
 
-        Assertions.assertEquals(result.moveNode!!, model.currentNode)
+        Assertions.assertEquals(result.moveNode!!, model.getCurrentMove())
     }
 
     @Test
@@ -63,7 +64,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1) // white removes last liberty, stone at 0,0 should be captured now
 
-        val gameState = model.getGameState(model.currentNode)
+        val gameState = model.getGameState(model.getCurrentMove())
         Assertions.assertEquals(1, gameState.prisonersWhite)
         Assertions.assertEquals(GoStoneColor.NONE, gameState.gamePosition.getStoneColorAt(0, 0))
     }
@@ -81,7 +82,7 @@ class PlayMoveTest {
                 .playMove(0, 2)
                 .playMove(1, 2) // After white plays this move, the three black stones on the left column should be all captured
 
-        val currentState = model.getGameState(model.currentNode)
+        val currentState = model.getGameState(model.getCurrentMove())
 
         Assertions.assertEquals(3, currentState.prisonersWhite)
 
@@ -105,8 +106,8 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(2, stateHashHistory.size)
-        Assertions.assertEquals(13, model.currentNode.data!!.stateHash) // 0100b xor 1001b = 1101b (13)
-        Assertions.assertEquals(4, model.currentNode.parent!!.data!!.stateHash) // 0100b (4)
+        Assertions.assertEquals(13, model.getCurrentMove().data!!.stateHash) // 0100b xor 1001b = 1101b (13)
+        Assertions.assertEquals(4, model.getCurrentMove().parent!!.data!!.stateHash) // 0100b (4)
     }
 
     @Test
@@ -120,7 +121,7 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.currentNode.parent!!.data!!.stateHash) // 0100b (4)
+        Assertions.assertEquals(4, model.getCurrentMove().parent!!.data!!.stateHash) // 0100b (4)
     }
 
     @Test
@@ -134,7 +135,7 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.currentNode.parent!!.data!!.stateHash) // 0100b (4)
+        Assertions.assertEquals(4, model.getCurrentMove().parent!!.data!!.stateHash) // 0100b (4)
     }
 
     @Test

@@ -1,10 +1,10 @@
 package yi.editor;
 
+import yi.core.go.GoAnnotation;
+import yi.core.go.GoGameModel;
+import yi.core.go.GoGameRules;
 import yi.editor.gui.board.GameBoard;
 import yi.editor.settings.Settings;
-import yi.core.GoAnnotation;
-import yi.core.GoGameRules;
-import yi.core.GoGameModel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,6 +1,6 @@
 package yi.editor.gui.board;
 
-import yi.core.GoGameModel;
+import yi.core.go.GoGameModel;
 
 import java.util.ArrayList;
 import java.util.List;

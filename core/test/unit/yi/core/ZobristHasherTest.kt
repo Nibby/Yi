@@ -2,6 +2,7 @@ package yi.core
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import yi.core.go.*
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -14,7 +15,7 @@ class ZobristHasherTest {
         val gameModel = GoGameModel(boardWidth, boardHeight, GoGameRules.CHINESE)
         val zobrist = GoZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(boardWidth, boardHeight)
-        val currentNode = gameModel.currentNode
+        val currentNode = gameModel.getCurrentMove()
         val state = GoGameState(gameModel, gamePosition, currentNode, 0, 0, HashSet(), 0)
 
         val firstHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
@@ -28,7 +29,7 @@ class ZobristHasherTest {
         val boardWidth = 3;
         val boardHeight = 3;
         val gameModel = GoGameModel(boardWidth, boardHeight, GoGameRules.CHINESE)
-        val currentNode = gameModel.currentNode
+        val currentNode = gameModel.getCurrentMove()
         val zobrist = GoZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GoGamePosition(boardWidth, boardHeight)
 
