@@ -1,0 +1,40 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.3.72"
+}
+
+buildDir = '../build/common'
+def globalConfigurations = rootProject.ext
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    testImplementation globalConfigurations.commonDependencies.testImplementation
+    testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir('src/main/kotlin')
+        }
+
+        resources {
+            srcDir('src/resources')
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test/unit', 'test/integration']
+        }
+    }
+}
+
+compileKotlin.kotlinOptions.jvmTarget = "11"
+compileTestKotlin.kotlinOptions.jvmTarget = "11"
+
+test {
+    useJUnitPlatform()
+
+    testClassesDirs = sourceSets.test.output
+}
