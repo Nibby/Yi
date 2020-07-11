@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 class GoGamePosition(private val boardWidth: Int, boardHeight: Int) {
 

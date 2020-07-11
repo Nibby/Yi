@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 /**
  * Represents the new changes (additions and/or deletions) since the last game position. This is the game state data
@@ -14,7 +14,7 @@ class GoGameStateUpdate(val type: Type,
                         val captures: Set<GoStoneData>,
                         val stateHash: Long,
                         val helperStoneUpdates: HashSet<GoStoneData>,
-                        val annotationsOnThisNode: HashSet<GoAnnotation>) {
+                        val annotationsOnThisNode: HashSet<_root_ide_package_.yi.core.go.GoAnnotation>) {
 
     enum class Type {
         MOVE_PLAYED,

@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 /**
  * Transforms a [GoGameState] into a hash code such that the hash code is unique if and only if the game position is unique.

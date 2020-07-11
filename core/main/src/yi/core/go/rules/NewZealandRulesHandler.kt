@@ -1,4 +1,4 @@
-package yi.core.rules
+package yi.core.go.rules
 
 class NewZealandRulesHandler : GoGameRulesHandler() {
 

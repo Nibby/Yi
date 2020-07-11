@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 import java.util.*
 

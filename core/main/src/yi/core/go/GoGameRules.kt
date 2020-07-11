@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 import yi.core.rules.ChineseRulesHandler
 import yi.core.rules.GoGameRulesHandler

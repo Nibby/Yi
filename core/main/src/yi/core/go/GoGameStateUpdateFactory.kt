@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 /**
  * Handles the creation of [GoGameStateUpdate] depending on the context.

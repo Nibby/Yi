@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 /**
  * A manager class that enables a sequence of moves to be played while checking each move is played successfully.
@@ -22,7 +22,7 @@ class GoMoveSequence constructor(private val game: GoGameModel) {
      *
      * @see [GoGameModel.addAnnotationOnThisMove]
      */
-    fun annotate(annotation: GoAnnotation): GoMoveSequence {
+    fun annotate(annotation: _root_ide_package_.yi.core.go.GoAnnotation): GoMoveSequence {
         game.addAnnotationOnThisMove(annotation)
         return this
     }

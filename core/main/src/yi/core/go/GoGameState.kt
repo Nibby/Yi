@@ -1,4 +1,6 @@
-package yi.core
+package yi.core.go
+
+import yi.core.MoveNode
 
 /**
  * Represents the game position at a given [MoveNode]. Yi's implementation of game position is based on an incremental model.
@@ -21,5 +23,5 @@ class GoGameState(private val gameModel: GoGameModel,
                   val representedNode: MoveNode<GoGameStateUpdate>,
                   val prisonersWhite: Int,
                   val prisonersBlack: Int,
-                  val annotations: Set<GoAnnotation>,
+                  val annotations: Set<_root_ide_package_.yi.core.go.GoAnnotation>,
                   val stateHash: Long)
