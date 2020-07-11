@@ -11,9 +11,9 @@ import kotlin.collections.HashSet
  * //TODO: Explain organisation internally, esp. how state is calculated and retrieved
  * //TODO: Explain how to submit moves
  */
-class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler, val stateHasher: StateHasher) {
+class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler, val stateHasher: GoStateHasher) {
 
-    internal val moveTree = MoveTree<GameStateUpdate>()
+    internal val moveTree = MoveTree<GoGameStateUpdate>()
 
     internal var currentNode = moveTree.rootNode
         set(value) {
@@ -32,21 +32,21 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
             throw IllegalArgumentException("Invalid board dimensions: $boardWidth x $boardHeight")
 
         val emptyStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
-        moveTree.rootNode.data = GameStateUpdateFactory.createForRootNode(emptyStateHash)
+        moveTree.rootNode.data = GoGameStateUpdateFactory.createForRootNode(emptyStateHash)
     }
 
-    constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler) : this(boardWidth, boardHeight, rulesHandler, ZobristHasher(boardWidth, boardHeight))
+    constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler) : this(boardWidth, boardHeight, rulesHandler, GoZobristHasher(boardWidth, boardHeight))
 
-    constructor(boardWidth: Int, boardHeight: Int, rules: GoGameRules) : this(boardWidth, boardHeight, rules.getRulesHandler(), ZobristHasher(boardWidth, boardHeight))
+    constructor(boardWidth: Int, boardHeight: Int, rules: GoGameRules) : this(boardWidth, boardHeight, rules.getRulesHandler(), GoZobristHasher(boardWidth, boardHeight))
 
     /**
      * Returns a handler to play a series of moves in succession. This is the recommended approach when submitting multiple
      * moves to the game model with the assumption that each move must be submitted successfully.
      *
-     * @see MoveSequence
+     * @see GoMoveSequence
      */
-    fun beginMoveSequence(): MoveSequence {
-        return MoveSequence(this)
+    fun beginMoveSequence(): GoMoveSequence {
+        return GoMoveSequence(this)
     }
 
     /**
@@ -59,16 +59,16 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
      * @return The result of the request. See [MoveSubmitResult] for more information.
      */
     fun playMove(x: Int, y: Int): MoveSubmitResult {
-        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, currentNode, true, StoneData(x, y, getNextTurnStoneColor()))
+        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, currentNode, true, GoStoneData(x, y, getNextTurnStoneColor()))
 
         val validationResult = validationAndNewNode.first
-        val newNode: MoveNode<GameStateUpdate>? = validationAndNewNode.second
+        val newNode: MoveNode<GoGameStateUpdate>? = validationAndNewNode.second
 
-        if (validationResult == MoveValidationResult.OK) {
+        if (validationResult == GoMoveValidationResult.OK) {
             submitMoveNode(newNode!!) // New node should not be null if validation result checks out
         }
 
-        return MoveSubmitResult(validationResult, newNode, validationResult == MoveValidationResult.OK)
+        return MoveSubmitResult(validationResult, newNode, validationResult == GoMoveValidationResult.OK)
     }
 
     /**
@@ -76,21 +76,21 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
      * it may result in an erroneous game state.
      */
     fun playMoveIgnoringRules(x: Int, y: Int): MoveSubmitResult {
-        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, currentNode, false, StoneData(x, y, getNextTurnStoneColor()))
-        val newNode: MoveNode<GameStateUpdate>? = validationAndNewNode.second
+        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, currentNode, false, GoStoneData(x, y, getNextTurnStoneColor()))
+        val newNode: MoveNode<GoGameStateUpdate>? = validationAndNewNode.second
         submitMoveNode(newNode!!)
 
-        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        return MoveSubmitResult(GoMoveValidationResult.OK, newNode, true)
     }
 
     /**
      * Checks if a hypothetical move can be played at the current game position. This will only test the move against the game rules, it will not create a node.
      *
-     * @return [MoveValidationResult.OK] if the move can be played in compliance with game rules, otherwise other values representing
+     * @return [GoMoveValidationResult.OK] if the move can be played in compliance with game rules, otherwise other values representing
      *         reason for game rules violation.
      */
-    fun validateMoveAgainstRules(game: GoGameModel, x: Int, y: Int): MoveValidationResult {
-        val proposedMove = StoneData(x, y, game.getNextTurnStoneColor())
+    fun validateMoveAgainstRules(game: GoGameModel, x: Int, y: Int): GoMoveValidationResult {
+        val proposedMove = GoStoneData(x, y, game.getNextTurnStoneColor())
         val validationAndDelta = GoMoveHelper.validateProposedMoveAndCreateStateUpdate(game, game.currentNode, proposedMove)
 
         return validationAndDelta.first
@@ -99,20 +99,20 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     fun playPass(): MoveSubmitResult {
         val newNode = GoMoveHelper.createMoveNodeForPass(this, currentNode)
         submitMoveNode(newNode)
-        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        return MoveSubmitResult(GoMoveValidationResult.OK, newNode, true)
     }
 
     fun playResign(): MoveSubmitResult {
         val newNode = GoMoveHelper.createMoveNodeForResignation(this, currentNode)
         submitMoveNode(newNode)
-        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        return MoveSubmitResult(GoMoveValidationResult.OK, newNode, true)
     }
 
     fun getCurrentGameState(): GoGameState {
         return getGameState(currentNode)
     }
 
-    fun getGameState(gameNode: MoveNode<GameStateUpdate>): GoGameState {
+    fun getGameState(gameNode: MoveNode<GoGameStateUpdate>): GoGameState {
         if (!moveTree.isDescendant(gameNode))
             throw IllegalArgumentException("Game node is not part of this move tree")
 
@@ -129,7 +129,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         var prisonersBlack = 0
 
         var currentStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
-        var annotations = HashSet<Annotation>();
+        var annotations = HashSet<GoAnnotation>();
 
         // Build the board state by traversing the history and apply the delta from root up to gameNode
         val pathToRoot = gameNode.getPathToRoot()
@@ -151,15 +151,15 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         return gameState
     }
 
-    fun addAnnotationOnThisMove(annotation: Annotation) {
+    fun addAnnotationOnThisMove(annotation: GoAnnotation) {
         addAnnotationsOnThisMove(annotation)
     }
 
-    fun addAnnotationsOnThisMove(vararg annotations: Annotation) {
+    fun addAnnotationsOnThisMove(vararg annotations: GoAnnotation) {
         annotations.forEach { currentNode.data!!.annotationsOnThisNode.add(it) }
     }
 
-    fun getAnnotationsOnThisMove(): Set<Annotation> {
+    fun getAnnotationsOnThisMove(): Set<GoAnnotation> {
         return currentNode.data!!.annotationsOnThisNode
     }
 
@@ -188,21 +188,21 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
      * Appends the move node after the current position in the game tree. If the
      * node has not been validated by [validateMoveAgainstRules], it may corrupt the game state.
      */
-    private fun submitMoveNode(newNode: MoveNode<GameStateUpdate>) {
+    private fun submitMoveNode(newNode: MoveNode<GoGameStateUpdate>) {
         appendNewNode(newNode)
         currentNode = newNode
     }
 
-    private fun appendNewNode(newNode: MoveNode<GameStateUpdate>) {
+    private fun appendNewNode(newNode: MoveNode<GoGameStateUpdate>) {
         moveTree.appendNode(currentNode, newNode)
     }
 
-    private fun onCurrentNodeUpdate(currentNode: MoveNode<GameStateUpdate>) {
+    private fun onCurrentNodeUpdate(currentNode: MoveNode<GoGameStateUpdate>) {
         val nodeHistory = currentNode.getPathToRoot()
         if (nodeHistory.size > 1) {
             // Only count non-root and primary move updates for unique state
             val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size)
-                                                .filter { state -> state.data!!.type == GameStateUpdate.Type.MOVE_PLAYED }
+                                                .filter { state -> state.data!!.type == GoGameStateUpdate.Type.MOVE_PLAYED }
 
             this.stateHashHistory = uniqueStateHistory.map { item -> item.data!!.stateHash }
         }

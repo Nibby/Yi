@@ -2,7 +2,7 @@ package yi.editor;
 
 import yi.editor.gui.board.GameBoard;
 import yi.editor.settings.Settings;
-import yi.core.Annotation;
+import yi.core.GoAnnotation;
 import yi.core.GoGameRules;
 import yi.core.GoGameModel;
 import javafx.application.Application;
@@ -28,18 +28,18 @@ public class Main extends Application {
                 .playMove(1, 3)
                 .playMove(0, 4)
                 .playMove(1, 4)
-                .annotate(new Annotation.Triangle(0, 0))
-                .annotate(new Annotation.Triangle(1, 0))
-                .annotate(new Annotation.Square(0, 1))
-                .annotate(new Annotation.Square(1, 1))
-                .annotate(new Annotation.Circle(0, 2))
-                .annotate(new Annotation.Circle(1, 2))
-                .annotate(new Annotation.Cross(0, 3))
-                .annotate(new Annotation.Cross(1, 3))
-                .annotate(new Annotation.Fade(0, 4))
-                .annotate(new Annotation.Fade(1, 4))
-                .annotate(new Annotation.Line(0, 5, 1, 5))
-                .annotate(new Annotation.Arrow(0, 6, 1, 6));
+                .annotate(new GoAnnotation.Triangle(0, 0))
+                .annotate(new GoAnnotation.Triangle(1, 0))
+                .annotate(new GoAnnotation.Square(0, 1))
+                .annotate(new GoAnnotation.Square(1, 1))
+                .annotate(new GoAnnotation.Circle(0, 2))
+                .annotate(new GoAnnotation.Circle(1, 2))
+                .annotate(new GoAnnotation.Cross(0, 3))
+                .annotate(new GoAnnotation.Cross(1, 3))
+                .annotate(new GoAnnotation.Fade(0, 4))
+                .annotate(new GoAnnotation.Fade(1, 4))
+                .annotate(new GoAnnotation.Line(0, 5, 1, 5))
+                .annotate(new GoAnnotation.Arrow(0, 6, 1, 6));
 
         GameBoard board = new GameBoard();
         board.setModel(game);

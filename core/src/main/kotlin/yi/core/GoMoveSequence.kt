@@ -3,16 +3,16 @@ package yi.core
 /**
  * A manager class that enables a sequence of moves to be played while checking each move is played successfully.
  */
-class MoveSequence constructor(private val game: GoGameModel) {
+class GoMoveSequence constructor(private val game: GoGameModel) {
 
     /**
      * Synonymous to [GoGameModel.playMove], but introduces an additional state check to verify the move is submitted successfully.
-     * Otherwise a [GameRulesException] is thrown to interrupt the sequence flow.
+     * Otherwise a [GoGameRulesException] is thrown to interrupt the sequence flow.
      */
-    fun playMove(x: Int, y:Int): MoveSequence {
+    fun playMove(x: Int, y:Int): GoMoveSequence {
         val result = game.playMove(x, y)
-        if (result.validationResult != MoveValidationResult.OK) {
-            throw GameRulesException(result.validationResult, "Cannot play move ($x, $y) at node position ${game.currentNode.getDistanceToRoot()}: ${result.validationResult}")
+        if (result.validationResult != GoMoveValidationResult.OK) {
+            throw GoGameRulesException(result.validationResult, "Cannot play move ($x, $y) at node position ${game.currentNode.getDistanceToRoot()}: ${result.validationResult}")
         }
         return this
     }
@@ -22,7 +22,7 @@ class MoveSequence constructor(private val game: GoGameModel) {
      *
      * @see [GoGameModel.addAnnotationOnThisMove]
      */
-    fun annotate(annotation: Annotation): MoveSequence {
+    fun annotate(annotation: GoAnnotation): GoMoveSequence {
         game.addAnnotationOnThisMove(annotation)
         return this
     }
@@ -32,7 +32,7 @@ class MoveSequence constructor(private val game: GoGameModel) {
      *
      * @see [GoGameModel.playPass]
      */
-    fun pass(): MoveSequence {
+    fun pass(): GoMoveSequence {
         game.playPass()
         return this
     }
@@ -42,7 +42,7 @@ class MoveSequence constructor(private val game: GoGameModel) {
      *
      * @see [GoGameModel.playResign]
      */
-    fun resign(): MoveSequence {
+    fun resign(): GoMoveSequence {
         game.playResign()
         return this
     }

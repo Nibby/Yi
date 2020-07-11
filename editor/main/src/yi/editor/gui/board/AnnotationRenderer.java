@@ -1,7 +1,7 @@
 package yi.editor.gui.board;
 
 import yi.editor.utilities.ShapeUtilities;
-import yi.core.Annotation;
+import yi.core.GoAnnotation;
 import yi.core.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -11,18 +11,18 @@ public final class AnnotationRenderer {
 
     private AnnotationRenderer() { }
 
-    public static void render(Annotation annotation, GraphicsContext g, GameBoardManager manager) {
+    public static void render(GoAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
 
-        if (annotation instanceof Annotation.PointAnnotation) {
-            renderPointAnnotation((Annotation.PointAnnotation) annotation, g, manager);
-        } else if (annotation instanceof Annotation.DirectionalAnnotation) {
-            renderDirectionalAnnotation((Annotation.DirectionalAnnotation) annotation, g, manager);
+        if (annotation instanceof GoAnnotation.PointAnnotation) {
+            renderPointAnnotation((GoAnnotation.PointAnnotation) annotation, g, manager);
+        } else if (annotation instanceof GoAnnotation.DirectionalAnnotation) {
+            renderDirectionalAnnotation((GoAnnotation.DirectionalAnnotation) annotation, g, manager);
         } else {
             unsupportedType(annotation);
         }
     }
 
-    private static void renderPointAnnotation(Annotation.PointAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
+    private static void renderPointAnnotation(GoAnnotation.PointAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] position = manager.size.getStoneRenderPosition(annotation.getX(), annotation.getY());
         double x = position[0];
@@ -74,7 +74,7 @@ public final class AnnotationRenderer {
         g.setLineWidth(originalLineWidth);
     }
 
-    private static void renderDirectionalAnnotation(Annotation.DirectionalAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
+    private static void renderDirectionalAnnotation(GoAnnotation.DirectionalAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] start = manager.size.getGridRenderPosition(annotation.getX(), annotation.getY(), 0d);
         double[] end = manager.size.getGridRenderPosition(annotation.getXEnd(), annotation.getYEnd(), 0d);
@@ -160,7 +160,7 @@ public final class AnnotationRenderer {
         return stoneSize / 16d;
     }
 
-    private static void unsupportedType(Annotation annotation) {
+    private static void unsupportedType(GoAnnotation annotation) {
         throw new IllegalStateException("Unsupported annotation type: " + annotation.getClass().toString());
     }
 }

@@ -9,7 +9,7 @@ class GoGamePosition(private val boardWidth: Int, boardHeight: Int) {
 
     val intersectionState = Array(boardWidth * boardHeight) { GoStoneColor.NONE }
 
-    fun apply(update: GameStateUpdate) {
+    fun apply(update: GoGameStateUpdate) {
         // Apply primary move
         if (update.primaryMove != null) {
             val primaryMove = update.primaryMove.getPosition(boardWidth)

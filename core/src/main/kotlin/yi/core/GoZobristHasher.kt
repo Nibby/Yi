@@ -8,7 +8,7 @@ import kotlin.random.Random
  * <p/>
  * See https://en.wikipedia.org/wiki/Zobrist_hashing for more information.
  */
-class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) : StateHasher {
+class GoZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) : GoStateHasher {
 
     private val intersectionCount = boardWidth * boardHeight
     private var hashLookup = Array<Long>(intersectionCount * GoStoneColor.values().size) { 0 }
@@ -50,7 +50,7 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
         return hash
     }
 
-    override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<StoneData>): Long {
+    override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<GoStoneData>): Long {
         var newHash = lastStateHash
 
         stoneUpdates.forEach { update ->
@@ -61,7 +61,7 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
         return newHash
     }
 
-    private fun getHashValue(data: StoneData): Long {
+    private fun getHashValue(data: GoStoneData): Long {
         return getHashValue(data.stoneColor, data.x + data.y * boardWidth)
     }
 

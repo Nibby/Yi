@@ -2,9 +2,9 @@ package yi.core
 
 import java.util.*
 
-abstract class Annotation constructor(val type: AnnotationType, val x: Int, val y: Int) {
+abstract class GoAnnotation constructor(val type: GoAnnotationType, val x: Int, val y: Int) {
 
-    abstract class PointAnnotation(type: AnnotationType, x: Int, y: Int) : Annotation(type, x, y) {
+    abstract class PointAnnotation(type: GoAnnotationType, x: Int, y: Int) : GoAnnotation(type, x, y) {
 
         override fun equals(other: Any?): Boolean {
             other?.let {
@@ -24,18 +24,18 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
         }
     }
 
-    class Triangle(x: Int, y: Int) : PointAnnotation(AnnotationType.TRIANGLE, x, y)
+    class Triangle(x: Int, y: Int) : PointAnnotation(GoAnnotationType.TRIANGLE, x, y)
 
-    class Square(x: Int, y: Int) : PointAnnotation(AnnotationType.SQUARE, x, y)
+    class Square(x: Int, y: Int) : PointAnnotation(GoAnnotationType.SQUARE, x, y)
 
-    class Circle(x: Int, y: Int) : PointAnnotation(AnnotationType.CIRCLE, x, y)
+    class Circle(x: Int, y: Int) : PointAnnotation(GoAnnotationType.CIRCLE, x, y)
 
-    class Cross(x: Int, y: Int) : PointAnnotation(AnnotationType.CROSS, x, y)
+    class Cross(x: Int, y: Int) : PointAnnotation(GoAnnotationType.CROSS, x, y)
 
-    class Fade(x: Int, y: Int) : PointAnnotation(AnnotationType.FADE, x, y)
+    class Fade(x: Int, y: Int) : PointAnnotation(GoAnnotationType.FADE, x, y)
 
 
-    abstract class DirectionalAnnotation(type: AnnotationType, x: Int, y: Int, val xEnd: Int, val yEnd: Int) : Annotation(type, x, y) {
+    abstract class DirectionalAnnotation(type: GoAnnotationType, x: Int, y: Int, val xEnd: Int, val yEnd: Int) : GoAnnotation(type, x, y) {
         override fun equals(other: Any?): Boolean {
             other?.let {
                 if (other is DirectionalAnnotation) {
@@ -56,8 +56,8 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
         }
     }
 
-    class Line(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : DirectionalAnnotation(AnnotationType.LINE, xStart, yStart, xEnd, yEnd)
+    class Line(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : DirectionalAnnotation(GoAnnotationType.LINE, xStart, yStart, xEnd, yEnd)
 
-    class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : DirectionalAnnotation(AnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
+    class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : DirectionalAnnotation(GoAnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
 
 }

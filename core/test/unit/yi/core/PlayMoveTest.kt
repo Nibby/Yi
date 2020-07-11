@@ -21,7 +21,7 @@ class PlayMoveTest {
 
         val moveSubmitResult = model.playMove(0, 0)
 
-        Assertions.assertEquals(MoveValidationResult.OK, moveSubmitResult.validationResult)
+        Assertions.assertEquals(GoMoveValidationResult.OK, moveSubmitResult.validationResult)
         Assertions.assertNotNull(moveSubmitResult.moveNode)
         Assertions.assertTrue(moveSubmitResult.played)
     }
@@ -150,7 +150,7 @@ class PlayMoveTest {
 
         val result = model.playMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
 
-        Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
+        Assertions.assertEquals(GoMoveValidationResult.OK, result.validationResult)
     }
 
     @Test
@@ -169,7 +169,7 @@ class PlayMoveTest {
         // This move should now be illegal because 1,0 was just captured
         val submitResult = model.playMove(1, 0)
 
-        Assertions.assertEquals(MoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
+        Assertions.assertEquals(GoMoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
     }
 
     @Test
@@ -183,7 +183,7 @@ class PlayMoveTest {
 
         val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
 
-        Assertions.assertEquals(MoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
+        Assertions.assertEquals(GoMoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
     }
 
     @Test
@@ -200,7 +200,7 @@ class PlayMoveTest {
 
         val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties
 
-        Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
+        Assertions.assertEquals(GoMoveValidationResult.OK, submitResult.validationResult)
     }
 
     @Test
@@ -212,7 +212,7 @@ class PlayMoveTest {
 
         val result = model.playMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
 
-        Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
+        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
     }
 
     @Test
@@ -231,12 +231,12 @@ class PlayMoveTest {
 
         val result = model.playMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
 
-        Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
+        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
     }
 
 
     // Only supports a 2x2 board for testing purposes
-    private class TestingFourIntersectionXORHasher() : StateHasher {
+    private class TestingFourIntersectionXORHasher() : GoStateHasher {
 
         // Uses the first four bits of a 'byte' to represent unique hash values for each intersection state
         // bit format: SS PP, where S = stone color, P = intersection position
@@ -271,7 +271,7 @@ class PlayMoveTest {
             return stateHash
         }
 
-        override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<StoneData>): Long {
+        override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<GoStoneData>): Long {
             var newHash = lastStateHash
             stoneUpdates.forEach { update ->
                 newHash = newHash xor getHash(update.stoneColor.index, update.x + update.y * 2)

@@ -18,8 +18,8 @@ package yi.core
  */
 class GoGameState(private val gameModel: GoGameModel,
                   val gamePosition: GoGamePosition,
-                  val representedNode: MoveNode<GameStateUpdate>,
+                  val representedNode: MoveNode<GoGameStateUpdate>,
                   val prisonersWhite: Int,
                   val prisonersBlack: Int,
-                  val annotations: Set<Annotation>,
+                  val annotations: Set<GoAnnotation>,
                   val stateHash: Long)
