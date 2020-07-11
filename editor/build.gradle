@@ -7,16 +7,16 @@ plugins {
 }
 
 buildDir = '../build/editor'
-def globalConfigurations = rootProject.ext
 
 dependencies {
     compile project(':core')
+    compile project(':components:gameBoard')
 
-    implementation 'org.json:json:20171018'
-    implementation 'org.jetbrains:annotations:17.0.0'
+    // JavaFx dependencies
+    implementation rootProject.ext.javaFxDependencies.implementation
 
-    testImplementation globalConfigurations.commonDependencies.testImplementation
-    testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
+    testImplementation rootProject.ext.commonDependencies.testImplementation
+    testRuntimeOnly rootProject.ext.commonDependencies.testRuntimeOnly
 }
 
 javafx {
@@ -33,11 +33,11 @@ test {
 sourceSets {
     main {
         java {
-            srcDir('src/java')
+            srcDir('main/src')
         }
 
         resources {
-            srcDir('resources')
+            srcDir('main/resources')
         }
     }
 
