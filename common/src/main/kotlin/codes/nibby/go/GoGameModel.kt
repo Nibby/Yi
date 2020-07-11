@@ -1,6 +1,6 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
-import codes.nibby.yi.go.rules.GoGameRulesHandler
+import codes.nibby.go.rules.GoGameRulesHandler
 import java.util.*
 import kotlin.collections.HashSet
 

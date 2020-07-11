@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 /**
  * Represents the result of a request to submit a move to the game tree.

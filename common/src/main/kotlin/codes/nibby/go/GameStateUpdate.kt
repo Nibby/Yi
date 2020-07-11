@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 /**
  * Represents the new changes (additions and/or deletions) since the last game position. This is the game state data

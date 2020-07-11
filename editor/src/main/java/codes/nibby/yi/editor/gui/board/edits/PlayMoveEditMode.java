@@ -1,7 +1,7 @@
 package codes.nibby.yi.editor.gui.board.edits;
 
 import codes.nibby.yi.editor.gui.board.GameBoardManager;
-import codes.nibby.yi.go.GoStoneColor;
+import codes.nibby.go.GoStoneColor;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

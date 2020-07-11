@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board;
 
-import codes.nibby.yi.go.GoGameModel;
+import codes.nibby.go.GoGameModel;
 
 import java.util.ArrayList;
 import java.util.List;

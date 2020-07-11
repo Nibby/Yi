@@ -1,8 +1,8 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.utilities.ShapeUtilities;
-import codes.nibby.yi.go.Annotation;
-import codes.nibby.yi.go.GoStoneColor;
+import codes.nibby.go.Annotation;
+import codes.nibby.go.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

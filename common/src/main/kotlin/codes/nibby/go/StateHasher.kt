@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 /**
  * Transforms a [GoGameState] into a hash code such that the hash code is unique if and only if the game position is unique.

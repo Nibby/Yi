@@ -1,6 +1,6 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
-import codes.nibby.yi.go.rules.GoGameRulesHandler
+import codes.nibby.go.rules.GoGameRulesHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

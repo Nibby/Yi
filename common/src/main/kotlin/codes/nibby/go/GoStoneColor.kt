@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 import java.lang.IllegalStateException
 

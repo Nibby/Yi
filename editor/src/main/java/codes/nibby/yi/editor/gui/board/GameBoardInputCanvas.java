@@ -1,7 +1,7 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.gui.board.edits.EditMode;
-import codes.nibby.yi.go.GoGameModel;
+import codes.nibby.go.GoGameModel;
 import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;

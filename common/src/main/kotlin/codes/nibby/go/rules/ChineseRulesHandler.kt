@@ -1,4 +1,4 @@
-package codes.nibby.yi.go.rules
+package codes.nibby.go.rules
 
 class ChineseRulesHandler : GoGameRulesHandler() {
 

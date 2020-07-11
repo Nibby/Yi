@@ -1,7 +1,7 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.gui.board.edits.Undoable;
-import codes.nibby.yi.go.GoGameModel;
+import codes.nibby.go.GoGameModel;
 
 import java.util.Stack;
 

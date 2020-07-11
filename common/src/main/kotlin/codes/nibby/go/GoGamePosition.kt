@@ -1,4 +1,4 @@
-package codes.nibby.yi.go
+package codes.nibby.go
 
 class GoGamePosition(private val boardWidth: Int, boardHeight: Int) {
 
