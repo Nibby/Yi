@@ -1,7 +1,5 @@
 package codes.nibby.yi.go
 
-import codes.nibby.yi.common.MoveNode
-
 /**
  * Represents the game position at a given [MoveNode]. Yi's implementation of game position is based on an incremental model.
  * This means that each [MoveNode] does not store the full game state at each position, rather, only the delta -- the change in

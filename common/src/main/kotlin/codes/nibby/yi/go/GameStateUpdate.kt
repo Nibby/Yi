@@ -1,7 +1,5 @@
 package codes.nibby.yi.go
 
-import codes.nibby.yi.common.MoveNode
-
 /**
  * Represents the new changes (additions and/or deletions) since the last game position. This is the game state data
  * associated with each [MoveNode]
