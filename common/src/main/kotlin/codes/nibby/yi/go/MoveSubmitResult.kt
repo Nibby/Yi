@@ -1,7 +1,5 @@
 package codes.nibby.yi.go
 
-import codes.nibby.yi.common.MoveNode
-
 /**
  * Represents the result of a request to submit a move to the game tree.
  *

@@ -1,4 +1,4 @@
-package codes.nibby.yi.common
+package codes.nibby.yi.go
 
 import java.util.*
 import kotlin.collections.ArrayList

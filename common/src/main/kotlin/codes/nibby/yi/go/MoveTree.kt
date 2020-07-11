@@ -1,4 +1,4 @@
-package codes.nibby.yi.common
+package codes.nibby.yi.go
 
 open class MoveTree<NodeData> constructor(rootNode: MoveNode<NodeData>) {
 

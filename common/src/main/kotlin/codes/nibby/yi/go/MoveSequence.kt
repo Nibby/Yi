@@ -1,7 +1,5 @@
 package codes.nibby.yi.go
 
-import codes.nibby.yi.exception.GameRulesException
-
 /**
  * A manager class that enables a sequence of moves to be played while checking each move is played successfully.
  */

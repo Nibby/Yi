@@ -1,6 +1,4 @@
-package codes.nibby.yi.exception
-
-import codes.nibby.yi.go.MoveValidationResult
+package codes.nibby.yi.go
 
 /**
  * Thrown when an attempted action is a violation of game rules.

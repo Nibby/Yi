@@ -1,6 +1,6 @@
 package codes.nibby.yi.editor.gui.board.edits;
 
-import codes.nibby.yi.common.MoveNode;
+import codes.nibby.yi.go.MoveNode;
 import codes.nibby.yi.go.*;
 
 public final class PlayMoveEdit extends UndoableEdit {

@@ -1,5 +1,7 @@
 package codes.nibby.yi.common
 
+import codes.nibby.yi.go.MoveNode
+import codes.nibby.yi.go.MoveTree
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
