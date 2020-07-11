@@ -1,6 +1,6 @@
 package yi.core.go.rules
 
-import yi.core.GoStoneColor
+import yi.core.go.GoStoneColor
 
 abstract class GoGameRulesHandler {
 

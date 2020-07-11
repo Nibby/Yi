@@ -1,11 +1,11 @@
 package yi.core.go
 
-import yi.core.MoveNode
+import yi.core.common.GameNode
 import java.util.*
 import kotlin.collections.HashSet
 
 /**
- * Responsible for the creation of [MoveNode] and [GoGameStateUpdate] for [GoGameModel]. In other words, the class manages the logic around
+ * Responsible for the creation of [GameNode] and [GoGameStateUpdate] for [GoGameModel]. In other words, the class manages the logic around
  * move submission in the game of Go.
  */
 internal object GoMoveHelper {
@@ -22,8 +22,8 @@ internal object GoMoveHelper {
      *                             then no new node be created.
      * @param proposedMove Information pertaining to the proposed move, see [GoStoneData]
      */
-    fun createMoveNodeForProposedMove(gameModel: GoGameModel, currentPosition: MoveNode<GoGameStateUpdate>, validateBeforeCreate: Boolean, proposedMove: GoStoneData)
-            : Pair<GoMoveValidationResult, MoveNode<GoGameStateUpdate>?> {
+    fun createMoveNodeForProposedMove(gameModel: GoGameModel, currentPosition: GameNode<GoGameStateUpdate>, validateBeforeCreate: Boolean, proposedMove: GoStoneData)
+            : Pair<GoMoveValidationResult, GameNode<GoGameStateUpdate>?> {
 
         var validationResult = GoMoveValidationResult.OK
         val update: GoGameStateUpdate?
@@ -41,17 +41,17 @@ internal object GoMoveHelper {
             update = GoGameStateUpdateFactory.createForProposedMove(proposedMove, HashSet(), 0)
         }
 
-        return Pair(validationResult, MoveNode(update))
+        return Pair(validationResult, GameNode(update))
     }
 
-    fun createMoveNodeForPass(gameModel: GoGameModel, currentPosition: MoveNode<GoGameStateUpdate>) : MoveNode<GoGameStateUpdate> {
+    fun createMoveNodeForPass(gameModel: GoGameModel, currentPosition: GameNode<GoGameStateUpdate>) : GameNode<GoGameStateUpdate> {
         val passStateUpdate = GoGameStateUpdateFactory.createForPassMove(currentPosition.data!!.stateHash)
-        return MoveNode(passStateUpdate)
+        return GameNode(passStateUpdate)
     }
 
-    fun createMoveNodeForResignation(gameModel: GoGameModel, currentPosition: MoveNode<GoGameStateUpdate>) : MoveNode<GoGameStateUpdate> {
+    fun createMoveNodeForResignation(gameModel: GoGameModel, currentPosition: GameNode<GoGameStateUpdate>) : GameNode<GoGameStateUpdate> {
         val resignStateUpdate = GoGameStateUpdateFactory.createForResignationMove(currentPosition.data!!.stateHash)
-        return MoveNode(resignStateUpdate)
+        return GameNode(resignStateUpdate)
     }
 
     /**
@@ -62,7 +62,7 @@ internal object GoMoveHelper {
      * @param currentNode The position at which the new move will be validated
      * @param proposedMove Information pertaining to the proposed move, see [GoStoneData]
      */
-    fun validateProposedMoveAndCreateStateUpdate(gameModel: GoGameModel, currentNode: MoveNode<GoGameStateUpdate>, proposedMove: GoStoneData)
+    fun validateProposedMoveAndCreateStateUpdate(gameModel: GoGameModel, currentNode: GameNode<GoGameStateUpdate>, proposedMove: GoStoneData)
             : Pair<GoMoveValidationResult, GoGameStateUpdate?> {
 
         val proposedMovePosition = proposedMove.getPosition(gameModel.boardWidth)

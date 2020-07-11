@@ -1,7 +1,7 @@
 package yi.core.go
 
-import yi.core.rules.ChineseRulesHandler
-import yi.core.rules.GoGameRulesHandler
+import yi.core.go.rules.ChineseRulesHandler
+import yi.core.go.rules.GoGameRulesHandler
 
 enum class GoGameRules {
 

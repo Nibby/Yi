@@ -1,9 +1,9 @@
 package yi.editor.gui.board;
 
+import yi.core.go.GoAnnotation;
+import yi.core.go.GoGameModel;
+import yi.core.go.GoStoneColor;
 import yi.editor.settings.Settings;
-import yi.core.GoAnnotation;
-import yi.core.GoGameModel;
-import yi.core.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;

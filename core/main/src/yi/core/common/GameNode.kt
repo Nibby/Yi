@@ -1,25 +1,25 @@
-package yi.core
+package yi.core.common
 
 import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * Represents a node on the [MoveTree]. Each node may optionally store an instance of the current game state.
+ * Represents a node on the [GameTree]. Each node may optionally store an instance of the current game state.
  *
  * @param NodeData The current state information represented by this node.
  */
-open class MoveNode<NodeData> constructor() {
+open class GameNode<NodeData> constructor() {
 
     internal var markedAsRoot: Boolean = false
 
     /** Reference to the root of the tree this node belongs to. */
-    var root: MoveNode<NodeData>? = null
+    var root: GameNode<NodeData>? = null
         internal set
 
-    var parent: MoveNode<NodeData>? = null
+    var parent: GameNode<NodeData>? = null
         internal set
 
-    var children: ArrayList<MoveNode<NodeData>> = ArrayList()
+    var children: ArrayList<GameNode<NodeData>> = ArrayList()
         internal set
 
     var data: NodeData? = null
@@ -49,9 +49,9 @@ open class MoveNode<NodeData> constructor() {
         return position
     }
 
-    fun getPathToRoot(): LinkedList<MoveNode<NodeData>> {
-        val path = LinkedList<MoveNode<NodeData>>()
-        var node: MoveNode<NodeData>? = this
+    fun getPathToRoot(): LinkedList<GameNode<NodeData>> {
+        val path = LinkedList<GameNode<NodeData>>()
+        var node: GameNode<NodeData>? = this
 
         while (node != null) {
             path.add(0, node)
@@ -61,7 +61,7 @@ open class MoveNode<NodeData> constructor() {
         return path
     }
 
-    fun getTreeRoot(): MoveNode<NodeData>? = root
+    fun getTreeRoot(): GameNode<NodeData>? = root
 
     override fun toString(): String {
         return "Node (" + getDistanceToRoot() + "): " + data.toString()

@@ -1,8 +1,8 @@
 package yi.editor.gui.board;
 
-import yi.core.GoGameModel;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
+import yi.core.go.GoGameModel;
 
 import java.util.Stack;
 

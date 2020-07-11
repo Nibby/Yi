@@ -14,7 +14,7 @@ class GoGameStateUpdate(val type: Type,
                         val captures: Set<GoStoneData>,
                         val stateHash: Long,
                         val helperStoneUpdates: HashSet<GoStoneData>,
-                        val annotationsOnThisNode: HashSet<_root_ide_package_.yi.core.go.GoAnnotation>) {
+                        val annotationsOnThisNode: HashSet<GoAnnotation>) {
 
     enum class Type {
         MOVE_PLAYED,

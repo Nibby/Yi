@@ -1,7 +1,7 @@
 package yi.editor.gui.board;
 
+import yi.core.go.GoGameModel;
 import yi.editor.gui.board.edits.EditMode;
-import yi.core.GoGameModel;
 import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;

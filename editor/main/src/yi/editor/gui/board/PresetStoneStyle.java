@@ -1,6 +1,5 @@
 package yi.editor.gui.board;
 
-import yi.core.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -8,15 +7,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import yi.core.go.GoStoneColor;
 
 public enum PresetStoneStyle {
 
     CERAMIC_BICONVEX {
-        protected double rgFocusAngle = 250d;
-        protected double rgFocusDistance = 0.1d;
-        protected double rgCenterX = 0.35d;
-        protected double rgCenterY = 0.35d;
-        protected double rgRadius = 0.45d;
 
         final RadialGradient blackGradient = createRadialGradient(new Stop(0d, Color.color(0.45d, 0.45d, 0.45d, 1d)), new Stop(0.99d, Color.color(0.1d, 0.1d, 0.0d, 1d)));
         final RadialGradient whiteGradient = createRadialGradient(new Stop(0d, Color.color(0.92d, 0.92d, 0.92d, 1d)), new Stop(0.99d, Color.color(0.82d, 0.82d, 0.82d, 1d)));
@@ -58,6 +53,12 @@ public enum PresetStoneStyle {
         }
 
         private RadialGradient createRadialGradient(Stop ... stops) {
+            double rgRadius = 0.45d;
+            double rgFocusAngle = 250d;
+            double rgFocusDistance = 0.1d;
+            double rgCenterX = 0.35d;
+            double rgCenterY = 0.35d;
+
             return new RadialGradient(rgFocusAngle, rgFocusDistance, rgCenterX, rgCenterY, rgRadius, true, CycleMethod.NO_CYCLE, stops);
         }
     };

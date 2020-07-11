@@ -12,7 +12,7 @@ class GoMoveSequence constructor(private val game: GoGameModel) {
     fun playMove(x: Int, y:Int): GoMoveSequence {
         val result = game.playMove(x, y)
         if (result.validationResult != GoMoveValidationResult.OK) {
-            throw GoGameRulesException(result.validationResult, "Cannot play move ($x, $y) at node position ${game.currentNode.getDistanceToRoot()}: ${result.validationResult}")
+            throw GoGameRulesException(result.validationResult, "Cannot play move ($x, $y) at node position ${game.getCurrentMove().getDistanceToRoot()}: ${result.validationResult}")
         }
         return this
     }
@@ -22,7 +22,7 @@ class GoMoveSequence constructor(private val game: GoGameModel) {
      *
      * @see [GoGameModel.addAnnotationOnThisMove]
      */
-    fun annotate(annotation: _root_ide_package_.yi.core.go.GoAnnotation): GoMoveSequence {
+    fun annotate(annotation: GoAnnotation): GoMoveSequence {
         game.addAnnotationOnThisMove(annotation)
         return this
     }
