@@ -1,7 +1,7 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 import yi.core.go.GoGameModel;
-import yi.editor.gui.board.edits.Undoable;
+import yi.component.board.edits.Undoable;
 
 import java.util.Stack;
 

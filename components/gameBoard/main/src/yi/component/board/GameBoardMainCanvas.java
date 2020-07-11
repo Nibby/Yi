@@ -1,9 +1,8 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 import yi.core.go.GoAnnotation;
 import yi.core.go.GoGameModel;
 import yi.core.go.GoStoneColor;
-import yi.editor.settings.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -66,7 +65,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
         private static void renderBoardTexture(GraphicsContext g, GameBoardManager manager) {
             Rectangle boardBounds = manager.size.getBoardBounds();
-            g.drawImage(Settings.boardTheme.getBoardImage(), boardBounds.getX(), boardBounds.getY(), boardBounds.getWidth(), boardBounds.getHeight());
+            g.drawImage(manager.view.boardImage, boardBounds.getX(), boardBounds.getY(), boardBounds.getWidth(), boardBounds.getHeight());
         }
 
         private static void renderCoordinateLabels(GraphicsContext g, GameBoardManager manager) {
@@ -74,7 +73,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderGrid(GraphicsContext g, GameBoardManager manager) {
-            Color lineColor = Settings.boardTheme.getBoardGridColor();
+            Color lineColor = manager.view.boardGridColor;
             g.setFill(lineColor);
             g.setStroke(lineColor);
 

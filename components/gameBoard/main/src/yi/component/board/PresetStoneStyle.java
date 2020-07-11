@@ -1,4 +1,4 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlurType;

@@ -10,6 +10,7 @@ subprojects {
 
     dependencies {
         // JavaFx dependencies
+        compile project(":core")
         implementation globalConfigurations.javaFxDependencies.implementation
 
         testImplementation globalConfigurations.commonDependencies.testImplementation

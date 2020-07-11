@@ -14,7 +14,7 @@ dependencies {
 
 sourceSets {
     main {
-        java {
+        kotlin {
             srcDir('main/src')
         }
 
@@ -29,6 +29,9 @@ sourceSets {
         }
     }
 }
+
+compileKotlin.destinationDir = compileJava.destinationDir
+compileTestKotlin.destinationDir = compileTestJava.destinationDir
 
 compileKotlin.kotlinOptions.jvmTarget = "11"
 compileTestKotlin.kotlinOptions.jvmTarget = "11"

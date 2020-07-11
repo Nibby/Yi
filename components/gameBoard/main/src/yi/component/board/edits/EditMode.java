@@ -1,6 +1,6 @@
-package yi.editor.gui.board.edits;
+package yi.component.board.edits;
 
-import yi.editor.gui.board.GameBoardManager;
+import yi.component.board.GameBoardManager;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 

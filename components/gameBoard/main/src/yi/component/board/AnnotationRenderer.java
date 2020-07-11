@@ -1,11 +1,11 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
-import yi.core.go.GoAnnotation;
-import yi.core.go.GoStoneColor;
-import yi.editor.utilities.ShapeUtilities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import yi.component.common.ShapeUtilities;
+import yi.core.go.GoAnnotation;
+import yi.core.go.GoStoneColor;
 
 public final class AnnotationRenderer {
 

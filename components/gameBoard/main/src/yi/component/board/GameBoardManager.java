@@ -1,4 +1,4 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 import yi.core.go.GoGameModel;
 
@@ -26,7 +26,7 @@ public final class GameBoardManager {
     }
 
     void onBoardSizeUpdate(double componentWidth, double componentHeight, GoGameModel game) {
-        size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.getCoordinateLabelPosition());
+        size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.coordinateLabelPosition);
     }
 
     void onGameUpdate(GoGameModel game) {
