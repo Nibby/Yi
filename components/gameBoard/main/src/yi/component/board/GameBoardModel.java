@@ -1,4 +1,4 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 import org.jetbrains.annotations.Nullable;
 import yi.core.go.GoGameModel;

@@ -1,4 +1,4 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 /**
  * Denotes the sides on the game board to show co-ordinate labels

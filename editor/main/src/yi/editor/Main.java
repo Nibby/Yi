@@ -3,7 +3,7 @@ package yi.editor;
 import yi.core.go.GoAnnotation;
 import yi.core.go.GoGameModel;
 import yi.core.go.GoGameRules;
-import yi.editor.gui.board.GameBoard;
+import yi.component.board.GameBoard;
 import yi.editor.settings.Settings;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -41,11 +41,11 @@ public class Main extends Application {
                 .annotate(new GoAnnotation.Line(0, 5, 1, 5))
                 .annotate(new GoAnnotation.Arrow(0, 6, 1, 6));
 
-        GameBoard board = new GameBoard();
+        GameBoard board = new GameBoard(Settings.getBoardSettings());
         board.setModel(game);
         board.setEditable(false);
 
-        Scene scene = new Scene(board.getComponent(), 800, 600);
+        Scene scene = new Scene(board.getComponent(), 800, 800);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

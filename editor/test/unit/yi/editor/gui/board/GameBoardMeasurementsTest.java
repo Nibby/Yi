@@ -1,7 +1,7 @@
 package yi.editor.gui.board;
 
+import yi.component.common.ShapeUtilities;
 import yi.editor.utilities.ComparisonUtilities;
-import yi.editor.utilities.ShapeUtilities;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 

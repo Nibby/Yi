@@ -1,5 +1,6 @@
 package yi.editor.settings;
 
+import yi.component.board.GameBoardSettings;
 import yi.editor.Main;
 import yi.editor.utilities.JSON;
 import org.json.JSONObject;
@@ -102,5 +103,14 @@ public final class Settings {
         }
 
         return Optional.of(JSON.read(settingsFile));
+    }
+
+    public static GameBoardSettings getBoardSettings() {
+        var settings = new GameBoardSettings();
+
+        settings.setBackgroundImage(boardTheme.getBoardImage());
+        settings.setGridColor(boardTheme.getBoardGridColor());
+
+        return settings;
     }
 }

@@ -1,4 +1,4 @@
-package yi.editor.utilities;
+package yi.component.common;
 
 import javafx.scene.shape.Rectangle;
 

@@ -1,4 +1,4 @@
-package yi.editor.gui.board.edits;
+package yi.component.board.edits;
 
 import yi.core.go.GoGameModel;
 

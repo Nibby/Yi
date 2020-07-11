@@ -1,7 +1,9 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
 import javafx.scene.Parent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import yi.core.go.GoGameModel;
 
 import java.util.Stack;
@@ -19,6 +21,10 @@ public final class GameBoard {
     private GoGameModel gameModel;
 
     public GameBoard() {
+        this(new GameBoardSettings());
+    }
+
+    public GameBoard(GameBoardSettings settings) {
         content.push(new GameBoardMainCanvas(manager));
         content.push(new GameBoardInputCanvas(manager));
 
@@ -28,25 +34,31 @@ public final class GameBoard {
                 super.layoutChildren();
 
                 if (gameModel != null) {
-                    final double x = snappedLeftInset();
-                    final double y = snappedTopInset();
-                    final double w = snapSizeX(getWidth()) - x - snappedRightInset();
-                    final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
-
-                    manager.onBoardSizeUpdate(w, h, gameModel);
-
-                    content.forEach(canvas -> {
-                        canvas.setLayoutX(x);
-                        canvas.setLayoutY(y);
-                        canvas.setWidth(w);
-                        canvas.setHeight(h);
-                    });
-
-                    renderAll();
+                    resizeContent();
                 }
+            }
+
+            private void resizeContent() {
+                final double x = snappedLeftInset();
+                final double y = snappedTopInset();
+                final double w = snapSizeX(getWidth()) - x - snappedRightInset();
+                final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
+
+                manager.onBoardSizeUpdate(w, h, gameModel);
+
+                content.forEach(canvas -> {
+                    canvas.setLayoutX(x);
+                    canvas.setLayoutY(y);
+                    canvas.setWidth(w);
+                    canvas.setHeight(h);
+                });
+
+                renderAll();
             }
         };
         component.getChildren().addAll(content);
+
+        applySettings(settings);
     }
 
     private void renderAll() {
@@ -88,6 +100,19 @@ public final class GameBoard {
         content.forEach(canvas -> canvas.onGameUpdate(game, manager));
 
         renderAll();
+    }
+
+    public void applySettings(GameBoardSettings settings) {
+        settings.getBackgroundImage().ifPresent(this::setBackgroundImage);
+        settings.getGridColor().ifPresent(this::setGridColor);
+    }
+
+    public void setBackgroundImage(Image image) {
+        manager.view.boardImage = image;
+    }
+
+    public void setGridColor(Color gridColor) {
+        manager.view.boardGridColor = gridColor;
     }
 
     /**
