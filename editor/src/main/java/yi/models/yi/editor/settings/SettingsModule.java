@@ -1,0 +1,27 @@
+package yi.models.yi.editor.settings;
+
+/**
+ * Represents all settings for one component in the program. Upon startup, all modules are loaded once.
+ * If settings are changed, call {@link #save()} to persist them in file storage.<br />
+ * <br />
+ * Modules should be self-contained, in the sense that the values in one module must not depend on the
+ * values in another. The only exception to this rule is {@link GeneralSettings}, which can be considered
+ * a global settings module that others may depend on. As a result, it is always loaded first, so it is
+ * safe to access the values in GeneralSettings during {@link #load()}. However, the same cannot be
+ * guaranteed for other modules.
+ */
+abstract class SettingsModule {
+
+    /**
+     * Loads all the data associated with this module. If this module is not {@link GeneralSettings}, values
+     * from {@link GeneralSettings} can be accessed through {@link Settings#general}. It is not safe to access
+     * the values from any other settings module, as they might not be initialized.
+     */
+    public abstract void load();
+
+    /**
+     * Saves all the data associated with this module.
+     */
+    public abstract void save();
+
+}
