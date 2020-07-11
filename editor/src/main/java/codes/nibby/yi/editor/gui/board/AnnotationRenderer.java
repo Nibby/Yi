@@ -48,7 +48,7 @@ public final class AnnotationRenderer {
 
         switch (annotation.getType()) {
             case TRIANGLE:
-                renderTriangle(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth(), color);
+                renderTriangle(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
                 break;
             case SQUARE:
                 renderSquare(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
@@ -56,15 +56,15 @@ public final class AnnotationRenderer {
             case CIRCLE:
                 // Use slightly bigger radius so that it appears roughly the same size as a square
                 var bigBounds = ShapeUtilities.clip(stoneBounds, stoneSize / 5d);
-                renderCircle(g, bigBounds.getX(), bigBounds.getY(), bigBounds.getWidth(), color);
+                renderCircle(g, bigBounds.getX(), bigBounds.getY(), bigBounds.getWidth());
                 break;
             case CROSS:
-                renderCross(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth(), color);
+                renderCross(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
                 break;
             case FADE:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
                 double gridUnitSize = manager.size.getGridUnitSizeInPixels();
-                renderFade(g, x, y, gridUnitSize, color);
+                renderFade(g, x, y, gridUnitSize);
                 break;
             default:
                 unsupportedType(annotation);
@@ -87,13 +87,17 @@ public final class AnnotationRenderer {
         // TODO: Work out how to color the annotation based on the underlying stone and board texture
         //       Also deal with the optical illusion that white-on-black appears lot larger than black-on-white
         Color color = Color.BLACK;
+        g.setStroke(color);
+
+        double lineWidth = getLineWidth(stoneSize) * 2;
+        g.setLineWidth(lineWidth);
 
         switch (annotation.getType()) {
             case LINE:
-                renderLine(g, xStart, yStart, xEnd, yEnd, stoneSize, color);
+                renderLine(g, xStart, yStart, xEnd, yEnd);
                 break;
             case ARROW:
-                renderArrow(g, xStart, yStart, xEnd, yEnd, stoneSize, color);
+                renderArrow(g, xStart, yStart, xEnd, yEnd, stoneSize);
                 break;
             default:
                 unsupportedType(annotation);
@@ -101,24 +105,29 @@ public final class AnnotationRenderer {
         }
     }
 
-    private static void renderArrow(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd, double stoneSize, Color color) {
+    private static void renderArrow(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd, double stoneSize) {
+        double tipSize = stoneSize / 4d;
 
+        renderLine(g, xStart, yStart, xEnd, yEnd);
+        renderLine(g, xEnd, yEnd, xEnd - tipSize, yStart - tipSize);
+        renderLine(g, xEnd, yEnd, xEnd - tipSize, yStart + tipSize);
     }
 
-    private static void renderLine(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd, double stoneSize, Color color) {
+    private static void renderLine(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd) {
+        g.strokeLine(xStart, yStart, xEnd, yEnd);
     }
 
-    private static void renderFade(GraphicsContext g, double x, double y, double size, Color color) {
+    private static void renderFade(GraphicsContext g, double x, double y, double size) {
         g.setFill(new Color(0d, 0d, 0d, 0.25d));
         g.fillRect(x, y, size, size);
     }
 
-    private static void renderCross(GraphicsContext g, double x, double y, double size, Color color) {
+    private static void renderCross(GraphicsContext g, double x, double y, double size) {
         g.strokeLine(x, y, x+size, y+size);
         g.strokeLine(x+size, y, x, y+size);
     }
 
-    private static void renderCircle(GraphicsContext g, double x, double y, double size, Color color) {
+    private static void renderCircle(GraphicsContext g, double x, double y, double size) {
         g.strokeOval(x, y, size, size);
     }
 
@@ -126,7 +135,7 @@ public final class AnnotationRenderer {
         g.strokeRect(x, y, size, size);
     }
     
-    private static void renderTriangle(GraphicsContext g, double x, double y, double size, Color color) {
+    private static void renderTriangle(GraphicsContext g, double x, double y, double size) {
         // Looks better when it's not 1:1 ratio
         double centerX = x + size / 2;
         double centerY = y + size / 5 * 2;

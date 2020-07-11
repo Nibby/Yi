@@ -37,7 +37,9 @@ public class Main extends Application {
                 .annotate(new Annotation.Cross(0, 3))
                 .annotate(new Annotation.Cross(1, 3))
                 .annotate(new Annotation.Fade(0, 4))
-                .annotate(new Annotation.Fade(1, 4));
+                .annotate(new Annotation.Fade(1, 4))
+                .annotate(new Annotation.Line(0, 5, 1, 5))
+                .annotate(new Annotation.Arrow(0, 6, 1, 6));
 
         GameBoard board = new GameBoard();
         board.setModel(game);
