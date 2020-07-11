@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Yi.iml" filepath="$PROJECT_DIR$/.idea/Yi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/Yi.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/Yi.common.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/Yi.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/Yi.common.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/Yi.common.test.iml" filepath="$PROJECT_DIR$/.idea/modules/common/Yi.common.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/Yi.editor.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/Yi.editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/Yi.editor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/Yi.editor.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/Yi.editor.test.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/Yi.editor.test.iml" />
