@@ -1,6 +1,7 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.utilities.ComparisonUtilities;
+import codes.nibby.yi.editor.utilities.ShapeUtilities;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +67,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 100);
         double fitWidthToHeightRatio = 1.0d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(0, 0, 100, 100), fit);
     }
@@ -76,7 +77,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 100);
         double fitWidthToHeightRatio = 2.0d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(0, 25, 100, 50), fit);
     }
@@ -86,7 +87,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 100);
         double fitWidthToHeightRatio = 0.5d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(25, 0, 50, 100), fit);
     }
@@ -96,7 +97,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 200, 100);
         double fitWidthToHeightRatio = 1.0d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(50, 0, 100, 100), fit);
     }
@@ -106,7 +107,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 200, 100);
         double fitWidthToHeightRatio = 2.0d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(0, 0, 200, 100), fit);
     }
@@ -116,7 +117,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 200, 100);
         double fitWidthToHeightRatio = 0.5d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(75, 0, 50, 100), fit);
     }
@@ -126,7 +127,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 200);
         double fitWidthToHeightRatio = 1.0d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(0, 50, 100, 100), fit);
     }
@@ -136,7 +137,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 200);
         double fitWidthToHeightRatio = 2.0d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(0, 75, 100, 50), fit);
     }
@@ -146,7 +147,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 200);
         double fitWidthToHeightRatio = 0.5d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0d);
 
         testFitCorrect(new Rectangle(0, 0, 100, 200), fit);
     }
@@ -156,7 +157,7 @@ public final class GameBoardMeasurementsTest {
         Rectangle container = new Rectangle(0, 0, 100, 200);
         double fitWidthToHeightRatio = 0.5d;
 
-        Rectangle fit = GameBoardSize.centerFit(container, fitWidthToHeightRatio, 0.05d);
+        Rectangle fit = ShapeUtilities.centerFit(container, fitWidthToHeightRatio, 0.05d);
 
         testFitCorrect(new Rectangle(5, 5, 90, 190), fit);
     }

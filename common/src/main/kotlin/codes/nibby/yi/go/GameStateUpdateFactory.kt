@@ -6,15 +6,15 @@ package codes.nibby.yi.go
 internal object GameStateUpdateFactory {
 
     fun createForProposedMove(primaryMove: StoneData, captures: HashSet<StoneData>, stateHash: Long): GameStateUpdate
-        = GameStateUpdate(GameStateUpdate.Type.MOVE_PLAYED, primaryMove, captures, stateHash, HashSet())
+        = GameStateUpdate(GameStateUpdate.Type.MOVE_PLAYED, primaryMove, captures, stateHash, HashSet(), HashSet())
 
     fun createForRootNode(emptyPositionStateHash: Long): GameStateUpdate
-        = GameStateUpdate(GameStateUpdate.Type.ROOT, null, HashSet(), emptyPositionStateHash, HashSet())
+        = GameStateUpdate(GameStateUpdate.Type.ROOT, null, HashSet(), emptyPositionStateHash, HashSet(), HashSet())
 
     fun createForPassMove(currentPositionStateHash: Long): GameStateUpdate
-        = GameStateUpdate(GameStateUpdate.Type.PASS, null, HashSet(), currentPositionStateHash, HashSet())
+        = GameStateUpdate(GameStateUpdate.Type.PASS, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
 
     fun createForResignationMove(currentPositionStateHash: Long): GameStateUpdate
-        = GameStateUpdate(GameStateUpdate.Type.RESIGN, null, HashSet(), currentPositionStateHash, HashSet())
+        = GameStateUpdate(GameStateUpdate.Type.RESIGN, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
 
 }
