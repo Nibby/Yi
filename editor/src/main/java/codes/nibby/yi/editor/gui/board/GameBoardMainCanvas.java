@@ -1,6 +1,7 @@
 package codes.nibby.yi.editor.gui.board;
 
 import codes.nibby.yi.editor.settings.Settings;
+import codes.nibby.yi.go.Annotation;
 import codes.nibby.yi.go.GoGameModel;
 import codes.nibby.yi.go.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
@@ -31,7 +32,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         g.clearRect(0, 0, getWidth(), getHeight());
 
         BoardRenderer.render(g, manager);
-        StoneRenderer.render(g, manager);
+        BoardStoneRenderer.render(g, manager);
+        BoardAnnotationRenderer.render(g, manager);
     }
 
     private static final class BoardRenderer {
@@ -201,7 +203,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
     }
 
-    private static final class StoneRenderer {
+    private static final class BoardStoneRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
             //TODO: Temporary code, polish later
@@ -219,5 +221,17 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 PresetStoneStyle.getDefaultValue().render(g, manager, state, x, y);
             }
         }
+    }
+
+    private static final class BoardAnnotationRenderer {
+
+        public static void render(GraphicsContext g, GameBoardManager manager) {
+            Set<Annotation> annotations = manager.model.getCurrentGameState().getAnnotations();
+
+            for (Annotation annotation : annotations) {
+                AnnotationRenderer.render(annotation, g, manager);
+            }
+        }
+
     }
 }

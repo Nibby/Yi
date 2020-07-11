@@ -15,7 +15,8 @@ class GameStateUpdate(val type: Type,
                       val primaryMove: StoneData?,
                       val captures: Set<StoneData>,
                       val stateHash: Long,
-                      val helperStoneUpdates: HashSet<StoneData>) {
+                      val helperStoneUpdates: HashSet<StoneData>,
+                      val annotationsOnThisNode: HashSet<Annotation>) {
 
     enum class Type {
         MOVE_PLAYED,

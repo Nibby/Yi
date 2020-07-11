@@ -20,6 +20,16 @@ class MoveSequence constructor(private val game: GoGameModel) {
     }
 
     /**
+     * Synonymous to [GoGameModel.addAnnotationOnThisMove]
+     *
+     * @see [GoGameModel.addAnnotationOnThisMove]
+     */
+    fun annotate(annotation: Annotation): MoveSequence {
+        game.addAnnotationOnThisMove(annotation)
+        return this
+    }
+
+    /**
      * Synonymous to [GoGameModel.playPass].
      *
      * @see [GoGameModel.playPass]
