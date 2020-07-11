@@ -3,14 +3,27 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Yi.iml" filepath="$PROJECT_DIR$/.idea/Yi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/Yi.components.iml" filepath="$PROJECT_DIR$/.idea/modules/components/Yi.components.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/build.gradle/Yi.components.build.gradle.iml" filepath="$PROJECT_DIR$/.idea/modules/components/build.gradle/Yi.components.build.gradle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/build.gradle/Yi.components.build.gradle.main.iml" filepath="$PROJECT_DIR$/.idea/modules/components/build.gradle/Yi.components.build.gradle.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/build.gradle/Yi.components.build.gradle.test.iml" filepath="$PROJECT_DIR$/.idea/modules/components/build.gradle/Yi.components.build.gradle.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/common/Yi.components.common.iml" filepath="$PROJECT_DIR$/.idea/modules/components/common/Yi.components.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/common/Yi.components.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/components/common/Yi.components.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/common/Yi.components.common.test.iml" filepath="$PROJECT_DIR$/.idea/modules/components/common/Yi.components.common.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameBoard/Yi.components.gameBoard.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameBoard/Yi.components.gameBoard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameBoard/Yi.components.gameBoard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameBoard/Yi.components.gameBoard.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameBoard/Yi.components.gameBoard.test.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameBoard/Yi.components.gameBoard.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.main.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.test.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/Yi.components.main.iml" filepath="$PROJECT_DIR$/.idea/modules/components/Yi.components.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/Yi.components.test.iml" filepath="$PROJECT_DIR$/.idea/modules/components/Yi.components.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/Yi.editor.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/Yi.editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/Yi.editor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/Yi.editor.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/Yi.editor.test.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/Yi.editor.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Yi.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Yi.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Yi.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Yi.test.iml" />
     </modules>
   </component>
 </project>

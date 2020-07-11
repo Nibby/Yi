@@ -3,19 +3,19 @@
   <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/../../../build/editor/classes/java/main" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../editor/resources" />
-    <content url="file://$MODULE_DIR$/../../../editor/src/java" />
-    <content url="file://$MODULE_DIR$/../../../editor/src/main">
-      <sourceFolder url="file://$MODULE_DIR$/../../../editor/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../editor/src/main/resources" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../editor/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../../editor/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../editor/main/src" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../../../editor/src/main" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.core.main" />
+    <orderEntry type="module" module-name="Yi.components.gameBoard.main" />
     <orderEntry type="library" name="Gradle: org.json:json:20171018" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:17.0.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-media:mac:11.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:11.0.2" level="project" />

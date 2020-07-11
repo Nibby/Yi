@@ -1,0 +1,42 @@
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.openjfx.javafxplugin'
+
+    def globalConfigurations = rootProject.ext
+
+    dependencies {
+        // JavaFx dependencies
+        implementation globalConfigurations.javaFxDependencies.implementation
+
+        testImplementation globalConfigurations.commonDependencies.testImplementation
+        testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
+    }
+
+    javafx {
+        version = globalConfigurations.javaFxVersion
+        modules = ['javafx.controls', 'javafx.media']
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'main/src'
+            }
+
+            resources {
+                srcDir 'main/resources'
+            }
+        }
+
+        test {
+            java {
+                srcDir 'test'
+            }
+        }
+    }
+
+}
