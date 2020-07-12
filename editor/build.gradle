@@ -6,7 +6,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
-buildDir = '../build/editor'
+buildDir = '../build/' + getProject().getName()
 
 dependencies {
     compile project(':core')

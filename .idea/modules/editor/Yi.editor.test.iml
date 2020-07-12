@@ -15,8 +15,8 @@
     <orderEntry type="module" module-name="Yi.core.main" />
     <orderEntry type="library" name="Gradle: org.json:json:20171018" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:17.0.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-media:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:11.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-media:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:11.0.2" level="project" />
