@@ -2,11 +2,12 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
-subprojects {
+allprojects {
     apply plugin: 'java'
     apply plugin: 'org.openjfx.javafxplugin'
 
     def globalConfigurations = rootProject.ext
+    buildDir = file(rootProject.getBuildDir().toString() + "/" + getProject().getName())
 
     dependencies {
         // JavaFx dependencies
