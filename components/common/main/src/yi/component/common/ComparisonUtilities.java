@@ -1,4 +1,4 @@
-package yi.editor.utilities;
+package yi.component.common;
 
 /**
  * A collection of miscellaneous utilities.

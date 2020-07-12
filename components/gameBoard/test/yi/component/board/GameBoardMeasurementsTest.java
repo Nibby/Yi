@@ -1,11 +1,10 @@
-package yi.editor.gui.board;
+package yi.component.board;
 
+import org.junit.jupiter.api.Assertions;
+import yi.component.common.ComparisonUtilities;
 import yi.component.common.ShapeUtilities;
-import yi.editor.utilities.ComparisonUtilities;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class GameBoardMeasurementsTest {
 
@@ -165,9 +164,9 @@ public final class GameBoardMeasurementsTest {
     private void testFitCorrect(Rectangle expected, Rectangle actual) {
         System.out.println("Testing fitExpected=" + expected.toString() + ", actual=" + actual.toString());
 
-        assertTrue(ComparisonUtilities.doubleEquals(actual.getX(), expected.getX()));
-        assertTrue(ComparisonUtilities.doubleEquals(actual.getY(), expected.getY()));
-        assertTrue(ComparisonUtilities.doubleEquals(actual.getWidth(), expected.getWidth()));
-        assertTrue(ComparisonUtilities.doubleEquals(actual.getHeight(), expected.getHeight()));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(actual.getX(), expected.getX()));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(actual.getY(), expected.getY()));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(actual.getWidth(), expected.getWidth()));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(actual.getHeight(), expected.getHeight()));
     }
 }
