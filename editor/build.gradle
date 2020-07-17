@@ -3,20 +3,20 @@ import java.nio.file.Paths
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
-buildDir = '../build/editor'
-def globalConfigurations = rootProject.ext
+buildDir = '../build/' + getProject().getName()
 
 dependencies {
-    compile project(':common')
+    compile project(':core')
+    compile project(':components:gameBoard')
 
-    implementation 'org.json:json:20171018'
-    implementation 'org.jetbrains:annotations:17.0.0'
+    // JavaFx dependencies
+    implementation rootProject.ext.javaFxDependencies.implementation
 
-    testImplementation globalConfigurations.commonDependencies.testImplementation
-    testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
+    testImplementation rootProject.ext.commonDependencies.testImplementation
+    testRuntimeOnly rootProject.ext.commonDependencies.testRuntimeOnly
 }
 
 javafx {
@@ -33,11 +33,11 @@ test {
 sourceSets {
     main {
         java {
-            srcDir('src/java')
+            srcDir('src/main/java')
         }
 
         resources {
-            srcDir('resources')
+            srcDir('src/main/resources')
         }
     }
 
@@ -51,6 +51,6 @@ sourceSets {
 application {
     def workingDirectory = Paths.get(System.getProperty("user.dir")).getParent().resolve("temp").toString()
 
-    mainClassName('codes.nibby.yi.editor.Main')
+    mainClassName('yi.editor.Main')
     applicationDefaultJvmArgs = ["-ea", "-Duser.dir=$workingDirectory"]
 }

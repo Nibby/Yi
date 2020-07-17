@@ -1,24 +1,26 @@
-plugins {
-    id 'java'
-    id 'idea'
-}
+ext {
+    commonDependencies = [
+            testImplementation: ['org.junit.jupiter:junit-jupiter-api:5.5.2'],
+            testRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.5.2'],
+    ]
 
-apply from: 'dependencies.gradle'
+    javaFxDependencies = [
+            implementation: [ 'org.openjfx:javafx-plugin:0.0.9',
+                              'org.json:json:20171018',
+                              'org.jetbrains:annotations:17.0.0' ]
+    ]
 
-group 'codes.nibby.yi'
-version '0.1-SNAPSHOT'
+    javaCompileVersion = 11
+    javaFxVersion = "11.0.2"
 
-compileJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
-}
-
-compileTestJava {
-    sourceCompatibility = 11
-    targetCompatibility = 11
 }
 
 allprojects {
+    apply plugin: 'idea'
+
+    group 'codes.nibby.yi'
+    version '0.1-SNAPSHOT'
+
     repositories {
         jcenter()
         mavenCentral()

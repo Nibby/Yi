@@ -1,4 +1,9 @@
 rootProject.name = 'Yi'
 
+include 'core'
+include 'components'
 include 'editor'
-include 'common'
+
+file('components').listFiles().each { folder ->
+    include "components:$folder.name"
+}
