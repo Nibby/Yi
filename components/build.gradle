@@ -1,5 +1,5 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 allprojects {
@@ -10,7 +10,6 @@ allprojects {
     buildDir = file(rootProject.getBuildDir().toString() + "/" + getProject().getName())
 
     dependencies {
-        // JavaFx dependencies
         compile project(":core")
         implementation globalConfigurations.javaFxDependencies.implementation
 
@@ -20,17 +19,17 @@ allprojects {
 
     javafx {
         version = globalConfigurations.javaFxVersion
-        modules = ['javafx.controls', 'javafx.media']
+        modules = ['javafx.controls']
     }
 
     sourceSets {
         main {
             java {
-                srcDir 'main/src'
+                srcDir 'src/main/java'
             }
 
             resources {
-                srcDir 'main/resources'
+                srcDir 'src/main/resources'
             }
         }
 
