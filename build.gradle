@@ -1,11 +1,13 @@
 ext {
     commonDependencies = [
             testImplementation: ['org.junit.jupiter:junit-jupiter-api:5.5.2'],
-            testRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.5.2']
+            testRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.5.2'],
     ]
 
     javaFxDependencies = [
-            implementation: [ 'org.json:json:20171018', 'org.jetbrains:annotations:17.0.0' ]
+            implementation: [ 'org.openjfx:javafx-plugin:0.0.9',
+                              'org.json:json:20171018',
+                              'org.jetbrains:annotations:17.0.0' ]
     ]
 
     javaCompileVersion = 11
