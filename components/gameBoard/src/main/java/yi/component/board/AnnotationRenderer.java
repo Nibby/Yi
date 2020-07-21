@@ -3,7 +3,7 @@ package yi.component.board;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import yi.component.common.ShapeUtilities;
+import yi.component.utilities.ShapeUtilities;
 import yi.core.go.GoAnnotation;
 import yi.core.go.GoStoneColor;
 
