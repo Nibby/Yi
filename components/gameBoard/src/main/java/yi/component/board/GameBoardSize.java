@@ -1,7 +1,7 @@
 package yi.component.board;
 
 import javafx.scene.shape.Rectangle;
-import yi.component.common.ShapeUtilities;
+import yi.component.utilities.ShapeUtilities;
 
 import java.util.Optional;
 

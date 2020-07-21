@@ -4,7 +4,6 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../../../components/gameTree">
       <excludeFolder url="file://$MODULE_DIR$/../../../../components/gameTree/.gradle" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../../components/gameTree/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
