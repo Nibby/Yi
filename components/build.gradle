@@ -11,7 +11,6 @@ allprojects {
 
     dependencies {
         compile project(":core")
-        compile project(":components:common")
         implementation globalConfigurations.javaFxDependencies.implementation
 
         testImplementation globalConfigurations.commonDependencies.testImplementation
