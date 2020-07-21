@@ -2,9 +2,9 @@ package yi.component.board;
 
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import yi.component.YiComponent;
+import yi.component.CanvasContainer;
+import yi.component.Component;
 import yi.core.go.GoGameModel;
 
 import java.util.Stack;
@@ -13,51 +13,29 @@ import java.util.Stack;
  * The core interface component that handles the display of the game board, as well as user input to browse
  * and edit {@link GoGameModel} data.
  */
-public final class GameBoard implements YiComponent {
+public final class GameBoardViewer implements Component {
 
-    private final Pane component;
+    private final CanvasContainer container;
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
     private GoGameModel gameModel;
 
-    public GameBoard() {
+    public GameBoardViewer() {
         this(new GameBoardSettings());
     }
 
-    public GameBoard(GameBoardSettings settings) {
+    public GameBoardViewer(GameBoardSettings settings) {
         content.push(new GameBoardMainCanvas(manager));
         content.push(new GameBoardInputCanvas(manager));
 
-        component = new Pane() {
-            @Override
-            protected void layoutChildren() {
-                super.layoutChildren();
-
-                if (gameModel != null) {
-                    resizeContent();
-                }
-            }
-
-            private void resizeContent() {
-                final double x = snappedLeftInset();
-                final double y = snappedTopInset();
-                final double w = snapSizeX(getWidth()) - x - snappedRightInset();
-                final double h = snapSizeY(getHeight()) - y - snappedBottomInset();
-
-                manager.onBoardSizeUpdate(w, h, gameModel);
-
-                content.forEach(canvas -> {
-                    canvas.setLayoutX(x);
-                    canvas.setLayoutY(y);
-                    canvas.setWidth(w);
-                    canvas.setHeight(h);
-                });
-
+        container = new CanvasContainer(content);
+        container.addSizeUpdateListener(newSize -> {
+            if (gameModel != null) {
+                manager.onBoardSizeUpdate(newSize.getWidth(), newSize.getHeight(), gameModel);
                 renderAll();
             }
-        };
-        component.getChildren().addAll(content);
+        });
 
         applySettings(settings);
     }
@@ -118,6 +96,6 @@ public final class GameBoard implements YiComponent {
 
     @Override
     public Parent getComponent() {
-        return component;
+        return container;
     }
 }

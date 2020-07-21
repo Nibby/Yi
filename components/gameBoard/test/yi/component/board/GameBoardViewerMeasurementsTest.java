@@ -6,7 +6,7 @@ import yi.component.utilities.ShapeUtilities;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Test;
 
-public final class GameBoardMeasurementsTest {
+public final class GameBoardViewerMeasurementsTest {
 
     // TODO: These tests have been temporarily disabled because of frequent game board layout changes.
     //       Add them back once the board design has been finalized.

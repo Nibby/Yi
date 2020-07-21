@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 import java.util.Optional;
 
 /**
- * Handles and manages all keyboard and mouse input to the {@link GameBoard}. Performs rapid repaints of
+ * Handles and manages all keyboard and mouse input to the {@link GameBoardViewer}. Performs rapid repaints of
  * lightweight objects (such as the transparent intersection cursor).
  */
 final class GameBoardInputCanvas extends GameBoardCanvas {

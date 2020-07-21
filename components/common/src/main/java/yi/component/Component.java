@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 /**
  * A user interface component in the Yi module.
  */
-public interface YiComponent {
+public interface Component {
 
     /**
      *
