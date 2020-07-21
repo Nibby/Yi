@@ -1,4 +1,0 @@
-dependencies {
-    compile project(":components:common")
-    compile project(":core")
-}

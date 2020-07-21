@@ -4,6 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import yi.component.YiComponent;
 import yi.core.go.GoGameModel;
 
 import java.util.Stack;
@@ -12,7 +13,7 @@ import java.util.Stack;
  * The core interface component that handles the display of the game board, as well as user input to browse
  * and edit {@link GoGameModel} data.
  */
-public final class GameBoard {
+public final class GameBoard implements YiComponent {
 
     private final Pane component;
     private final Stack<GameBoardCanvas> content = new Stack<>();
@@ -115,10 +116,7 @@ public final class GameBoard {
         manager.view.boardGridColor = gridColor;
     }
 
-    /**
-     *
-     * @return The JavaFx container used to display the game board
-     */
+    @Override
     public Parent getComponent() {
         return component;
     }
