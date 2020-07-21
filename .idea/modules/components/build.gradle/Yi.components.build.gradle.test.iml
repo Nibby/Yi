@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.build.gradle.main" />
+    <orderEntry type="module" module-name="Yi.components.common.main" />
     <orderEntry type="module" module-name="Yi.core.main" />
     <orderEntry type="library" name="Gradle: org.json:json:20171018" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:17.0.0" level="project" />
