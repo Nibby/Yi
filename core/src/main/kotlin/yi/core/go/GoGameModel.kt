@@ -22,9 +22,6 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     init {
         if (boardWidth < 1 || boardHeight < 1)
             throw IllegalArgumentException("Invalid board dimensions: $boardWidth x $boardHeight")
-
-        val emptyStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
-
     }
 
     constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler) : this(boardWidth, boardHeight, rulesHandler, GoZobristHasher(boardWidth, boardHeight))
