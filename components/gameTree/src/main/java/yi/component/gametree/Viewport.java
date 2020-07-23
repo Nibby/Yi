@@ -1,5 +1,7 @@
 package yi.component.gametree;
 
+import yi.core.go.GoGameModel;
+
 final class Viewport {
 
     private double offsetX;

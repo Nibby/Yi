@@ -45,10 +45,10 @@ public class Main extends Application {
                 .annotate(new GoAnnotation.Arrow(0, 6, 1, 6));
 
         GameBoardViewer board = new GameBoardViewer(Settings.getBoardSettings());
-        board.setModel(game);
-        board.setEditable(false);
+        board.setGameModel(game);
+//        board.setEditable(false);
 
-        GameTreeViewer tree = new GameTreeViewer();
+        GameTreeViewer tree = new GameTreeViewer(game);
 
         SplitPane content = new SplitPane(board.getComponent(), tree.getComponent());
         content.setDividerPosition(0, 0.7d);

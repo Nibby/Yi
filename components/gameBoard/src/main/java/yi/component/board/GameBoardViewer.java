@@ -49,7 +49,7 @@ public final class GameBoardViewer implements Component {
      *
      * @param game The game model to subscribe to
      */
-    public void setModel(GoGameModel game) {
+    public void setGameModel(GoGameModel game) {
         this.gameModel = game;
 
         manager.onGameModelSet(game);
@@ -62,15 +62,16 @@ public final class GameBoardViewer implements Component {
 
     /**
      * Invoked when there is an update to the {@link GoGameModel}. The model must
-     * be identical to the model that was last {@link #setModel(GoGameModel) initialized}.
+     * be identical to the model that was last {@link #setGameModel(GoGameModel) initialized}.
      * <p/>
-     * To change the model used by this game board, call {@link #setModel(GoGameModel)} with
+     * To change the model used by this game board, call {@link #setGameModel(GoGameModel)} with
      * the new model.
      *
      * @param game The last game model used to initialize the game board
      * @throws IllegalArgumentException If {@param game} is not the last model used to initialize the game board.
      */
     public void update(GoGameModel game) {
+        // TODO: This is silly. setModel() already adjusts the model anyway, so why require the parameter again?
         if (this.gameModel != game) {
             throw new IllegalArgumentException("Unrecognised game model");
         }

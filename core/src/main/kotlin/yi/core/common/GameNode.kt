@@ -21,6 +21,9 @@ open class GameNode<NodeData> constructor() {
 
     var children: ArrayList<GameNode<NodeData>> = ArrayList()
         internal set
+        get() {
+            return ArrayList(field)
+        }
 
     var data: NodeData? = null
         internal set
@@ -61,7 +64,25 @@ open class GameNode<NodeData> constructor() {
         return path
     }
 
-    fun getTreeRoot(): GameNode<NodeData>? = root
+    /**
+     * @return true if this position has more than 1 possible continuation.
+     */
+    fun hasOtherVariations(): Boolean {
+        return getChildrenExcludingMainVariation().isNotEmpty()
+    }
+
+    /**
+     * @return All child nodes except the node that is part of the main variation.
+     */
+    fun getChildrenExcludingMainVariation(): List<GameNode<NodeData>> {
+        val allChildren = children
+
+        if (allChildren.size <= 1)
+            return ArrayList()
+
+        allChildren.removeAt(0)
+        return allChildren
+    }
 
     override fun toString(): String {
         return "Node (" + getDistanceToRoot() + "): " + data.toString()
