@@ -10,20 +10,20 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Yi.editor.main" />
+    <orderEntry type="module" module-name="Yi.components.common.main" />
     <orderEntry type="module" module-name="Yi.components.gameBoard.main" />
     <orderEntry type="module" module-name="Yi.components.gameTree.main" />
     <orderEntry type="module" module-name="Yi.core.main" />
+    <orderEntry type="module" module-name="Yi.editor.main" />
     <orderEntry type="library" name="Gradle: org.json:json:20171018" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:17.0.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-media:mac:11.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.5.2" level="project" />
-    <orderEntry type="module" module-name="Yi.components.common.main" />
     <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-commons:1.5.2" level="project" />
     <orderEntry type="library" name="Gradle: org.apiguardian:apiguardian-api:1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.2.0" level="project" />
