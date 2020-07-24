@@ -1,7 +1,7 @@
 package yi.core.common
 
 @FunctionalInterface
-interface EventObserver<EventType> {
+interface EventListener<EventType> {
 
     /**
      * Invoked when an event of this type is triggered.

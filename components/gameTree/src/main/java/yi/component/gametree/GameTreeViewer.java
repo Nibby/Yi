@@ -4,7 +4,10 @@ import javafx.scene.Parent;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
+import yi.core.common.EventListener;
+import yi.core.common.NodeEvent;
 import yi.core.go.GoGameModel;
+import yi.core.go.GoGameStateUpdate;
 
 /**
  * A component which displays the game model and its nodes as a tree graph.
@@ -28,24 +31,33 @@ public final class GameTreeViewer implements Component {
         setGameModel(gameModel);
     }
 
-    public void update() {
-        long stateHash = gameModel.getCurrentGameState().getStateHash();
-
-        if (currentStateHash != stateHash) {
-            treeStructure.update();
-        }
-        currentStateHash = stateHash;
-
-        updateViewportAndRender();
-    }
-
     private void updateViewportAndRender() {
         canvas.render(treeStructure.getElements());
     }
 
+
+    private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (node) -> {
+        treeStructure.reconstruct();
+        updateViewportAndRender();
+    };
+
+    private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveChangeListener = (node) -> {
+
+    };
+
     public void setGameModel(@NotNull GoGameModel model) {
+        if (this.gameModel != null) {
+            this.gameModel.onCurrentNodeUpdate().removeListener(currentMoveChangeListener);
+            this.gameModel.onNodeAdd().removeListener(treeStructureChangeListener);
+            this.gameModel.onNodeDelete().removeListener(treeStructureChangeListener);
+        }
+
         this.gameModel = model;
-        treeStructure = new GameTreeStructure(this.gameModel);
+        this.treeStructure = new GameTreeStructure(this.gameModel);
+
+        this.gameModel.onCurrentNodeUpdate().addListener(currentMoveChangeListener);
+        this.gameModel.onNodeAdd().addListener(treeStructureChangeListener);
+        this.gameModel.onNodeDelete().addListener(treeStructureChangeListener);
     }
 
     @Override

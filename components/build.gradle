@@ -11,6 +11,8 @@ allprojects {
 
     dependencies {
         compile project(":core")
+        implementation "org.jetbrains.kotlin:kotlin-stdlib"
+        implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
         implementation globalConfigurations.javaFxDependencies.implementation
 
         testImplementation globalConfigurations.commonDependencies.testImplementation
