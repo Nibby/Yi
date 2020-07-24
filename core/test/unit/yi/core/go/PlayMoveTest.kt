@@ -1,9 +1,9 @@
-package yi.core
+package yi.core.go
 
-import yi.core.go.rules.GoGameRulesHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import yi.core.go.*
+import yi.core.go.TestGameRules.TestingGameRulesNoSuicide
+import yi.core.go.TestGameRules.TestingGameRulesSuicideAllowed
 
 class PlayMoveTest {
 
@@ -147,7 +147,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(1, 0)
                 .pass()
-                .playMove(0, 1);
+                .playMove(0, 1)
 
         val result = model.playMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
 
@@ -213,7 +213,7 @@ class PlayMoveTest {
 
         val result = model.playMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
 
-        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
+        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
 
     @Test
@@ -232,12 +232,12 @@ class PlayMoveTest {
 
         val result = model.playMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
 
-        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult);
+        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
 
 
     // Only supports a 2x2 board for testing purposes
-    private class TestingFourIntersectionXORHasher() : GoStateHasher {
+    private class TestingFourIntersectionXORHasher : GoStateHasher {
 
         // Uses the first four bits of a 'byte' to represent unique hash values for each intersection state
         // bit format: SS PP, where S = stone color, P = intersection position
@@ -284,15 +284,5 @@ class PlayMoveTest {
         fun getHash(stateId: Byte, position: Int): Long {
             return hashes[stateId * 4 + position].toLong()
         }
-    }
-
-    private class TestingGameRulesNoSuicide : GoGameRulesHandler() {
-        override fun getKomi(): Float = 6.5F
-        override fun allowSuicideMoves(): Boolean = false
-    }
-
-    private class TestingGameRulesSuicideAllowed : GoGameRulesHandler() {
-        override fun getKomi(): Float = 6.5F
-        override fun allowSuicideMoves(): Boolean = true
     }
 }
