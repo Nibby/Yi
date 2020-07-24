@@ -1,5 +1,9 @@
 package yi.core.common
 
+/**
+ * An abstract implementation of [TreeBasedGameModel], providing the basic state management
+ * infrastructure for subsequent implementations.
+ */
 abstract class AbstractTreeBasedGameModel<Data>(rootNodeData: Data) : TreeBasedGameModel<Data> {
 
     internal val gameTree = GameTree<Data>()

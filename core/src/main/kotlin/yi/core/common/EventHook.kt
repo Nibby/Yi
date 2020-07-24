@@ -1,18 +1,31 @@
 package yi.core.common
 
+/**
+ * The super class for providing model events to outgoing sources.
+ * Each [EventHook] provides a single type of event source to subscribe to.
+ */
 abstract class EventHook<EventType> {
 
-    private var observers: HashSet<(event: EventType) -> Unit> = HashSet()
+    private var listeners: HashSet<(event: EventType) -> Unit> = HashSet()
 
+    /**
+     * Sends an event message to all existing listeners.
+     */
     internal fun fireEvent(event: EventType) {
-        observers.forEach { observer -> observer.invoke(event) }
+        listeners.forEach { observer -> observer.invoke(event) }
     }
 
-    fun addObserver(observer: (event: EventType) -> Unit) {
-        observers.add(observer)
+    /**
+     * Subscribe a new listener to this event.
+     */
+    fun addListener(listener: (event: EventType) -> Unit) {
+        listeners.add(listener)
     }
 
-    fun removeObserver(observer: (event: EventType) -> Unit) {
-        observers.remove(observer)
+    /**
+     * Removes an existing listener from this event hook.
+     */
+    fun removeListener(listener: (event: EventType) -> Unit) {
+        listeners.remove(listener)
     }
 }
