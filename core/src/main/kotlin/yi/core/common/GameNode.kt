@@ -44,6 +44,26 @@ open class GameNode<NodeData> constructor() {
         markedAsRoot = true
     }
 
+    fun isDescendantOf(node: GameNode<NodeData>): Boolean {
+        var currentNode = this
+
+        val nodeDistance = node.getDistanceToRoot()
+        var currentDistance = currentNode.getDistanceToRoot()
+
+        while (!currentNode.isRoot()) {
+            if (currentNode == node)
+                return true
+
+            currentNode = currentNode.parent!! // Not root, should always have a parent
+            currentDistance--
+
+            if (currentDistance < nodeDistance)
+                return false
+        }
+
+        return false
+    }
+
     fun isRoot(): Boolean = parent == null || markedAsRoot
 
     fun isLeaf(): Boolean = parent != null && children.size == 0
