@@ -1,5 +1,9 @@
 package yi.core.common
 
+/**
+ * An abstract implementation of [TreeBasedGameModel], providing the basic state management
+ * infrastructure for subsequent implementations.
+ */
 abstract class AbstractTreeBasedGameModel<Data>(rootNodeData: Data) : TreeBasedGameModel<Data> {
 
     internal val gameTree = GameTree<Data>()
@@ -36,6 +40,8 @@ abstract class AbstractTreeBasedGameModel<Data>(rootNodeData: Data) : TreeBasedG
 
     override fun setCurrentMove(node: GameNode<Data>) {
         _currentMove = node
+
+        currentNodeEventHook.fireEvent(NodeEvent(_currentMove))
     }
 
     override fun getPreviousMove(): GameNode<Data>? {
@@ -72,6 +78,28 @@ abstract class AbstractTreeBasedGameModel<Data>(rootNodeData: Data) : TreeBasedG
 
     fun appendMove(node: GameNode<Data>) {
         gameTree.appendNode(getCurrentMove(), node)
+        nodeAdditionEventHook.fireEvent(NodeEvent(node))
     }
 
+    fun deleteMove(node: GameNode<Data>) {
+        if (node.isRoot())
+            throw IllegalArgumentException("Root node cannot be deleted")
+
+        gameTree.removeNodeSubtree(node)
+        nodeDeletionEventHook.fireEvent(NodeEvent(node))
+
+        if (_currentMove.isDescendantOf(node)) {
+            _currentMove = node.parent!! // Since root cannot be deleted, all other nodes should have a parent
+        }
+    }
+
+    // -- Observable property declarations
+    private val currentNodeEventHook = NodeEventHook<Data>()
+    fun onCurrentNodeUpdate(): NodeEventHook<Data> = currentNodeEventHook
+
+    private val nodeAdditionEventHook = NodeEventHook<Data>()
+    fun onNodeAdd(): NodeEventHook<Data> = nodeAdditionEventHook
+
+    private val nodeDeletionEventHook = NodeEventHook<Data>()
+    fun onNodeDelete(): NodeEventHook<Data> = nodeDeletionEventHook
 }
