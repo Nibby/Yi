@@ -21,9 +21,6 @@ open class GameNode<NodeData> constructor() {
 
     var children: ArrayList<GameNode<NodeData>> = ArrayList()
         internal set
-        get() {
-            return ArrayList(field)
-        }
 
     var data: NodeData? = null
         internal set

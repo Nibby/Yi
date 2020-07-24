@@ -10,6 +10,7 @@ import yi.component.gametree.GameTreeViewer;
 import yi.core.go.GoAnnotation;
 import yi.core.go.GoGameModel;
 import yi.core.go.GoGameRules;
+import yi.core.go.GoMoveSubmitResult;
 import yi.editor.settings.Settings;
 
 public class Main extends Application {
@@ -43,6 +44,17 @@ public class Main extends Application {
                 .annotate(new GoAnnotation.Fade(1, 4))
                 .annotate(new GoAnnotation.Line(0, 5, 1, 5))
                 .annotate(new GoAnnotation.Arrow(0, 6, 1, 6));
+
+        game.toPreviousMove();
+        game.toPreviousMove();
+        game.playMove(5, 5);
+        game.toPreviousMove();
+        game.toPreviousMove();
+        game.toPreviousMove();
+        game.toPreviousMove();
+        game.playMove(5, 5);
+//        GoMoveSubmitResult goMoveSubmitResult = game.playMove(5, 9);
+//        game.setCurrentMove(goMoveSubmitResult.getMoveNode());
 
         GameBoardViewer board = new GameBoardViewer(Settings.getBoardSettings());
         board.setGameModel(game);

@@ -235,6 +235,20 @@ class PlayMoveTest {
         Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
 
+    @Test // Bug picked up from issue #36
+    fun `child nodes enumerated properly as moves are played`() {
+        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+
+        model.beginMoveSequence()
+                .playMove(0, 0)
+
+        val currentMove = model.getCurrentMove()
+        Assertions.assertEquals(1, model.getCurrentMoveNumber()) // Sanity check
+
+        val parent = currentMove.parent
+        Assertions.assertEquals(1, parent!!.children.size)
+    }
+
 
     // Only supports a 2x2 board for testing purposes
     private class TestingFourIntersectionXORHasher : GoStateHasher {

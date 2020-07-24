@@ -32,7 +32,7 @@ public final class GameTreeViewer implements Component {
     }
 
     private void updateViewportAndRender() {
-        canvas.render(treeStructure.getElements());
+        canvas.render(treeStructure.getElements(), gameModel.getCurrentMove());
     }
 
 
@@ -42,7 +42,7 @@ public final class GameTreeViewer implements Component {
     };
 
     private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveChangeListener = (node) -> {
-
+        updateViewportAndRender();
     };
 
     public void setGameModel(@NotNull GoGameModel model) {

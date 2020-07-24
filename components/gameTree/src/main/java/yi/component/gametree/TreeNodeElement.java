@@ -20,11 +20,13 @@ final class TreeNodeElement implements TreeElement {
     public TreeNodeElement(@Nullable TreeElement parent, GameNode<GoGameStateUpdate> node, int x, int y) {
         this.parent = parent;
         this.node = node;
+        this.logicalX = x;
+        this.logicalY = y;
     }
 
     @Override
     public Optional<TreeElement> getParent() {
-        return Optional.empty();
+        return Optional.ofNullable(parent);
     }
 
     @Override
@@ -35,5 +37,9 @@ final class TreeNodeElement implements TreeElement {
     @Override
     public int getLogicalY() {
         return logicalY;
+    }
+
+    public GameNode<GoGameStateUpdate> getNode() {
+        return node;
     }
 }

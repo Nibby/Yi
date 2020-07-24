@@ -133,10 +133,7 @@ final class GameTreeStructure {
             }
 
             var nodeElement = new TreeNodeElement(nodeParent, node, x, y);
-
-            elementPositions.putIfAbsent(x, new HashMap<>());
-            var yMap = elementPositions.get(x);
-            yMap.put(y, nodeElement);
+            addElement(nodeElement);
 
             return nodeElement;
         }
@@ -178,6 +175,15 @@ final class GameTreeStructure {
                 return false;
 
             return elementPositions.get(x).containsKey(y);
+        }
+
+        private void addElement(TreeElement element) {
+            int x = element.getLogicalX();
+            int y = element.getLogicalY();
+
+            elementPositions.putIfAbsent(x, new HashMap<>());
+            var yMap = elementPositions.get(x);
+            yMap.put(y, element);
         }
 
         public void clear() {
