@@ -12,7 +12,7 @@ class GoGameModelEventsTest {
         var eventReceived = false
 
         // Method under test
-        model.onNodeAdd().addObserver {
+        model.onNodeAdd().addListener {
             eventReceived = true
         }
 
@@ -27,7 +27,7 @@ class GoGameModelEventsTest {
         var eventReceived = false
 
         // Method under test
-        model.onCurrentNodeUpdate().addObserver {
+        model.onCurrentNodeUpdate().addListener {
             eventReceived = true
         }
 
@@ -42,7 +42,7 @@ class GoGameModelEventsTest {
         var eventReceived = false
 
         // Method under test
-        model.onNodeDelete().addObserver {
+        model.onNodeDelete().addListener {
             eventReceived = true
         }
 
