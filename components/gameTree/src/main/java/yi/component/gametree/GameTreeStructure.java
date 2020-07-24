@@ -20,7 +20,7 @@ final class GameTreeStructure {
         this.gameModel = gameModel;
         this.treeElementManager = new TreeElementManager();
 
-        update();
+        reconstruct();
     }
 
     public Collection<TreeElement> getElementsWithinBounds(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
@@ -31,7 +31,7 @@ final class GameTreeStructure {
         return treeElementManager.getAllElements();
     }
 
-    public void update() {
+    public void reconstruct() {
         treeElementManager.reset();
 
         var currentMove = gameModel.getCurrentMove();
