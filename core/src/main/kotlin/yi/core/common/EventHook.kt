@@ -8,8 +8,11 @@ abstract class EventHook<EventType> {
         observers.forEach { observer -> observer.invoke(event) }
     }
 
-    fun execute(observer: (event: EventType) -> Unit) {
+    fun addObserver(observer: (event: EventType) -> Unit) {
         observers.add(observer)
     }
 
+    fun removeObserver(observer: (event: EventType) -> Unit) {
+        observers.remove(observer)
+    }
 }
