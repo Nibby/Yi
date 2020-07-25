@@ -4,7 +4,6 @@
     <output-test url="file://$MODULE_DIR$/../../../../build/build.gradle/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../../../components/build.gradle/src/test" />
-    <content url="file://$MODULE_DIR$/../../../../components/build.gradle/test" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.build.gradle.main" />

@@ -37,9 +37,13 @@ allprojects {
 
         test {
             java {
-                srcDir 'test'
+                srcDirs = ['src/test/unit', 'src/test/integration']
             }
         }
     }
 
+    test {
+        useJUnitPlatform()
+        testClassesDirs = sourceSets.test.output
+    }
 }

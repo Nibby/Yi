@@ -4,7 +4,6 @@
     <output-test url="file://$MODULE_DIR$/../../../build/components/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../../components/src/test" />
-    <content url="file://$MODULE_DIR$/../../../components/test" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.main" />
