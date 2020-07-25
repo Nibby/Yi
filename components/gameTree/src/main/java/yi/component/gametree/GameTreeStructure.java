@@ -51,7 +51,7 @@ final class GameTreeStructure {
      * root of the tree grows outwards.
      */
     private void createSubtree(TreeElement parentElement, GameNode<GoGameStateUpdate> treeParent) {
-        var nodesToCreateSubtree = new Stack<ExpandableNode>();
+        var nodesToCreateSubtree = new Stack<TreeNodeElement>();
         var currentNode = treeParent;
 
         TreeElement lastParent = parentElement;
@@ -61,8 +61,7 @@ final class GameTreeStructure {
 
             if (currentNode.hasOtherVariations()) {
                 // Revisit this later to create its subtree
-                var nodeToBranch = new ExpandableNode(currentNode, lastParent);
-                nodesToCreateSubtree.push(nodeToBranch);
+                nodesToCreateSubtree.push(currentNodeElement);
             }
 
             lastParent = currentNodeElement;
@@ -76,9 +75,7 @@ final class GameTreeStructure {
 
         while (nodesToCreateSubtree.size() > 0) {
             var branchingPoint = nodesToCreateSubtree.pop();
-
-            var parentOfNodeToExpand = branchingPoint.getParentNode();
-            var nonMainVariationChildren = branchingPoint.node.getChildren();
+            var nonMainVariationChildren = branchingPoint.getNode().getChildren();
 
             for (var child : nonMainVariationChildren) {
                 if (nonMainVariationChildren.indexOf(child) == 0)
@@ -87,7 +84,7 @@ final class GameTreeStructure {
                 // As a MVP I think this recursion is fine. However...
                 // If this starts to throw StackOverflowException, it's probably because the game file has
                 // too many variations. We might have to consider a different approach at that point...
-                createSubtree(parentOfNodeToExpand, child);
+                createSubtree(branchingPoint, child);
             }
         }
     }
@@ -105,7 +102,7 @@ final class GameTreeStructure {
             positionStorage = new TreeElementPositionStorage();
         }
 
-        public TreeElement addNode(TreeElement parentElement, GameNode<GoGameStateUpdate> node) {
+        public TreeNodeElement addNode(TreeElement parentElement, GameNode<GoGameStateUpdate> node) {
             var nodeElement = positionStorage.addNode(parentElement, node);
             allElements.add(nodeElement);
 
@@ -191,24 +188,6 @@ final class GameTreeStructure {
 
         public void clear() {
             elementPositions.keySet().forEach(xKey -> elementPositions.get(xKey).clear());
-        }
-    }
-
-    private static final class ExpandableNode {
-        private final GameNode<GoGameStateUpdate> node;
-        private final TreeElement parentNode;
-
-        public ExpandableNode(GameNode<GoGameStateUpdate> node, TreeElement parentNode) {
-            this.node = node;
-            this.parentNode = parentNode;
-        }
-
-        public GameNode<GoGameStateUpdate> getNode() {
-            return node;
-        }
-
-        public TreeElement getParentNode() {
-            return parentNode;
         }
     }
 }
