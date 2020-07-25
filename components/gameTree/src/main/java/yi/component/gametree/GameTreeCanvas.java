@@ -12,6 +12,11 @@ import yi.core.go.GoGameStateUpdate;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+/**
+ * Manages the rendering of the game tree.
+ *
+ * See {@link GameTreeViewer.CanvasInputHandler} for input handling aspects of the canvas.
+ */
 final class GameTreeCanvas extends Canvas {
 
     private final GraphicsContext graphics;
@@ -43,31 +48,17 @@ final class GameTreeCanvas extends Canvas {
                 .map(nodeElement -> (TreeNodeElement) nodeElement)
                 .collect(Collectors.toList());
 
-        final double ELEMENT_WIDTH = size.getGridSize().getWidth();
-        final double ELEMENT_HEIGHT = size.getGridSize().getHeight();
+        final double gridWidth = size.getGridSize().getWidth();
+        final double gridHeight = size.getGridSize().getHeight();
 
+        renderTracks(nodeElements, gridWidth, gridHeight, offsetX, offsetY);
+        renderNodes(nodeElements, currentNode, gridWidth, gridHeight, offsetX, offsetY);
+    }
+
+    private void renderNodes(Collection<TreeNodeElement> nodeElements, GameNode<GoGameStateUpdate> currentNode, double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (var nodeElement : nodeElements) {
-            nodeElement.getParent().ifPresent(parent -> {
-                double px = parent.getLogicalX() * ELEMENT_WIDTH;
-                double  py = parent.getLogicalY() * ELEMENT_HEIGHT;
-
-                double pCenterX = px + ELEMENT_WIDTH / 2d + offsetX;
-                double pCenterY = py + ELEMENT_HEIGHT / 2d + offsetY;
-
-                double  x = nodeElement.getLogicalX() * ELEMENT_WIDTH;
-                double  y = nodeElement.getLogicalY() * ELEMENT_HEIGHT;
-
-                double centerX = x + ELEMENT_WIDTH / 2d + offsetX;
-                double centerY = y + ELEMENT_HEIGHT / 2d + offsetY;
-
-                graphics.strokeLine(pCenterX, pCenterY, centerX, pCenterY);
-                graphics.strokeLine(centerX, pCenterY, centerX, centerY);
-            });
-        }
-
-        for (var nodeElement : nodeElements) {
-            double x = nodeElement.getLogicalX() * ELEMENT_WIDTH + offsetX;
-            double y = nodeElement.getLogicalY() * ELEMENT_HEIGHT + offsetY;
+            double x = nodeElement.getLogicalX() * gridWidth + offsetX;
+            double y = nodeElement.getLogicalY() * gridHeight + offsetY;
 
             graphics.setFill(Color.BLACK);
 
@@ -79,7 +70,28 @@ final class GameTreeCanvas extends Canvas {
                 graphics.setFill(Color.BLUE);
             }
 
-            graphics.fillOval(x + 3, y + 3, ELEMENT_WIDTH - 6, ELEMENT_HEIGHT - 6);
+            graphics.fillOval(x + 3, y + 3, gridWidth - 6, gridHeight - 6);
+        }
+    }
+
+    private void renderTracks(Collection<TreeNodeElement> nodeElements, double gridWidth, double gridHeight, double offsetX, double offsetY) {
+        for (var nodeElement : nodeElements) {
+            nodeElement.getParent().ifPresent(parent -> {
+                double px = parent.getLogicalX() * gridWidth;
+                double  py = parent.getLogicalY() * gridHeight;
+
+                double pCenterX = px + gridWidth / 2d + offsetX;
+                double pCenterY = py + gridHeight / 2d + offsetY;
+
+                double  x = nodeElement.getLogicalX() * gridWidth;
+                double  y = nodeElement.getLogicalY() * gridHeight;
+
+                double centerX = x + gridWidth / 2d + offsetX;
+                double centerY = y + gridHeight / 2d + offsetY;
+
+                graphics.strokeLine(pCenterX, pCenterY, centerX, pCenterY);
+                graphics.strokeLine(centerX, pCenterY, centerX, centerY);
+            });
         }
     }
 

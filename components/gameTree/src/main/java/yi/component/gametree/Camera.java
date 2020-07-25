@@ -30,8 +30,7 @@ final class Camera {
     private double viewportWidth = 0d;
     private double viewportHeight = 0d;
 
-    private Timeline animator;
-    private final Set<Runnable> panAnimationListeners = new HashSet<>();
+    private final Set<Runnable> offsetChangeListener = new HashSet<>();
 
     // TODO: Transfer this hard-coded value to a preference value
     // Number of times doSmoothScroll() should be called in order for the entire transition to take place
@@ -49,7 +48,7 @@ final class Camera {
     /**
      * Sets the target item to center on. The camera will pan to the target location over time.
      * To respond to panning animation intermediate-step events, subscribe to the pan animation listener 
-     * using {@link #addPanAnimationListener(Runnable)}.
+     * using {@link #addOffsetChangeListener(Runnable)}.
      *
      * @param centeredItem Element to center on
      * @param gridSize Size of each grid in the tree structure, can be obtained from {@link GameTreeElementSize#getGridSize()}
@@ -66,7 +65,7 @@ final class Camera {
     /**
      * Set the point to center on. The camera will pan to the target location over time.
      * To respond to panning animation intermediate-step events, subscribe to the pan animation listener
-     * using {@link #addPanAnimationListener(Runnable)}.
+     * using {@link #addOffsetChangeListener(Runnable)}.
      *
      * @param centerX X position to center on
      * @param centerY Y position to center on
@@ -89,7 +88,7 @@ final class Camera {
         // Method above should calculate target offset for us
         this.offsetX = targetOffsetX;
         this.offsetY = targetOffsetY;
-        panAnimationListeners.forEach(Runnable::run);
+        offsetChangeListener.forEach(Runnable::run);
     }
 
     private void setCenterOnCoordinate(double centerX, double centerY) {
@@ -142,7 +141,7 @@ final class Camera {
         this.offsetX = x;
         this.offsetY = y;
 
-        panAnimationListeners.forEach(Runnable::run);
+        offsetChangeListener.forEach(Runnable::run);
     }
 
     public double getOffsetX() {
@@ -158,18 +157,18 @@ final class Camera {
         this.offsetY = 0;
     }
 
-    public void addPanAnimationListener(Runnable listener) {
-        panAnimationListeners.add(listener);
+    public void addOffsetChangeListener(Runnable listener) {
+        offsetChangeListener.add(listener);
     }
 
-    public void removePanAnimationListener(Runnable listener) {
-        panAnimationListeners.remove(listener);
+    public void removeOffsetChangeListener(Runnable listener) {
+        offsetChangeListener.remove(listener);
     }
 
     private void startAnimation() {
-        animator = new Timeline(new KeyFrame(new Duration(10), "Pan Tick", (event) -> {
+        Timeline animator = new Timeline(new KeyFrame(new Duration(10), "Pan Tick", (event) -> {
             doSmoothScroll();
-            panAnimationListeners.forEach(Runnable::run);
+            offsetChangeListener.forEach(Runnable::run);
         }));
 
         animator.setCycleCount(animationSteps);
