@@ -249,6 +249,32 @@ class PlayMoveTest {
         Assertions.assertEquals(1, parent!!.children.size)
     }
 
+    @Test
+    fun `play move at same coordinate as a previous played move will go to that move instead`() {
+        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+
+        model.beginMoveSequence()
+                .playMove(0, 0)
+
+        // Assume both playMoves() succeed
+        val variationOne = model.playMove(1, 0).moveNode
+        model.toPreviousMove()
+        val variationTwo = model.playMove(0, 1).moveNode
+
+        // back to first node, now playing (1, 0) should set current position to variationOne
+        // and playing (0, 1) should set current position to variationTwo without creating new
+        // nodes for both situations.
+        model.toPreviousMove()
+
+        Assertions.assertEquals(variationOne, model.playMove(1, 0).moveNode)
+        model.toPreviousMove()
+
+        Assertions.assertEquals(variationTwo, model.playMove(0, 1).moveNode)
+        model.toPreviousMove()
+
+        // Check child size is still correct
+        Assertions.assertEquals(2, model.getCurrentMove().children.size)
+    }
 
     // Only supports a 2x2 board for testing purposes
     private class TestingFourIntersectionXORHasher : GoStateHasher {

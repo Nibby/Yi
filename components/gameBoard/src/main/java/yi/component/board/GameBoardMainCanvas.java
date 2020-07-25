@@ -199,7 +199,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
     @Override
     public void onGameUpdate(GoGameModel game, GameBoardManager manager) {
-
+        render(manager);
     }
 
     private static final class BoardStoneRenderer {
