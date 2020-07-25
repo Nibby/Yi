@@ -6,4 +6,8 @@ public interface TreeElement {
 
     int getLogicalY();
 
+    void setHighlighted(boolean highlighted);
+
+    boolean isHighlighted();
+
 }

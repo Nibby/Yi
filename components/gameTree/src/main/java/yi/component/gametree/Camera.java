@@ -141,6 +141,8 @@ final class Camera {
     public void setOffset(double x, double y) {
         this.offsetX = x;
         this.offsetY = y;
+
+        panAnimationListeners.forEach(Runnable::run);
     }
 
     public double getOffsetX() {

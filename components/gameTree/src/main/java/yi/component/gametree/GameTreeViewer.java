@@ -1,6 +1,9 @@
 package yi.component.gametree;
 
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
@@ -27,13 +30,17 @@ public final class GameTreeViewer implements Component {
 
     public GameTreeViewer(GoGameModel gameModel) {
         canvas = new GameTreeCanvas();
+        canvas.addInputHandler(new CanvasInputHandler());
+
         component = new CanvasContainer(canvas);
         elementSize = new GameTreeElementSize();
         camera = new Camera(component.getWidth(), component.getHeight());
+
         component.addSizeUpdateListener(newSize -> {
             camera.setViewportSize(newSize.getWidth(), newSize.getHeight());
             render();
         });
+
         camera.addPanAnimationListener(this::render);
 
         setGameModel(gameModel);
@@ -50,22 +57,7 @@ public final class GameTreeViewer implements Component {
     }
 
     private void render() {
-        canvas.render(camera, getElementsOnScreen(), gameModel.getCurrentMove(), elementSize);
-    }
-
-    private Collection<TreeElement> getElementsOnScreen() {
-        double topLeftX = -camera.getOffsetX();
-        double topLeftY = -camera.getOffsetY();
-
-        double gridWidth = elementSize.getGridSize().getWidth();
-        double gridHeight = elementSize.getGridSize().getHeight();
-
-        int topLeftGridX = (int) Math.round(topLeftX / gridWidth) - 1;
-        int topLeftGridY = (int) Math.round(topLeftY / gridHeight) - 1;
-        int bottomRightGridX = topLeftGridX + (int) Math.round(component.getWidth() / gridWidth) + 1;
-        int bottomRightGridY = topLeftGridY + (int) Math.round(component.getHeight() / gridHeight) + 1;
-
-        return treeStructure.getElementsWithinBounds(topLeftGridX, topLeftGridY, bottomRightGridX, bottomRightGridY);
+        canvas.render(camera, treeStructure.getElements(), gameModel.getCurrentMove(), elementSize);
     }
 
     private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (event) -> {
@@ -94,5 +86,84 @@ public final class GameTreeViewer implements Component {
     @Override
     public Parent getComponent() {
         return component;
+    }
+
+
+    private final class CanvasInputHandler implements GameTreeCanvas.InputHandler {
+
+        private double dragStartX = 0;
+        private double dragStartY = 0;
+        private boolean isDragging = false;
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            int[] gridPosition = getGridPosition(e);
+            int x = gridPosition[0];
+            int y = gridPosition[1];
+
+            boolean hasItem = treeStructure.setHighlightedGrid(x, y);
+            if (!hasItem) {
+                canvas.setCursor(Cursor.OPEN_HAND);
+            } else {
+                canvas.setCursor(Cursor.HAND);
+            }
+
+            render();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            dragStartX = e.getX();
+            dragStartY = e.getY();
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (!isDragging) {
+                int[] gridPosition = getGridPosition(e);
+                int x = gridPosition[0];
+                int y = gridPosition[1];
+
+                treeStructure.getElement(x, y).ifPresent(element -> {
+                    if (element instanceof TreeNodeElement) {
+                        var selectedNode = ((TreeNodeElement) element).getNode();
+                        gameModel.setCurrentMove(selectedNode);
+                    }
+                });
+            }
+
+            isDragging = false;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            isDragging = true;
+            canvas.setCursor(Cursor.CLOSED_HAND);
+
+            double xDiff = e.getX() - dragStartX;
+            double yDiff = e.getY() - dragStartY;
+            dragStartX = e.getX();
+            dragStartY = e.getY();
+
+            double offsetX = camera.getOffsetX();
+            double offsetY = camera.getOffsetY();
+
+            camera.setOffset(offsetX + xDiff, offsetY + yDiff);
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            render();
+        }
+
+        private int[] getGridPosition(MouseEvent e) {
+            double gridWidth = elementSize.getGridSize().getWidth();
+            double gridHeight = elementSize.getGridSize().getHeight();
+
+            int gridX = (int) Math.round(((e.getX() - gridWidth / 2) - camera.getOffsetX()) / gridWidth);
+            int gridY = (int) Math.round(((e.getY() - gridHeight / 2) - camera.getOffsetY()) / gridHeight);
+
+            return new int[] { gridX, gridY };
+        }
     }
 }
