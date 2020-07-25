@@ -40,7 +40,7 @@ public final class GameTreeViewer implements Component {
             render();
         });
 
-        camera.addPanAnimationListener(this::render);
+        camera.addOffsetChangeListener(this::render);
 
         setGameModel(gameModel);
         updateCameraAndRender(gameModel.getCurrentMove());
@@ -88,7 +88,11 @@ public final class GameTreeViewer implements Component {
     }
 
 
-    private final class CanvasInputHandler implements GameTreeCanvas.InputHandler {
+    /*
+        Put this here to access all the required fields without introducing excessive coupling to the
+        canvas component itself.
+     */
+    final class CanvasInputHandler implements GameTreeCanvas.InputHandler {
 
         private double dragStartX = 0;
         private double dragStartY = 0;
