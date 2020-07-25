@@ -2,6 +2,8 @@ package yi.component.gametree;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import yi.core.common.GameNode;
 import yi.core.go.GoGameStateUpdate;
@@ -17,6 +19,14 @@ final class GameTreeCanvas extends Canvas {
         graphics = getGraphicsContext2D();
     }
 
+    public void addInputHandler(InputHandler handler) {
+        addEventHandler(MouseEvent.MOUSE_MOVED, handler::mouseMoved);
+        addEventHandler(MouseEvent.MOUSE_PRESSED, handler::mousePressed);
+        addEventHandler(MouseEvent.MOUSE_CLICKED, handler::mouseClicked);
+        addEventHandler(MouseEvent.MOUSE_DRAGGED, handler::mouseDragged);
+        addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
+    }
+
     public void render(Camera camera, Collection<TreeElement> visibleElements, GameNode<GoGameStateUpdate> currentNode, GameTreeElementSize size) {
         graphics.clearRect(0, 0, getWidth(), getHeight());
         graphics.setStroke(Color.BLACK);
@@ -26,7 +36,7 @@ final class GameTreeCanvas extends Canvas {
         double offsetX = camera.getOffsetX();
         double offsetY = camera.getOffsetY();
 
-        Collection<TreeNodeElement> nodes = visibleElements.stream()
+        Collection<TreeNodeElement> nodeElements = visibleElements.stream()
                 .filter(element -> element instanceof TreeNodeElement)
                 .map(nodeElement -> (TreeNodeElement) nodeElement)
                 .collect(Collectors.toList());
@@ -34,16 +44,16 @@ final class GameTreeCanvas extends Canvas {
         final double ELEMENT_WIDTH = size.getGridSize().getWidth();
         final double ELEMENT_HEIGHT = size.getGridSize().getHeight();
 
-        for (var element : nodes) {
-            element.getParent().ifPresent(parent -> {
+        for (var nodeElement : nodeElements) {
+            nodeElement.getParent().ifPresent(parent -> {
                 double px = parent.getLogicalX() * ELEMENT_WIDTH;
                 double  py = parent.getLogicalY() * ELEMENT_HEIGHT;
 
                 double pCenterX = px + ELEMENT_WIDTH / 2d + offsetX;
                 double pCenterY = py + ELEMENT_HEIGHT / 2d + offsetY;
 
-                double  x = element.getLogicalX() * ELEMENT_WIDTH;
-                double  y = element.getLogicalY() * ELEMENT_HEIGHT;
+                double  x = nodeElement.getLogicalX() * ELEMENT_WIDTH;
+                double  y = nodeElement.getLogicalY() * ELEMENT_HEIGHT;
 
                 double centerX = x + ELEMENT_WIDTH / 2d + offsetX;
                 double centerY = y + ELEMENT_HEIGHT / 2d + offsetY;
@@ -53,18 +63,35 @@ final class GameTreeCanvas extends Canvas {
             });
         }
 
-        for (var element : visibleElements) {
-            double x = element.getLogicalX() * ELEMENT_WIDTH + offsetX;
-            double y = element.getLogicalY() * ELEMENT_HEIGHT + offsetY;
+        for (var nodeElement : nodeElements) {
+            double x = nodeElement.getLogicalX() * ELEMENT_WIDTH + offsetX;
+            double y = nodeElement.getLogicalY() * ELEMENT_HEIGHT + offsetY;
 
             graphics.setFill(Color.BLACK);
-            if (element instanceof TreeNodeElement) {
-                var node = ((TreeNodeElement) element).getNode();
-                if (node.equals(currentNode)) {
-                    graphics.setFill(Color.BLUE);
-                }
+
+            if (nodeElement.isHighlighted()) {
+                graphics.setFill(Color.GRAY);
             }
+
+            if (nodeElement.getNode().equals(currentNode)) {
+                graphics.setFill(Color.BLUE);
+            }
+
             graphics.fillOval(x + 3, y + 3, ELEMENT_WIDTH - 6, ELEMENT_HEIGHT - 6);
         }
+    }
+
+    /**
+     * A set of listeners to receive canvas input events.
+     */
+    interface InputHandler {
+
+        void mouseMoved(MouseEvent e);
+        void mousePressed(MouseEvent e);
+        void mouseClicked(MouseEvent e);
+        void mouseDragged(MouseEvent e);
+
+        void keyPressed(KeyEvent e);
+
     }
 }

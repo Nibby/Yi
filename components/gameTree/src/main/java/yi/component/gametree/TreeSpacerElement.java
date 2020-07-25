@@ -23,4 +23,14 @@ final class TreeSpacerElement implements TreeElement {
     public int getLogicalY() {
         return logicalY;
     }
+
+    @Override
+    public void setHighlighted(boolean highlighted) {
+        // Do nothing
+    }
+
+    @Override
+    public boolean isHighlighted() {
+        return false;
+    }
 }

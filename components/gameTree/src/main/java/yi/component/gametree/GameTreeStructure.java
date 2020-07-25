@@ -6,6 +6,7 @@ import yi.core.go.GoGameModel;
 import yi.core.go.GoGameStateUpdate;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This is the view model for the tree viewer. It determines the sizing and position for each node
@@ -27,38 +28,6 @@ final class GameTreeStructure {
         this.treeElementManager = new TreeElementManager();
 
         reconstruct();
-    }
-
-    /**
-     * Retrieves all the elements within the defined grid-space rectangle.
-     *
-     * @param topLeftX Top left grid x
-     * @param topLeftY Top left grid y
-     * @param bottomRightX Bottom right grid x
-     * @param bottomRightY Bottom right grid y
-     * @return All elements within the rectangle defined by the two points
-     */
-    public Collection<TreeElement> getElementsWithinBounds(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-        Collection<TreeElement> elementsWithinBounds = new HashSet<>();
-
-        for (int x = topLeftX; x < bottomRightX; ++x) {
-            for (int y = topLeftY; y < bottomRightY; ++y) {
-                getElement(x, y).ifPresent(elementsWithinBounds::add);
-            }
-        }
-
-        return elementsWithinBounds;
-    }
-
-    /**
-     * Retrieves the element at the given grid space.
-     */
-    public Optional<TreeElement> getElement(int gridX, int gridY) {
-        return treeElementManager.positionStorage.getElement(gridX, gridY);
-    }
-
-    public Collection<TreeElement> getElements() {
-        return treeElementManager.getAllElements();
     }
 
     public void reconstruct() {
@@ -119,10 +88,26 @@ final class GameTreeStructure {
         }
     }
 
+    /**
+     * Retrieves the element at the given grid space.
+     */
+    public Optional<TreeElement> getElement(int gridX, int gridY) {
+        return treeElementManager.positionStorage.getElement(gridX, gridY);
+    }
+
+    public Collection<TreeElement> getElements() {
+        return treeElementManager.getAllElements();
+    }
+
+    public boolean setHighlightedGrid(int x, int y) {
+        return treeElementManager.setHighlightedGrid(x, y);
+    }
+
     private static final class TreeElementManager {
 
         private Collection<TreeElement> allElements = new HashSet<>();
         private TreeElementPositionStorage positionStorage = new TreeElementPositionStorage();
+        private TreeElement currentHighlight;
 
         public void reset() {
             positionStorage.clear();
@@ -141,6 +126,22 @@ final class GameTreeStructure {
 
         public Collection<TreeElement> getAllElements() {
             return allElements;
+        }
+
+        public boolean setHighlightedGrid(int x, int y) {
+            AtomicBoolean success = new AtomicBoolean(false);
+
+            if (currentHighlight != null) {
+                currentHighlight.setHighlighted(false);
+            }
+
+            positionStorage.getElement(x, y).ifPresent(newHighlight -> {
+                newHighlight.setHighlighted(true);
+                currentHighlight = newHighlight;
+                success.set(true);
+            });
+
+            return success.get();
         }
     }
 

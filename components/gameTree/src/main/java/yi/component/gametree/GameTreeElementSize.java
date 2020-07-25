@@ -23,8 +23,8 @@ class GameTreeElementSize {
      */
     public Dimension2D getGridSize() {
         switch (viewMode) {
-            case COMPACT: return new Dimension2D(25, 25);
-            case LABELLED: return new Dimension2D(65, 25);
+            case COMPACT: return new Dimension2D(20, 20);
+            case LABELLED: return new Dimension2D(60, 20);
         }
         throw new IllegalStateException("Unimplemented view mode: " + viewMode.name());
     }

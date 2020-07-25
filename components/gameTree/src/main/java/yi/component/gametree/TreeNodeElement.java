@@ -16,6 +16,7 @@ final class TreeNodeElement implements TreeElement {
 
     private final TreeNodeElement parent;
     private final GameNode<GoGameStateUpdate> node;
+    private boolean highlighted = false;
 
     public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode<GoGameStateUpdate> node, int x, int y) {
         this.parent = parent;
@@ -36,6 +37,16 @@ final class TreeNodeElement implements TreeElement {
     @Override
     public int getLogicalY() {
         return logicalY;
+    }
+
+    @Override
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
+    }
+
+    @Override
+    public boolean isHighlighted() {
+        return highlighted;
     }
 
     public GameNode<GoGameStateUpdate> getNode() {
