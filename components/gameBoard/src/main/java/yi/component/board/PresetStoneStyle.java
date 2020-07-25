@@ -30,10 +30,14 @@ public enum PresetStoneStyle {
                 gradient = whiteGradient;
 
             if (gradient != null) {
+                var previousFill = g.getFill();
+
                 g.setFill(gradient);
                 g.setEffect(dropShadow);
                 g.fillOval(x, y, size, size);
                 g.setEffect(null);
+
+                g.setFill(previousFill);
             }
         }
 

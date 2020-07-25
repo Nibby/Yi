@@ -6,26 +6,26 @@ package yi.core.common
  */
 abstract class EventHook<EventType> {
 
-    private var listeners: HashSet<(event: EventType) -> Unit> = HashSet()
+    private var listeners: HashSet<EventListener<EventType>> = HashSet()
 
     /**
      * Sends an event message to all existing listeners.
      */
     internal fun fireEvent(event: EventType) {
-        listeners.forEach { observer -> observer.invoke(event) }
+        listeners.forEach { listener -> listener.onEvent(event) }
     }
 
     /**
      * Subscribe a new listener to this event.
      */
-    fun addListener(listener: (event: EventType) -> Unit) {
+    fun addListener(listener: EventListener<EventType>) {
         listeners.add(listener)
     }
 
     /**
      * Removes an existing listener from this event hook.
      */
-    fun removeListener(listener: (event: EventType) -> Unit) {
+    fun removeListener(listener: EventListener<EventType>) {
         listeners.remove(listener)
     }
 }
