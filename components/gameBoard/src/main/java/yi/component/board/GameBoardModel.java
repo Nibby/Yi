@@ -60,4 +60,12 @@ public final class GameBoardModel {
     @Nullable GoGameModel getGameModel() {
         return gameModel;
     }
+
+    public void toPreviousMove() {
+        gameModel.toPreviousMove();
+    }
+
+    public void toNextMove() {
+        gameModel.toNextMove();
+    }
 }
