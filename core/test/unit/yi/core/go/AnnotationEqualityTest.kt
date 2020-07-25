@@ -1,4 +1,4 @@
-package yi.core
+package yi.core.go
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

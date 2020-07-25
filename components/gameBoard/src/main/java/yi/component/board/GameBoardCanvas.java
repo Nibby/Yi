@@ -14,9 +14,7 @@ abstract class GameBoardCanvas extends Canvas {
 
     GameBoardCanvas(GameBoardManager manager) {
         this.graphics = getGraphicsContext2D();
-
         this.manager = manager;
-        this.manager.addGameUpdateListener(() -> render(manager));
     }
 
     void render(GameBoardManager manager) {

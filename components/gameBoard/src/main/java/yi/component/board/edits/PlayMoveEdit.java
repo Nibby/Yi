@@ -25,8 +25,10 @@ public final class PlayMoveEdit extends UndoableEdit {
         GoMoveSubmitResult moveSubmitResult = gameModel.playMove(moveX, moveY);
         GoMoveValidationResult validationResult = moveSubmitResult.getValidationResult();
 
-        if (moveSubmitResult.getValidationResult() != GoMoveValidationResult.OK)
-            throw new IllegalMoveException(validationResult, "Illegal move: " + validationResult.toString());
+        if (validationResult != GoMoveValidationResult.OK) {
+//            throw new IllegalMoveException(validationResult, "Illegal move: " + validationResult.toString());
+            return false;
+        }
 
         assert moveSubmitResult.getPlayed() : "Move is not played internally, is it returning the result before being submitted to the game tree?";
 
