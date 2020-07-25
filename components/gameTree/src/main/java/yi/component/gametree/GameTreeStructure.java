@@ -8,16 +8,17 @@ import yi.core.go.GoGameStateUpdate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * This is the view model for the tree viewer. It determines the sizing and position for each node
- * in the game tree.
- */
 //TODO: The algorithm to lay out the tree structure can be improved. Specifically, there is actually
 //      no need to use TreeSpacerElement to pad spaces for subsequent branches, because it
 //      can be calculated dynamically by looking at the last node in the branch and finding an
 //      appropriate column. This way we save computation (without having to call
 //      TreeElementPositionStorage#adjustAllNodesToSameColumn(TreeNodeElement, TreeNodeElement, int)
-//      on each update. As an MVP, I'll let it slide, but will be logging an issue for this later.
+//      on each update. As an MVP, I'll let it slide, but issue #38 has been logged to describe this task
+//      in detail.
+/**
+ * This is the view model for the tree viewer. It determines the sizing and position for each node
+ * in the game tree.
+ */
 final class GameTreeStructure {
 
     private final GoGameModel gameModel;
