@@ -1,5 +1,7 @@
 package yi.component.board.edits;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import yi.core.go.GoStoneColor;
 import yi.component.board.GameBoardManager;
 import javafx.scene.Cursor;
@@ -11,12 +13,6 @@ import java.util.Optional;
 final class PlayMoveEditMode implements EditMode {
 
     PlayMoveEditMode() { }
-
-    @Override
-    public void onMousePress(GameBoardManager manager, int gridX, int gridY) {
-        var playMoveEdit = new PlayMoveEdit(gridX, gridY);
-        manager.edit.recordAndApply(playMoveEdit, manager);
-    }
 
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
@@ -48,4 +44,18 @@ final class PlayMoveEditMode implements EditMode {
         return Optional.of(Cursor.HAND);
     }
 
+    @Override
+    public void onMousePress(GameBoardManager manager, int gridX, int gridY) {
+        var playMoveEdit = new PlayMoveEdit(gridX, gridY);
+        manager.edit.recordAndApply(playMoveEdit, manager);
+    }
+
+    @Override
+    public void onKeyPress(GameBoardManager manager, KeyEvent e) {
+        if (e.getCode() == KeyCode.UP) {
+            manager.model.toPreviousMove();
+        } else if (e.getCode() == KeyCode.DOWN) {
+            manager.model.toNextMove();
+        }
+    }
 }

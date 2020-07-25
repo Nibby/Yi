@@ -23,6 +23,8 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     GameBoardInputCanvas(GameBoardManager manager) {
         super(manager);
 
+        setFocusTraversable(true);
+
         addEventHandler(MouseEvent.ANY, this::onMouseEvent);
         addEventHandler(KeyEvent.ANY, this::onKeyEvent);
     }
@@ -62,8 +64,10 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         render(manager);
     }
 
-    private <GenericKeyEvent extends Event> void onKeyEvent(GenericKeyEvent t) {
-
+    private void onKeyEvent(KeyEvent e) {
+        if (e.getEventType() == KeyEvent.KEY_PRESSED) {
+            editMode.onKeyPress(manager, e);
+        }
     }
 
     public void onKeyPress(KeyEvent e) {

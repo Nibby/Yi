@@ -48,11 +48,14 @@ public class Main extends Application {
         game.toPreviousMove();
         game.toPreviousMove();
         game.playMove(5, 5);
+        game.playMove(5, 6);
+        game.playMove(5, 7);
+        game.playMove(5, 8);
         game.toPreviousMove();
         game.toPreviousMove();
-        game.toPreviousMove();
-        game.toPreviousMove();
-        game.playMove(5, 5);
+        game.playMove(3,4);
+        game.playMove(3,5);
+        game.playMove(3,6);
 //        GoMoveSubmitResult goMoveSubmitResult = game.playMove(5, 9);
 //        game.setCurrentMove(goMoveSubmitResult.getMoveNode());
 

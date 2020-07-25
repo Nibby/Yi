@@ -5,7 +5,10 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import yi.component.CanvasContainer;
 import yi.component.Component;
+import yi.core.common.EventListener;
+import yi.core.common.NodeEvent;
 import yi.core.go.GoGameModel;
+import yi.core.go.GoGameStateUpdate;
 
 import java.util.Stack;
 
@@ -44,13 +47,19 @@ public final class GameBoardViewer implements Component {
         content.forEach(canvas -> canvas.render(manager));
     }
 
+    private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveUpdateListener = (newCurrentNode) -> update();
+
     /**
      * Invoked when the game board should display a new game model.
      *
      * @param game The game model to subscribe to
      */
     public void setGameModel(GoGameModel game) {
+        if (this.gameModel != null) {
+            this.gameModel.onCurrentNodeUpdate().addListener(currentMoveUpdateListener);
+        }
         this.gameModel = game;
+        this.gameModel.onCurrentNodeUpdate().addListener(currentMoveUpdateListener);
 
         manager.onGameModelSet(game);
         content.forEach(canvas -> canvas.onGameModelSet(game, manager));
@@ -61,23 +70,14 @@ public final class GameBoardViewer implements Component {
     }
 
     /**
-     * Invoked when there is an update to the {@link GoGameModel}. The model must
-     * be identical to the model that was last {@link #setGameModel(GoGameModel) initialized}.
-     * <p/>
+     * Invoked when there is an update to the {@link GoGameModel}.
      * To change the model used by this game board, call {@link #setGameModel(GoGameModel)} with
      * the new model.
      *
-     * @param game The last game model used to initialize the game board
-     * @throws IllegalArgumentException If {@param game} is not the last model used to initialize the game board.
      */
-    public void update(GoGameModel game) {
-        // TODO: This is silly. setModel() already adjusts the model anyway, so why require the parameter again?
-        if (this.gameModel != game) {
-            throw new IllegalArgumentException("Unrecognised game model");
-        }
-
-        manager.onGameUpdate(game);
-        content.forEach(canvas -> canvas.onGameUpdate(game, manager));
+    public void update() {
+        manager.onGameUpdate(this.gameModel);
+        content.forEach(canvas -> canvas.onGameUpdate(this.gameModel, this.manager));
 
         renderAll();
     }
