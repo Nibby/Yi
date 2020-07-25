@@ -159,8 +159,8 @@ public final class GameTreeViewer implements Component {
             // TODO: Scrolling behaviour adjusts view offset rather than game
             //       state. Potentially make this adjustable in preferences so
             //       that those who are migrating from another app can feel at home.
-            double deltaX = e.getDeltaX() / 3d;
-            double deltaY = e.getDeltaY() / 3d;
+            double deltaX = e.getDeltaX();
+            double deltaY = e.getDeltaY();
 
             double offsetX = camera.getOffsetX();
             double offsetY = camera.getOffsetY();
