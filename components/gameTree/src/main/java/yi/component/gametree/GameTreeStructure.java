@@ -11,9 +11,15 @@ import java.util.*;
  * This is the view model for the tree viewer. It determines the sizing and position for each node
  * in the game tree.
  */
+//TODO: The algorithm to lay out the tree structure can be improved. Specifically, there is actually
+//      no need to use TreeSpacerElement to pad spaces for subsequent branches, because it
+//      can be calculated dynamically by looking at the last node in the branch and finding an
+//      appropriate column. This way we save computation (without having to call
+//      TreeElementPositionStorage#adjustAllNodesToSameColumn(TreeNodeElement, TreeNodeElement, int)
+//      on each update. As an MVP, I'll let it slide, but will be logging an issue for this later.
 final class GameTreeStructure {
 
-    private GoGameModel gameModel;
+    private final GoGameModel gameModel;
     private final TreeElementManager treeElementManager;
 
     public GameTreeStructure(GoGameModel gameModel) {
@@ -50,11 +56,11 @@ final class GameTreeStructure {
      * Branches are created from the child variation first so that variations closer towards the
      * root of the tree grows outwards.
      */
-    private void createSubtree(TreeElement parentElement, GameNode<GoGameStateUpdate> treeParent) {
+    private void createSubtree(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> treeParent) {
         var nodesToCreateSubtree = new Stack<TreeNodeElement>();
         var currentNode = treeParent;
 
-        TreeElement lastParent = parentElement;
+        TreeNodeElement lastParent = parentElement;
 
         while (currentNode != null) {
             var currentNodeElement = treeElementManager.addNode(lastParent, currentNode);
@@ -75,10 +81,10 @@ final class GameTreeStructure {
 
         while (nodesToCreateSubtree.size() > 0) {
             var branchingPoint = nodesToCreateSubtree.pop();
-            var nonMainVariationChildren = branchingPoint.getNode().getChildren();
+            var children = branchingPoint.getNode().getChildren();
 
-            for (var child : nonMainVariationChildren) {
-                if (nonMainVariationChildren.indexOf(child) == 0)
+            for (var child : children) {
+                if (children.indexOf(child) == 0)
                     continue; // Main variation, already built from the while loop above, so we skip it here.
 
                 // As a MVP I think this recursion is fine. However...
@@ -102,7 +108,7 @@ final class GameTreeStructure {
             positionStorage = new TreeElementPositionStorage();
         }
 
-        public TreeNodeElement addNode(TreeElement parentElement, GameNode<GoGameStateUpdate> node) {
+        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> node) {
             var nodeElement = positionStorage.addNode(parentElement, node);
             allElements.add(nodeElement);
 
@@ -123,10 +129,10 @@ final class GameTreeStructure {
 
         private final Map<Integer, Map<Integer, TreeElement>> elementPositions = new HashMap<>();
 
-        public TreeNodeElement addNode(TreeElement nodeParent, GameNode<GoGameStateUpdate> node) {
-            int[] position = findNextVacantPosition(nodeParent);
-            int x = position[0];
-            int y = position[1];
+        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode<GoGameStateUpdate> node) {
+            int[] vacantPosition = makeRoomForNextVacantPosition(nodeParent);
+            int x = vacantPosition[0];
+            int y = vacantPosition[1];
 
             if (isPositionOccupied(x, y)) {
                 throw new IllegalArgumentException("The position at (" + x + ", " + y + ") is already occupied");
@@ -134,21 +140,72 @@ final class GameTreeStructure {
 
             var nodeElement = new TreeNodeElement(nodeParent, node, x, y);
             addElement(nodeElement);
+            adjustAllNodesToSameColumn(nodeParent, nodeElement, x);
 
             return nodeElement;
         }
 
+        /*
+         * Ensures that all the nodes in a given branch are aligned on the same column. This can be improved.
+         * See the to-do note at the beginning of the parent class.
+         */
+        private void adjustAllNodesToSameColumn(TreeNodeElement nodeParent, TreeNodeElement node, int logicalX) {
+            TreeNodeElement currentParent = nodeParent;
+            TreeNodeElement currentNodeElement = node;
+
+            while (currentParent != null && currentNodeElement != null) {
+                if (currentParent.getNode().getChildren().indexOf(currentNodeElement.getNode()) == 0) {
+                    int parentLogicalX = currentParent.getLogicalX();
+                    if (logicalX > parentLogicalX) {
+                        // Our child is not in the same column as the parent, likely because another
+                        // branch further down has occupied the space...
+                        //
+                        // i.e.
+                        // [node]====|
+                        //   |     [this]=====|
+                        // [node]           [this*] <-- We're here
+                        //   |-------|
+                        // [node]  [node]
+                        //
+                        // In this case, the child is part of the main variation of this branch,
+                        // for aesthetic purposes, we wish to shift the parent column so that it is
+                        // the same as the child.
+                        currentParent.setLogicalX(logicalX);
+
+                        // Since the column has shifted, also ensure the track space is reserved.
+                        for (int column = parentLogicalX; column <= logicalX; column++) {
+                            addElement(new TreeSpacerElement(column, currentParent.getLogicalY() - 1));
+                        }
+                    }
+
+                    Optional<TreeNodeElement> parent = currentParent.getParent();
+                    if (parent.isPresent()) {
+                        currentNodeElement = currentParent;
+                        currentParent = parent.get();
+                    } else {
+                        currentParent = null;
+                    }
+                } else {
+                    currentParent = null;
+                }
+            }
+
+        }
+
         /**
-         * Finds the next nearest vacant position to place the child of this parent element. The parent
+         * Gets the next nearest vacant position to place the child of this parent element. The parent
          * must be part of the game tree. If the parent element is null, the vacant position will be the
          * position of the tree root node.
+         *
+         * This method will change the state of the position storage by adding tracks to grids that are
+         * unsuitable to place new nodes.
          *
          * @param parentElement The element to find vacant child node position for
          * @return An array of size 2, representing the (x, y) position in the element position space.
          *
          * @throws IllegalArgumentException If the element is not part of the position storage.
          */
-        private int[] findNextVacantPosition(@Nullable TreeElement parentElement) {
+        private int[] makeRoomForNextVacantPosition(@Nullable TreeElement parentElement) {
             if (parentElement == null) {
                 return new int[] { 0, 0 };
             }
@@ -165,6 +222,17 @@ final class GameTreeStructure {
 
             while (isPositionOccupied(childX, childY)) {
                 childX += 1;
+
+                // This grid is blocked because another branch further down has a node/track here.
+                // In order to find a suitable place to put our current node, we will also need to
+                // reserve the grid one space above this point to draw our track lines.
+                //
+                // i.e. we're reserving the space marked by the '===' using the following track element
+                // [node]============|
+                //   |-------|       |
+                // [node]  [node]  [node]
+                var trackReservedGrid = new TreeSpacerElement(childX, childY - 1);
+                addElement(trackReservedGrid);
             }
 
             return new int[] { childX, childY };

@@ -7,6 +7,7 @@ import yi.core.common.GameNode;
 import yi.core.go.GoGameStateUpdate;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 final class GameTreeCanvas extends Canvas {
 
@@ -25,7 +26,12 @@ final class GameTreeCanvas extends Canvas {
         graphics.setLineWidth(2d);
         graphics.setFill(Color.BLACK);
 
-        for (var element : visibleElements) {
+        Collection<TreeNodeElement> nodes = visibleElements.stream()
+                .filter(element -> element instanceof TreeNodeElement)
+                .map(nodeElement -> (TreeNodeElement) nodeElement)
+                .collect(Collectors.toList());
+
+        for (var element : nodes) {
             element.getParent().ifPresent(parent -> {
                 int px = parent.getLogicalX() * ELEMENT_WIDTH;
                 int py = parent.getLogicalY() * ELEMENT_HEIGHT;
@@ -39,7 +45,8 @@ final class GameTreeCanvas extends Canvas {
                 double centerX = x + ELEMENT_WIDTH / 2d;
                 double centerY = y + ELEMENT_HEIGHT / 2d;
 
-                graphics.strokeLine(pCenterX, pCenterY, centerX, centerY);
+                graphics.strokeLine(pCenterX, pCenterY, centerX, pCenterY);
+                graphics.strokeLine(centerX, pCenterY, centerX, centerY);
             });
         }
 
