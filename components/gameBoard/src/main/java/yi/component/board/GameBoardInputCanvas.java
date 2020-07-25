@@ -125,14 +125,14 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         renderCursor = false;
     }
 
-    private void setCursorPosition(int[] logicalPosition) {
+    private void setCursorPosition(int[] gridPosition) {
         renderCursor = true;
-        cursorX = logicalPosition[0];
-        cursorY = logicalPosition[1];
+        cursorX = gridPosition[0];
+        cursorY = gridPosition[1];
     }
 
     private void retrieveCursorPosition(double mouseX, double mouseY) {
-        Optional<int[]> cursorPosition = manager.size.getGridLogicalPosition(mouseX, mouseY);
+        Optional<int[]> cursorPosition = manager.size.getGridPosition(mouseX, mouseY);
         cursorPosition.ifPresentOrElse(this::setCursorPosition, this::clearCursorPosition);
     }
 }

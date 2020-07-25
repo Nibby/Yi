@@ -329,7 +329,7 @@ public class TreeStructureCorrectnessTest {
         // Probe the entire structure to check if it complies
         for (int x = 0; x < grids.length; ++x) {
             for (int y = 0; y < grids[0].length; ++y) {
-                var elementHere = structure.getElement(x, y);
+                var elementHere = structure.getNodeElement(x, y);
                 boolean hasNodeHere = elementHere.isPresent() && elementHere.get() instanceof TreeNodeElement;
 
                 actualGrid[x][y] = hasNodeHere;
@@ -357,7 +357,7 @@ public class TreeStructureCorrectnessTest {
 
     private void testBranch(GameNode<GoGameStateUpdate> node, GameTreeStructure structure, boolean[][] grids) {
         var currentNode = node;
-        Collection<TreeElement> allElements = structure.getElements();
+        Collection<TreeElement> allElements = structure.getAllElements();
 
         while (currentNode != null) {
             // 1. Test whether an element is there
@@ -370,8 +370,8 @@ public class TreeStructureCorrectnessTest {
             assertTrue(elementOfNode.isPresent(), "Cannot find corresponding tree element for node '" + currentNode.toString() + "'");
 
             var element = elementOfNode.get();
-            int elementX = element.getLogicalX();
-            int elementY = element.getLogicalY();
+            int elementX = element.getGridX();
+            int elementY = element.getGridY();
 
             // 3. Test logical coordinate correct
             String errorMessage = String.format("Unexpected node at %d,%d : '%s'", elementX, elementY, currentNode.toString());

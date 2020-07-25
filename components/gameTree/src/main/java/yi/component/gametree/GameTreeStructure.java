@@ -88,11 +88,23 @@ final class GameTreeStructure {
     /**
      * Retrieves the element at the given grid space.
      */
-    public Optional<TreeNodeElement> getElement(int gridX, int gridY) {
+    public Optional<TreeNodeElement> getNodeElement(int gridX, int gridY) {
         return treeElementManager.positionStorage.getElement(gridX, gridY);
     }
 
-    public Collection<TreeElement> getElements() {
+    /**
+     *
+     * @return All the {@link TreeNodeElement} added so far in the tree structure.
+     */
+    public Collection<TreeNodeElement> getNodeElements() {
+        return treeElementManager.getNodeElements();
+    }
+
+    /**
+     *
+     * @return All the elements added so far in the tree structure.
+     */
+    public Collection<TreeElement> getAllElements() {
         return treeElementManager.getAllElements();
     }
 
@@ -103,6 +115,7 @@ final class GameTreeStructure {
     private static final class TreeElementManager {
 
         private Collection<TreeElement> allElements = new HashSet<>();
+        private Collection<TreeNodeElement> nodeElements = new HashSet<>();
         private TreeElementPositionStorage positionStorage = new TreeElementPositionStorage();
         private TreeElement currentHighlight;
 
@@ -126,17 +139,16 @@ final class GameTreeStructure {
         public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
             var nodeElement = positionStorage.addNode(parentElement, nodeToAdd, firstNodeInThisBranch);
             allElements.add(nodeElement);
+            nodeElements.add(nodeElement);
 
             return nodeElement;
         }
 
-        /**
-         *
-         * @return All the elements added so far in the tree structure.
-         */
         public Collection<TreeElement> getAllElements() {
             return allElements;
         }
+
+        public Collection<TreeNodeElement> getNodeElements() { return nodeElements; }
 
         /**
          * A highlighted grid may have some special rendering on the grid space or the element stored on it.
@@ -188,8 +200,8 @@ final class GameTreeStructure {
         }
 
         private void removeNode(TreeElement nodeToRemove) {
-            int x = nodeToRemove.getLogicalX();
-            int y = nodeToRemove.getLogicalY();
+            int x = nodeToRemove.getGridX();
+            int y = nodeToRemove.getGridY();
 
             if (elementPositions.containsKey(x)) {
                 var elementThere = elementPositions.get(x).get(y);
@@ -228,8 +240,8 @@ final class GameTreeStructure {
 
                     if (parentElement != null) {
                         // All columns to the left of this one is unavailable, reserve track line space
-                        for (int column = parentElement.getLogicalX() + 1; column <= columnToUse; ++column) {
-                            var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getLogicalY());
+                        for (int column = parentElement.getGridX() + 1; column <= columnToUse; ++column) {
+                            var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getGridY());
                             addElement(reservedGridForTrack);
                         }
                     }
@@ -241,7 +253,7 @@ final class GameTreeStructure {
             }
 
             int nextNodeX = branchHeadToColumn.get(firstNodeInThisBranch);
-            int nextNodeY = parentElement.getLogicalY() + 1;
+            int nextNodeY = parentElement.getGridY() + 1;
 
             return new int[] { nextNodeX, nextNodeY };
         }
@@ -254,8 +266,8 @@ final class GameTreeStructure {
         }
 
         private void addElement(TreeElement element) {
-            int x = element.getLogicalX();
-            int y = element.getLogicalY();
+            int x = element.getGridX();
+            int y = element.getGridY();
 
             elementPositions.putIfAbsent(x, new HashMap<>());
             var yMap = elementPositions.get(x);
@@ -300,13 +312,13 @@ final class GameTreeStructure {
             displayed in a single column.
          */
         private void computeColumnForNewBranch(@Nullable TreeNodeElement parentElementOfFirstNode, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
-            int columnToUse = parentElementOfFirstNode != null ? parentElementOfFirstNode.getLogicalX() + 1 : 0; // Use first column for root
-            int currentLogicalY = parentElementOfFirstNode != null ? parentElementOfFirstNode.getLogicalY() + 1 : 0; // Use first row for root
+            int columnToUse = parentElementOfFirstNode != null ? parentElementOfFirstNode.getGridX() + 1 : 0; // Use first column for root
+            int currentGridY = parentElementOfFirstNode != null ? parentElementOfFirstNode.getGridY() + 1 : 0; // Use first row for root
 
             var currentNode = firstNodeInThisBranch;
 
             while (currentNode != null) {
-                while (isPositionOccupied(columnToUse, currentLogicalY)) {
+                while (isPositionOccupied(columnToUse, currentGridY)) {
                     ++columnToUse;
                 }
                 
@@ -314,7 +326,7 @@ final class GameTreeStructure {
 
                 if (children.size() > 0) {
                     currentNode = children.get(0);
-                    ++currentLogicalY;
+                    ++currentGridY;
                 } else {
                     break;
                 }

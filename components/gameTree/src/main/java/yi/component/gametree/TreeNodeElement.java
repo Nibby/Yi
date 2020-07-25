@@ -11,8 +11,8 @@ import java.util.Optional;
  */
 final class TreeNodeElement implements TreeElement {
 
-    private final int logicalX;
-    private final int logicalY;
+    private final int gridX;
+    private final int gridY;
 
     private final TreeNodeElement parent;
     private final GameNode<GoGameStateUpdate> node;
@@ -21,8 +21,8 @@ final class TreeNodeElement implements TreeElement {
     public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode<GoGameStateUpdate> node, int x, int y) {
         this.parent = parent;
         this.node = node;
-        this.logicalX = x;
-        this.logicalY = y;
+        this.gridX = x;
+        this.gridY = y;
     }
 
     public Optional<TreeNodeElement> getParent() {
@@ -30,13 +30,13 @@ final class TreeNodeElement implements TreeElement {
     }
 
     @Override
-    public int getLogicalX() {
-        return logicalX;
+    public int getGridX() {
+        return gridX;
     }
 
     @Override
-    public int getLogicalY() {
-        return logicalY;
+    public int getGridY() {
+        return gridY;
     }
 
     @Override
