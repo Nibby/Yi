@@ -49,10 +49,21 @@ abstract class AbstractTreeBasedGameModel<Data>(rootNodeData: Data) : TreeBasedG
     }
 
     override fun toPreviousMove(): GameNode<Data>? {
-        val parent = _currentMove.parent
-        parent?.let { setCurrentMove(it) }
 
-        return parent
+        return toPreviousMove(1)
+    }
+
+    fun toPreviousMove(steps: Int): GameNode<Data>? {
+        var newPosition = _currentMove
+
+        for (i in 0 until steps) {
+            newPosition.parent?.let {
+                newPosition = it
+            }
+        }
+        setCurrentMove(newPosition)
+
+        return newPosition
     }
 
     override fun getNextMove(): GameNode<Data>? {
@@ -65,10 +76,20 @@ abstract class AbstractTreeBasedGameModel<Data>(rootNodeData: Data) : TreeBasedG
     }
 
     override fun toNextMove(): GameNode<Data>? {
-        val nextMove = getNextMove()
-        nextMove?.let { setCurrentMove(it) }
+        return toNextMove(1)
+    }
 
-        return nextMove
+    fun toNextMove(steps: Int): GameNode<Data>? {
+        var newPosition = _currentMove
+
+        for (i in 0 until steps) {
+            if (newPosition.children.isNotEmpty()) {
+                newPosition = newPosition.children[0]
+            }
+        }
+        setCurrentMove(newPosition)
+
+        return newPosition
     }
 
     override fun submitMove(node: GameNode<Data>) {

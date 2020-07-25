@@ -4,9 +4,6 @@
     <output-test url="file://$MODULE_DIR$/../../../../build/gameBoard/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../../../components/gameBoard/src/test" />
-    <content url="file://$MODULE_DIR$/../../../../components/gameBoard/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../../components/gameBoard/test" isTestSource="true" />
-    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.gameBoard.main" />

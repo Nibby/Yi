@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 final class TreeNodeElement implements TreeElement {
 
-    private int logicalX;
+    private final int logicalX;
     private final int logicalY;
 
     private final TreeNodeElement parent;
@@ -51,9 +51,5 @@ final class TreeNodeElement implements TreeElement {
 
     public GameNode<GoGameStateUpdate> getNode() {
         return node;
-    }
-
-    public void setLogicalX(int x) {
-        this.logicalX = x;
     }
 }

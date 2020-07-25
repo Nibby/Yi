@@ -8,16 +8,12 @@ import yi.core.go.GoGameStateUpdate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//TODO: The algorithm to lay out the tree structure can be improved. Specifically, there is actually
-//      no need to use TreeSpacerElement to pad spaces for subsequent branches, because it
-//      can be calculated dynamically by looking at the last node in the branch and finding an
-//      appropriate column. This way we save computation (without having to call
-//      TreeElementPositionStorage#adjustAllNodesToSameColumn(TreeNodeElement, TreeNodeElement, int)
-//      on each update. As an MVP, I'll let it slide, but issue #38 has been logged to describe this task
-//      in detail.
 /**
- * This is the view model for the tree viewer. It determines the sizing and position for each node
- * in the game tree.
+ * Handles the layout presentation of the nodes in the game tree. Internally, the tree structure is
+ * hosted within a grid space, where (0, 0) is on top left, and denotes the root element of the tree.
+ * Elements are enumerated downwards (positive y-axis) and sideways (positive x-axis).
+ * <p/>
+ *
  */
 final class GameTreeStructure {
 
@@ -57,7 +53,7 @@ final class GameTreeStructure {
         TreeNodeElement lastParent = parentElement;
 
         while (currentNode != null) {
-            var currentNodeElement = treeElementManager.addNode(lastParent, currentNode);
+            var currentNodeElement = treeElementManager.addNode(lastParent, currentNode, treeParent);
 
             if (currentNode.hasOtherVariations()) {
                 // Revisit this later to create its subtree
@@ -92,7 +88,7 @@ final class GameTreeStructure {
     /**
      * Retrieves the element at the given grid space.
      */
-    public Optional<TreeElement> getElement(int gridX, int gridY) {
+    public Optional<TreeNodeElement> getElement(int gridX, int gridY) {
         return treeElementManager.positionStorage.getElement(gridX, gridY);
     }
 
@@ -110,7 +106,7 @@ final class GameTreeStructure {
         private TreeElementPositionStorage positionStorage = new TreeElementPositionStorage();
         private TreeElement currentHighlight;
 
-        public void reset() {
+        private void reset() {
             positionStorage.clear();
             allElements.clear();
 
@@ -118,17 +114,39 @@ final class GameTreeStructure {
             positionStorage = new TreeElementPositionStorage();
         }
 
-        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> node) {
-            var nodeElement = positionStorage.addNode(parentElement, node);
+        /**
+         * Wraps a new node as an element and determine its location in the tree structure. This is the entry point to the
+         * tree structure spacing algorithm.
+         *
+         * @param parentElement The node element of the parent node of <code>nodeToAdd</code>
+         * @param nodeToAdd The new node to be added to the position storage.
+         * @param firstNodeInThisBranch The first node in the branch of <code>nodeToAdd</code>
+         * @return A new {@link TreeNodeElement} that wraps the <code>nodeToAdd</code>
+         */
+        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+            var nodeElement = positionStorage.addNode(parentElement, nodeToAdd, firstNodeInThisBranch);
             allElements.add(nodeElement);
 
             return nodeElement;
         }
 
+        /**
+         *
+         * @return All the elements added so far in the tree structure.
+         */
         public Collection<TreeElement> getAllElements() {
             return allElements;
         }
 
+        /**
+         * A highlighted grid may have some special rendering on the grid space or the element stored on it.
+         * Only one grid may be highlighted at a time. Highlighting a new grid will automatically unhighlight the
+         * previous.
+         *
+         * @param x X ordinate of the highlighted grid
+         * @param y Y ordinate of the highlighted gri d
+         * @return true if an element exists on that position.
+         */
         public boolean setHighlightedGrid(int x, int y) {
             AtomicBoolean success = new AtomicBoolean(false);
 
@@ -154,68 +172,39 @@ final class GameTreeStructure {
     private static final class TreeElementPositionStorage {
 
         private final Map<Integer, Map<Integer, TreeElement>> elementPositions = new HashMap<>();
+        private final Map<GameNode<GoGameStateUpdate>, Integer> branchHeadToColumn = new HashMap<>();
 
-        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode<GoGameStateUpdate> node) {
-            int[] vacantPosition = makeRoomForNextVacantPosition(nodeParent);
+        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+            int[] vacantPosition = prepareForNextNode(nodeParent, nodeToAdd, firstNodeInThisBranch);
             int x = vacantPosition[0];
             int y = vacantPosition[1];
 
-            if (isPositionOccupied(x, y)) {
-                throw new IllegalArgumentException("The position at (" + x + ", " + y + ") is already occupied");
-            }
+            assertNotOccupied(x, y);
 
-            var nodeElement = new TreeNodeElement(nodeParent, node, x, y);
+            var nodeElement = new TreeNodeElement(nodeParent, nodeToAdd, x, y);
             addElement(nodeElement);
-            adjustAllNodesToSameColumn(nodeParent, nodeElement, x);
 
             return nodeElement;
         }
 
-        /*
-         * Ensures that all the nodes in a given branch are aligned on the same column. This can be improved.
-         * See the to-do note at the beginning of the parent class.
-         */
-        private void adjustAllNodesToSameColumn(TreeNodeElement nodeParent, TreeNodeElement node, int logicalX) {
-            TreeNodeElement currentParent = nodeParent;
-            TreeNodeElement currentNodeElement = node;
+        private void removeNode(TreeElement nodeToRemove) {
+            int x = nodeToRemove.getLogicalX();
+            int y = nodeToRemove.getLogicalY();
 
-            while (currentParent != null && currentNodeElement != null) {
-                if (currentParent.getNode().getChildren().indexOf(currentNodeElement.getNode()) == 0) {
-                    int parentLogicalX = currentParent.getLogicalX();
-                    if (logicalX > parentLogicalX) {
-                        // Our child is not in the same column as the parent, likely because another
-                        // branch further down has occupied the space...
-                        //
-                        // i.e.
-                        // [node]====|
-                        //   |     [this]=====|
-                        // [node]           [this*] <-- We're here
-                        //   |-------|
-                        // [node]  [node]
-                        //
-                        // In this case, the child is part of the main variation of this branch,
-                        // for aesthetic purposes, we wish to shift the parent column so that it is
-                        // the same as the child.
-                        currentParent.setLogicalX(logicalX);
-
-                        // Since the column has shifted, also ensure the track space is reserved.
-                        for (int column = parentLogicalX; column <= logicalX; column++) {
-                            addElement(new TreeSpacerElement(column, currentParent.getLogicalY() - 1));
-                        }
-                    }
-
-                    Optional<TreeNodeElement> parent = currentParent.getParent();
-                    if (parent.isPresent()) {
-                        currentNodeElement = currentParent;
-                        currentParent = parent.get();
-                    } else {
-                        currentParent = null;
-                    }
+            if (elementPositions.containsKey(x)) {
+                var elementThere = elementPositions.get(x).get(y);
+                if (elementThere != null && elementThere.equals(nodeToRemove)) {
+                    elementPositions.get(x).remove(y, elementThere);
                 } else {
-                    currentParent = null;
+                    throw new IllegalStateException("There is a different node at (" + x + ", " + y + ")");
                 }
             }
+        }
 
+        private void assertNotOccupied(int x, int y) {
+            if (isPositionOccupied(x, y)) {
+                throw new IllegalArgumentException("The position at (" + x + ", " + y + ") is already occupied");
+            }
         }
 
         /**
@@ -231,37 +220,30 @@ final class GameTreeStructure {
          *
          * @throws IllegalArgumentException If the element is not part of the position storage.
          */
-        private int[] makeRoomForNextVacantPosition(@Nullable TreeElement parentElement) {
+        private int[] prepareForNextNode(@Nullable TreeNodeElement parentElement, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+            if (nodeToAdd.equals(firstNodeInThisBranch)) {
+                if (!branchHeadToColumn.containsKey(firstNodeInThisBranch)) {
+                    computeColumnForNewBranch(parentElement, firstNodeInThisBranch);
+                    int columnToUse = branchHeadToColumn.get(firstNodeInThisBranch);
+
+                    if (parentElement != null) {
+                        // All columns to the left of this one is unavailable, reserve track line space
+                        for (int column = parentElement.getLogicalX() + 1; column <= columnToUse; ++column) {
+                            var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getLogicalY());
+                            addElement(reservedGridForTrack);
+                        }
+                    }
+                }
+            }
+
             if (parentElement == null) {
-                return new int[] { 0, 0 };
+                return new int[] { 0, 0 }; // Root node
             }
 
-            return _computeVacantPosition(parentElement);
-        }
+            int nextNodeX = branchHeadToColumn.get(firstNodeInThisBranch);
+            int nextNodeY = parentElement.getLogicalY() + 1;
 
-        private int[] _computeVacantPosition(TreeElement parentElement) {
-            int parentX = parentElement.getLogicalX();
-            int parentY = parentElement.getLogicalY();
-
-            int childX = parentX;
-            int childY = parentY + 1;
-
-            while (isPositionOccupied(childX, childY)) {
-                childX += 1;
-
-                // This grid is blocked because another branch further down has a node/track here.
-                // In order to find a suitable place to put our current node, we will also need to
-                // reserve the grid one space above this point to draw our track lines.
-                //
-                // i.e. we're reserving the space marked by the '===' using the following track element
-                // [node]============|
-                //   |-------|       |
-                // [node]  [node]  [node]
-                var trackReservedGrid = new TreeSpacerElement(childX, childY - 1);
-                addElement(trackReservedGrid);
-            }
-
-            return new int[] { childX, childY };
+            return new int[] { nextNodeX, nextNodeY };
         }
 
         private boolean isPositionOccupied(int x, int y) {
@@ -277,19 +259,69 @@ final class GameTreeStructure {
 
             elementPositions.putIfAbsent(x, new HashMap<>());
             var yMap = elementPositions.get(x);
+
+            var itemHere = yMap.get(y);
+            if (itemHere instanceof TreeNodeElement) {
+                throw new IllegalStateException("Overwriting existing node element at (" + x + ", " + y + ")");
+            }
+
             yMap.put(y, element);
         }
 
-        public void clear() {
+        /**
+         * Removes all cached element positions within the storage.
+         */
+        void clear() {
             elementPositions.keySet().forEach(xKey -> elementPositions.get(xKey).clear());
         }
 
-        public Optional<TreeElement> getElement(int x, int y) {
+        /**
+         * Retrieves a tree node element at the given co-ordinate.
+         *
+         * @param x X ordinate of the node element
+         * @param y Y ordinate of the node element
+         * @return The element if one is present at the location, or {@link Optional#empty()} if grid is empty, or
+         *         it is not a {@link TreeNodeElement}
+         */
+        public Optional<TreeNodeElement> getElement(int x, int y) {
             if (elementPositions.containsKey(x)) {
-                return Optional.ofNullable(elementPositions.get(x).get(y));
+                var itemHere = elementPositions.get(x).get(y);
+
+                if (itemHere instanceof TreeNodeElement) {
+                    return Optional.of((TreeNodeElement) itemHere);
+                }
             }
 
             return Optional.empty();
+        }
+
+        /*
+            Determines a suitable column to house all the nodes in the new branch such that all the nodes will be
+            displayed in a single column.
+         */
+        private void computeColumnForNewBranch(@Nullable TreeNodeElement parentElementOfFirstNode, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+            int columnToUse = parentElementOfFirstNode != null ? parentElementOfFirstNode.getLogicalX() + 1 : 0; // Use first column for root
+            int currentLogicalY = parentElementOfFirstNode != null ? parentElementOfFirstNode.getLogicalY() + 1 : 0; // Use first row for root
+
+            var currentNode = firstNodeInThisBranch;
+
+            while (currentNode != null) {
+                while (isPositionOccupied(columnToUse, currentLogicalY)) {
+                    ++columnToUse;
+                }
+                
+                var children = currentNode.getChildren();
+
+                if (children.size() > 0) {
+                    currentNode = children.get(0);
+                    ++currentLogicalY;
+                } else {
+                    break;
+                }
+            }
+
+
+            branchHeadToColumn.put(firstNodeInThisBranch, columnToUse);
         }
     }
 }
