@@ -2,6 +2,7 @@ package yi.component.board;
 
 import yi.core.go.GoAnnotation;
 import yi.core.go.GoGameModel;
+import yi.core.go.GoGameStateUpdate;
 import yi.core.go.GoStoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
@@ -10,6 +11,7 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -207,6 +209,9 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         public static void render(GraphicsContext g, GameBoardManager manager) {
             //TODO: Temporary code, polish later
 
+            var currentMoveData = manager.model.getCurrentMove().getData();
+            assert currentMoveData != null;
+
             var gamePosition = manager.model.getCurrentGamePosition();
             GoStoneColor[] boardState = gamePosition.getIntersectionState();
             int boardWidth = manager.model.getBoardWidth();
@@ -229,6 +234,14 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
             for (GoAnnotation annotation : annotations) {
                 AnnotationRenderer.render(annotation, g, manager);
+            }
+
+            var primaryMove = Objects.requireNonNull(manager.model.getCurrentMove().getData()).getPrimaryMove();
+            if (primaryMove != null) {
+                int px = primaryMove.getX();
+                int py = primaryMove.getY();
+
+                AnnotationRenderer.render(new GoAnnotation.Dot(px, py), g, manager);
             }
         }
 
