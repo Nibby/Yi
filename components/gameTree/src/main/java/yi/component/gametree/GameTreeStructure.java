@@ -29,8 +29,32 @@ final class GameTreeStructure {
         reconstruct();
     }
 
+    /**
+     * Retrieves all the elements within the defined grid-space rectangle.
+     *
+     * @param topLeftX Top left grid x
+     * @param topLeftY Top left grid y
+     * @param bottomRightX Bottom right grid x
+     * @param bottomRightY Bottom right grid y
+     * @return All elements within the rectangle defined by the two points
+     */
     public Collection<TreeElement> getElementsWithinBounds(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-        throw new IllegalStateException("Not Implemented!"); // TODO: Implement me
+        Collection<TreeElement> elementsWithinBounds = new HashSet<>();
+
+        for (int x = topLeftX; x < bottomRightX; ++x) {
+            for (int y = topLeftY; y < bottomRightY; ++y) {
+                getElement(x, y).ifPresent(elementsWithinBounds::add);
+            }
+        }
+
+        return elementsWithinBounds;
+    }
+
+    /**
+     * Retrieves the element at the given grid space.
+     */
+    public Optional<TreeElement> getElement(int gridX, int gridY) {
+        return treeElementManager.positionStorage.getElement(gridX, gridY);
     }
 
     public Collection<TreeElement> getElements() {
@@ -256,6 +280,14 @@ final class GameTreeStructure {
 
         public void clear() {
             elementPositions.keySet().forEach(xKey -> elementPositions.get(xKey).clear());
+        }
+
+        public Optional<TreeElement> getElement(int x, int y) {
+            if (elementPositions.containsKey(x)) {
+                return Optional.ofNullable(elementPositions.get(x).get(y));
+            }
+
+            return Optional.empty();
         }
     }
 }
