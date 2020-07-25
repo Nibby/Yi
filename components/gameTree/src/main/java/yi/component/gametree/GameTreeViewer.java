@@ -4,6 +4,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
@@ -149,6 +150,17 @@ public final class GameTreeViewer implements Component {
             double offsetY = camera.getOffsetY();
 
             camera.setOffset(offsetX + xDiff, offsetY + yDiff);
+        }
+
+        @Override
+        public void mouseScrolled(ScrollEvent e) {
+            double deltaY = e.getDeltaY();
+
+            if (deltaY > 0) {
+                gameModel.toPreviousMove();
+            } else if (deltaY < 0) {
+                gameModel.toNextMove();
+            }
         }
 
         @Override

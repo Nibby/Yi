@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import yi.core.common.GameNode;
 import yi.core.go.GoGameStateUpdate;
@@ -24,6 +25,7 @@ final class GameTreeCanvas extends Canvas {
         addEventHandler(MouseEvent.MOUSE_PRESSED, handler::mousePressed);
         addEventHandler(MouseEvent.MOUSE_CLICKED, handler::mouseClicked);
         addEventHandler(MouseEvent.MOUSE_DRAGGED, handler::mouseDragged);
+        addEventHandler(ScrollEvent.SCROLL, handler::mouseScrolled);
         addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
     }
 
@@ -90,6 +92,7 @@ final class GameTreeCanvas extends Canvas {
         void mousePressed(MouseEvent e);
         void mouseClicked(MouseEvent e);
         void mouseDragged(MouseEvent e);
+        void mouseScrolled(ScrollEvent e);
 
         void keyPressed(KeyEvent e);
 
