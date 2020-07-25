@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TreeStructureCorrectnessTest {
+public class GameTreeStructureCorrectnessTest {
 
     private static final class TestingRules extends GoGameRulesHandler {
 
