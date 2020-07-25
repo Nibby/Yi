@@ -3,7 +3,7 @@ package yi.component.board;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import yi.component.common.ShapeUtilities;
+import yi.component.utilities.ShapeUtilities;
 import yi.core.go.GoAnnotation;
 import yi.core.go.GoStoneColor;
 
@@ -45,6 +45,7 @@ public final class AnnotationRenderer {
         double lineWidth = getLineWidth(stoneSize);
         g.setLineWidth(lineWidth);
         g.setStroke(color);
+        g.setFill(color);
 
         switch (annotation.getType()) {
             case TRIANGLE:
@@ -65,6 +66,10 @@ public final class AnnotationRenderer {
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
                 double gridUnitSize = manager.size.getGridUnitSizeInPixels();
                 renderFade(g, x, y, gridUnitSize);
+                break;
+            case _DOT:
+                var bounds = ShapeUtilities.clip(annoBounds, annoBounds.getWidth() / 4d);
+                renderDot(g, bounds.getX(), bounds.getY(), bounds.getWidth());
                 break;
             default:
                 unsupportedType(annotation);
@@ -154,6 +159,10 @@ public final class AnnotationRenderer {
         };
 
         g.strokePolygon(xPoints, yPoints, 3);
+    }
+
+    private static void renderDot(GraphicsContext g, double x, double y, double size) {
+        g.fillOval(x, y, size, size);
     }
 
     private static double getLineWidth(double stoneSize) {

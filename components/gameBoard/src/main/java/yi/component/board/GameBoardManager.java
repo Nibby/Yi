@@ -16,8 +16,6 @@ public final class GameBoardManager {
     public final GameBoardView view = new GameBoardView();
     public final GameBoardEditor edit = new GameBoardEditor();
 
-    private List<Runnable> gameUpdateListeners = new ArrayList<>();
-
     GameBoardManager() { }
 
     void onGameModelSet(GoGameModel game) {
@@ -31,14 +29,5 @@ public final class GameBoardManager {
 
     void onGameUpdate(GoGameModel game) {
         model.update(game);
-        fireGameUpdateEvent();
-    }
-
-    void addGameUpdateListener(Runnable listener) {
-        gameUpdateListeners.add(listener);
-    }
-
-    void fireGameUpdateEvent() {
-        gameUpdateListeners.forEach(Runnable::run);
     }
 }
