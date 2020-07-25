@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
 import yi.core.common.EventListener;
+import yi.core.common.GameNode;
 import yi.core.common.NodeEvent;
 import yi.core.go.GoGameModel;
 import yi.core.go.GoGameStateUpdate;
@@ -16,35 +17,46 @@ public final class GameTreeViewer implements Component {
 
     private final CanvasContainer component;
     private final GameTreeCanvas canvas;
-    private final Viewport viewport;
+    private final Camera camera;
 
     private GoGameModel gameModel;
     private GameTreeStructure treeStructure;
-    private long currentStateHash;
+    private final GameTreeElementSize elementSize;
 
     public GameTreeViewer(GoGameModel gameModel) {
-        viewport = new Viewport();
         canvas = new GameTreeCanvas();
         component = new CanvasContainer(canvas);
-        component.addSizeUpdateListener(newSize -> updateViewportAndRender());
+        elementSize = new GameTreeElementSize();
+        camera = new Camera(component.getWidth(), component.getHeight());
+        component.addSizeUpdateListener(newSize -> {
+            camera.setViewportSize(newSize.getWidth(), newSize.getHeight());
+            render();
+        });
+        camera.addPanAnimationListener(this::render);
 
         setGameModel(gameModel);
+        updateCameraAndRender(gameModel.getCurrentMove());
     }
 
-    private void updateViewportAndRender() {
-        canvas.render(treeStructure.getElements(), gameModel.getCurrentMove());
+    private void updateCameraAndRender(GameNode<GoGameStateUpdate> currentNode) {
+        treeStructure.getElements().stream()
+                .filter(element -> (element instanceof TreeNodeElement) && ((TreeNodeElement) element).getNode().equals(currentNode))
+                .findAny()
+                .ifPresent(currentNodeElement -> camera.setCenterElementWithAnimation(currentNodeElement, elementSize.getGridSize()));
+
+        render();
     }
 
+    private void render() {
+        canvas.render(camera, treeStructure.getElements(), gameModel.getCurrentMove(), elementSize);
+    }
 
-    private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (node) -> {
-//        treeStructure.reconstruct();
-//        updateViewportAndRender();
-    };
-
-    private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveChangeListener = (node) -> {
+    private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (event) -> {
         treeStructure.reconstruct();
-        updateViewportAndRender();
+        render();
     };
+
+    private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveChangeListener = (event) -> updateCameraAndRender(event.getNode());
 
     public void setGameModel(@NotNull GoGameModel model) {
         if (this.gameModel != null) {
@@ -55,6 +67,7 @@ public final class GameTreeViewer implements Component {
 
         this.gameModel = model;
         this.treeStructure = new GameTreeStructure(this.gameModel);
+        this.camera.reset();
 
         this.gameModel.onCurrentNodeUpdate().addListener(currentMoveChangeListener);
         this.gameModel.onNodeAdd().addListener(treeStructureChangeListener);
