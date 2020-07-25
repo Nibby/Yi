@@ -57,8 +57,8 @@ final class GameTreeCanvas extends Canvas {
 
     private void renderNodes(Collection<TreeNodeElement> nodeElements, GameNode<GoGameStateUpdate> currentNode, double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (var nodeElement : nodeElements) {
-            double x = nodeElement.getLogicalX() * gridWidth + offsetX;
-            double y = nodeElement.getLogicalY() * gridHeight + offsetY;
+            double x = nodeElement.getGridX() * gridWidth + offsetX;
+            double y = nodeElement.getGridY() * gridHeight + offsetY;
 
             graphics.setFill(Color.BLACK);
 
@@ -77,14 +77,14 @@ final class GameTreeCanvas extends Canvas {
     private void renderTracks(Collection<TreeNodeElement> nodeElements, double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (var nodeElement : nodeElements) {
             nodeElement.getParent().ifPresent(parent -> {
-                double px = parent.getLogicalX() * gridWidth;
-                double  py = parent.getLogicalY() * gridHeight;
+                double px = parent.getGridX() * gridWidth;
+                double  py = parent.getGridY() * gridHeight;
 
                 double pCenterX = px + gridWidth / 2d + offsetX;
                 double pCenterY = py + gridHeight / 2d + offsetY;
 
-                double  x = nodeElement.getLogicalX() * gridWidth;
-                double  y = nodeElement.getLogicalY() * gridHeight;
+                double  x = nodeElement.getGridX() * gridWidth;
+                double  y = nodeElement.getGridY() * gridHeight;
 
                 double centerX = x + gridWidth / 2d + offsetX;
                 double centerY = y + gridHeight / 2d + offsetY;

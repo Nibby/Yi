@@ -150,7 +150,7 @@ public final class GameBoardSize {
      * The returned position will automatically be adjusted such that drawing an object of this size will make the intersection
      * at the center of the object.
      * <p/>
-     * To convert a drawing position to logical board position, see {@link #getGridLogicalPosition(double, double)}
+     * To convert a drawing position to logical board position, see {@link #getGridPosition(double, double)}
      *
      * @param gridX Logical x position on the game board
      * @param gridY Logical y position on the game board
@@ -175,7 +175,7 @@ public final class GameBoardSize {
      * @return The logical board intersection represented by the provided draw position, or {@link Optional#empty()} if
      *         the position is not within grid boundaries.
      */
-    public Optional<int[]> getGridLogicalPosition(double x, double y) {
+    public Optional<int[]> getGridPosition(double x, double y) {
         Rectangle gridBounds = getGridBounds();
 
         double normalizedX = x - gridBounds.getX();
@@ -188,12 +188,12 @@ public final class GameBoardSize {
             return Optional.empty();
         }
 
-        int logicalX = (int) Math.round(normalizedX / getGridUnitSizeInPixels());
-        int logicalY = (int) Math.round(normalizedY / getGridUnitSizeInPixels());
+        int gridX = (int) Math.round(normalizedX / getGridUnitSizeInPixels());
+        int gridY = (int) Math.round(normalizedY / getGridUnitSizeInPixels());
 
-        int[] logicalPosition = new int[] { logicalX, logicalY };
+        int[] gridPosition = new int[] { gridX, gridY };
 
-        return Optional.of(logicalPosition);
+        return Optional.of(gridPosition);
     }
 
     /**

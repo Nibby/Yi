@@ -47,8 +47,8 @@ public final class GameTreeViewer implements Component {
     }
 
     private void updateCameraAndRender(GameNode<GoGameStateUpdate> currentNode) {
-        treeStructure.getElements().stream()
-                .filter(element -> (element instanceof TreeNodeElement) && ((TreeNodeElement) element).getNode().equals(currentNode))
+        treeStructure.getNodeElements().parallelStream()
+                .filter(element -> element.getNode().equals(currentNode))
                 .findAny()
                 .ifPresent(currentNodeElement -> camera.setCenterElementWithAnimation(currentNodeElement, elementSize.getGridSize()));
 
@@ -56,7 +56,7 @@ public final class GameTreeViewer implements Component {
     }
 
     private void render() {
-        canvas.render(camera, treeStructure.getElements(), gameModel.getCurrentMove(), elementSize);
+        canvas.render(camera, treeStructure.getAllElements(), gameModel.getCurrentMove(), elementSize);
     }
 
     private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (event) -> {
@@ -127,11 +127,9 @@ public final class GameTreeViewer implements Component {
                 int x = gridPosition[0];
                 int y = gridPosition[1];
 
-                treeStructure.getElement(x, y).ifPresent(element -> {
-                    if (element instanceof TreeNodeElement) {
-                        var selectedNode = ((TreeNodeElement) element).getNode();
-                        gameModel.setCurrentMove(selectedNode);
-                    }
+                treeStructure.getNodeElement(x, y).ifPresent(element -> {
+                    var selectedNode = element.getNode();
+                    gameModel.setCurrentMove(selectedNode);
                 });
             }
 

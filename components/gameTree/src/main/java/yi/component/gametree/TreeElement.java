@@ -2,9 +2,9 @@ package yi.component.gametree;
 
 public interface TreeElement {
 
-    int getLogicalX();
+    int getGridX();
 
-    int getLogicalY();
+    int getGridY();
 
     void setHighlighted(boolean highlighted);
 

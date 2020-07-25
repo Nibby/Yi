@@ -6,22 +6,22 @@ package yi.component.gametree;
  */
 final class TreeSpacerElement implements TreeElement {
 
-    private final int logicalX;
-    private final int logicalY;
+    private final int gridX;
+    private final int gridY;
 
-    TreeSpacerElement(int logicalX, int logicalY) {
-        this.logicalX = logicalX;
-        this.logicalY = logicalY;
+    TreeSpacerElement(int gridX, int gridY) {
+        this.gridX = gridX;
+        this.gridY = gridY;
     }
 
     @Override
-    public int getLogicalX() {
-        return logicalX;
+    public int getGridX() {
+        return gridX;
     }
 
     @Override
-    public int getLogicalY() {
-        return logicalY;
+    public int getGridY() {
+        return gridY;
     }
 
     @Override

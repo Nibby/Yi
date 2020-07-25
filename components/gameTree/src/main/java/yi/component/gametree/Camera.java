@@ -54,8 +54,8 @@ final class Camera {
      * @param gridSize Size of each grid in the tree structure, can be obtained from {@link GameTreeElementSize#getGridSize()}
      */
     public void setCenterElementWithAnimation(TreeElement centeredItem, Dimension2D gridSize) {
-        int gridX = centeredItem.getLogicalX();
-        int gridY = centeredItem.getLogicalY();
+        int gridX = centeredItem.getGridX();
+        int gridY = centeredItem.getGridY();
 
         double centerX = gridX * gridSize.getWidth() + gridSize.getWidth() / 2;
         double centerY = gridY * gridSize.getHeight() + gridSize.getHeight() / 2;
