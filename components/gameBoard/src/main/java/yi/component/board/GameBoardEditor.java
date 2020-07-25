@@ -33,8 +33,6 @@ public final class GameBoardEditor {
 
             editHistory.push(undoable);
             positionInHistory = editHistory.size() - 1;
-
-            manager.onGameUpdate(gameModel);
         }
     }
 
@@ -54,7 +52,6 @@ public final class GameBoardEditor {
 
         if (successful) {
             positionInHistory--;
-            manager.onGameUpdate(gameModel);
         }
     }
 
@@ -73,7 +70,6 @@ public final class GameBoardEditor {
 
         if (successful) {
             positionInHistory++;
-            manager.onGameUpdate(gameModel);
         }
     }
 

@@ -12,7 +12,7 @@ ext {
 
     javaCompileVersion = 11
     javaFxVersion = "11.0.2"
-
+    kotlinVersion = "1.3.72"
 }
 
 allprojects {

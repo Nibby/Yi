@@ -81,7 +81,12 @@ open class GameNode<NodeData> constructor() {
         return path
     }
 
-    fun getTreeRoot(): GameNode<NodeData>? = root
+    /**
+     * @return true if this position has more than 1 possible continuation.
+     */
+    fun hasOtherVariations(): Boolean {
+        return children.size > 1
+    }
 
     override fun toString(): String {
         return "Node (" + getDistanceToRoot() + "): " + data.toString()

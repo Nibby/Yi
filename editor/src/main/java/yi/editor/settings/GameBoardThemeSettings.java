@@ -1,6 +1,6 @@
 package yi.editor.settings;
 
-import yi.component.common.ComparisonUtilities;
+import yi.component.utilities.ComparisonUtilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;

@@ -17,7 +17,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
     : AbstractTreeBasedGameModel<GoGameStateUpdate>(GoGameStateUpdateFactory.createForRootNode(stateHasher.computeEmptyPositionHash(boardWidth, boardHeight))) {
 
     private var stateHashHistory: List<Long> = LinkedList()
-    private var stateCache = WeakHashMap<Int, GoGameState>()
+    private var stateCache = WeakHashMap<Long, GoGameState>()
 
     init {
         if (boardWidth < 1 || boardHeight < 1)
@@ -45,19 +45,43 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
      * If the move is not compliant with the game rules, the method will fail silently without submitting any new node to
      * the game tree. To play a sequence of moves ensuring each move is played correctly, use [beginMoveSequence] instead.
      *
+     * If there is another move that is already played at the same co-ordinates following the current move, then no new
+     * node will be submitted to the game tree. Instead, the current position will be set to that move.
+     *
      * @return The result of the request. See [GoMoveSubmitResult] for more information.
      */
     fun playMove(x: Int, y: Int): GoMoveSubmitResult {
-        val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, getCurrentMove(), true, GoStoneData(x, y, getNextTurnStoneColor()))
+        var identicalExistingMove: GameNode<GoGameStateUpdate>? = null
 
-        val validationResult = validationAndNewNode.first
-        val newNode: GameNode<GoGameStateUpdate>? = validationAndNewNode.second
+        for (child in getCurrentMove().children) {
+            child.data!!.primaryMove?.let {
+                val moveX = it.x
+                val moveY = it.y
 
-        if (validationResult == GoMoveValidationResult.OK) {
-            submitMove(newNode!!) // New node should not be null if validation result checks out
+                if (moveX == x && moveY == y) {
+                    identicalExistingMove = child
+                }
+            }
+
+            if (identicalExistingMove != null)
+                break
         }
 
-        return GoMoveSubmitResult(validationResult, newNode, validationResult == GoMoveValidationResult.OK)
+        if (identicalExistingMove == null) {
+            val validationAndNewNode = GoMoveHelper.createMoveNodeForProposedMove(this, getCurrentMove(), true, GoStoneData(x, y, getNextTurnStoneColor()))
+
+            val validationResult = validationAndNewNode.first
+            val newNode: GameNode<GoGameStateUpdate>? = validationAndNewNode.second
+
+            if (validationResult == GoMoveValidationResult.OK) {
+                submitMove(newNode!!) // New node should not be null if validation result checks out
+            }
+
+            return GoMoveSubmitResult(validationResult, newNode, validationResult == GoMoveValidationResult.OK)
+        } else {
+            setCurrentMove(identicalExistingMove!!)
+            return GoMoveSubmitResult(GoMoveValidationResult.OK, identicalExistingMove, true)
+        }
     }
 
     /**
@@ -105,9 +129,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         if (!gameTree.isDescendant(gameNode))
             throw IllegalArgumentException("Game node is not part of this move tree")
 
-        val moveNumber = gameNode.getDistanceToRoot()
-
-        this.stateCache[moveNumber]?.let {
+        this.stateCache[gameNode.data!!.stateHash]?.let {
             return it
         }
 
@@ -135,7 +157,7 @@ class GoGameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRu
         annotations = pathToRoot.last.data!!.annotationsOnThisNode;
 
         val gameState = GoGameState(this, positionState, gameNode, prisonersWhite, prisonersBlack, annotations, currentStateHash)
-        this.stateCache[gameNode.getDistanceToRoot()] = gameState
+        this.stateCache[gameNode.data!!.stateHash] = gameState
 
         return gameState
     }

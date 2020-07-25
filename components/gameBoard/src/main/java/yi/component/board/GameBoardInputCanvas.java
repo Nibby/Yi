@@ -1,8 +1,8 @@
 package yi.component.board;
 
+import javafx.scene.input.ScrollEvent;
 import yi.core.go.GoGameModel;
 import yi.component.board.edits.EditMode;
-import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 import java.util.Optional;
 
 /**
- * Handles and manages all keyboard and mouse input to the {@link GameBoard}. Performs rapid repaints of
+ * Handles and manages all keyboard and mouse input to the {@link GameBoardViewer}. Performs rapid repaints of
  * lightweight objects (such as the transparent intersection cursor).
  */
 final class GameBoardInputCanvas extends GameBoardCanvas {
@@ -23,8 +23,11 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     GameBoardInputCanvas(GameBoardManager manager) {
         super(manager);
 
+        setFocusTraversable(true);
+
         addEventHandler(MouseEvent.ANY, this::onMouseEvent);
         addEventHandler(KeyEvent.ANY, this::onKeyEvent);
+        addEventFilter(ScrollEvent.SCROLL, this::onScrollEvent);
     }
 
     @Override
@@ -62,8 +65,10 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         render(manager);
     }
 
-    private <GenericKeyEvent extends Event> void onKeyEvent(GenericKeyEvent t) {
-
+    private void onKeyEvent(KeyEvent e) {
+        if (e.getEventType() == KeyEvent.KEY_PRESSED) {
+            editMode.onKeyPress(manager, e);
+        }
     }
 
     public void onKeyPress(KeyEvent e) {
@@ -106,18 +111,28 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         clearCursorPosition();
     }
 
+    public void onScrollEvent(ScrollEvent e) {
+        double deltaY = e.getDeltaY();
+
+        if (deltaY < 0) {
+            manager.model.toNextMove();
+        } else if (deltaY > 0) {
+            manager.model.toPreviousMove();
+        }
+    }
+
     private void clearCursorPosition() {
         renderCursor = false;
     }
 
-    private void setCursorPosition(int[] logicalPosition) {
+    private void setCursorPosition(int[] gridPosition) {
         renderCursor = true;
-        cursorX = logicalPosition[0];
-        cursorY = logicalPosition[1];
+        cursorX = gridPosition[0];
+        cursorY = gridPosition[1];
     }
 
     private void retrieveCursorPosition(double mouseX, double mouseY) {
-        Optional<int[]> cursorPosition = manager.size.getGridLogicalPosition(mouseX, mouseY);
+        Optional<int[]> cursorPosition = manager.size.getGridPosition(mouseX, mouseY);
         cursorPosition.ifPresentOrElse(this::setCursorPosition, this::clearCursorPosition);
     }
 }

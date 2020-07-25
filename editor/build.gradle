@@ -11,6 +11,7 @@ buildDir = '../build/' + getProject().getName()
 dependencies {
     compile project(':core')
     compile project(':components:gameBoard')
+    compile project(':components:gameTree')
 
     // JavaFx dependencies
     implementation rootProject.ext.javaFxDependencies.implementation
