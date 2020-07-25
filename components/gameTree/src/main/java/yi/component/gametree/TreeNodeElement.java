@@ -12,20 +12,19 @@ import java.util.Optional;
 final class TreeNodeElement implements TreeElement {
 
     private int logicalX;
-    private int logicalY;
+    private final int logicalY;
 
-    private TreeElement parent;
+    private final TreeNodeElement parent;
     private final GameNode<GoGameStateUpdate> node;
 
-    public TreeNodeElement(@Nullable TreeElement parent, GameNode<GoGameStateUpdate> node, int x, int y) {
+    public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode<GoGameStateUpdate> node, int x, int y) {
         this.parent = parent;
         this.node = node;
         this.logicalX = x;
         this.logicalY = y;
     }
 
-    @Override
-    public Optional<TreeElement> getParent() {
+    public Optional<TreeNodeElement> getParent() {
         return Optional.ofNullable(parent);
     }
 
@@ -41,5 +40,9 @@ final class TreeNodeElement implements TreeElement {
 
     public GameNode<GoGameStateUpdate> getNode() {
         return node;
+    }
+
+    public void setLogicalX(int x) {
+        this.logicalX = x;
     }
 }
