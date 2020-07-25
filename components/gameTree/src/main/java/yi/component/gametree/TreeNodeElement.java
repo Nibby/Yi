@@ -18,13 +18,17 @@ final class TreeNodeElement implements TreeElement {
     private final GameNode<GoGameStateUpdate> node;
     private boolean highlighted = false;
 
-    public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode<GoGameStateUpdate> node, int x, int y) {
+    public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode<GoGameStateUpdate> node, int gridX, int gridY) {
         this.parent = parent;
         this.node = node;
-        this.gridX = x;
-        this.gridY = y;
+        this.gridX = gridX;
+        this.gridY = gridY;
     }
 
+    /**
+     *
+     * @return The parent node element for the node wrapped by this element.
+     */
     public Optional<TreeNodeElement> getParent() {
         return Optional.ofNullable(parent);
     }
