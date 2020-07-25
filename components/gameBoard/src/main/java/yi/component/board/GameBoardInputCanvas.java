@@ -1,8 +1,8 @@
 package yi.component.board;
 
+import javafx.scene.input.ScrollEvent;
 import yi.core.go.GoGameModel;
 import yi.component.board.edits.EditMode;
-import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -27,6 +27,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
         addEventHandler(MouseEvent.ANY, this::onMouseEvent);
         addEventHandler(KeyEvent.ANY, this::onKeyEvent);
+        addEventFilter(ScrollEvent.SCROLL, this::onScrollEvent);
     }
 
     @Override
@@ -108,6 +109,16 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
     public void onMouseExit(MouseEvent e) {
         clearCursorPosition();
+    }
+
+    public void onScrollEvent(ScrollEvent e) {
+        double deltaY = e.getDeltaY();
+
+        if (deltaY < 0) {
+            manager.model.toNextMove();
+        } else if (deltaY > 0) {
+            manager.model.toPreviousMove();
+        }
     }
 
     private void clearCursorPosition() {

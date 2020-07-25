@@ -14,8 +14,6 @@ import yi.core.common.NodeEvent;
 import yi.core.go.GoGameModel;
 import yi.core.go.GoGameStateUpdate;
 
-import java.util.Collection;
-
 /**
  * A component which displays the game model and its nodes as a tree graph.
  */
@@ -154,13 +152,16 @@ public final class GameTreeViewer implements Component {
 
         @Override
         public void mouseScrolled(ScrollEvent e) {
-            double deltaY = e.getDeltaY();
+            // TODO: Scrolling behaviour adjusts view offset rather than game
+            //       state. Potentially make this adjustable in preferences so
+            //       that those who are migrating from another app can feel at home.
+            double deltaX = e.getDeltaX() / 3d;
+            double deltaY = e.getDeltaY() / 3d;
 
-            if (deltaY > 0) {
-                gameModel.toPreviousMove();
-            } else if (deltaY < 0) {
-                gameModel.toNextMove();
-            }
+            double offsetX = camera.getOffsetX();
+            double offsetY = camera.getOffsetY();
+
+            camera.setOffset(offsetX + deltaX, offsetY + deltaY);
         }
 
         @Override
