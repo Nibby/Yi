@@ -2,7 +2,9 @@ package yi.component.gametree;
 
 /**
  * An element used solely to occupy a grid space so that subsequent nodes do not consider this grid
- * when laying out the tree structure.
+ * when laying out the tree structure. This is most frequently used to reserve grids that are used to
+ * render track lines. Though in theory this element can be used wherever we want to prohibit {@link GameTreeStructure}
+ * from placing an element there.
  */
 final class TreeSpacerElement implements TreeElement {
 
