@@ -16,27 +16,29 @@ final class PlayMoveEditMode implements EditMode {
 
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
-        if (manager.model.getCurrentGamePosition().getStoneColorAt(gridX, gridY) != GoStoneColor.NONE) {
-            // A stone already exists here, don't draw cursor.
-            return;
-        }
-
-        var nextTurnStoneColor = manager.model.getNextTurnStoneColor();
-        Color cursorColor = null;
-
-        if (nextTurnStoneColor == GoStoneColor.BLACK) {
-            cursorColor = Color.BLACK;
-        } else if (nextTurnStoneColor == GoStoneColor.WHITE) {
-            cursorColor = Color.WHITE;
-        }
-
-        if (cursorColor != null) {
-            double cursorSize = manager.size.getStoneSizeInPixels() / 2d;
-            double[] position = manager.size.getGridRenderPosition(gridX, gridY, cursorSize);
-
-            g.setFill(cursorColor);
-            g.fillRect(position[0], position[1], cursorSize, cursorSize);
-        }
+        // TODO: Temporary. Probably should be disabled by default as the indicators are quite distracting.
+        //       But can have this as a configurable preference.
+//        if (manager.model.getCurrentGamePosition().getStoneColorAt(gridX, gridY) != GoStoneColor.NONE) {
+//            // A stone already exists here, don't draw cursor.
+//            return;
+//        }
+//
+//        var nextTurnStoneColor = manager.model.getNextTurnStoneColor();
+//        Color cursorColor = null;
+//
+//        if (nextTurnStoneColor == GoStoneColor.BLACK) {
+//            cursorColor = Color.BLACK;
+//        } else if (nextTurnStoneColor == GoStoneColor.WHITE) {
+//            cursorColor = Color.WHITE;
+//        }
+//
+//        if (cursorColor != null) {
+//            double cursorSize = manager.size.getStoneSizeInPixels() / 2d;
+//            double[] position = manager.size.getGridRenderPosition(gridX, gridY, cursorSize);
+//
+//            g.setFill(cursorColor);
+//            g.fillRect(position[0], position[1], cursorSize, cursorSize);
+//        }
     }
 
     @Override
