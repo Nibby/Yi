@@ -1,10 +1,8 @@
 package yi.component.board;
 
 import org.jetbrains.annotations.Nullable;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGamePosition;
-import yi.core.go.GoGameState;
-import yi.core.go.GoStoneColor;
+import yi.core.common.GameNode;
+import yi.core.go.*;
 
 /**
  * Wraps the current {@link GoGameModel} and provide game information to other board classes.
@@ -67,5 +65,9 @@ public final class GameBoardModel {
 
     public void toNextMove() {
         gameModel.toNextMove();
+    }
+
+    public GameNode<GoGameStateUpdate> getCurrentMove() {
+        return gameModel.getCurrentMove();
     }
 }

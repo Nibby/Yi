@@ -34,6 +34,8 @@ abstract class GoAnnotation constructor(val type: GoAnnotationType, val x: Int, 
 
     class Fade(x: Int, y: Int) : GoAnnotation.PointAnnotation(GoAnnotationType.FADE, x, y)
 
+    // Non-standard annotations
+    class Dot(x: Int, y: Int) : GoAnnotation.PointAnnotation(GoAnnotationType._DOT, x, y)
 
     abstract class DirectionalAnnotation(type: GoAnnotationType, x: Int, y: Int, val xEnd: Int, val yEnd: Int) : GoAnnotation(type, x, y) {
         override fun equals(other: Any?): Boolean {

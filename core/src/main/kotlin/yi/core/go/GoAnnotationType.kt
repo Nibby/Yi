@@ -9,6 +9,9 @@ enum class GoAnnotationType {
     FADE,
     LABEL,
     LINE,
-    ARROW
+    ARROW,
+
+    // Non-standard
+    _DOT
 
 }
