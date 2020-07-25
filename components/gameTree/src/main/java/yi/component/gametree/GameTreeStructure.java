@@ -81,6 +81,9 @@ final class GameTreeStructure {
             var nonMainVariationChildren = branchingPoint.node.getChildren();
 
             for (var child : nonMainVariationChildren) {
+                if (nonMainVariationChildren.indexOf(child) == 0)
+                    continue; // Main variation, already built from the while loop above, so we skip it here.
+
                 // As a MVP I think this recursion is fine. However...
                 // If this starts to throw StackOverflowException, it's probably because the game file has
                 // too many variations. We might have to consider a different approach at that point...

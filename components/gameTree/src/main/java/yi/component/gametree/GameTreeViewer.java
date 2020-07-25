@@ -37,11 +37,12 @@ public final class GameTreeViewer implements Component {
 
 
     private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (node) -> {
-        treeStructure.reconstruct();
-        updateViewportAndRender();
+//        treeStructure.reconstruct();
+//        updateViewportAndRender();
     };
 
     private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveChangeListener = (node) -> {
+        treeStructure.reconstruct();
         updateViewportAndRender();
     };
 
