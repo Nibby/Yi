@@ -82,12 +82,17 @@ public final class GameBoardViewer implements Component {
     }
 
     public void applySettings(GameBoardSettings settings) {
-        settings.getBackgroundImage().ifPresent(this::setBackgroundImage);
+        settings.getBoardImage().ifPresent(this::setBoardImage);
         settings.getGridColor().ifPresent(this::setGridColor);
+        settings.getBackgroundImage().ifPresent(this::setBackgroundImage);
+    }
+
+    public void setBoardImage(Image image) {
+        manager.view.boardImage = image;
     }
 
     public void setBackgroundImage(Image image) {
-        manager.view.boardImage = image;
+        manager.view.backgroundImage = image;
     }
 
     public void setGridColor(Color gridColor) {

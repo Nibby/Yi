@@ -8,14 +8,15 @@ import java.util.Optional;
 public final class GameBoardSettings {
 
     private Image backgroundImage;
+    private Image boardImage;
     private Color gridColor;
 
-    public void setBackgroundImage(Image image) {
-        this.backgroundImage = image;
+    public void setBoardImage(Image image) {
+        this.boardImage = image;
     }
 
-    public Optional<Image> getBackgroundImage() {
-        return Optional.ofNullable(backgroundImage);
+    public Optional<Image> getBoardImage() {
+        return Optional.ofNullable(boardImage);
     }
 
     public void setGridColor(Color gridColor) {
@@ -24,5 +25,13 @@ public final class GameBoardSettings {
 
     public Optional<Color> getGridColor() {
         return Optional.ofNullable(gridColor);
+    }
+
+    public void setBackgroundImage(Image image) {
+        backgroundImage = image;
+    }
+
+    public Optional<Image> getBackgroundImage() {
+        return Optional.ofNullable(backgroundImage);
     }
 }

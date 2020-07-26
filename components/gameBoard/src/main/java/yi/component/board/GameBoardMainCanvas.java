@@ -1,5 +1,6 @@
 package yi.component.board;
 
+import javafx.scene.image.Image;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
 import yi.core.go.StoneColor;
@@ -39,34 +40,44 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardRenderer {
 
         private static final DropShadow BOARD_BORDER_SHADOW = new DropShadow();
-        private static final Color BOARD_BORDER_COLOR = Color.color(0.25d, 0.25d, 0.25d, 0.25d);
 
         private static void render(GraphicsContext g, GameBoardManager manager) {
-            renderBorderAndShadow(g, manager);
+            renderBackground(g, manager);
             renderBoardTexture(g, manager);
             renderCoordinateLabels(g, manager);
             renderGrid(g, manager);
         }
 
-        private static void renderBorderAndShadow(GraphicsContext g, GameBoardManager manager) {
-            double borderOffset = manager.size.getBoardBorderShadowOffsetInPixels();
+        private static void renderBackground(GraphicsContext g, GameBoardManager manager) {
+            Image backgroundImage = manager.view.backgroundImage;
 
-            BOARD_BORDER_SHADOW.setRadius(manager.size.getShadowRadius());
-            BOARD_BORDER_SHADOW.setOffsetX(borderOffset);
-            BOARD_BORDER_SHADOW.setOffsetY(borderOffset);
-            BOARD_BORDER_SHADOW.setColor(Color.color(0d, 0d, 0d, 0.5d));
-
-            g.setEffect(BOARD_BORDER_SHADOW);
-            g.setFill(BOARD_BORDER_COLOR);
-
-            Rectangle borderBounds = manager.size.getBoardBorderBounds();
-            g.fillRect(borderBounds.getX(), borderBounds.getY(), borderBounds.getWidth(), borderBounds.getHeight());
-            g.setEffect(null);
+            if (backgroundImage != null) {
+                Rectangle stage = manager.size.getStageBounds();
+                g.drawImage(backgroundImage, stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+            }
         }
 
         private static void renderBoardTexture(GraphicsContext g, GameBoardManager manager) {
+            double borderOffset = manager.size.getBoardBorderShadowOffsetInPixels();
+            BOARD_BORDER_SHADOW.setRadius(manager.size.getShadowRadius());
+            BOARD_BORDER_SHADOW.setOffsetY(borderOffset);
+            BOARD_BORDER_SHADOW.setColor(Color.color(0d, 0d, 0d, 0.7d));
+            g.setEffect(BOARD_BORDER_SHADOW);
+
             Rectangle boardBounds = manager.size.getBoardBounds();
             g.drawImage(manager.view.boardImage, boardBounds.getX(), boardBounds.getY(), boardBounds.getWidth(), boardBounds.getHeight());
+
+            g.setEffect(null);
+
+            { // Draw border around board edge
+                g.setStroke(Color.BLACK);
+                g.setGlobalAlpha(0.1d);
+                final double borderThickness = boardBounds.getWidth() / 100d;
+                g.setLineWidth(borderThickness);
+                g.strokeRect(boardBounds.getX() + borderThickness / 2, boardBounds.getY() + borderThickness / 2, boardBounds.getWidth() - borderThickness, boardBounds.getHeight() - borderThickness);
+                g.setGlobalAlpha(1.0d);
+            }
+
         }
 
         private static void renderCoordinateLabels(GraphicsContext g, GameBoardManager manager) {
@@ -74,13 +85,15 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderGrid(GraphicsContext g, GameBoardManager manager) {
+            double originalLineWidth = g.getLineWidth();
+            double gridLineThickness = manager.size.getGridLineThicknessInPixels();
+
+            // Draw game grid
+            g.setLineWidth(gridLineThickness);
+
             Color lineColor = manager.view.boardGridColor;
             g.setFill(lineColor);
             g.setStroke(lineColor);
-
-            double originalLineWidth = g.getLineWidth();
-            double gridLineThickness = manager.size.getGridLineThicknessInPixels();
-            g.setLineWidth(gridLineThickness);
 
             Rectangle gridBounds = manager.size.getGridBounds();
 

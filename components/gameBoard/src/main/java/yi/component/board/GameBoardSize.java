@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public final class GameBoardSize {
 
-    private LayoutRectangle boardBorderBounds;
+    private Rectangle stageBounds;
     private LayoutRectangle boardBounds;
 
     private LayoutRectangle coordinateLabelBounds;
@@ -39,7 +39,7 @@ public final class GameBoardSize {
      * @param gridHeight Number of board intersections vertically
      */
     void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight, CoordinateLabelPosition coordinateLabelPosition) {
-        Rectangle stage = new Rectangle(0, 0, componentWidth, componentHeight);
+        stageBounds = new Rectangle(0, 0, componentWidth, componentHeight);
 
         // Overview:
         // =========
@@ -56,12 +56,12 @@ public final class GameBoardSize {
         // scale value).
 
         // We need to calculate a scaled version of stone size at this point to maintain the correct board ratio
-        Rectangle gridFitRatio = ShapeUtilities.centerFit(stage, (double) gridWidth / (double) gridHeight, 0d);
+        Rectangle gridFitRatio = ShapeUtilities.centerFit(stageBounds, (double) gridWidth / (double) gridHeight, 0d);
 
         // Doesn't really matter the size of the grid bounds at this point, the proportion is what matters.
         // We will scale everything to the correct size later.
         LayoutRectangle scaledGridBounds = new LayoutRectangle(gridFitRatio.getWidth(), gridFitRatio.getHeight());
-        double percentageMarginBetweenLabelsAndGrid = 0.05d;
+        double percentageMarginBetweenLabelsAndGrid = 0.035d;
         LayoutRectangle gridSpacingBounds = scaledGridBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenLabelsAndGrid, scaledGridBounds));
 
         coordinateLabelBounds = computeCoordinateLabelBounds(gridSpacingBounds, coordinateLabelPosition);
@@ -69,14 +69,11 @@ public final class GameBoardSize {
         double percentageMarginBetweenBoardEdgeAndLabels = 0.01d;
         boardBounds = coordinateLabelBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenBoardEdgeAndLabels, coordinateLabelBounds));
         // Expressed as a percentage of total canvas width/height
-        double percentageThicknessOfBoardBorder = 0.02d;
-        boardBorderBounds = boardBounds.createParentWithMargin(getPixelValue(percentageThicknessOfBoardBorder, boardBounds));
-
         // Rescale everything. All the objects are referenced internally by LayoutRectangle, so the entire hierarchy will be updated
         // These are percentages of the shorter side of board dimensions rather than total size
         double percentageMarginFromEdge = 0.02d;
-        double marginFromEdgeInPixels = percentageMarginFromEdge * Math.min(stage.getWidth(), stage.getHeight());
-        boardBorderBounds.rescaleAndFinalize(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), marginFromEdgeInPixels, 1.0d, true);
+        double marginFromEdgeInPixels = percentageMarginFromEdge * Math.min(stageBounds.getWidth(), stageBounds.getHeight());
+        boardBounds.rescaleAndFinalize(stageBounds.getX(), stageBounds.getY(), stageBounds.getWidth(), stageBounds.getHeight(), marginFromEdgeInPixels, 1.0d, true);
 
         // Now we can finally calculate the correct stone size
         double stoneSizeFromWidth = scaledGridBounds.getWidth() / (gridWidth-1);
@@ -123,6 +120,10 @@ public final class GameBoardSize {
         }
 
         return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, containerStrategy);
+    }
+
+    public Rectangle getStageBounds() {
+        return stageBounds;
     }
 
     public double getStoneShadowRadius() {
@@ -206,14 +207,6 @@ public final class GameBoardSize {
 
     /**
      *
-     * @return The drawing boundaries for the border around the game board image
-     */
-    public Rectangle getBoardBorderBounds() {
-        return boardBorderBounds;
-    }
-
-    /**
-     *
      * @return The drawing boundaries for the game co-ordinates
      */
     public Rectangle getCoordinateLabelBounds() {
@@ -233,7 +226,7 @@ public final class GameBoardSize {
      * @return The blur factor of the shadow effect used to paint board component border
      */
     public double getShadowRadius() {
-        final double percentageShadowBlurRadius = 0.015d;
+        final double percentageShadowBlurRadius = 0.05d;
         return percentageShadowBlurRadius * getBoardBoundsPercentageMetric();
     }
 
