@@ -88,6 +88,7 @@ final class Camera {
         // Method above should calculate target offset for us
         this.offsetX = targetOffsetX;
         this.offsetY = targetOffsetY;
+
         offsetChangeListener.forEach(Runnable::run);
     }
 
@@ -175,4 +176,11 @@ final class Camera {
         animator.play();
     }
 
+    public double getCenterX() {
+        return lastCenterX;
+    }
+
+    public double getCenterY() {
+        return lastCenterY;
+    }
 }
