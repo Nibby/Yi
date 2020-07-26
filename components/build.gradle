@@ -44,6 +44,5 @@ allprojects {
 
     test {
         useJUnitPlatform()
-        testClassesDirs = sourceSets.test.output
     }
 }
