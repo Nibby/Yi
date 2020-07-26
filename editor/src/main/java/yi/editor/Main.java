@@ -59,11 +59,10 @@ public class Main extends Application {
 
         GameBoardViewer board = new GameBoardViewer(Settings.getBoardSettings());
         board.setGameModel(game);
-//        board.setEditable(false);
 
         GameTreeViewer tree = new GameTreeViewer(game);
 
-        SplitPane content = new SplitPane(board.getComponent(), tree.getComponent());
+        SplitPane content = new SplitPane(board.getComponent());
         content.setDividerPosition(0, 0.7d);
 
         Scene scene = new Scene(content, 800, 600);

@@ -108,7 +108,8 @@ public final class Settings {
     public static GameBoardSettings getBoardSettings() {
         var settings = new GameBoardSettings();
 
-        settings.setBackgroundImage(boardTheme.getBoardImage());
+        settings.setBackgroundImage(boardTheme.getBackgroundImage());
+        settings.setBoardImage(boardTheme.getBoardImage());
         settings.setGridColor(boardTheme.getBoardGridColor());
 
         return settings;
