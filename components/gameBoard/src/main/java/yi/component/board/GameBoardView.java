@@ -3,7 +3,7 @@ package yi.component.board;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-public final class GameBoardView {
+final class GameBoardView {
 
     GameBoardView() { }
 

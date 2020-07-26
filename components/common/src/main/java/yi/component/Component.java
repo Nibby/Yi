@@ -1,6 +1,5 @@
 package yi.component;
 
-import javafx.scene.Node;
 import javafx.scene.Parent;
 
 /**
