@@ -1,0 +1,87 @@
+package yi.core.go
+
+import java.util.*
+
+/**
+ * Annotations are special labels that can be added to a [GameNode] through [GameModel.addAnnotationOnCurrentMove].
+ *
+ * Unlike other game objects, annotations do not accumulate. They are only present on the game node it is added to.
+ * Annotation positions use the same co-ordinate space as the game board.
+ * There are two types of annotations:
+ *
+ * [PointAnnotation] are those that are added to a single grid position, while [DirectionalAnnotation] are two-point
+ * annotations that have a start point and an end point like vectors.
+ *
+ * This implementation is compliant with the specifications laid out by SGF-4 standard.
+ */
+abstract class Annotation constructor(val type: AnnotationType, val x: Int, val y: Int) {
+
+    /**
+     * Represents an annotation whose location can be modelled using a single co-ordinate.
+     */
+    abstract class PointAnnotation(type: AnnotationType, x: Int, y: Int) : Annotation(type, x, y) {
+
+        override fun equals(other: Any?): Boolean {
+            other?.let {
+                if (other is Annotation.PointAnnotation) {
+                    return this.type == other.type && this.x == other.x && this.y == other.y
+                }
+            }
+            return super.equals(other)
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(type, x, y)
+        }
+
+        override fun toString(): String {
+            return "$type at ($x, $y)"
+        }
+    }
+
+    class Triangle(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.TRIANGLE, x, y)
+
+    class Square(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.SQUARE, x, y)
+
+    class Circle(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.CIRCLE, x, y)
+
+    class Cross(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.CROSS, x, y)
+
+    class Fade(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.FADE, x, y)
+
+    /**
+     * This is not part of the SGF-4 standard. Rather, it is an internal annotation used by the program only.
+     * This annotation will not be saved to file.
+     */
+    class Dot(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType._DOT, x, y)
+
+
+    /**
+     * Represents an annotation whose location is modelled by two points, and has a direction.
+     */
+    abstract class DirectionalAnnotation(type: AnnotationType, x: Int, y: Int, val xEnd: Int, val yEnd: Int) : Annotation(type, x, y) {
+        override fun equals(other: Any?): Boolean {
+            other?.let {
+                if (other is Annotation.DirectionalAnnotation) {
+                    return this.type == other.type && this.x == other.x && this.y == other.y
+                            && this.xEnd == other.xEnd && this.yEnd == other.yEnd
+                }
+            }
+
+            return false
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(type, x, y, xEnd, yEnd)
+        }
+
+        override fun toString(): String {
+            return "$type from ($x, $y) to ($xEnd, $yEnd)"
+        }
+    }
+
+    class Line(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : Annotation.DirectionalAnnotation(AnnotationType.LINE, xStart, yStart, xEnd, yEnd)
+
+    class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : Annotation.DirectionalAnnotation(AnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
+
+}

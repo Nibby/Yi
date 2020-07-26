@@ -1,9 +1,8 @@
 package yi.component.board;
 
-import yi.core.go.GoAnnotation;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameStateUpdate;
-import yi.core.go.GoStoneColor;
+import yi.core.go.Annotation;
+import yi.core.go.GameModel;
+import yi.core.go.StoneColor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -195,12 +194,12 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     }
 
     @Override
-    public void onGameModelSet(GoGameModel model, GameBoardManager manager) {
+    public void onGameModelSet(GameModel model, GameBoardManager manager) {
 
     }
 
     @Override
-    public void onGameUpdate(GoGameModel game, GameBoardManager manager) {
+    public void onGameUpdate(GameModel game, GameBoardManager manager) {
         render(manager);
     }
 
@@ -209,15 +208,15 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         public static void render(GraphicsContext g, GameBoardManager manager) {
             //TODO: Temporary code, polish later
 
-            var currentMoveData = manager.model.getCurrentMove().getData();
+            var currentMoveData = manager.model.getCurrentMove().getStateDelta();
             assert currentMoveData != null;
 
             var gamePosition = manager.model.getCurrentGamePosition();
-            GoStoneColor[] boardState = gamePosition.getIntersectionState();
+            StoneColor[] boardState = gamePosition.getIntersectionState();
             int boardWidth = manager.model.getBoardWidth();
 
             for (int i = 0; i < boardState.length; ++i) {
-                GoStoneColor state = boardState[i];
+                StoneColor state = boardState[i];
 
                 int x = i % boardWidth;
                 int y = i / boardWidth;
@@ -230,18 +229,18 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardAnnotationRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            Set<GoAnnotation> annotations = manager.model.getCurrentGameState().getAnnotations();
+            Set<Annotation> annotations = manager.model.getCurrentGameState().getAnnotations();
 
-            for (GoAnnotation annotation : annotations) {
+            for (Annotation annotation : annotations) {
                 AnnotationRenderer.render(annotation, g, manager);
             }
 
-            var primaryMove = Objects.requireNonNull(manager.model.getCurrentMove().getData()).getPrimaryMove();
+            var primaryMove = Objects.requireNonNull(manager.model.getCurrentMove().getStateDelta()).getPrimaryMove();
             if (primaryMove != null) {
                 int px = primaryMove.getX();
                 int py = primaryMove.getY();
 
-                AnnotationRenderer.render(new GoAnnotation.Dot(px, py), g, manager);
+                AnnotationRenderer.render(new Annotation.Dot(px, py), g, manager);
             }
         }
 

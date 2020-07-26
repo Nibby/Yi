@@ -5,16 +5,15 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import yi.component.CanvasContainer;
 import yi.component.Component;
-import yi.core.common.EventListener;
-import yi.core.common.NodeEvent;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameStateUpdate;
+import yi.core.go.EventListener;
+import yi.core.go.NodeEvent;
+import yi.core.go.GameModel;
 
 import java.util.Stack;
 
 /**
  * The core interface component that handles the display of the game board, as well as user input to browse
- * and edit {@link GoGameModel} data.
+ * and edit {@link GameModel} data.
  */
 public final class GameBoardViewer implements Component {
 
@@ -22,7 +21,7 @@ public final class GameBoardViewer implements Component {
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
-    private GoGameModel gameModel;
+    private GameModel gameModel;
 
     public GameBoardViewer() {
         this(new GameBoardSettings());
@@ -47,14 +46,14 @@ public final class GameBoardViewer implements Component {
         content.forEach(canvas -> canvas.render(manager));
     }
 
-    private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveUpdateListener = (newCurrentNode) -> update();
+    private final EventListener<NodeEvent> currentMoveUpdateListener = (newCurrentNode) -> update();
 
     /**
      * Invoked when the game board should display a new game model.
      *
      * @param game The game model to subscribe to
      */
-    public void setGameModel(GoGameModel game) {
+    public void setGameModel(GameModel game) {
         if (this.gameModel != null) {
             this.gameModel.onCurrentNodeUpdate().addListener(currentMoveUpdateListener);
         }
@@ -70,8 +69,8 @@ public final class GameBoardViewer implements Component {
     }
 
     /**
-     * Invoked when there is an update to the {@link GoGameModel}.
-     * To change the model used by this game board, call {@link #setGameModel(GoGameModel)} with
+     * Invoked when there is an update to the {@link GameModel}.
+     * To change the model used by this game board, call {@link #setGameModel(GameModel)} with
      * the new model.
      *
      */

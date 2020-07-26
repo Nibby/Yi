@@ -1,4 +1,4 @@
-package yi.core.common
+package yi.core.go
 
 @FunctionalInterface
 interface EventListener<EventType> {

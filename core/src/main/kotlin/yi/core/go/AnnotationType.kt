@@ -1,6 +1,9 @@
 package yi.core.go
 
-enum class GoAnnotationType {
+/**
+ * Lists all the annotation shapes supported by the program.
+ */
+enum class AnnotationType {
 
     CIRCLE,
     TRIANGLE,

@@ -1,13 +1,13 @@
 package yi.component.board.edits;
 
-import yi.core.common.GameNode;
+import yi.core.go.GameNode;
 import yi.core.go.*;
 
 public final class PlayMoveEdit extends UndoableEdit {
 
     private final int moveX;
     private final int moveY;
-    private GameNode<GoGameStateUpdate> submittedNode;
+    private GameNode submittedNode;
 
     public PlayMoveEdit(int moveX, int moveY) {
         this.moveX = moveX;
@@ -15,17 +15,17 @@ public final class PlayMoveEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _rollbackEdit(GoGameModel gameModel) {
+    protected boolean _rollbackEdit(GameModel gameModel) {
         // TODO: Implement later
         return false;
     }
 
     @Override
-    protected boolean _performEdit(GoGameModel gameModel) {
-        GoMoveSubmitResult moveSubmitResult = gameModel.playMove(moveX, moveY);
-        GoMoveValidationResult validationResult = moveSubmitResult.getValidationResult();
+    protected boolean _performEdit(GameModel gameModel) {
+        MoveSubmitResult moveSubmitResult = gameModel.playMove(moveX, moveY);
+        MoveValidationResult validationResult = moveSubmitResult.getValidationResult();
 
-        if (validationResult != GoMoveValidationResult.OK) {
+        if (validationResult != MoveValidationResult.OK) {
 //            throw new IllegalMoveException(validationResult, "Illegal move: " + validationResult.toString());
             return false;
         }

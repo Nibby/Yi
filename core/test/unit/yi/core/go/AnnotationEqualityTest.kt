@@ -2,7 +2,7 @@ package yi.core.go
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import yi.core.go.GoAnnotation.*
+import yi.core.go.Annotation.*
 
 class AnnotationEqualityTest {
 

@@ -1,11 +1,11 @@
 package yi.core.go.rules
 
-import yi.core.go.GoStoneColor
+import yi.core.go.StoneColor
 
 abstract class GoGameRulesHandler {
 
-    fun getStoneColorForTurn(nextMoveNumber: Int): GoStoneColor {
-        return if (nextMoveNumber % 2 == 1) GoStoneColor.BLACK else GoStoneColor.WHITE
+    fun getStoneColorForTurn(nextMoveNumber: Int): StoneColor {
+        return if (nextMoveNumber % 2 == 1) StoneColor.BLACK else StoneColor.WHITE
     }
 
     abstract fun getKomi(): Float

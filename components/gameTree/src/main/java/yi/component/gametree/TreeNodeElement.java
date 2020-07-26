@@ -1,8 +1,8 @@
 package yi.component.gametree;
 
 import org.jetbrains.annotations.Nullable;
-import yi.core.common.GameNode;
-import yi.core.go.GoGameStateUpdate;
+import yi.core.go.GameNode;
+import yi.core.go.StateDelta;
 
 import java.util.Optional;
 
@@ -15,10 +15,10 @@ final class TreeNodeElement implements TreeElement {
     private final int gridY;
 
     private final TreeNodeElement parent;
-    private final GameNode<GoGameStateUpdate> node;
+    private final GameNode node;
     private boolean highlighted = false;
 
-    public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode<GoGameStateUpdate> node, int gridX, int gridY) {
+    public TreeNodeElement(@Nullable TreeNodeElement parent, GameNode node, int gridX, int gridY) {
         this.parent = parent;
         this.node = node;
         this.gridX = gridX;
@@ -53,7 +53,7 @@ final class TreeNodeElement implements TreeElement {
         return highlighted;
     }
 
-    public GameNode<GoGameStateUpdate> getNode() {
+    public GameNode getNode() {
         return node;
     }
 }

@@ -2,11 +2,9 @@ package yi.component.board.edits;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import yi.core.go.GoStoneColor;
 import yi.component.board.GameBoardManager;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import java.util.Optional;
 

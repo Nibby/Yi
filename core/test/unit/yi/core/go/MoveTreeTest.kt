@@ -1,9 +1,7 @@
-package yi.core
+package yi.core.go
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import yi.core.common.GameNode
-import yi.core.common.GameTree
 import java.lang.IllegalArgumentException
 
 /**
@@ -11,23 +9,20 @@ import java.lang.IllegalArgumentException
  */
 class MoveTreeTest {
 
-    /* Filler node data used for testing purposes */
-    private class Data
-
     @Test
     fun `node distance to root calculation is correct`() {
-        val tree = GameTree<Data>()
-        val nodeA = GameNode<Data>()
+        val tree = GameTree()
+        val nodeA = GameNode()
         tree.appendNode(tree.rootNode, nodeA)
 
-        Assertions.assertEquals(0, tree.rootNode.getDistanceToRoot())
-        Assertions.assertEquals(1, nodeA.getDistanceToRoot())
+        Assertions.assertEquals(0, tree.rootNode.moveNumber)
+        Assertions.assertEquals(1, nodeA.moveNumber)
     }
 
     @Test
     fun `linear node path to root is correct`() {
-        val tree = GameTree<Data>()
-        val steps = listOf(GameNode<Data>(), GameNode(), GameNode(), GameNode(), GameNode())
+        val tree = GameTree()
+        val steps = listOf(GameNode(), GameNode(), GameNode(), GameNode(), GameNode())
 
         // Establish linked hierarchy
         for (step in 0..steps.size) {
@@ -41,7 +36,7 @@ class MoveTreeTest {
 
         // Check path to root
         val lastNode = steps[steps.lastIndex]
-        val path = lastNode.getPathToRoot()
+        val path = lastNode.getMoveHistory()
         var nextCorrectNode = tree.rootNode
         for (step in 0..steps.size) {
             val pathNode = path[step]
@@ -55,15 +50,15 @@ class MoveTreeTest {
 
     @Test
     fun `tree has correct root node state`() {
-        val tree = GameTree<Data>()
+        val tree = GameTree()
 
         Assertions.assertTrue(tree.rootNode.isRoot())
     }
 
     @Test
     fun `appendNode() sets correct children on parent node`() {
-        val tree = GameTree<Data>()
-        val firstChild = GameNode<Data>()
+        val tree = GameTree()
+        val firstChild = GameNode()
 
         tree.appendNode(tree.rootNode, firstChild)
 
@@ -72,8 +67,8 @@ class MoveTreeTest {
 
     @Test
     fun `appendNode() sets correct parent on child node`() {
-        val tree = GameTree<Data>()
-        val firstChild = GameNode<Data>()
+        val tree = GameTree()
+        val firstChild = GameNode()
 
         tree.appendNode(tree.rootNode, firstChild)
         Assertions.assertEquals(tree.rootNode, firstChild.parent)
@@ -81,9 +76,9 @@ class MoveTreeTest {
 
     @Test
     fun `appendNode() multiple child on one parent sets correct child order`() {
-        val tree = GameTree<Data>()
-        val firstChild = GameNode<Data>()
-        val secondChild = GameNode<Data>()
+        val tree = GameTree()
+        val firstChild = GameNode()
+        val secondChild = GameNode()
 
         tree.appendNode(tree.rootNode, firstChild)
         tree.appendNode(tree.rootNode, secondChild)
@@ -95,8 +90,8 @@ class MoveTreeTest {
 
     @Test
     fun `removeNode() on leaf correctly sets parent node state`() {
-        val tree = GameTree<Data>()
-        val leaf = GameNode<Data>()
+        val tree = GameTree()
+        val leaf = GameNode()
         tree.appendNode(tree.rootNode, leaf)
 
         tree.removeNode(leaf)
@@ -106,10 +101,10 @@ class MoveTreeTest {
 
     @Test
     fun `removeNode() breaks tree hierarchy and split tree into two`() {
-        val tree = GameTree<Data>()
-        val level1 = GameNode<Data>()
-        val level2 = GameNode<Data>()
-        val level3 = GameNode<Data>()
+        val tree = GameTree()
+        val level1 = GameNode()
+        val level2 = GameNode()
+        val level3 = GameNode()
         tree.appendNode(tree.rootNode, level1)
         tree.appendNode(level1, level2)
         tree.appendNode(level2, level3)
@@ -123,10 +118,10 @@ class MoveTreeTest {
 
     @Test
     fun `removeNodeSubtree() on internal node should make its parent leaf`() {
-        val tree = GameTree<Data>()
-        val level1 = GameNode<Data>()
-        val level2 = GameNode<Data>()
-        val level3 = GameNode<Data>()
+        val tree = GameTree()
+        val level1 = GameNode()
+        val level2 = GameNode()
+        val level3 = GameNode()
         tree.appendNode(tree.rootNode, level1)
         tree.appendNode(level1, level2)
         tree.appendNode(level2, level3)
@@ -141,11 +136,11 @@ class MoveTreeTest {
 
     @Test
     fun `removing node on treeA from treeB should fail`() {
-        val treeA = GameTree<Data>()
-        val nodeA = GameNode<Data>()
+        val treeA = GameTree()
+        val nodeA = GameNode()
         treeA.appendNode(treeA.rootNode, nodeA)
 
-        val treeB = GameTree<Data>()
+        val treeB = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             treeB.removeNode(nodeA)
@@ -154,11 +149,11 @@ class MoveTreeTest {
 
     @Test
     fun `adding node to treeB when it is already in treeA should fail`() {
-        val treeA = GameTree<Data>()
-        val nodeA = GameNode<Data>()
+        val treeA = GameTree()
+        val nodeA = GameNode()
         treeA.appendNode(nodeA)
 
-        val treeB = GameTree<Data>()
+        val treeB = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             treeB.appendNode(nodeA)
@@ -167,8 +162,8 @@ class MoveTreeTest {
 
     @Test
     fun `appending root node to a parent should fail`() {
-        val treeA = GameTree<Data>()
-        val treeB = GameTree<Data>()
+        val treeA = GameTree()
+        val treeB = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             treeA.appendNode(treeB.rootNode)
@@ -177,7 +172,7 @@ class MoveTreeTest {
 
     @Test
     fun `appending same node as child should fail`() {
-        val treeA = GameTree<Data>()
+        val treeA = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             treeA.appendNode(treeA.rootNode)
@@ -186,19 +181,19 @@ class MoveTreeTest {
 
     @Test
     fun `root node has correct position`() {
-        val treeA = GameTree<Data>()
+        val treeA = GameTree()
 
-        Assertions.assertEquals(0, treeA.rootNode.position)
-        Assertions.assertEquals(0, treeA.rootNode.getDistanceToRoot())
+        Assertions.assertEquals(0, treeA.rootNode.moveNumber)
+        Assertions.assertEquals(0, treeA.rootNode.moveNumber)
     }
 
     @Test
     fun `child node has correct position`() {
-        val treeA = GameTree<Data>()
-        val child1 = GameNode<Data>()
+        val treeA = GameTree()
+        val child1 = GameNode()
         treeA.appendNode(child1)
 
-        Assertions.assertEquals(1, child1.position)
-        Assertions.assertEquals(1, child1.getDistanceToRoot())
+        Assertions.assertEquals(1, child1.moveNumber)
+        Assertions.assertEquals(1, child1.moveNumber)
     }
 }

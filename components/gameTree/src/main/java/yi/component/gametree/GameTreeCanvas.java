@@ -6,8 +6,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
-import yi.core.common.GameNode;
-import yi.core.go.GoGameStateUpdate;
+import yi.core.go.GameNode;
+import yi.core.go.StateDelta;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ final class GameTreeCanvas extends Canvas {
         addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
     }
 
-    public void render(Camera camera, Collection<TreeElement> visibleElements, GameNode<GoGameStateUpdate> currentNode, GameTreeElementSize size) {
+    public void render(Camera camera, Collection<TreeElement> visibleElements, GameNode currentNode, GameTreeElementSize size) {
         graphics.clearRect(0, 0, getWidth(), getHeight());
         graphics.setStroke(Color.BLACK);
         graphics.setLineWidth(2d);
@@ -55,7 +55,7 @@ final class GameTreeCanvas extends Canvas {
         renderNodes(nodeElements, currentNode, gridWidth, gridHeight, offsetX, offsetY);
     }
 
-    private void renderNodes(Collection<TreeNodeElement> nodeElements, GameNode<GoGameStateUpdate> currentNode, double gridWidth, double gridHeight, double offsetX, double offsetY) {
+    private void renderNodes(Collection<TreeNodeElement> nodeElements, GameNode currentNode, double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (var nodeElement : nodeElements) {
             double x = nodeElement.getGridX() * gridWidth + offsetX;
             double y = nodeElement.getGridY() * gridHeight + offsetY;

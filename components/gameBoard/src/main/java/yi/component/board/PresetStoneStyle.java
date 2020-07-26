@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
-import yi.core.go.GoStoneColor;
+import yi.core.go.StoneColor;
 
 public enum PresetStoneStyle {
 
@@ -19,14 +19,14 @@ public enum PresetStoneStyle {
         DropShadow dropShadow = null;
 
         @Override
-        public void _render(GraphicsContext g, GameBoardManager manager, GoStoneColor color, double x, double y, double size) {
+        public void _render(GraphicsContext g, GameBoardManager manager, StoneColor color, double x, double y, double size) {
             updateDropShadowIfNecessary(manager);
 
             RadialGradient gradient = null;
 
-            if (color == GoStoneColor.BLACK)
+            if (color == StoneColor.BLACK)
                 gradient = blackGradient;
-            if (color == GoStoneColor.WHITE)
+            if (color == StoneColor.WHITE)
                 gradient = whiteGradient;
 
             if (gradient != null) {
@@ -67,9 +67,9 @@ public enum PresetStoneStyle {
         }
     };
 
-    protected abstract void _render(GraphicsContext g, GameBoardManager manager, GoStoneColor color, double x, double y, double size);
+    protected abstract void _render(GraphicsContext g, GameBoardManager manager, StoneColor color, double x, double y, double size);
 
-    public void render(GraphicsContext g, GameBoardManager manager, GoStoneColor color, int gridX, int gridY) {
+    public void render(GraphicsContext g, GameBoardManager manager, StoneColor color, int gridX, int gridY) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] position = manager.size.getStoneRenderPosition(gridX, gridY);
         double x = position[0];
