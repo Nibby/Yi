@@ -58,14 +58,18 @@ public class Main extends Application {
 //        game.setCurrentMove(goMoveSubmitResult.getMoveNode());
 
         GameBoardViewer board = new GameBoardViewer(Settings.getBoardSettings());
+        board.getComponent().setMinSize(600, 600);
         board.setGameModel(game);
 
         GameTreeViewer tree = new GameTreeViewer(game);
 
-        SplitPane content = new SplitPane(board.getComponent());
+        SplitPane content = new SplitPane(board.getComponent(), tree.getComponent());
         content.setDividerPosition(0, 0.7d);
+        SplitPane.setResizableWithParent(tree.getComponent(), false);
 
-        Scene scene = new Scene(content, 800, 600);
+        Scene scene = new Scene(content, 900, 600);
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
