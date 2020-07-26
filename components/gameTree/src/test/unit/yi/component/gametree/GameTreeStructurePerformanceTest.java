@@ -1,5 +1,188 @@
 package yi.component.gametree;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import yi.core.common.GameNode;
+import yi.core.go.GoGameModel;
+import yi.core.go.GoGameStateUpdate;
+import yi.core.go.GoMoveValidationResult;
+import yi.core.go.rules.GoGameRulesHandler;
+
+import java.util.concurrent.TimeUnit;
+
 public class GameTreeStructurePerformanceTest {
-    // TODO: Implement me
+
+    @Test
+    public void testVerticalGrowth_300Nodes_FastEnough() {
+        testPerformance(createModelWithMainVariation(300), 10);
+    }
+
+    @Test
+    public void testVerticalGrowth_600Nodes_FastEnough() {
+        testPerformance(createModelWithMainVariation(600), 10);
+    }
+
+    @Test
+    public void testVerticalGrowth_1200Nodes_FastEnough() {
+        testPerformance(createModelWithMainVariation(1200), 20);
+    }
+
+    @Test
+    public void testVerticalGrowth_3000Nodes_FastEnough() {
+        testPerformance(createModelWithMainVariation(3000), 30);
+    }
+
+    @Test
+    public void testManyBranches_300Branches_FastEnough() {
+        var model = createModelWithMainVariation(400);
+
+        // Create a branch of size 1 on each node in the main variation
+        for (int i = 0; i < 300; ++i) {
+            playMoveSomewhereVacant(model);
+            model.toPreviousMove();
+            model.toNextMove();
+        }
+
+        testPerformance(model, 30);
+    }
+
+    @Test
+    public void testManyBranches_600Branches_FastEnough() {
+        var model = createModelWithMainVariation(300);
+
+        for (int i = 0; i < 300; ++i) {
+            playMoveSomewhereVacant(model);
+            playMoveSomewhereVacant(model);
+            model.toPreviousMove();
+            playMoveSomewhereVacant(model);
+            model.toPreviousMove(2);
+            model.toNextMove();
+        }
+
+        testPerformance(model, 80);
+    }
+
+    @Test
+    public void testManyBranches_1200Branches_FastEnough() {
+        var model = createModelWithMainVariation(300);
+
+        for (int i = 0; i < 400; ++i) {
+            playMoveSomewhereVacant(model);
+            playMoveSomewhereVacant(model);
+            playMoveSomewhereVacant(model);
+            model.toPreviousMove(2);
+            playMoveSomewhereVacant(model);
+            model.toPreviousMove();
+            model.toNextMove();
+            playMoveSomewhereVacant(model);
+            model.toPreviousMove(3);
+        }
+
+        testPerformance(model, 60);
+    }
+
+    @Test
+    public void testManyBranches_3000Branches_FastEnough() {
+        var model = createModelWithMainVariation(500);
+
+        for (int i = 0; i < 500; ++i) {
+
+            // Create six branches for every node in the main variation
+            for (int j = 0; j < 6; ++j) {
+                playMoveSomewhereVacant(model);
+                playMoveSomewhereVacant(model);
+                playMoveSomewhereVacant(model);
+                playMoveSomewhereVacant(model);
+                playMoveSomewhereVacant(model);
+                model.toPreviousMove(4);
+            }
+
+            model.toPreviousMove(6);
+            model.toNextMove();
+        }
+
+        testPerformance(model, 300);
+    }
+
+    private void playMoveSomewhereVacant(GoGameModel model) {
+        int w = model.getBoardWidth();
+        int h = model.getBoardHeight();
+
+        var children = model.getCurrentMove().getChildren();
+
+        for (int x = 0; x < w; x++) {
+            seekNext:
+            for (int y = 0; y < h; y++) {
+
+                // Ensure the move we play will definitely create a new node instead of re-using an existing one
+                // because another child has already played there.
+                for (GameNode<GoGameStateUpdate> child : children) {
+                    if (child.getData() != null && child.getData().getPrimaryMove() != null) {
+                        var move = child.getData().getPrimaryMove();
+                        if (move.getY() == y && move.getX() == x)
+                            continue seekNext;
+                    }
+                }
+
+                boolean success = model.playMove(x, y).getValidationResult() == GoMoveValidationResult.OK;
+
+                if (success) {
+                    return;
+                }
+            }
+        }
+    }
+
+    private void testPerformance(GoGameModel model, long expectedDurationMillis) {
+        double startTime = System.nanoTime();
+        new GameTreeStructure(model);
+        double endTime = System.nanoTime();
+
+        double timeElapsed = endTime - startTime;
+        long timeElapsedMillis = TimeUnit.NANOSECONDS.toMillis(Math.round(timeElapsed));
+
+        Assertions.assertTrue(timeElapsedMillis < expectedDurationMillis,
+                "Took " + timeElapsedMillis + "ms to construct tree structure, expected " + expectedDurationMillis + "ms");
+    }
+
+    private GoGameModel createModelWithMainVariation(int nodeCount) {
+        int boardWidth = (int) Math.round(Math.sqrt(nodeCount) + 1);
+        int boardHeight = (int) Math.round(Math.sqrt(nodeCount) + 1);
+
+        var model = new GoGameModel(boardWidth, boardHeight, new TestingRules());
+
+        int x = 0;
+        int y = 0;
+
+        for (int i = 0; i < nodeCount; ++i) {
+            model.beginMoveSequence()
+                    .playMove(x, y);
+
+            x++;
+            if (x >= boardWidth) {
+                x = 0;
+                y++;
+
+                if (y >= boardHeight) {
+                    throw new IllegalStateException("Unexpected number of vertical nodes (too many)!");
+                }
+            }
+        }
+
+        model.toPreviousMove(boardWidth * boardHeight - 1);
+        return model;
+    }
+
+    private static final class TestingRules extends GoGameRulesHandler {
+
+        @Override
+        public float getKomi() {
+            return 0;
+        }
+
+        @Override
+        public boolean allowSuicideMoves() {
+            return false;
+        }
+    }
 }
