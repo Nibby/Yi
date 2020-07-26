@@ -1,10 +1,10 @@
-name: Run tests on 'dev'
+name: Tests on 'development'
 
 on:
   push:
-    branches: [ master, development ]
+    branches: [ development ]
   pull_request:
-    branches: [ master, development ]
+    branches: [ development ]
 
 jobs:
   tests:
