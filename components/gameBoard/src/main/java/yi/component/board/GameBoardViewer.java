@@ -1,13 +1,13 @@
 package yi.component.board;
 
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import yi.component.CanvasContainer;
 import yi.component.Component;
 import yi.core.go.EventListener;
-import yi.core.go.NodeEvent;
 import yi.core.go.GameModel;
+import yi.core.go.NodeEvent;
 
 import java.util.Stack;
 
@@ -100,7 +100,7 @@ public final class GameBoardViewer implements Component {
     }
 
     @Override
-    public Parent getComponent() {
+    public Pane getComponent() {
         return container;
     }
 }
