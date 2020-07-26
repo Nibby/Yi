@@ -1,9 +1,8 @@
 package yi.component.gametree;
 
 import org.jetbrains.annotations.Nullable;
-import yi.core.common.GameNode;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameStateUpdate;
+import yi.core.go.GameNode;
+import yi.core.go.GameModel;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,10 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 final class GameTreeStructure {
 
-    private final GoGameModel gameModel;
+    private final GameModel gameModel;
     private final TreeElementManager treeElementManager;
 
-    public GameTreeStructure(GoGameModel gameModel) {
+    public GameTreeStructure(GameModel gameModel) {
         this.gameModel = gameModel;
         this.treeElementManager = new TreeElementManager();
 
@@ -29,11 +28,7 @@ final class GameTreeStructure {
 
     public void reconstruct() {
         treeElementManager.reset();
-
-        var currentMove = gameModel.getCurrentMove();
-        var rootMove = currentMove.getRoot();
-
-        createSubtree(null, rootMove);
+        createSubtree(null, gameModel.getRootNode());
     }
 
     /*
@@ -46,7 +41,7 @@ final class GameTreeStructure {
      * Branches are created from the child variation first so that variations closer towards the
      * root of the tree grows outwards.
      */
-    private void createSubtree(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> treeParent) {
+    private void createSubtree(TreeNodeElement parentElement, GameNode treeParent) {
         var nodesToCreateSubtree = new Stack<TreeNodeElement>();
         var currentNode = treeParent;
 
@@ -55,28 +50,20 @@ final class GameTreeStructure {
         while (currentNode != null) {
             var currentNodeElement = treeElementManager.addNode(lastParent, currentNode, treeParent);
 
-            if (currentNode.hasOtherVariations()) {
+            if (currentNode.hasAlternativeNextMoves()) {
                 // Revisit this later to create its subtree
                 nodesToCreateSubtree.push(currentNodeElement);
             }
 
             lastParent = currentNodeElement;
-
-            if (currentNode.getChildren().size() == 0) {
-                currentNode = null;
-            } else {
-                currentNode = currentNode.getChildren().get(0);
-            }
+            currentNode = currentNode.getNextMoveInMainBranch();
         }
 
         while (nodesToCreateSubtree.size() > 0) {
             var branchingPoint = nodesToCreateSubtree.pop();
-            var children = branchingPoint.getNode().getChildren();
+            var variations = branchingPoint.getNode().getNextMovesExcludingMainBranch();
 
-            for (var child : children) {
-                if (children.indexOf(child) == 0)
-                    continue; // Main variation, already built from the while loop above, so we skip it here.
-
+            for (var child : variations) {
                 // As a MVP I think this recursion is fine. However...
                 // If this starts to throw StackOverflowException, it's probably because the game file has
                 // too many variations. We might have to consider a different approach at that point...
@@ -115,7 +102,7 @@ final class GameTreeStructure {
     private static final class TreeElementManager {
 
         private Collection<TreeElement> allElements = new HashSet<>();
-        private Collection<TreeNodeElement> nodeElements = new HashSet<>();
+        private final Collection<TreeNodeElement> nodeElements = new HashSet<>();
         private TreeElementPositionStorage positionStorage = new TreeElementPositionStorage();
         private TreeElement currentHighlight;
 
@@ -136,7 +123,7 @@ final class GameTreeStructure {
          * @param firstNodeInThisBranch The first node in the branch of <code>nodeToAdd</code>
          * @return A new {@link TreeNodeElement} that wraps the <code>nodeToAdd</code>
          */
-        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
             var nodeElement = positionStorage.addNode(parentElement, nodeToAdd, firstNodeInThisBranch);
             allElements.add(nodeElement);
             nodeElements.add(nodeElement);
@@ -184,9 +171,9 @@ final class GameTreeStructure {
     private static final class TreeElementPositionStorage {
 
         private final Map<Integer, Map<Integer, TreeElement>> elementPositions = new HashMap<>();
-        private final Map<GameNode<GoGameStateUpdate>, Integer> branchHeadToColumn = new HashMap<>();
+        private final Map<GameNode, Integer> branchHeadToColumn = new HashMap<>();
 
-        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
             int[] vacantPosition = prepareForNextNode(nodeParent, nodeToAdd, firstNodeInThisBranch);
             int x = vacantPosition[0];
             int y = vacantPosition[1];
@@ -232,7 +219,7 @@ final class GameTreeStructure {
          *
          * @throws IllegalArgumentException If the element is not part of the position storage.
          */
-        private int[] prepareForNextNode(@Nullable TreeNodeElement parentElement, GameNode<GoGameStateUpdate> nodeToAdd, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+        private int[] prepareForNextNode(@Nullable TreeNodeElement parentElement, GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
             if (nodeToAdd.equals(firstNodeInThisBranch)) {
                 if (!branchHeadToColumn.containsKey(firstNodeInThisBranch)) {
                     computeColumnForNewBranch(parentElement, firstNodeInThisBranch);
@@ -311,7 +298,7 @@ final class GameTreeStructure {
             Determines a suitable column to house all the nodes in the new branch such that all the nodes will be
             displayed in a single column.
          */
-        private void computeColumnForNewBranch(@Nullable TreeNodeElement parentElementOfFirstNode, GameNode<GoGameStateUpdate> firstNodeInThisBranch) {
+        private void computeColumnForNewBranch(@Nullable TreeNodeElement parentElementOfFirstNode, GameNode firstNodeInThisBranch) {
             int columnToUse = parentElementOfFirstNode != null ? parentElementOfFirstNode.getGridX() + 1 : 0; // Use first column for root
             int currentGridY = parentElementOfFirstNode != null ? parentElementOfFirstNode.getGridY() + 1 : 0; // Use first row for root
 
@@ -321,11 +308,11 @@ final class GameTreeStructure {
                 while (isPositionOccupied(columnToUse, currentGridY)) {
                     ++columnToUse;
                 }
-                
-                var children = currentNode.getChildren();
 
-                if (children.size() > 0) {
-                    currentNode = children.get(0);
+                var nextMove = currentNode.getNextMoveInMainBranch();
+
+                if (nextMove != null) {
+                    currentNode = nextMove;
                     ++currentGridY;
                 } else {
                     break;

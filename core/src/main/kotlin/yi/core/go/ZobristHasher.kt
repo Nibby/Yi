@@ -4,19 +4,19 @@ import java.lang.IllegalStateException
 import kotlin.random.Random
 
 /**
- * A simple XOR state hasher for [GoGameState].
+ * A simple XOR state hasher for [GameState].
  * <p/>
  * See https://en.wikipedia.org/wiki/Zobrist_hashing for more information.
  */
-class GoZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) : GoStateHasher {
+class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) : GameStateHasher {
 
     private val intersectionCount = boardWidth * boardHeight
-    private var hashLookup = Array<Long>(intersectionCount * GoStoneColor.values().size) { 0 }
+    private var hashLookup = Array<Long>(intersectionCount * StoneColor.values().size) { 0 }
 
     init {
         val usedNumbers: HashSet<Long> = HashSet()
 
-        for (state in GoStoneColor.values().indices) {
+        for (state in StoneColor.values().indices) {
             for (index in 0 until intersectionCount) {
                 var uniqueStateHash = Random.nextLong()
                 var retries = 0
@@ -38,7 +38,7 @@ class GoZobristHasher constructor(private val boardWidth: Int, boardHeight: Int)
         }
     }
 
-    override fun computeStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
+    override fun computeStateHash(state: GameState, boardWidth: Int, boardHeight: Int): Long {
         val position = state.gamePosition
         var hash = computeEmptyPositionHash(boardWidth, boardHeight)
 
@@ -50,7 +50,7 @@ class GoZobristHasher constructor(private val boardWidth: Int, boardHeight: Int)
         return hash
     }
 
-    override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<GoStoneData>): Long {
+    override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<Stone>): Long {
         var newHash = lastStateHash
 
         stoneUpdates.forEach { update ->
@@ -61,11 +61,11 @@ class GoZobristHasher constructor(private val boardWidth: Int, boardHeight: Int)
         return newHash
     }
 
-    private fun getHashValue(data: GoStoneData): Long {
+    private fun getHashValue(data: Stone): Long {
         return getHashValue(data.stoneColor, data.x + data.y * boardWidth)
     }
 
-    private fun getHashValue(color: GoStoneColor, position: Int): Long {
+    private fun getHashValue(color: StoneColor, position: Int): Long {
         return hashLookup[color.index * intersectionCount + position]
     }
 }

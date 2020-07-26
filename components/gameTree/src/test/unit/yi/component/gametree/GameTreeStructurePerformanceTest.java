@@ -2,10 +2,9 @@ package yi.component.gametree;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import yi.core.common.GameNode;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameStateUpdate;
-import yi.core.go.GoMoveValidationResult;
+import yi.core.go.GameNode;
+import yi.core.go.GameModel;
+import yi.core.go.MoveValidationResult;
 import yi.core.go.rules.GoGameRulesHandler;
 
 import java.util.concurrent.TimeUnit;
@@ -104,11 +103,11 @@ public class GameTreeStructurePerformanceTest {
         testPerformance(model, 300);
     }
 
-    private void playMoveSomewhereVacant(GoGameModel model) {
+    private void playMoveSomewhereVacant(GameModel model) {
         int w = model.getBoardWidth();
         int h = model.getBoardHeight();
 
-        var children = model.getCurrentMove().getChildren();
+        var nextMoves = model.getCurrentMove().getNextMoves();
 
         for (int x = 0; x < w; x++) {
             seekNext:
@@ -116,15 +115,16 @@ public class GameTreeStructurePerformanceTest {
 
                 // Ensure the move we play will definitely create a new node instead of re-using an existing one
                 // because another child has already played there.
-                for (GameNode<GoGameStateUpdate> child : children) {
-                    if (child.getData() != null && child.getData().getPrimaryMove() != null) {
-                        var move = child.getData().getPrimaryMove();
+                for (GameNode nextMove : nextMoves) {
+                    nextMove.getStateDelta();
+                    if (nextMove.getStateDelta().getPrimaryMove() != null) {
+                        var move = nextMove.getStateDelta().getPrimaryMove();
                         if (move.getY() == y && move.getX() == x)
                             continue seekNext;
                     }
                 }
 
-                boolean success = model.playMove(x, y).getValidationResult() == GoMoveValidationResult.OK;
+                boolean success = model.playMove(x, y).getValidationResult() == MoveValidationResult.OK;
 
                 if (success) {
                     return;
@@ -133,7 +133,7 @@ public class GameTreeStructurePerformanceTest {
         }
     }
 
-    private void testPerformance(GoGameModel model, long expectedDurationMillis) {
+    private void testPerformance(GameModel model, long expectedDurationMillis) {
         double startTime = System.nanoTime();
         new GameTreeStructure(model);
         double endTime = System.nanoTime();
@@ -145,11 +145,11 @@ public class GameTreeStructurePerformanceTest {
                 "Took " + timeElapsedMillis + "ms to construct tree structure, expected " + expectedDurationMillis + "ms");
     }
 
-    private GoGameModel createModelWithMainVariation(int nodeCount) {
+    private GameModel createModelWithMainVariation(int nodeCount) {
         int boardWidth = (int) Math.round(Math.sqrt(nodeCount) + 1);
         int boardHeight = (int) Math.round(Math.sqrt(nodeCount) + 1);
 
-        var model = new GoGameModel(boardWidth, boardHeight, new TestingRules());
+        var model = new GameModel(boardWidth, boardHeight, new TestingRules());
 
         int x = 0;
         int y = 0;

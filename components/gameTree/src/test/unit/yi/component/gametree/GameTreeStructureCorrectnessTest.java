@@ -1,9 +1,8 @@
 package yi.component.gametree;
 
 import org.junit.jupiter.api.Test;
-import yi.core.common.GameNode;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameStateUpdate;
+import yi.core.go.GameNode;
+import yi.core.go.GameModel;
 import yi.core.go.rules.GoGameRulesHandler;
 
 import java.util.Collection;
@@ -29,7 +28,7 @@ public class GameTreeStructureCorrectnessTest {
 
     @Test
     public void testLinearSequence() {
-        var model = new GoGameModel(3, 3, new TestingRules());
+        var model = new GameModel(3, 3, new TestingRules());
         model.beginMoveSequence()
                 .playMove(0, 0)
                 .playMove(0, 1)
@@ -48,7 +47,7 @@ public class GameTreeStructureCorrectnessTest {
 
     @Test
     public void testWithOneSideBranch() {
-        var model = new GoGameModel(3, 3, new TestingRules());
+        var model = new GameModel(3, 3, new TestingRules());
         model.beginMoveSequence()
                 .playMove(0, 0)
                 .playMove(0, 1);
@@ -86,7 +85,7 @@ public class GameTreeStructureCorrectnessTest {
 
     @Test
     public void testWithThreeSideBranch() {
-        var model = new GoGameModel(3, 3, new TestingRules());
+        var model = new GameModel(3, 3, new TestingRules());
         model.beginMoveSequence()
                 .playMove(0, 0)
                 .playMove(0, 1);
@@ -118,7 +117,7 @@ public class GameTreeStructureCorrectnessTest {
 
     @Test
     public void testBranches_createNewVariationDownstream_PushesParentVariationsOutwards() {
-        var model = new GoGameModel(3, 3, new TestingRules());
+        var model = new GameModel(3, 3, new TestingRules());
 
         // Setup test
         model.beginMoveSequence()
@@ -160,7 +159,7 @@ public class GameTreeStructureCorrectnessTest {
 
     @Test
     public void testColumnAdjust_LongTrackBelow_AncestorVariationDoesNotIntersect() {
-        var model = new GoGameModel(3, 3, new TestingRules());
+        var model = new GameModel(3, 3, new TestingRules());
 
         // Build main branch
         model.beginMoveSequence()
@@ -220,7 +219,7 @@ public class GameTreeStructureCorrectnessTest {
 
     @Test
     public void testColumnAdjust_LongAncestorBranches_FindsNewColumnOnRight() {
-        var model = new GoGameModel(3, 3, new TestingRules());
+        var model = new GameModel(3, 3, new TestingRules());
 
         // Build main branch
         model.beginMoveSequence()
@@ -322,7 +321,7 @@ public class GameTreeStructureCorrectnessTest {
         testTreeStructure(model, new GameTreeStructure(model), expectedStructure);
     }
 
-    private void testTreeStructure(GoGameModel model, GameTreeStructure structure, String[] expectedStructure) {
+    private void testTreeStructure(GameModel model, GameTreeStructure structure, String[] expectedStructure) {
         boolean[][] grids = generateExpectedGridSpace(expectedStructure);
         boolean[][] actualGrid = new boolean[grids.length][grids[0].length];
 
@@ -352,17 +351,17 @@ public class GameTreeStructureCorrectnessTest {
         assertArrayEquals(expectedStructure, actualStructure, "Actual structure may be incomplete as only the space defined by the expected structure is checked.");
 
         // Check the branch nodes in detail
-        testBranch(model.getCurrentMove().getRoot(), structure, grids);
+        testBranch(model.getRootNode(), structure, grids);
     }
 
-    private void testBranch(GameNode<GoGameStateUpdate> node, GameTreeStructure structure, boolean[][] grids) {
+    private void testBranch(GameNode node, GameTreeStructure structure, boolean[][] grids) {
         var currentNode = node;
         Collection<TreeElement> allElements = structure.getAllElements();
 
         while (currentNode != null) {
             // 1. Test whether an element is there
             // 2. Test element-to-node correspondence
-            GameNode<GoGameStateUpdate> finalCurrentNode = currentNode;
+            GameNode finalCurrentNode = currentNode;
             Optional<TreeElement> elementOfNode = allElements.parallelStream()
                     .filter(element -> element instanceof TreeNodeElement && ((TreeNodeElement) element).getNode().equals(finalCurrentNode))
                     .findAny();
@@ -377,14 +376,9 @@ public class GameTreeStructureCorrectnessTest {
             String errorMessage = String.format("Unexpected node at %d,%d : '%s'", elementX, elementY, currentNode.toString());
             assertTrue(grids[elementX][elementY], errorMessage);
 
-            var children = currentNode.getChildren();
+            var children = currentNode.getNextMoves();
             if (children.size() > 0) {
-                if (children.size() > 1) {
-                    for (int i = 1; i < children.size(); ++i) {
-                        testBranch(children.get(i), structure, grids);
-                    }
-                }
-
+                currentNode.getNextMovesExcludingMainBranch().forEach(move -> testBranch(move, structure, grids));
                 currentNode = children.get(0);
             } else {
                 break;

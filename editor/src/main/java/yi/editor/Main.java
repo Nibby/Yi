@@ -7,8 +7,8 @@ import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameRules;
+import yi.core.go.GameModel;
+import yi.core.go.GameRules;
 import yi.editor.settings.Settings;
 
 public class Main extends Application {
@@ -18,7 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Settings.load();
-        GoGameModel game = new GoGameModel(19, 19, GoGameRules.CHINESE);
+        GameModel game = new GameModel(19, 19, GameRules.CHINESE);
 //        game.beginMoveSequence()
 //                .playMove(0, 0)
 //                .playMove(1, 0)

@@ -1,11 +1,11 @@
 package yi.component.board.edits;
 
-import yi.core.go.GoGameModel;
+import yi.core.go.GameModel;
 
 public abstract class UndoableEdit implements Undoable {
 
     @Override
-    public boolean rollbackEdit(GoGameModel gameModel) {
+    public boolean rollbackEdit(GameModel gameModel) {
         if (!canRollback())
             throw new IllegalStateException();
 
@@ -13,13 +13,13 @@ public abstract class UndoableEdit implements Undoable {
     }
 
     @Override
-    public boolean performEdit(GoGameModel gameModel) {
+    public boolean performEdit(GameModel gameModel) {
         return _performEdit(gameModel);
     }
 
-    protected abstract boolean _rollbackEdit(GoGameModel gameModel);
+    protected abstract boolean _rollbackEdit(GameModel gameModel);
 
-    protected abstract boolean _performEdit(GoGameModel gameModel);
+    protected abstract boolean _performEdit(GameModel gameModel);
 
     protected abstract boolean canRollback();
 }

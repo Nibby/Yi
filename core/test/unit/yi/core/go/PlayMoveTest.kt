@@ -9,7 +9,7 @@ class PlayMoveTest {
 
     @Test
     fun `play first legal move has correct move tree state`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         val result = model.playMove(0, 0)
 
@@ -18,18 +18,18 @@ class PlayMoveTest {
 
     @Test
     fun `play first legal move returns correct move submission result`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         val moveSubmitResult = model.playMove(0, 0)
 
-        Assertions.assertEquals(GoMoveValidationResult.OK, moveSubmitResult.validationResult)
+        Assertions.assertEquals(MoveValidationResult.OK, moveSubmitResult.validationResult)
         Assertions.assertNotNull(moveSubmitResult.moveNode)
         Assertions.assertTrue(moveSubmitResult.played)
     }
 
     @Test
     fun `play first legal move resolves to correct board position`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         val moveSubmitResult = model.playMove(0, 0)
         val newNode = moveSubmitResult.moveNode
@@ -37,12 +37,12 @@ class PlayMoveTest {
         val firstMoveGameState = model.getGameState(newNode!!)
         val stoneColorAtPlayedMove = firstMoveGameState.gamePosition.getStoneColorAt(0, 0)
 
-        Assertions.assertEquals(GoStoneColor.BLACK, stoneColorAtPlayedMove)
+        Assertions.assertEquals(StoneColor.BLACK, stoneColorAtPlayedMove)
     }
 
     @Test
     fun `play five consecutive moves all have correct stone color`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         val moveSubmitResult = model.playMove(0, 0)
         val newNode = moveSubmitResult.moveNode
@@ -50,12 +50,12 @@ class PlayMoveTest {
         val firstMoveGameState = model.getGameState(newNode!!)
         val stoneColorAtPlayedMove = firstMoveGameState.gamePosition.getStoneColorAt(0, 0)
 
-        Assertions.assertEquals(GoStoneColor.BLACK, stoneColorAtPlayedMove)
+        Assertions.assertEquals(StoneColor.BLACK, stoneColorAtPlayedMove)
     }
 
     @Test
     fun `one stone capture works`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         // Play black stone in the corner
         model.beginMoveSequence()
@@ -66,12 +66,12 @@ class PlayMoveTest {
 
         val gameState = model.getGameState(model.getCurrentMove())
         Assertions.assertEquals(1, gameState.prisonersWhite)
-        Assertions.assertEquals(GoStoneColor.NONE, gameState.gamePosition.getStoneColorAt(0, 0))
+        Assertions.assertEquals(StoneColor.NONE, gameState.gamePosition.getStoneColorAt(0, 0))
     }
 
     @Test
     fun `connected string capture works with primary moves`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         // Black plays three stones along the 1st column, white surrounds it on the 2nd column
         model.beginMoveSequence()
@@ -87,17 +87,17 @@ class PlayMoveTest {
         Assertions.assertEquals(3, currentState.prisonersWhite)
 
         // Check that stones are actually captured
-        Assertions.assertEquals(GoStoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 0))
-        Assertions.assertEquals(GoStoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 1))
-        Assertions.assertEquals(GoStoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 2))
-        Assertions.assertEquals(GoStoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 0))
-        Assertions.assertEquals(GoStoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 1))
-        Assertions.assertEquals(GoStoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 2))
+        Assertions.assertEquals(StoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 0))
+        Assertions.assertEquals(StoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 1))
+        Assertions.assertEquals(StoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 2))
+        Assertions.assertEquals(StoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 0))
+        Assertions.assertEquals(StoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 1))
+        Assertions.assertEquals(StoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 2))
     }
 
     @Test
     fun `game model state hash is correct after playing two legal moves`() {
-        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -106,13 +106,13 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(2, stateHashHistory.size)
-        Assertions.assertEquals(13, model.getCurrentMove().data!!.stateHash) // 0100b xor 1001b = 1101b (13)
-        Assertions.assertEquals(4, model.getCurrentMove().parent!!.data!!.stateHash) // 0100b (4)
+        Assertions.assertEquals(13, model.getCurrentMove().stateDelta.stateHash) // 0100b xor 1001b = 1101b (13)
+        Assertions.assertEquals(4, model.getCurrentMove().parent!!.stateDelta.stateHash) // 0100b (4)
     }
 
     @Test
     fun `game model state hash ignores pass moves`() {
-        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -121,12 +121,12 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.getCurrentMove().parent!!.data!!.stateHash) // 0100b (4)
+        Assertions.assertEquals(4, model.getCurrentMove().parent!!.stateDelta.stateHash) // 0100b (4)
     }
 
     @Test
     fun `game model state hash ignores resignation moves`() {
-        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -135,12 +135,12 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.getCurrentMove().parent!!.data!!.stateHash) // 0100b (4)
+        Assertions.assertEquals(4, model.getCurrentMove().parent!!.stateDelta.stateHash) // 0100b (4)
     }
 
     @Test
     fun `played move with no liberty but captures opponent stones is allowed`() {
-        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -151,12 +151,12 @@ class PlayMoveTest {
 
         val result = model.playMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
 
-        Assertions.assertEquals(GoMoveValidationResult.OK, result.validationResult)
+        Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
     }
 
     @Test
     fun `ko recapture is illegal`() {
-        val model = GoGameModel(3, 3, TestingGameRulesNoSuicide())
+        val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -170,12 +170,12 @@ class PlayMoveTest {
         // This move should now be illegal because 1,0 was just captured
         val submitResult = model.playMove(1, 0)
 
-        Assertions.assertEquals(GoMoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
+        Assertions.assertEquals(MoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
     }
 
     @Test
     fun `suicidal move not allowed on rules that prohibit suicide`() {
-        val model = GoGameModel(2, 2, TestingGameRulesNoSuicide())
+        val model = GameModel(2, 2, TestingGameRulesNoSuicide())
 
         model.beginMoveSequence()
                 .playMove(1, 0)
@@ -184,12 +184,12 @@ class PlayMoveTest {
 
         val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties)
 
-        Assertions.assertEquals(GoMoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
+        Assertions.assertEquals(MoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
     }
 
     @Test
     fun `suicidal move is playable on rules that allow suicide`() {
-        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(1, 0)
@@ -201,24 +201,24 @@ class PlayMoveTest {
 
         val submitResult = model.playMove(0, 0) // Tries to play inside black territory (0 liberties
 
-        Assertions.assertEquals(GoMoveValidationResult.OK, submitResult.validationResult)
+        Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
     }
 
     @Test
     fun `board position repeat is illegal on 1x1`() {
-        val model = GoGameModel(1, 1, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+        val model = GameModel(1, 1, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
 
         val result = model.playMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
 
-        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
+        Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
 
     @Test
     fun `board position repeat is illegal on 2x2`() {
-        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -232,12 +232,12 @@ class PlayMoveTest {
 
         val result = model.playMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
 
-        Assertions.assertEquals(GoMoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
+        Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
 
     @Test // Bug picked up from issue #36
     fun `child nodes enumerated properly as moves are played`() {
-        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -251,7 +251,7 @@ class PlayMoveTest {
 
     @Test
     fun `play move at same coordinate as a previous played move will go to that move instead`() {
-        val model = GoGameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
         model.beginMoveSequence()
                 .playMove(0, 0)
@@ -277,7 +277,7 @@ class PlayMoveTest {
     }
 
     // Only supports a 2x2 board for testing purposes
-    private class TestingFourIntersectionXORHasher : GoStateHasher {
+    private class TestingFourIntersectionXORHasher : GameStateHasher {
 
         // Uses the first four bits of a 'byte' to represent unique hash values for each intersection state
         // bit format: SS PP, where S = stone color, P = intersection position
@@ -298,7 +298,7 @@ class PlayMoveTest {
                 8, 9, 10, 11
         )
 
-        override fun computeStateHash(state: GoGameState, boardWidth: Int, boardHeight: Int): Long {
+        override fun computeStateHash(state: GameState, boardWidth: Int, boardHeight: Int): Long {
             val position = state.gamePosition
             var stateHash = computeEmptyPositionHash(boardWidth, boardHeight)
 
@@ -312,7 +312,7 @@ class PlayMoveTest {
             return stateHash
         }
 
-        override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<GoStoneData>): Long {
+        override fun computeUpdateHash(lastStateHash: Long, stoneUpdates: Set<Stone>): Long {
             var newHash = lastStateHash
             stoneUpdates.forEach { update ->
                 newHash = newHash xor getHash(update.stoneColor.index, update.x + update.y * 2)

@@ -5,7 +5,7 @@ package yi.core.go
  * whether a proposed game move is conforming to, or in violation of, the game rules. If a proposed move
  * is acceptable, [OK] is returned. Otherwise, another value is returned detailing the reason for failure.
  */
-enum class GoMoveValidationResult {
+enum class MoveValidationResult {
 
     /** The move is legal and playable. */
     OK,

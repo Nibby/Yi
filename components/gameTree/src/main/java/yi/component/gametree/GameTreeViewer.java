@@ -8,11 +8,10 @@ import javafx.scene.input.ScrollEvent;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
-import yi.core.common.EventListener;
-import yi.core.common.GameNode;
-import yi.core.common.NodeEvent;
-import yi.core.go.GoGameModel;
-import yi.core.go.GoGameStateUpdate;
+import yi.core.go.EventListener;
+import yi.core.go.GameNode;
+import yi.core.go.NodeEvent;
+import yi.core.go.GameModel;
 
 /**
  * A component which displays the game model and its nodes as a tree graph.
@@ -23,11 +22,11 @@ public final class GameTreeViewer implements Component {
     private final GameTreeCanvas canvas;
     private final Camera camera;
 
-    private GoGameModel gameModel;
+    private GameModel gameModel;
     private GameTreeStructure treeStructure;
     private final GameTreeElementSize elementSize;
 
-    public GameTreeViewer(GoGameModel gameModel) {
+    public GameTreeViewer(GameModel gameModel) {
         canvas = new GameTreeCanvas();
         canvas.addInputHandler(new CanvasInputHandler());
 
@@ -46,7 +45,7 @@ public final class GameTreeViewer implements Component {
         updateCameraAndRender(gameModel.getCurrentMove());
     }
 
-    private void updateCameraAndRender(GameNode<GoGameStateUpdate> currentNode) {
+    private void updateCameraAndRender(GameNode currentNode) {
         treeStructure.getNodeElements().parallelStream()
                 .filter(element -> element.getNode().equals(currentNode))
                 .findAny()
@@ -59,14 +58,14 @@ public final class GameTreeViewer implements Component {
         canvas.render(camera, treeStructure.getAllElements(), gameModel.getCurrentMove(), elementSize);
     }
 
-    private final EventListener<NodeEvent<GoGameStateUpdate>> treeStructureChangeListener = (event) -> {
+    private final EventListener<NodeEvent> treeStructureChangeListener = (event) -> {
         treeStructure.reconstruct();
         render();
     };
 
-    private final EventListener<NodeEvent<GoGameStateUpdate>> currentMoveChangeListener = (event) -> updateCameraAndRender(event.getNode());
+    private final EventListener<NodeEvent> currentMoveChangeListener = (event) -> updateCameraAndRender(event.getNode());
 
-    public void setGameModel(@NotNull GoGameModel model) {
+    public void setGameModel(@NotNull GameModel model) {
         if (this.gameModel != null) {
             this.gameModel.onCurrentNodeUpdate().removeListener(currentMoveChangeListener);
             this.gameModel.onNodeAdd().removeListener(treeStructureChangeListener);

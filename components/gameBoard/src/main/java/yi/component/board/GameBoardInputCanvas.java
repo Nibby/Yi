@@ -1,7 +1,7 @@
 package yi.component.board;
 
 import javafx.scene.input.ScrollEvent;
-import yi.core.go.GoGameModel;
+import yi.core.go.GameModel;
 import yi.component.board.edits.EditMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
@@ -41,12 +41,12 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     @Override
-    public void onGameModelSet(GoGameModel model, GameBoardManager manager) {
+    public void onGameModelSet(GameModel model, GameBoardManager manager) {
 
     }
 
     @Override
-    public void onGameUpdate(GoGameModel game, GameBoardManager manager) {
+    public void onGameUpdate(GameModel game, GameBoardManager manager) {
 
     }
 

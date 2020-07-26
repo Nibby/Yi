@@ -1,4 +1,4 @@
-package yi.core.common
+package yi.core.go
 
 /**
  * The super class for providing model events to outgoing sources.

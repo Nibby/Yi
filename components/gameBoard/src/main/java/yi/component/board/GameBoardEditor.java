@@ -1,6 +1,6 @@
 package yi.component.board;
 
-import yi.core.go.GoGameModel;
+import yi.core.go.GameModel;
 import yi.component.board.edits.Undoable;
 
 import java.util.Stack;
@@ -107,7 +107,7 @@ public final class GameBoardEditor {
         this.editable = editable;
     }
 
-    private GoGameModel getGameModelOrCrash(GameBoardManager manager) {
+    private GameModel getGameModelOrCrash(GameBoardManager manager) {
         var gameModel = manager.model.getGameModel();
 
         if (gameModel == null)

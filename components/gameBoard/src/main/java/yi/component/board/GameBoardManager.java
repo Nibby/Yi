@@ -1,9 +1,6 @@
 package yi.component.board;
 
-import yi.core.go.GoGameModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import yi.core.go.GameModel;
 
 /**
  * Main controller class for {@link GameBoardCanvas} state. Receives UI and game events and manages the interaction
@@ -18,16 +15,16 @@ public final class GameBoardManager {
 
     GameBoardManager() { }
 
-    void onGameModelSet(GoGameModel game) {
+    void onGameModelSet(GameModel game) {
         model.setGameModel(game);
         edit.setEditable(true);
     }
 
-    void onBoardSizeUpdate(double componentWidth, double componentHeight, GoGameModel game) {
+    void onBoardSizeUpdate(double componentWidth, double componentHeight, GameModel game) {
         size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.coordinateLabelPosition);
     }
 
-    void onGameUpdate(GoGameModel game) {
+    void onGameUpdate(GameModel game) {
         model.update(game);
     }
 }

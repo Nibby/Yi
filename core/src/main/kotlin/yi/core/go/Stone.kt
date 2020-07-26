@@ -5,7 +5,7 @@ import java.util.*
 /**
  * A tuple that describes the state of a position.
  */
-class GoStoneData constructor(val x: Int, val y: Int, val stoneColor: GoStoneColor) {
+class Stone constructor(val x: Int, val y: Int, val stoneColor: StoneColor) {
 
     /**
      * @return index-based position representation of this stone.
@@ -13,7 +13,7 @@ class GoStoneData constructor(val x: Int, val y: Int, val stoneColor: GoStoneCol
     fun getPosition(boardWidth: Int) = x + y * boardWidth
 
     override fun equals(other: Any?): Boolean {
-        if (other is GoStoneData) {
+        if (other is Stone) {
             return this.x == other.x && this.y == other.y && this.stoneColor == other.stoneColor
         }
 

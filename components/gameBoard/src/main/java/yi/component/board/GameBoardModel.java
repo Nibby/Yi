@@ -1,25 +1,25 @@
 package yi.component.board;
 
 import org.jetbrains.annotations.Nullable;
-import yi.core.common.GameNode;
+import yi.core.go.GameNode;
 import yi.core.go.*;
 
 /**
- * Wraps the current {@link GoGameModel} and provide game information to other board classes.
+ * Wraps the current {@link GameModel} and provide game information to other board classes.
  */
 public final class GameBoardModel {
 
-    private GoGameModel gameModel;
-    private GoGameState currentGameState;
+    private GameModel gameModel;
+    private GameState currentGameState;
 
     GameBoardModel() { }
 
-    public void setGameModel(GoGameModel gameModel) {
+    public void setGameModel(GameModel gameModel) {
         this.gameModel = gameModel;
         update(gameModel);
     }
 
-    public void update(GoGameModel gameModel) {
+    public void update(GameModel gameModel) {
         if (this.gameModel != gameModel) {
             this.gameModel = gameModel;
         }
@@ -27,11 +27,11 @@ public final class GameBoardModel {
         this.currentGameState = this.gameModel.getCurrentGameState();
     }
 
-    public GoGameState getCurrentGameState() {
+    public GameState getCurrentGameState() {
         return currentGameState;
     }
 
-    public GoGamePosition getCurrentGamePosition() {
+    public GamePosition getCurrentGamePosition() {
         return getCurrentGameState().getGamePosition();
     }
 
@@ -43,7 +43,7 @@ public final class GameBoardModel {
         return gameModel.getBoardHeight();
     }
 
-    public GoStoneColor getNextTurnStoneColor() {
+    public StoneColor getNextTurnStoneColor() {
         return gameModel.getNextTurnStoneColor();
     }
 
@@ -55,7 +55,7 @@ public final class GameBoardModel {
         return gameModel.getNextMoveNumber();
     }
 
-    @Nullable GoGameModel getGameModel() {
+    @Nullable GameModel getGameModel() {
         return gameModel;
     }
 
@@ -67,7 +67,7 @@ public final class GameBoardModel {
         gameModel.toNextMove();
     }
 
-    public GameNode<GoGameStateUpdate> getCurrentMove() {
+    public GameNode getCurrentMove() {
         return gameModel.getCurrentMove();
     }
 }
