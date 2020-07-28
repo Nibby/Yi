@@ -22,6 +22,7 @@ public final class Settings {
     private static Path rootPath = null;
 
     private static final Set<SettingsModule> modules = new LinkedHashSet<>();
+
     public static final GeneralSettings general = new GeneralSettings("settings.json");
     public static final GameBoardThemeSettings boardTheme = new GameBoardThemeSettings();
 
@@ -85,6 +86,17 @@ public final class Settings {
         return Paths.get(System.getProperty("user.dir")).toAbsolutePath();
     }
 
+    /**
+     * Alternative method to {@link #readJSON(Path)} that uses string file paths.
+     *
+     * This is a convenience method if the file is at the top-level.
+     *
+     * @param filePath Path of the JSON file
+     * @return The JSON object if the file is parsed successfully, or {@link Optional#empty()} otherwise.
+     * @throws IOException If the file cannot be found or read.
+     *
+     * @see #readJSON(Path)
+     */
     public static Optional<JSONObject> readJSON(String filePath) throws IOException {
         return readJSON(getRootPath().resolve(filePath));
     }
@@ -93,7 +105,7 @@ public final class Settings {
      * Parses a file into a {@link JSONObject}, assuming the filePath is relative to {@link #getRootPath()}.
      * @param filePath Path of the JSON file to read, relative to {@link #getRootPath()}.
      * @return The {@link JSONObject} representation of the file, or {@link Optional#empty()} if the file is not found, or is directory.
-     * @throws IOException See {@link #getRootPath()}.
+     * @throws IOException If the file cannot be found or read.
      */
     public static Optional<JSONObject> readJSON(Path filePath) throws IOException {
         Path settingsFile = getRootPath().resolve(filePath);
@@ -105,7 +117,12 @@ public final class Settings {
         return Optional.of(JSON.read(settingsFile));
     }
 
-    public static GameBoardSettings getBoardSettings() {
+    /**
+     * This is a property-getter, not a settings module.
+     *
+     * @return The current settings to configure each new instance of {@link yi.component.board.GameBoardViewer}.
+     */
+    public static GameBoardSettings getCurrentGameBoardSettings() {
         var settings = new GameBoardSettings();
 
         settings.setBackgroundImage(boardTheme.getBackgroundImage());

@@ -3,12 +3,15 @@ package yi.component.board;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
+import yi.component.board.edits.EditMode;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
 import yi.core.go.NodeEvent;
 
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -64,6 +67,23 @@ public final class GameBoardViewer implements Component {
         content.forEach(canvas -> canvas.onGameModelSet(game, manager));
     }
 
+    /**
+     * Set the edit method to apply when the board receives input events. In order for edits to be made,
+     * the board viewer must be {@link #setEditMode(EditMode) editable}.
+     *
+     * @param editMode The edit method
+     */
+    public void setEditMode(@NotNull EditMode editMode) {
+        Objects.requireNonNull(editMode, "Edit mode cannot be null. To disable editing, use setEditable(false)");
+
+        manager.edit.setEditMode(editMode);
+    }
+
+    /**
+     * Set whether the game model can be edited through the game board editor or not.
+     *
+     * @param editable true if editable
+     */
     public void setEditable(boolean editable) {
         manager.edit.setEditable(editable);
     }

@@ -23,7 +23,7 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
 
         override fun equals(other: Any?): Boolean {
             other?.let {
-                if (other is Annotation.PointAnnotation) {
+                if (other is PointAnnotation) {
                     return this.type == other.type && this.x == other.x && this.y == other.y
                 }
             }
@@ -39,21 +39,23 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
         }
     }
 
-    class Triangle(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.TRIANGLE, x, y)
+    class Triangle(x: Int, y: Int) : PointAnnotation(AnnotationType.TRIANGLE, x, y)
 
-    class Square(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.SQUARE, x, y)
+    class Square(x: Int, y: Int) : PointAnnotation(AnnotationType.SQUARE, x, y)
 
-    class Circle(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.CIRCLE, x, y)
+    class Circle(x: Int, y: Int) : PointAnnotation(AnnotationType.CIRCLE, x, y)
 
-    class Cross(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.CROSS, x, y)
+    class Cross(x: Int, y: Int) : PointAnnotation(AnnotationType.CROSS, x, y)
 
-    class Fade(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType.FADE, x, y)
+    class Label(x: Int, y: Int, val text: String) : PointAnnotation(AnnotationType.LABEL, x, y)
+
+    class Fade(x: Int, y: Int) : PointAnnotation(AnnotationType.FADE, x, y)
 
     /**
      * This is not part of the SGF-4 standard. Rather, it is an internal annotation used by the program only.
      * This annotation will not be saved to file.
      */
-    class Dot(x: Int, y: Int) : Annotation.PointAnnotation(AnnotationType._DOT, x, y)
+    class _Dot(x: Int, y: Int) : PointAnnotation(AnnotationType._DOT, x, y)
 
 
     /**
@@ -84,4 +86,28 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
 
     class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : Annotation.DirectionalAnnotation(AnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
 
+    companion object {
+        /**
+         * Creates an annotation from a given annotation type at the target (x, y) co-ordinate.
+         *
+         * @throws IllegalArgumentException If the annotation type is not a supported [PointAnnotation]
+         */
+        fun fromType(type: AnnotationType, x1: Int, y1: Int, x2: Int, y2: Int, text: String): Annotation {
+            when (type) {
+                AnnotationType._DOT -> return _Dot(x1, y1)
+
+                AnnotationType.TRIANGLE -> return Triangle(x1, y1)
+                AnnotationType.CIRCLE -> return Circle(x1, y1)
+                AnnotationType.SQUARE -> return Square(x1, y1)
+                AnnotationType.CROSS -> return Cross(x1, y1)
+                AnnotationType.FADE -> return Fade(x1, y1)
+                AnnotationType.LABEL -> return Label(x1, y1, text)
+
+                AnnotationType.LINE -> return Line(x1, y1, x2, y2)
+                AnnotationType.ARROW -> return Arrow(x1, y1, x2, y2)
+
+                else -> throw IllegalArgumentException("Unsupported AnnotationType: $type")
+            }
+        }
+    }
 }

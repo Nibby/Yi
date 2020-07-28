@@ -253,7 +253,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 int px = primaryMove.getX();
                 int py = primaryMove.getY();
 
-                AnnotationRenderer.render(new Annotation.Dot(px, py), g, manager);
+                AnnotationRenderer.render(new Annotation._Dot(px, py), g, manager);
             }
         }
 
