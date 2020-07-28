@@ -4,9 +4,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import yi.component.board.GameBoardViewer;
+import yi.component.board.edits.EditMode;
 import yi.component.gametree.GameTreeViewer;
 import yi.core.go.GameModel;
-import yi.editor.components.ComponentLayout;
+import yi.editor.components.ContentLayout;
 import yi.editor.components.ControlToolBar;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorToolBar;
@@ -26,13 +27,13 @@ public class EditorFrame extends Stage {
     private GameModel gameModel;
 
     public EditorFrame(GameModel gameModel) {
-        this(gameModel, ComponentLayout.COMPACT);
+        this(gameModel, Settings.general.getCurrentLayout());
     }
 
-    public EditorFrame(GameModel gameModel, ComponentLayout layout) {
+    public EditorFrame(GameModel gameModel, ContentLayout layout) {
         this.gameModel = gameModel;
 
-        boardViewer = new GameBoardViewer(Settings.getBoardSettings());
+        boardViewer = new GameBoardViewer(Settings.getCurrentGameBoardSettings());
         boardViewer.setGameModel(gameModel);
 
         treeViewer = new GameTreeViewer(gameModel);
@@ -40,16 +41,22 @@ public class EditorFrame extends Stage {
         menuBar = new EditorMenuBar();
 
         editorToolBar = new EditorToolBar();
+        editorToolBar.addToolSelectionListener(this::setTool);
+
         controlToolBar = new ControlToolBar();
+        controlToolBar.addLayoutOptionsValueListener(this::setLayout);
 
         setLayout(layout);
-
-        setMinWidth(640);
-        setMinHeight(735);
     }
 
-    private void setLayout(ComponentLayout layout) {
-        var content = layout.layoutContent(this);
+    private void setTool(EditorTool tool) {
+        tool.apply(boardViewer);
+    }
+
+    private void setLayout(ContentLayout newLayout) {
+        editorToolBar.setButtonsForContentLayout(newLayout);
+
+        var content = newLayout.getContent(this);
 
         var controlPane = new BorderPane();
         controlPane.setTop(menuBar);
@@ -57,7 +64,7 @@ public class EditorFrame extends Stage {
         var toolBarPane = new BorderPane();
         {
             toolBarPane.setCenter(editorToolBar);
-            toolBarPane.setRight(controlToolBar);
+            toolBarPane.setLeft(controlToolBar);
 
             toolBarPane.heightProperty().addListener(newHeight -> {
                 editorToolBar.setPrefHeight(toolBarPane.getHeight());
@@ -70,15 +77,29 @@ public class EditorFrame extends Stage {
         container.setTop(controlPane);
         container.setCenter(content);
 
-        setScene(new Scene(container));
-    }
+        var currentScene = getScene();
 
-    public EditorMenuBar getMenuBar() {
-        return menuBar;
-    }
+        if (currentScene != null) {
+            double currentHeight = currentScene.getHeight();
+            double newAspectRatio = newLayout.getPreferredAspectRatio();
+            double newWidth = currentHeight * newAspectRatio;
 
-    public EditorToolBar getEditorToolBar() {
-        return editorToolBar;
+            var newScene = new Scene(container, newWidth, currentHeight);
+            setScene(newScene);
+            setWidth(newWidth);
+            setHeight(currentHeight);
+        } else {
+            var startupSize = newLayout.getMinimumWindowSize();
+
+            double startupWidth = startupSize.getWidth();
+            double startupHeight = startupSize.getHeight();
+
+            setScene(new Scene(container, startupWidth, startupHeight));
+        }
+
+        var minSize = newLayout.getMinimumWindowSize();
+        setMinWidth(minSize.getWidth());
+        setMinHeight(minSize.getHeight());
     }
 
     public GameBoardViewer getBoardViewer() {
@@ -87,9 +108,5 @@ public class EditorFrame extends Stage {
 
     public GameTreeViewer getTreeViewer() {
         return treeViewer;
-    }
-
-    public GameModel getGameModel() {
-        return gameModel;
     }
 }

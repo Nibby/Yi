@@ -1,5 +1,7 @@
 package yi.editor.utilities;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -7,6 +9,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
+import java.util.Optional;
 
 public class JSON {
 
@@ -25,4 +29,36 @@ public class JSON {
         return new JSONObject(jsonSource.toString());
     }
 
+    /**
+     * Retrieves a string property from the JSON object.
+     *
+     * @param json The JSON object to retrieve value from
+     * @param key The key to retrieve
+     * @return The corresponding value for the key, or {@link Optional#empty()} if the key doesn't exist.
+     */
+    public static Optional<String> getString(JSONObject json, String key) {
+        try {
+            return Optional.of(json.getString(key));
+        } catch (JSONException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Retrieves a string property from the JSON object.
+     *
+     * @param json The JSON object to retrieve value from
+     * @param key The key to retrieve
+     * @param defaultValue The value to return if no value exists with that key
+     * @return The corresponding value for the key
+     */
+    public static String getString(JSONObject json, String key, @NotNull String defaultValue) {
+        Objects.requireNonNull(defaultValue, "Default value must not be null");
+
+        try {
+            return json.getString(key);
+        } catch (JSONException e) {
+            return defaultValue;
+        }
+    }
 }

@@ -13,7 +13,9 @@ public interface EditMode {
 
     void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY);
 
-    Optional<Cursor> getMouseCursor();
+    default Optional<Cursor> getMouseCursor() {
+        return Optional.of(Cursor.HAND);
+    }
 
     void onMousePress(GameBoardManager manager, int gridX, int gridY);
 

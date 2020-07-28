@@ -1,5 +1,6 @@
 package yi.component.board;
 
+import yi.component.board.edits.EditMode;
 import yi.core.go.GameModel;
 import yi.component.board.edits.Undoable;
 
@@ -15,6 +16,7 @@ public final class GameBoardEditor {
     private int positionInHistory = 0;
 
     private boolean editable = false;
+    private EditMode editMode = EditMode.PLAY_MOVE;
 
     GameBoardEditor() { }
 
@@ -105,6 +107,14 @@ public final class GameBoardEditor {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    public EditMode getEditMode() {
+        return editMode;
+    }
+
+    public void setEditMode(EditMode editMode) {
+        this.editMode = editMode;
     }
 
     private GameModel getGameModelOrCrash(GameBoardManager manager) {

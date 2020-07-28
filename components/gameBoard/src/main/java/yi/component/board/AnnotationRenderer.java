@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import yi.component.utilities.ShapeUtilities;
 import yi.core.go.Annotation;
+import yi.core.go.AnnotationType;
 import yi.core.go.StoneColor;
 
 public final class AnnotationRenderer {
@@ -12,7 +13,6 @@ public final class AnnotationRenderer {
     private AnnotationRenderer() { }
 
     public static void render(Annotation annotation, GraphicsContext g, GameBoardManager manager) {
-
         if (annotation instanceof Annotation.PointAnnotation) {
             renderPointAnnotation((Annotation.PointAnnotation) annotation, g, manager);
         } else if (annotation instanceof Annotation.DirectionalAnnotation) {
@@ -62,6 +62,10 @@ public final class AnnotationRenderer {
             case CROSS:
                 renderCross(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
                 break;
+            case LABEL:
+                assert annotation instanceof Annotation.Label;
+                renderLabel(g, ((Annotation.Label) annotation).getText(), annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
+                break;
             case FADE:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
                 double gridUnitSize = manager.size.getGridUnitSizeInPixels();
@@ -108,6 +112,10 @@ public final class AnnotationRenderer {
                 unsupportedType(annotation);
                 break;
         }
+    }
+
+    private static void renderLabel(GraphicsContext g, String text, double x, double y, double width) {
+        g.fillText(text, x, y, width);
     }
 
     private static void renderArrow(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd, double stoneSize) {

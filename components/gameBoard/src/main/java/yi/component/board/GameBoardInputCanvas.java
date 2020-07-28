@@ -1,11 +1,10 @@
 package yi.component.board;
 
-import javafx.scene.input.ScrollEvent;
-import yi.core.go.GameModel;
-import yi.component.board.edits.EditMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import yi.core.go.GameModel;
 
 import java.util.Optional;
 
@@ -17,8 +16,6 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
     private int cursorX = 0, cursorY = 0;
     private boolean renderCursor = false;
-
-    private EditMode editMode = EditMode.PLAY_MOVE;
 
     GameBoardInputCanvas(GameBoardManager manager) {
         super(manager);
@@ -35,6 +32,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         g.clearRect(0, 0, getWidth(), getHeight());
         
         if (renderCursor) {
+            var editMode = manager.edit.getEditMode();
             editMode.getMouseCursor().ifPresent(this::setCursor);
             editMode.renderGridCursor(g, manager, cursorX, cursorY);
         }
@@ -58,7 +56,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
         if (renderCursor) {
             if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
-                editMode.onMousePress(manager, cursorX, cursorY);
+                manager.edit.getEditMode().onMousePress(manager, cursorX, cursorY);
             }
         }
 
@@ -67,7 +65,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
     private void onKeyEvent(KeyEvent e) {
         if (e.getEventType() == KeyEvent.KEY_PRESSED) {
-            editMode.onKeyPress(manager, e);
+            manager.edit.getEditMode().onKeyPress(manager, e);
         }
     }
 

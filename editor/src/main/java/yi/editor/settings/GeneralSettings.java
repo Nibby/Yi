@@ -1,6 +1,8 @@
 package yi.editor.settings;
 
 import org.json.JSONObject;
+import yi.editor.components.ContentLayout;
+import yi.editor.utilities.JSON;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,16 +11,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-final class GeneralSettings extends SettingsModule {
+/**
+ * Stores general preference values for {@link yi.editor.EditorFrame}.
+ */
+public final class GeneralSettings extends SettingsModule {
 
     private final String settingsFile;
 
     private static final String KEY_BOARD_THEME_DIRECTORY = "boardTheme";
+    private static final String KEY_CONTENT_LAYOUT = "contentLayout";
 
     // The theme directory to be loaded
+    private ContentLayout currentLayout = ContentLayout.getDefaultValue();
     private String selectedBoardThemeDirectory;
 
-    public GeneralSettings(String settingsFilePath) {
+    GeneralSettings(String settingsFilePath) {
         this.settingsFile = settingsFilePath;
     }
 
@@ -37,13 +44,17 @@ final class GeneralSettings extends SettingsModule {
     }
 
     private void loadFromJson(JSONObject settings) {
-        selectedBoardThemeDirectory = settings.getString(KEY_BOARD_THEME_DIRECTORY);
+        JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> selectedBoardThemeDirectory = value);
+        JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> currentLayout = ContentLayout.getValue(value));
+
+
     }
 
     @Override
     public void save() {
         JSONObject settings = new JSONObject();
         settings.put(KEY_BOARD_THEME_DIRECTORY, GameBoardThemeSettings.getDefaultThemeDirectory());
+        settings.put(KEY_CONTENT_LAYOUT, currentLayout.name());
 
         Path file = Paths.get(settingsFile);
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
@@ -56,6 +67,7 @@ final class GeneralSettings extends SettingsModule {
 
     private void useAndSaveDefaults() {
         setSelectedBoardThemeDirectory(GameBoardThemeSettings.getDefaultThemeDirectory());
+        setCurrentLayout(ContentLayout.getDefaultValue());
         save();
     }
 
@@ -65,5 +77,13 @@ final class GeneralSettings extends SettingsModule {
 
     public void setSelectedBoardThemeDirectory(String selectedBoardThemeDirectory) {
         this.selectedBoardThemeDirectory = selectedBoardThemeDirectory;
+    }
+
+    public ContentLayout getCurrentLayout() {
+        return currentLayout;
+    }
+
+    public void setCurrentLayout(ContentLayout currentLayout) {
+        this.currentLayout = currentLayout;
     }
 }
