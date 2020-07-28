@@ -45,7 +45,7 @@ public class EditorFrame extends Stage {
         setLayout(layout);
 
         setMinWidth(640);
-        setMinHeight(640);
+        setMinHeight(735);
     }
 
     private void setLayout(ComponentLayout layout) {
@@ -63,7 +63,6 @@ public class EditorFrame extends Stage {
                 editorToolBar.setPrefHeight(toolBarPane.getHeight());
                 controlToolBar.setMinHeight(toolBarPane.getHeight());
             });
-
         }
         controlPane.setCenter(toolBarPane);
 
