@@ -13,7 +13,7 @@ class AnnotationTypeCoverageTest {
             val directional = AnnotationType.isDirectionalAnnotation(annotationType)
             val point = AnnotationType.isPointAnnotation(annotationType)
 
-            Assertions.assertTrue(point || directional)
+            Assertions.assertTrue(point || directional, annotationType.name + " is not covered by type check!")
         }
     }
 }

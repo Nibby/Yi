@@ -35,7 +35,7 @@ enum class AnnotationType {
          */
         fun isPointAnnotation(type: AnnotationType): Boolean {
             return when (type) {
-                CIRCLE, TRIANGLE, SQUARE, CROSS, FADE, LABEL -> true
+                _DOT, CIRCLE, TRIANGLE, SQUARE, CROSS, FADE, LABEL -> true
                 else -> false
             }
         }
