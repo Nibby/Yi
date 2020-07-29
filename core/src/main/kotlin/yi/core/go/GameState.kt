@@ -1,5 +1,7 @@
 package yi.core.go
 
+import java.util.*
+
 /**
  * Represents the game position at a given [GameNode]. Yi's implementation of game position is based on an incremental model.
  * This means that each [GameNode] does not store the full game state at each position, rather, only the delta -- the change in
@@ -13,8 +15,6 @@ package yi.core.go
  * @param prisonersBlack Number of prisoners black has captured at this point
  * @param prisonersWhite Number of prisoners white has captured at this point
  * @param annotations The annotations present in this state
- *
- * @see GoGameStateHelper
  */
 class GameState(private val gameModel: GameModel,
                 val gamePosition: GamePosition,
@@ -22,4 +22,13 @@ class GameState(private val gameModel: GameModel,
                 val prisonersWhite: Int,
                 val prisonersBlack: Int,
                 val annotations: Set<Annotation>,
-                val stateHash: Long)
+                val stateHash: Long) {
+
+    /**
+     * @return The annotation at (x, y) if present, otherwise null.
+     */
+    fun getAnnotation(x: Int, y: Int): Optional<Annotation> {
+        return annotations.stream().filter { annotation -> annotation.x == x && annotation.y == y }.findAny()
+    }
+
+}

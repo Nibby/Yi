@@ -48,6 +48,7 @@ final class PlayMoveEditMode implements EditMode {
     public void onMousePress(GameBoardManager manager, int gridX, int gridY) {
         var playMoveEdit = new PlayMoveEdit(gridX, gridY);
         manager.edit.recordAndApply(playMoveEdit, manager);
+        
     }
 
     @Override
@@ -61,5 +62,10 @@ final class PlayMoveEditMode implements EditMode {
         } else if (e.getCode() == KeyCode.RIGHT) {
             // TODO: Find the branching node and scan all children from left to right, selecting the first node of the same distance to root in its main branch.
         }
+    }
+
+    @Override
+    public void onMouseDrag(GameBoardManager manager, int gridX, int gridY) {
+        // TODO: Feature - If the stone being dragged is the last move played, move the stone to the new position.
     }
 }

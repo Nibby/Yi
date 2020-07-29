@@ -87,12 +87,13 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
     class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : Annotation.DirectionalAnnotation(AnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
 
     companion object {
+
         /**
-         * Creates an annotation from a given annotation type at the target (x, y) co-ordinate.
+         * Factory method: creates an annotation from a given annotation type at the target (x, y) co-ordinate.
          *
          * @throws IllegalArgumentException If the annotation type is not a supported [PointAnnotation]
          */
-        fun fromType(type: AnnotationType, x1: Int, y1: Int, x2: Int, y2: Int, text: String): Annotation {
+        fun createFromType(type: AnnotationType, x1: Int, y1: Int, x2: Int, y2: Int, text: String): Annotation {
             when (type) {
                 AnnotationType._DOT -> return _Dot(x1, y1)
 

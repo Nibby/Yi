@@ -54,9 +54,11 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         }
         retrieveCursorPosition(e.getX(), e.getY());
 
-        if (renderCursor) {
+        if (manager.edit.isEditable()) {
             if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
                 manager.edit.getEditMode().onMousePress(manager, cursorX, cursorY);
+            } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+                manager.edit.getEditMode().onMouseDrag(manager, cursorX, cursorY);
             }
         }
 
@@ -67,46 +69,6 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (e.getEventType() == KeyEvent.KEY_PRESSED) {
             manager.edit.getEditMode().onKeyPress(manager, e);
         }
-    }
-
-    public void onKeyPress(KeyEvent e) {
-
-    }
-
-    public void onKeyRelease(KeyEvent e) {
-
-    }
-
-    public void onKeyType(KeyEvent e) {
-
-    }
-
-    public void onMouseMove(MouseEvent e) {
-        retrieveCursorPosition(e.getX(), e.getY());
-    }
-
-    public void onMouseClick(MouseEvent e) {
-
-    }
-
-    public void onMouseDrag(MouseEvent e) {
-
-    }
-
-    public void onMousePress(MouseEvent e) {
-
-    }
-
-    public void onMouseRelease(MouseEvent e) {
-
-    }
-
-    public void onMouseEnter(MouseEvent e) {
-
-    }
-
-    public void onMouseExit(MouseEvent e) {
-        clearCursorPosition();
     }
 
     public void onScrollEvent(ScrollEvent e) {

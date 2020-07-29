@@ -19,5 +19,8 @@ public interface EditMode {
 
     void onMousePress(GameBoardManager manager, int gridX, int gridY);
 
+    void onMouseDrag(GameBoardManager manager, int gridX, int gridY);
+
     void onKeyPress(GameBoardManager manager, KeyEvent e);
+
 }

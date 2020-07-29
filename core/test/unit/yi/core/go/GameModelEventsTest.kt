@@ -41,7 +41,7 @@ class GameModelEventsTest {
         }
 
         // Method under test
-        model.onCurrentNodeUpdate().addListener(eventListener);
+        model.onCurrentNodeChange().addListener(eventListener);
 
         model.beginMoveSequence().playMove(0, 0)
         Thread.sleep(10)
@@ -62,10 +62,10 @@ class GameModelEventsTest {
         }
 
         // Method under test
-        model.onNodeDelete().addListener(eventListener);
+        model.onNodeRemove().addListener(eventListener);
 
         val submitResult = model.playMove(0, 0)
-        model.deleteMove(submitResult.moveNode!!) // Has to be a legal move
+        model.removeNode(submitResult.moveNode!!) // Has to be a legal move
         Thread.sleep(10)
         Assertions.assertTrue(eventReceived)
     }

@@ -67,18 +67,18 @@ public final class GameTreeViewer implements Component {
 
     public void setGameModel(@NotNull GameModel model) {
         if (this.gameModel != null) {
-            this.gameModel.onCurrentNodeUpdate().removeListener(currentMoveChangeListener);
+            this.gameModel.onCurrentNodeChange().removeListener(currentMoveChangeListener);
             this.gameModel.onNodeAdd().removeListener(treeStructureChangeListener);
-            this.gameModel.onNodeDelete().removeListener(treeStructureChangeListener);
+            this.gameModel.onNodeRemove().removeListener(treeStructureChangeListener);
         }
 
         this.gameModel = model;
         this.treeStructure = new GameTreeStructure(this.gameModel);
         this.camera.reset();
 
-        this.gameModel.onCurrentNodeUpdate().addListener(currentMoveChangeListener);
+        this.gameModel.onCurrentNodeChange().addListener(currentMoveChangeListener);
         this.gameModel.onNodeAdd().addListener(treeStructureChangeListener);
-        this.gameModel.onNodeDelete().addListener(treeStructureChangeListener);
+        this.gameModel.onNodeRemove().addListener(treeStructureChangeListener);
     }
 
     @Override
