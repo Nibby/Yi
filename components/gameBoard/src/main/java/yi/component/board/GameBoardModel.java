@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Nullable;
 import yi.core.go.GameNode;
 import yi.core.go.*;
 
+import java.util.Set;
+
 /**
  * Wraps the current {@link GameModel} and provide game information to other board classes.
  */
@@ -69,5 +71,17 @@ public final class GameBoardModel {
 
     public GameNode getCurrentMove() {
         return gameModel.getCurrentMove();
+    }
+
+    public void removeAnnotationsOnCurrentMove(int gridX, int gridY) {
+        gameModel.removeAnnotationsFromCurrentMove(gridX, gridY);
+    }
+
+    public void addAnnotationToCurrentMove(Annotation annotation) {
+        gameModel.addAnnotationOnCurrentMove(annotation);
+    }
+
+    public Set<Annotation> getAllAnnotationsOnCurrentMove() {
+        return gameModel.getAnnotationsOnCurrentMove();
     }
 }

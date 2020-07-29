@@ -5,7 +5,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import yi.component.utilities.ShapeUtilities;
 import yi.core.go.Annotation;
-import yi.core.go.AnnotationType;
 import yi.core.go.StoneColor;
 
 public final class AnnotationRenderer {
@@ -122,8 +121,9 @@ public final class AnnotationRenderer {
         double tipSize = stoneSize / 4d;
 
         renderLine(g, xStart, yStart, xEnd, yEnd);
-        renderLine(g, xEnd, yEnd, xEnd - tipSize, yStart - tipSize);
-        renderLine(g, xEnd, yEnd, xEnd - tipSize, yStart + tipSize);
+        // TODO: The arrow tips are NOT drawn properly. Need to consider all rotations using Math.sin() and Math.cos().
+        renderLine(g, xEnd, yEnd, xEnd - tipSize, yEnd - tipSize);
+        renderLine(g, xEnd, yEnd, xEnd - tipSize, yEnd + tipSize);
     }
 
     private static void renderLine(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd) {

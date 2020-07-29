@@ -21,6 +21,8 @@ import java.util.Stack;
 public final class GameBoardViewer implements Component {
 
     private final CanvasContainer container;
+    private final GameBoardMainCanvas mainCanvas;
+    private final GameBoardInputCanvas inputCanvas;
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
@@ -31,8 +33,10 @@ public final class GameBoardViewer implements Component {
     }
 
     public GameBoardViewer(GameBoardSettings settings) {
-        content.push(new GameBoardMainCanvas(manager));
-        content.push(new GameBoardInputCanvas(manager));
+        mainCanvas = new GameBoardMainCanvas(manager);
+        inputCanvas = new GameBoardInputCanvas(manager);
+        content.push(mainCanvas);
+        content.push(inputCanvas);
 
         container = new CanvasContainer(content);
         container.addSizeUpdateListener(newSize -> {
@@ -49,7 +53,7 @@ public final class GameBoardViewer implements Component {
         content.forEach(canvas -> canvas.render(manager));
     }
 
-    private final EventListener<NodeEvent> currentMoveUpdateListener = (newCurrentNode) -> update();
+    private final EventListener<NodeEvent> updateAllCanvas = (newCurrentNode) -> update();
 
     /**
      * Invoked when the game board should display a new game model.
@@ -58,10 +62,14 @@ public final class GameBoardViewer implements Component {
      */
     public void setGameModel(GameModel game) {
         if (this.gameModel != null) {
-            this.gameModel.onCurrentNodeUpdate().addListener(currentMoveUpdateListener);
+            this.gameModel.onCurrentNodeChange().removeListener(updateAllCanvas);
+            this.gameModel.onCurrentNodeDataUpdate().removeListener(updateAllCanvas);
         }
+
         this.gameModel = game;
-        this.gameModel.onCurrentNodeUpdate().addListener(currentMoveUpdateListener);
+
+        this.gameModel.onCurrentNodeChange().addListener(updateAllCanvas);
+        this.gameModel.onCurrentNodeDataUpdate().addListener(updateAllCanvas);
 
         manager.onGameModelSet(game);
         content.forEach(canvas -> canvas.onGameModelSet(game, manager));
