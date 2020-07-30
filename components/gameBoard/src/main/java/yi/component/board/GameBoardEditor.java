@@ -1,6 +1,6 @@
 package yi.component.board;
 
-import yi.component.board.edits.EditMode;
+import yi.component.board.editmodes.EditMode;
 import yi.core.go.GameModel;
 import yi.component.board.edits.Undoable;
 

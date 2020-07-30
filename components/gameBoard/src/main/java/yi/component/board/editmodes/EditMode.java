@@ -1,4 +1,4 @@
-package yi.component.board.edits;
+package yi.component.board.editmodes;
 
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;

@@ -1,4 +1,4 @@
-package yi.component.board.edits;
+package yi.component.board.editmodes;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
