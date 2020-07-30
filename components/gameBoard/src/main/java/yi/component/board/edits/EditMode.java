@@ -1,6 +1,7 @@
 package yi.component.board.edits;
 
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,10 +18,11 @@ public interface EditMode {
         return Optional.of(Cursor.HAND);
     }
 
-    void onMousePress(GameBoardManager manager, int gridX, int gridY);
+    void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY);
 
-    void onMouseDrag(GameBoardManager manager, int gridX, int gridY);
+    void onMouseDrag(MouseButton button, GameBoardManager manager, int gridX, int gridY);
 
     void onKeyPress(GameBoardManager manager, KeyEvent e);
 
+    void onMouseRelease(MouseButton button, GameBoardManager manager, int cursorX, int cursorY);
 }

@@ -2,6 +2,7 @@ package yi.component.board.edits;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import yi.core.go.StoneColor;
 
@@ -19,17 +20,22 @@ public final class StoneEditMode implements EditMode {
     }
 
     @Override
-    public void onMousePress(GameBoardManager manager, int gridX, int gridY) {
+    public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
 
     }
 
     @Override
-    public void onMouseDrag(GameBoardManager manager, int gridX, int gridY) {
+    public void onMouseDrag(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
 
     }
 
     @Override
     public void onKeyPress(GameBoardManager manager, KeyEvent e) {
+
+    }
+
+    @Override
+    public void onMouseRelease(MouseButton button, GameBoardManager manager, int cursorX, int cursorY) {
 
     }
 

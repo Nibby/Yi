@@ -2,6 +2,7 @@ package yi.component.board.edits;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
@@ -45,10 +46,9 @@ final class PlayMoveEditMode implements EditMode {
     }
 
     @Override
-    public void onMousePress(GameBoardManager manager, int gridX, int gridY) {
+    public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         var playMoveEdit = new PlayMoveEdit(gridX, gridY);
         manager.edit.recordAndApply(playMoveEdit, manager);
-        
     }
 
     @Override
@@ -65,7 +65,12 @@ final class PlayMoveEditMode implements EditMode {
     }
 
     @Override
-    public void onMouseDrag(GameBoardManager manager, int gridX, int gridY) {
+    public void onMouseRelease(MouseButton button, GameBoardManager manager, int cursorX, int cursorY) {
+
+    }
+
+    @Override
+    public void onMouseDrag(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         // TODO: Feature - If the stone being dragged is the last move played, move the stone to the new position.
     }
 }
