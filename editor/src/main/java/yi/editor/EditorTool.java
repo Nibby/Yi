@@ -61,14 +61,14 @@ public enum EditorTool {
     ANNOTATE_LETTER {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.LABEL);
+            var mode = new AnnotationEditMode(AnnotationEditMode.LabelType.LETTER);
             board.setEditMode(mode);
         }
     },
     ANNOTATE_NUMBER {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.LABEL);
+            var mode = new AnnotationEditMode(AnnotationEditMode.LabelType.NUMBER);
             board.setEditMode(mode);
         }
     },

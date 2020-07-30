@@ -56,9 +56,11 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
         if (manager.edit.isEditable()) {
             if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
-                manager.edit.getEditMode().onMousePress(manager, cursorX, cursorY);
+                manager.edit.getEditMode().onMousePress(e.getButton(), manager, cursorX, cursorY);
             } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-                manager.edit.getEditMode().onMouseDrag(manager, cursorX, cursorY);
+                manager.edit.getEditMode().onMouseDrag(e.getButton(), manager, cursorX, cursorY);
+            } else if (e.getEventType() == MouseEvent.MOUSE_RELEASED) {
+                manager.edit.getEditMode().onMouseRelease(e.getButton(), manager, cursorX, cursorY);
             }
         }
 

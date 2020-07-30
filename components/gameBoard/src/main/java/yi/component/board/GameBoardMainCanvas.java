@@ -164,7 +164,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                    point(2, 6, 9),                     point(6, 6, 9));
 
 
-            private Set<Integer> points;
+            private final Set<Integer> points;
 
             StarPointPosition(Integer ... points) {
                 this.points = Arrays.stream(points).collect(Collectors.toSet());
@@ -219,11 +219,6 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardStoneRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            //TODO: Temporary code, polish later
-
-            var currentMoveData = manager.model.getCurrentMove().getStateDelta();
-            assert currentMoveData != null;
-
             var gamePosition = manager.model.getCurrentGamePosition();
             StoneColor[] boardState = gamePosition.getIntersectionState();
             int boardWidth = manager.model.getBoardWidth();
@@ -248,12 +243,20 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 AnnotationRenderer.render(annotation, g, manager);
             }
 
-            var primaryMove = Objects.requireNonNull(manager.model.getCurrentMove().getStateDelta()).getPrimaryMove();
+            renderCurrentMoveMarker(g, manager);
+        }
+
+        private static void renderCurrentMoveMarker(GraphicsContext g, GameBoardManager manager) {
+            var stateDelta = manager.model.getCurrentMove().getStateDelta();
+            var primaryMove = stateDelta.getPrimaryMove();
+
             if (primaryMove != null) {
                 int px = primaryMove.getX();
                 int py = primaryMove.getY();
 
-                AnnotationRenderer.render(new Annotation._Dot(px, py), g, manager);
+                if (manager.model.getCurrentGameState().getAnnotation(px, py).isEmpty()) {
+                    AnnotationRenderer.render(new Annotation._Dot(px, py), g, manager);
+                }
             }
         }
 

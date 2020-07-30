@@ -2,6 +2,8 @@ package yi.component.board.edits;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.component.board.AnnotationRenderer;
@@ -9,8 +11,7 @@ import yi.component.board.GameBoardManager;
 import yi.core.go.Annotation;
 import yi.core.go.AnnotationType;
 
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class AnnotationEditMode implements EditMode {
@@ -34,7 +35,7 @@ public final class AnnotationEditMode implements EditMode {
      * The internal game model does not differentiate between a letter label and a number label.
      * These are arbitrary differentiations made by the editor. Therefore we distinguish it here.
      */
-    private enum LabelType {
+    public enum LabelType {
         LETTER,
         NUMBER
     }
@@ -63,7 +64,10 @@ public final class AnnotationEditMode implements EditMode {
 
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
-        // TODO: Figure out how to draw label annotations here...
+        if (manager.model.getCurrentGameState().getAnnotation(gridX, gridY).isPresent()) {
+            return;
+        }
+
         Annotation temporary = null;
 
         if (AnnotationType.Companion.isPointAnnotation(typeToApply)) {
@@ -84,28 +88,31 @@ public final class AnnotationEditMode implements EditMode {
     }
 
     @Override
-    public void onMousePress(GameBoardManager manager, int gridX, int gridY) {
+    public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         var currentState = manager.model.getCurrentGameState();
         var annotationHere = currentState.getAnnotation(gridX, gridY);
+
+        boolean createRatherThanDelete;
 
         if (annotationHere.isPresent()) {
             var itsType = annotationHere.get().getType();
 
-            if (itsType == typeToApply) {
-                dragAction = DragAction.DELETE;
-                removeAnnotation(manager, gridX, gridY);
-            } else {
-                dragAction = DragAction.CREATE;
-                maybeCreateAnnotation(manager, gridX, gridY);
-            }
+            createRatherThanDelete = itsType != typeToApply;
         } else {
+            createRatherThanDelete = true;
+        }
+
+        if (createRatherThanDelete) {
             dragAction = DragAction.CREATE;
             maybeCreateAnnotation(manager, gridX, gridY);
+        } else {
+            dragAction = DragAction.DELETE;
+            removeAnnotation(manager, gridX, gridY);
         }
     }
 
     @Override
-    public void onMouseDrag(GameBoardManager manager, int gridX, int gridY) {
+    public void onMouseDrag(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         // TODO: Maybe allow re-positioning a directional annotation if it's dragged at either end?
 
         if (dragAction == DragAction.CREATE) {
@@ -120,6 +127,13 @@ public final class AnnotationEditMode implements EditMode {
     @Override
     public void onKeyPress(GameBoardManager manager, KeyEvent e) {
 
+    }
+
+    @Override
+    public void onMouseRelease(MouseButton button, GameBoardManager manager, int cursorX, int cursorY) {
+        if (typeToApply == AnnotationType.LABEL) {
+            computeNextLabelText(manager);
+        }
     }
 
     private void removeAnnotation(GameBoardManager manager, int gridX, int gridY) {
@@ -140,7 +154,7 @@ public final class AnnotationEditMode implements EditMode {
         removeAnnotation(manager, gridX, gridY);
 
         if (AnnotationType.Companion.isPointAnnotation(typeToApply)) {
-            createPointAnnotation(manager, typeToApply, gridX, gridY);
+            createPointAnnotation(manager, typeToApply, gridX, gridY, nextLabelText);
         } else if (AnnotationType.Companion.isDirectionalAnnotation(typeToApply)) {
             if (!directionalAnnoStartPositionDefined) {
                 directionalAnnoFirstX = gridX;
@@ -156,13 +170,21 @@ public final class AnnotationEditMode implements EditMode {
         }
     }
 
-    static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType, int gridX, int gridY) {
-        // TODO: Label annotations?
-        var pointAnno = Annotation.Companion.createFromType(annotationType, gridX, gridY, -1, -1, "");
+    static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType, int gridX, int gridY, String nextLabelText) {
+        if (!AnnotationType.Companion.isPointAnnotation(annotationType)) {
+            throw new IllegalArgumentException("Not a point annotation: " + annotationType.name());
+        }
+
+        var annotationText = nextLabelText == null ? "" : nextLabelText;
+        Annotation pointAnno = Annotation.Companion.createFromType(annotationType, gridX, gridY, -1, -1, annotationText);
         manager.model.addAnnotationToCurrentMove(pointAnno);
     }
 
     static void createDirectionalAnnotation(GameBoardManager manager, AnnotationType annotationType, int startX, int startY, int endX, int endY) {
+        if (!AnnotationType.Companion.isDirectionalAnnotation(annotationType)) {
+            throw new IllegalArgumentException("Not a directional annotation: " + annotationType.name());
+        }
+
         var directionalAnno = Annotation.Companion.createFromType(annotationType, startX, startY, endX, endY, "");
         manager.model.addAnnotationToCurrentMove(directionalAnno);
     }
@@ -174,7 +196,8 @@ public final class AnnotationEditMode implements EditMode {
     }
 
     private String getNextLabelText(GameBoardManager manager) {
-        assertLabelTypeNotNull();
+        if (labelType == null)
+            return "";
 
         if (nextLabelText == null) {
             computeNextLabelText(manager);
@@ -186,37 +209,44 @@ public final class AnnotationEditMode implements EditMode {
     private void computeNextLabelText(GameBoardManager manager) {
         assertLabelTypeNotNull();
 
-        var allLabelText =
-                manager.model.getAllAnnotationsOnCurrentMove()
-                .stream()
-                .filter(anno -> anno instanceof Annotation.Label)
-                .map(anno -> ((Annotation.Label) anno).getText())
-                .collect(Collectors.toSet());
-
         if (labelType == LabelType.LETTER) {
-            computeNextLetterText(allLabelText);
-        } else if (labelType == LabelType.NUMBER) {
-            computeNextNumberText(allLabelText);
-        } else throw new IllegalStateException("Unimplemented label type: " + Objects.requireNonNull(labelType).name());
-    }
+            var annoTexts =
+                    manager.model.getAllAnnotationsOnCurrentMove()
+                    .stream()
+                    .filter(anno -> anno instanceof Annotation.Label)
+                    .map(anno -> ((Annotation.Label) anno).getText())
+                    .filter(text -> !NumberUtils.isCreatable(text))
+                    .collect(Collectors.toSet());
 
-    private void computeNextNumberText(Set<String> allLabelText) {
+            int step = 0;
+            String candidateText;
 
-    }
+            // TODO: This is not ideal. Annotation labels should ideally correspond to a base 26 format so that
+            //       if the annotation exceeds letter Z, we append AA, AB ... AZ, then AAA, AAB ... etc.
 
-    private void computeNextLetterText(Set<String> allLabelText) {
-        // TODO: Make some magic happen.
-        String current;
-        int step = 0;
+            do {
+                candidateText = String.valueOf(LETTER_LABEL_PROGRESSION.charAt(step));
+                if (annoTexts.contains(candidateText)) {
+                    ++step;
+                } else {
+                    break;
+                }
+            } while (step < LETTER_LABEL_PROGRESSION.length());
 
-        for (;;) {
-            current = String.valueOf(LETTER_LABEL_PROGRESSION.charAt(step));
-
-            if (allLabelText.contains(current)) {
-                ++step;
-            }
-
+            nextLabelText = candidateText;
         }
+        else if (labelType == LabelType.NUMBER) {
+            var maxNumber =
+                manager.model.getAllAnnotationsOnCurrentMove()
+                    .stream()
+                    .filter(anno -> anno instanceof Annotation.Label)
+                    .map(anno -> ((Annotation.Label) anno).getText())
+                    .filter(NumberUtils::isCreatable)
+                    .map(Integer::parseInt)
+                    .max((a, b) -> a > b ? a : (a.equals(b)) ? 0 : -1);
+
+            nextLabelText = String.valueOf(1 + maxNumber.orElse(0));
+        } else throw new IllegalStateException("Unimplemented label type: " + Objects.requireNonNull(labelType).name());
     }
 
     private void assertLabelTypeNotNull() {
