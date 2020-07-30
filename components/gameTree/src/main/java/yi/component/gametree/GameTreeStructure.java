@@ -231,6 +231,8 @@ final class GameTreeStructure {
                             var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getGridY());
                             addElement(reservedGridForTrack);
 
+                            // Block all internal space between the parent branch and this branch so that new branches
+                            // are created on the outside. This will avoid all sorts of internal collisions.
                             if (column < columnToUse && getElement(column, parentElement.getGridY() + 1).isEmpty()) {
                                 var blockedGridForSubsequentBranches = new TreeSpacerElement(column, parentElement.getGridY() + 1);
                                 addElement(blockedGridForSubsequentBranches);
