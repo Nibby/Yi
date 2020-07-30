@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
-import yi.component.board.edits.EditMode;
+import yi.component.board.editmodes.EditMode;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
 import yi.core.go.NodeEvent;

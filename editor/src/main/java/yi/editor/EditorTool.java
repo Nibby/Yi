@@ -1,8 +1,8 @@
 package yi.editor;
 
 import yi.component.board.GameBoardViewer;
-import yi.component.board.edits.AnnotationEditMode;
-import yi.component.board.edits.EditMode;
+import yi.component.board.editmodes.AnnotationEditMode;
+import yi.component.board.editmodes.EditMode;
 import yi.core.go.AnnotationType;
 
 /**

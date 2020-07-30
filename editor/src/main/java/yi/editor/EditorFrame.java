@@ -4,7 +4,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import yi.component.board.GameBoardViewer;
-import yi.component.board.edits.EditMode;
 import yi.component.gametree.GameTreeViewer;
 import yi.core.go.GameModel;
 import yi.editor.components.ContentLayout;
