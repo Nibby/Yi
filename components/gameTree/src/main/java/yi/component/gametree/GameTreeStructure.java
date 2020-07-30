@@ -230,6 +230,11 @@ final class GameTreeStructure {
                         for (int column = parentElement.getGridX() + 1; column <= columnToUse; ++column) {
                             var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getGridY());
                             addElement(reservedGridForTrack);
+
+                            if (column < columnToUse && getElement(column, parentElement.getGridY() + 1).isEmpty()) {
+                                var blockedGridForSubsequentBranches = new TreeSpacerElement(column, parentElement.getGridY() + 1);
+                                addElement(blockedGridForSubsequentBranches);
+                            }
                         }
                     }
                 }

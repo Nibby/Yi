@@ -10,6 +10,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests that the layout of the tree is correct under different branching conditions.
+ */
+// TODO: The error display for failed test cases can do with improvement. Currently it is not intuitive
+//       to understand at a glance the difference between the actual structure produced and the expected structure.
 public class GameTreeStructureCorrectnessTest {
 
     private static final class TestingRules extends GoGameRulesHandler {
@@ -319,6 +324,75 @@ public class GameTreeStructureCorrectnessTest {
                 "xxxx"
         };
         testTreeStructure(model, new GameTreeStructure(model), expectedStructure);
+    }
+
+    public void testColumnAdjust_newBranchInWideBranch_movedToOutside() {
+        // Tests the following situation:
+        //
+        // [x]------------| =====|      <=== Appending a new branch from the wide outer branch should adjust it to the outside rather than staying inside.
+        //  |             |      |
+        // [x]           [x]    [x]
+        //  |             |
+        // [x]           [x]
+        //  |             |
+        // [x]           [x]
+        //  |             |
+        // [x]-------|   [x]
+        //  |        |    |
+        // [x]---|  [x]  [x]
+        //  |    |
+        // [x]  [x]
+        //
+        var model = new GameModel(3, 3, new TestingRules());
+
+        // Build main branch
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(0, 1)
+                .playMove(0, 2)
+                .playMove(1, 0)
+                .playMove(1 ,1)
+                .playMove(1, 2)
+                .playMove(2, 0)
+                .playMove(2, 1);
+
+        // Create two inner branches
+        model.toPreviousMove();
+        model.beginMoveSequence().playMove(2, 2);
+        model.toPreviousMove(2);
+        model.beginMoveSequence().playMove(2, 2).playMove(2, 1);
+
+        model.setCurrentMove(model.getRootNode());
+
+        // Create wide branch from root
+        model.beginMoveSequence().playMove(0, 1).playMove(0, 2);
+        model.toPreviousMove(2);
+
+        String[] expectedInitialStructure = {
+                "x   ",
+                "x  x",
+                "x  x",
+                "x   ",
+                "x   ",
+                "x x ",
+                "xx  ",
+        };
+        testTreeStructure(model, new GameTreeStructure(model), expectedInitialStructure); // Sanity check
+
+        // Begin test
+        model.beginMoveSequence().playMove(2, 2);
+
+        // Assert
+        String[] expectedStructure = {
+                "x    ",
+                "x  xx", // <-- Expect the outer 'x' rather than "xx x"
+                "x  x ",
+                "x    ",
+                "x    ",
+                "x x  ",
+                "xx   ",
+        };
+        testTreeStructure(model, new GameTreeStructure(model), expectedStructure); // Sanity check
     }
 
     private void testTreeStructure(GameModel model, GameTreeStructure structure, String[] expectedStructure) {
