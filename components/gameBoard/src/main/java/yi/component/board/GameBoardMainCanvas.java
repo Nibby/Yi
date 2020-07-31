@@ -229,6 +229,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 int x = i % boardWidth;
                 int y = i / boardWidth;
 
+                // TODO: Temporary. Allow rendering custom stone images in the future.
                 PresetStoneStyle.getDefaultValue().render(g, manager, state, x, y);
             }
         }
@@ -247,17 +248,14 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderCurrentMoveMarker(GraphicsContext g, GameBoardManager manager) {
-            var stateDelta = manager.model.getCurrentMove().getStateDelta();
-            var primaryMove = stateDelta.getPrimaryMove();
+            manager.model.getCurrentMove().getPrimaryMove().ifPresent(stone -> {
+                int x = stone.getX();
+                int y = stone.getY();
 
-            if (primaryMove != null) {
-                int px = primaryMove.getX();
-                int py = primaryMove.getY();
-
-                if (manager.model.getCurrentGameState().getAnnotation(px, py).isEmpty()) {
-                    AnnotationRenderer.render(new Annotation._Dot(px, py), g, manager);
+                if (!manager.model.getCurrentMove().hasAnnotationAt(x, y)) {
+                    AnnotationRenderer.render(new Annotation._Dot(x, y), g, manager);
                 }
-            }
+            });
         }
 
     }

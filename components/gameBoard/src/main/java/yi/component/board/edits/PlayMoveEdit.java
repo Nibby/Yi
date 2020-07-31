@@ -16,7 +16,7 @@ public final class PlayMoveEdit extends UndoableEdit {
 
     @Override
     protected boolean _rollbackEdit(GameModel gameModel) {
-        // TODO: Implement later
+
         return false;
     }
 
@@ -26,14 +26,14 @@ public final class PlayMoveEdit extends UndoableEdit {
         MoveValidationResult validationResult = moveSubmitResult.getValidationResult();
 
         if (validationResult != MoveValidationResult.OK) {
-//            throw new IllegalMoveException(validationResult, "Illegal move: " + validationResult.toString());
             return false;
         }
 
-        assert moveSubmitResult.getPlayed() : "Move is not played internally, is it returning the result before being submitted to the game tree?";
+        if (!moveSubmitResult.isPlayed()) {
+            throw new IllegalStateException("Move is not played internally, is it returning the result before being submitted to the game tree?");
+        }
 
         submittedNode = moveSubmitResult.getMoveNode();
-
         return true;
     }
 

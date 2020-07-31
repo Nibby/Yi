@@ -24,7 +24,7 @@ class GameModelEventsTest {
 
         model.beginMoveSequence().playMove(0, 0)
         Thread.sleep(10)
-        Assertions.assertTrue(eventReceived)
+        Assertions.assertTrue(eventReceived, "No event emitted")
     }
 
     @Test
@@ -45,7 +45,7 @@ class GameModelEventsTest {
 
         model.beginMoveSequence().playMove(0, 0)
         Thread.sleep(10)
-        Assertions.assertTrue(eventReceived)
+        Assertions.assertTrue(eventReceived, "No event emitted")
     }
 
     @Test
@@ -67,6 +67,6 @@ class GameModelEventsTest {
         val submitResult = model.playMove(0, 0)
         model.removeNode(submitResult.moveNode!!) // Has to be a legal move
         Thread.sleep(10)
-        Assertions.assertTrue(eventReceived)
+        Assertions.assertTrue(eventReceived, "No event emitted")
     }
 }

@@ -3,7 +3,7 @@ package yi.core.go
 import java.util.*
 
 /**
- * Annotations are special labels that can be added to a [GameNode] through [GameModel.addAnnotationOnCurrentMove].
+ * Annotations are special labels that can be added to a [GameNode] through [GameModel.addAnnotationToCurrentMove].
  *
  * Unlike other game objects, annotations do not accumulate. They are only present on the game node it is added to.
  * Annotation positions use the same co-ordinate space as the game board.
@@ -17,9 +17,20 @@ import java.util.*
 abstract class Annotation constructor(val type: AnnotationType, val x: Int, val y: Int) {
 
     /**
+     * Whether this annotation is occupying the point specified.
+     *
+     * @return true if the annotation is occupying this point.
+     */
+    abstract fun isOccupyingPosition(x: Int, y: Int): Boolean
+
+    /**
      * Represents an annotation whose location can be modelled using a single co-ordinate.
      */
     abstract class PointAnnotation(type: AnnotationType, x: Int, y: Int) : Annotation(type, x, y) {
+
+        override fun isOccupyingPosition(x: Int, y: Int): Boolean {
+            return x == this.x && y == this.y
+        }
 
         override fun equals(other: Any?): Boolean {
             other?.let {
@@ -62,6 +73,11 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
      * Represents an annotation whose location is modelled by two points, and has a direction.
      */
     abstract class DirectionalAnnotation(type: AnnotationType, x: Int, y: Int, val xEnd: Int, val yEnd: Int) : Annotation(type, x, y) {
+
+        override fun isOccupyingPosition(x: Int, y: Int): Boolean {
+            return this.x == x && this.y == y || this.x == xEnd && this.y == yEnd
+        }
+
         override fun equals(other: Any?): Boolean {
             other?.let {
                 if (other is Annotation.DirectionalAnnotation) {

@@ -1,13 +1,14 @@
 package yi.component.board;
 
-import org.jetbrains.annotations.Nullable;
-import yi.core.go.GameNode;
+import yi.component.board.edits.Undoable;
 import yi.core.go.*;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 /**
- * Wraps the current {@link GameModel} and provide game information to other board classes.
+ * The main interface between the {@link GameModel} and the rest of the board modules.
  */
 public final class GameBoardModel {
 
@@ -29,7 +30,8 @@ public final class GameBoardModel {
         this.currentGameState = this.gameModel.getCurrentGameState();
     }
 
-    public GameState getCurrentGameState() {
+    // Must not be public because its state can be modified.
+    GameState getCurrentGameState() {
         return currentGameState;
     }
 
@@ -57,10 +59,6 @@ public final class GameBoardModel {
         return gameModel.getNextMoveNumber();
     }
 
-    @Nullable GameModel getGameModel() {
-        return gameModel;
-    }
-
     public void toPreviousMove() {
         gameModel.toPreviousMove();
     }
@@ -69,19 +67,76 @@ public final class GameBoardModel {
         gameModel.toNextMove();
     }
 
-    public GameNode getCurrentMove() {
-        return gameModel.getCurrentMove();
+    /**
+     *
+     * @return A {@link GameNode} wrapper which exposes some properties of the current move.
+     */
+    public GameNodeWrapper getCurrentMove() {
+        return new GameNodeWrapper(gameModel.getCurrentMove());
     }
 
-    public void removeAnnotationsOnCurrentMove(int gridX, int gridY) {
-        gameModel.removeAnnotationsFromCurrentMove(gridX, gridY);
+    // TODO: Move this to the editing model
+//    public void removeAnnotationsOnCurrentMove(int gridX, int gridY) {
+//        gameModel.removeAnnotationsFromCurrentMove(gridX, gridY);
+//    }
+
+    /**
+     * This must be package-private because we should never expose the model for other classes to access
+     * other than {@link GameBoardEditor}.
+     *
+     * @return The game model if it is set.
+     */
+    Optional<GameModel> getGameModel() {
+        return Optional.ofNullable(gameModel);
     }
 
-    public void addAnnotationToCurrentMove(Annotation annotation) {
-        gameModel.addAnnotationOnCurrentMove(annotation);
-    }
-
+    /**
+     *
+     * @return An immutable set of all annotations that are currently on this node.
+     */
     public Set<Annotation> getAllAnnotationsOnCurrentMove() {
-        return gameModel.getAnnotationsOnCurrentMove();
+        return Collections.unmodifiableSet(gameModel.getAnnotationsOnCurrentMove());
+    }
+
+    /**
+     * Wraps a {@link GameModel} and exposes only methods that do not permit the modification of game state.
+     * Use {@link GameBoardEditor#recordAndApply(Undoable, GameBoardManager)} to edit to the game model.
+     */
+    public static final class GameNodeWrapper {
+        private final GameNode node;
+
+        private GameNodeWrapper(GameNode node) {
+            this.node = node;
+        }
+
+        public Optional<Stone> getPrimaryMove() {
+            var primaryMove = node.getStateDelta().getPrimaryMove();
+            return Optional.ofNullable(primaryMove);
+        }
+
+        public Set<Annotation> getAnnotations() {
+            var annotations = node.getStateDelta().getAnnotationsOnThisNode();
+            return Collections.unmodifiableSet(annotations);
+        }
+
+        public boolean hasAnnotationAt(int x, int y) {
+            return getAnnotations().stream().anyMatch(annotation -> annotation.isOccupyingPosition(x, y));
+        }
+
+        public Optional<Annotation> getAnnotationAt(int x, int y) {
+            return getAnnotations().stream().filter(annotation -> annotation.isOccupyingPosition(x, y)).findAny();
+        }
+
+        /**
+         * <b>Do not use this method to update node state</b>. Use {@link GameBoardEditor#recordAndApply(Undoable, GameBoardManager)}
+         * and its variants to make changes to the game model. Failure to do so breaks the undo/redo mechanism.
+         *
+         * @return The underlying game node wrapped by this class.
+         */
+        // FIXME: Due to the current package structure, it is unfortunate that we have to expose this in order for annotation edits to work.
+        //        If the project adopts the jigsaw setup, remove this.
+        public GameNode _internalNode() {
+            return node;
+        }
     }
 }

@@ -10,7 +10,7 @@ import yi.component.board.edits.PlayMoveEdit;
 
 import java.util.Optional;
 
-final class PlayMoveEditMode implements EditMode {
+final class PlayMoveEditMode extends AbstractEditMode {
 
     PlayMoveEditMode() { }
 
@@ -50,19 +50,6 @@ final class PlayMoveEditMode implements EditMode {
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         var playMoveEdit = new PlayMoveEdit(gridX, gridY);
         manager.edit.recordAndApply(playMoveEdit, manager);
-    }
-
-    @Override
-    public void onKeyPress(GameBoardManager manager, KeyEvent e) {
-        if (e.getCode() == KeyCode.UP) {
-            manager.model.toPreviousMove();
-        } else if (e.getCode() == KeyCode.DOWN) {
-            manager.model.toNextMove();
-        } else if (e.getCode() == KeyCode.LEFT) {
-            // TODO: Find the branching node and find a node of the same distance to root in its main branch.
-        } else if (e.getCode() == KeyCode.RIGHT) {
-            // TODO: Find the branching node and scan all children from left to right, selecting the first node of the same distance to root in its main branch.
-        }
     }
 
     @Override
