@@ -6,7 +6,7 @@ import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import yi.core.go.StoneColor;
 
-public final class StoneEditMode implements EditMode {
+public final class StoneEditMode extends AbstractEditMode {
 
     private StoneColor stoneColor;
 
@@ -26,11 +26,6 @@ public final class StoneEditMode implements EditMode {
 
     @Override
     public void onMouseDrag(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
-
-    }
-
-    @Override
-    public void onKeyPress(GameBoardManager manager, KeyEvent e) {
 
     }
 

@@ -22,13 +22,4 @@ class GameState(private val gameModel: GameModel,
                 val prisonersWhite: Int,
                 val prisonersBlack: Int,
                 val annotations: Set<Annotation>,
-                val stateHash: Long) {
-
-    /**
-     * @return The annotation at (x, y) if present, otherwise null.
-     */
-    fun getAnnotation(x: Int, y: Int): Optional<Annotation> {
-        return annotations.stream().filter { annotation -> annotation.x == x && annotation.y == y }.findAny()
-    }
-
-}
+                val stateHash: Long)

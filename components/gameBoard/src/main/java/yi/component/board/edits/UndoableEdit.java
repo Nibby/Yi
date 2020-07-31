@@ -1,8 +1,11 @@
 package yi.component.board.edits;
 
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 
-public abstract class UndoableEdit implements Undoable {
+import java.util.Objects;
+
+abstract class UndoableEdit implements Undoable {
 
     @Override
     public boolean rollbackEdit(GameModel gameModel) {

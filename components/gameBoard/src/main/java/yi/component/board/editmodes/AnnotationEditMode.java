@@ -8,13 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.component.board.AnnotationRenderer;
 import yi.component.board.GameBoardManager;
+import yi.component.board.edits.AnnotationEdit;
 import yi.core.go.Annotation;
 import yi.core.go.AnnotationType;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public final class AnnotationEditMode implements EditMode {
+public final class AnnotationEditMode extends AbstractEditMode {
 
     /**
      * Defines the behaviour for mouse drag across the board intersection.
@@ -44,6 +47,7 @@ public final class AnnotationEditMode implements EditMode {
 
     // Internal
     private DragAction dragAction = DragAction.CREATE;
+    private long mouseSessionId;
 
     // For label annotations only
     private static final String LETTER_LABEL_PROGRESSION = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -64,7 +68,7 @@ public final class AnnotationEditMode implements EditMode {
 
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
-        if (manager.model.getCurrentGameState().getAnnotation(gridX, gridY).isPresent()) {
+        if (manager.model.getCurrentMove().hasAnnotationAt(gridX, gridY)) {
             return;
         }
 
@@ -89,14 +93,13 @@ public final class AnnotationEditMode implements EditMode {
 
     @Override
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
-        var currentState = manager.model.getCurrentGameState();
-        var annotationHere = currentState.getAnnotation(gridX, gridY);
+        generateNewMouseSessionId();
 
+        var annotationHere = manager.model.getCurrentMove().getAnnotationAt(gridX, gridY);
         boolean createRatherThanDelete;
 
         if (annotationHere.isPresent()) {
             var itsType = annotationHere.get().getType();
-
             createRatherThanDelete = itsType != typeToApply;
         } else {
             createRatherThanDelete = true;
@@ -107,7 +110,7 @@ public final class AnnotationEditMode implements EditMode {
             maybeCreateAnnotation(manager, gridX, gridY);
         } else {
             dragAction = DragAction.DELETE;
-            removeAnnotation(manager, gridX, gridY);
+            removeAnnotationAt(manager, gridX, gridY, mouseSessionId);
         }
     }
 
@@ -118,26 +121,19 @@ public final class AnnotationEditMode implements EditMode {
         if (dragAction == DragAction.CREATE) {
             maybeCreateAnnotation(manager, gridX, gridY);
         } else if (dragAction == DragAction.DELETE) {
-            removeAnnotation(manager, gridX, gridY);
+            removeAnnotationAt(manager, gridX, gridY, mouseSessionId);
         } else {
             throw new IllegalStateException("Unsupported drag action: " + dragAction.name());
         }
     }
 
     @Override
-    public void onKeyPress(GameBoardManager manager, KeyEvent e) {
-
-    }
-
-    @Override
     public void onMouseRelease(MouseButton button, GameBoardManager manager, int cursorX, int cursorY) {
+        generateNewMouseSessionId();
+
         if (typeToApply == AnnotationType.LABEL) {
             computeNextLabelText(manager);
         }
-    }
-
-    private void removeAnnotation(GameBoardManager manager, int gridX, int gridY) {
-        manager.model.removeAnnotationsOnCurrentMove(gridX, gridY);
     }
 
     /*
@@ -149,12 +145,18 @@ public final class AnnotationEditMode implements EditMode {
     private boolean directionalAnnoStartPositionDefined = false;
     
     private void maybeCreateAnnotation(GameBoardManager manager, int gridX, int gridY) {
+        Optional<Annotation> annotationHere = manager.model.getCurrentMove().getAnnotationAt(gridX, gridY);
+
+        if (annotationHere.isPresent() && annotationHere.get().getType() == typeToApply) {
+            return; // Same annotation. Letting the logic fall through introduces too much overhead.
+        }
+
         // First clear whatever annotation that is already here.
         // Only want one annotation per intersection.
-        removeAnnotation(manager, gridX, gridY);
+        removeAnnotationAt(manager, gridX, gridY, mouseSessionId);
 
         if (AnnotationType.Companion.isPointAnnotation(typeToApply)) {
-            createPointAnnotation(manager, typeToApply, gridX, gridY, nextLabelText);
+            createPointAnnotation(manager, typeToApply, gridX, gridY, nextLabelText, mouseSessionId);
         } else if (AnnotationType.Companion.isDirectionalAnnotation(typeToApply)) {
             if (!directionalAnnoStartPositionDefined) {
                 directionalAnnoFirstX = gridX;
@@ -164,29 +166,44 @@ public final class AnnotationEditMode implements EditMode {
                 assert directionalAnnoFirstX >= 0 && directionalAnnoFirstY >= 0
                         : String.format("Invalid directional annotation starting point: (%d, %d).", directionalAnnoFirstX, directionalAnnoFirstY);
 
-                createDirectionalAnnotation(manager, typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, gridX, gridY);
+                maybeCreateDirectionalAnnotation(manager, typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, gridX, gridY, mouseSessionId);
                 resetDirectionalAnnotationCreateStep();
             }
         }
     }
 
-    static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType, int gridX, int gridY, String nextLabelText) {
+    private static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType, int gridX, int gridY, String nextLabelText, long sessionId) {
         if (!AnnotationType.Companion.isPointAnnotation(annotationType)) {
             throw new IllegalArgumentException("Not a point annotation: " + annotationType.name());
         }
 
         var annotationText = nextLabelText == null ? "" : nextLabelText;
         Annotation pointAnno = Annotation.Companion.createFromType(annotationType, gridX, gridY, -1, -1, annotationText);
-        manager.model.addAnnotationToCurrentMove(pointAnno);
+        createAnnotation(manager, pointAnno, sessionId);
     }
 
-    static void createDirectionalAnnotation(GameBoardManager manager, AnnotationType annotationType, int startX, int startY, int endX, int endY) {
+    private static void maybeCreateDirectionalAnnotation(GameBoardManager manager, AnnotationType annotationType, int startX, int startY, int endX, int endY, long sessionId) {
         if (!AnnotationType.Companion.isDirectionalAnnotation(annotationType)) {
             throw new IllegalArgumentException("Not a directional annotation: " + annotationType.name());
         }
 
         var directionalAnno = Annotation.Companion.createFromType(annotationType, startX, startY, endX, endY, "");
-        manager.model.addAnnotationToCurrentMove(directionalAnno);
+        createAnnotation(manager, directionalAnno, sessionId);
+    }
+
+    private static void removeAnnotationAt(GameBoardManager manager, int gridX, int gridY, long sessionId) {
+        manager.model.getCurrentMove().getAnnotationAt(gridX, gridY).ifPresent(annotationToRemove -> {
+            var currentMove = manager.model.getCurrentMove();
+            var deletionEdit = AnnotationEdit.forRemoval(currentMove, annotationToRemove, sessionId);
+
+            manager.edit.recordAndApply(deletionEdit, manager);
+        });
+    }
+
+    private static void createAnnotation(GameBoardManager manager, Annotation annotation, long sessionId) {
+        var currentMove = manager.model.getCurrentMove();
+        var additionEdit = AnnotationEdit.forNew(currentMove, annotation, sessionId);
+        manager.edit.recordAndApply(additionEdit, manager);
     }
 
     private void resetDirectionalAnnotationCreateStep() {
@@ -247,6 +264,16 @@ public final class AnnotationEditMode implements EditMode {
 
             nextLabelText = String.valueOf(1 + maxNumber.orElse(0));
         } else throw new IllegalStateException("Unimplemented label type: " + Objects.requireNonNull(labelType).name());
+    }
+
+    private void generateNewMouseSessionId() {
+        long sessionId;
+
+        do {
+            sessionId = ThreadLocalRandom.current().nextLong();
+        } while (mouseSessionId == sessionId);
+
+        mouseSessionId = sessionId;
     }
 
     private void assertLabelTypeNotNull() {

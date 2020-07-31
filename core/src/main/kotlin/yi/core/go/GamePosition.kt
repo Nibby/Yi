@@ -30,8 +30,4 @@ class GamePosition(private val boardWidth: Int, boardHeight: Int) {
     fun getStoneColorAt(position: Int): StoneColor {
         return intersectionState[position]
     }
-
-    internal fun setStoneColorAt(x: Int, y: Int, stoneColor: StoneColor) {
-        intersectionState[x + y * boardWidth] = stoneColor
-    }
 }

@@ -1,22 +1,26 @@
 package yi.component.board;
 
+import yi.component.board.editmodes.AbstractEditMode;
 import yi.component.board.editmodes.EditMode;
+import yi.component.board.edits.AnnotationEdit;
 import yi.core.go.GameModel;
 import yi.component.board.edits.Undoable;
 
+import java.util.Collection;
 import java.util.Stack;
 
 /**
  * Manages all the edits made to the game model, providing support for undo and redo actions. The editing model requires
- * all changes to the game model to be submitted through this handler.
+ * all changes to the game model to be submitted through this handler. Therefore, this class should be the only place that
+ * directly interacts with {@link GameModel} state.
  */
 public final class GameBoardEditor {
 
-    private final Stack<Undoable> editHistory = new Stack<>();
+    private final Stack<Undoable> undoHistory = new Stack<>();
     private int positionInHistory = 0;
 
     private boolean editable = false;
-    private EditMode editMode = EditMode.PLAY_MOVE;
+    private AbstractEditMode editMode = EditMode.PLAY_MOVE;
 
     GameBoardEditor() { }
 
@@ -26,16 +30,44 @@ public final class GameBoardEditor {
         boolean successful = undoable.performEdit(gameModel);
 
         if (successful) {
-            if (positionInHistory < editHistory.size() - 1) {
-                // Discard the existing edit history
-                for (int i = positionInHistory; i < editHistory.size(); ++i) {
-                    editHistory.remove(editHistory.size() - 1);
-                }
-            }
+            // TODO: Making one exception for AnnotationEdit to aggregate fast edits under one undoable action.
+            //       If this becomes a common pattern, abstract this mechanism away.
+            if (!undoHistory.isEmpty() && undoable instanceof AnnotationEdit && undoHistory.peek() instanceof AnnotationEdit) {
+                var topOfHistoryStack = (AnnotationEdit) undoHistory.peek();
+                var annotationEdit = ((AnnotationEdit) undoable);
 
-            editHistory.push(undoable);
-            positionInHistory = editHistory.size() - 1;
+                if (topOfHistoryStack.isSameSession(annotationEdit)) {
+                    mergeWithMostRecentAnnotationEditInHistory(annotationEdit);
+                } else {
+                    pushChangeToUndoHistory(undoable);
+                }
+            } else {
+                pushChangeToUndoHistory(undoable);
+            }
         }
+    }
+
+    private void mergeWithMostRecentAnnotationEditInHistory(AnnotationEdit undoable) {
+        var firstItemToUndo = undoHistory.peek();
+
+        if (!(firstItemToUndo instanceof AnnotationEdit)) {
+            throw new IllegalStateException("First item is not AnnotationEdit so cannot be merged.");
+        }
+
+        ((AnnotationEdit) firstItemToUndo).merge(undoable);
+    }
+
+    private void pushChangeToUndoHistory(Undoable undoable) {
+        if (positionInHistory < undoHistory.size() - 1) {
+            // Discard the existing edit history
+            int originalSize = undoHistory.size();
+            for (int i = positionInHistory + 1; i < originalSize; ++i) {
+                undoHistory.pop();
+            }
+        }
+
+        undoHistory.push(undoable);
+        positionInHistory = undoHistory.indexOf(undoable);
     }
 
     /**
@@ -45,16 +77,20 @@ public final class GameBoardEditor {
     public void performUndo(GameBoardManager manager) {
         var gameModel = getGameModelOrCrash(manager);
 
-        if (!canUndo())
+        if (!canUndo()) {
             throw new IllegalStateException("Current position in history does not support undo." +
-                    " positionInHistory: " + positionInHistory + ", editHistorySize: " + editHistory.size());
-
-        Undoable currentEdit = editHistory.get(positionInHistory);
-        boolean successful = currentEdit.rollbackEdit(gameModel);
-
-        if (successful) {
-            positionInHistory--;
+                    " positionInHistory: " + positionInHistory + ", editHistorySize: " + undoHistory.size());
         }
+
+        if (positionInHistory >= 0) {
+            Undoable currentEdit = undoHistory.get(positionInHistory);
+            boolean successful = currentEdit.rollbackEdit(gameModel);
+
+            if (successful) {
+                positionInHistory--;
+            }
+        }
+        System.out.println(positionInHistory + ", " + undoHistory.size());
     }
 
     /**
@@ -63,16 +99,19 @@ public final class GameBoardEditor {
     public void performRedo(GameBoardManager manager) {
         var gameModel = getGameModelOrCrash(manager);
 
-        if (!canRedo())
+        if (!canRedo()) {
             throw new IllegalStateException("Current position in history does not support redo." +
-                    " positionInHistory: " + positionInHistory + ", editHistorySize: " + editHistory.size());
+                    " positionInHistory: " + positionInHistory + ", editHistorySize: " + undoHistory.size());
+        }
 
-        Undoable currentEdit = editHistory.get(positionInHistory);
+        Undoable currentEdit = undoHistory.get(positionInHistory + 1);
         boolean successful = currentEdit.performEdit(gameModel);
 
         if (successful) {
             positionInHistory++;
         }
+
+        System.out.println(positionInHistory + ", " + undoHistory.size());
     }
 
     /**
@@ -80,8 +119,7 @@ public final class GameBoardEditor {
      * @return true if {@link #performUndo(GameBoardManager)} can be performed.
      */
     public boolean canUndo() {
-        int previousPosition = positionInHistory - 1;
-        return previousPosition >= 0;
+        return undoHistory.size() > 0 && positionInHistory >= 0;
     }
 
     /**
@@ -90,15 +128,15 @@ public final class GameBoardEditor {
      */
     public boolean canRedo() {
         int nextPosition = positionInHistory + 1;
-        return nextPosition <= editHistory.size();
+        return nextPosition < undoHistory.size();
     }
 
     /**
      * Completely erases the editing history. This is a destructive operation!
      */
     public void clearEditHistory() {
-        editHistory.clear();
-        positionInHistory = editHistory.size();
+        undoHistory.clear();
+        positionInHistory = undoHistory.size();
     }
 
     public boolean isEditable() {
@@ -109,20 +147,15 @@ public final class GameBoardEditor {
         this.editable = editable;
     }
 
-    public EditMode getEditMode() {
+    public AbstractEditMode getEditMode() {
         return editMode;
     }
 
-    public void setEditMode(EditMode editMode) {
+    public void setEditMode(AbstractEditMode editMode) {
         this.editMode = editMode;
     }
 
     private GameModel getGameModelOrCrash(GameBoardManager manager) {
-        var gameModel = manager.model.getGameModel();
-
-        if (gameModel == null)
-            throw new IllegalStateException("Game model is unset");
-
-        return gameModel;
+        return manager.model.getGameModel().orElseThrow(() -> new IllegalStateException("Game model is not set"));
     }
 }

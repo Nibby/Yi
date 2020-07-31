@@ -18,12 +18,12 @@ class MoveSequence constructor(private val game: GameModel) {
     }
 
     /**
-     * Synonymous to [GameModel.addAnnotationOnCurrentMove]
+     * Synonymous to [GameModel.addAnnotationToCurrentMove]
      *
-     * @see [GameModel.addAnnotationOnCurrentMove]
+     * @see [GameModel.addAnnotationToCurrentMove]
      */
     fun annotate(annotation: Annotation): MoveSequence {
-        game.addAnnotationOnCurrentMove(annotation)
+        game.addAnnotationToCurrentMove(annotation)
         return this
     }
 

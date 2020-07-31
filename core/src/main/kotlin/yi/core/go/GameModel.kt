@@ -2,8 +2,6 @@
 
 package yi.core.go
 
-import yi.core.go.Annotation.DirectionalAnnotation
-import yi.core.go.Annotation.PointAnnotation
 import yi.core.go.rules.GoGameRulesHandler
 import java.util.*
 
@@ -221,8 +219,15 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method emits an [onCurrentNodeDataUpdate] event.
      */
-    fun addAnnotationOnCurrentMove(annotation: Annotation) {
-        addAnnotationsOnCurrentMove(annotation)
+    fun addAnnotationToCurrentMove(annotation: Annotation) {
+        addAnnotationsToCurrentMove(Collections.singleton(annotation))
+    }
+
+    /**
+     * Calls [addAnnotations] using the current move.
+     */
+    fun addAnnotationsToCurrentMove(annotations: Collection<Annotation>) {
+        addAnnotations(getCurrentMove(), annotations);
     }
 
     /**
@@ -230,33 +235,29 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method emits an [onCurrentNodeDataUpdate] event only once after all annotations have been added.
      */
-    fun addAnnotationsOnCurrentMove(vararg annotations: Annotation) {
-        annotations.forEach { getCurrentMoveStateDelta().annotationsOnThisNode.add(it) }
-        currentMoveUpdateEventHook.fireEvent(NodeEvent(getCurrentMove()))
+    fun addAnnotations(nodeToEdit: GameNode, annotations: Collection<Annotation>) {
+        annotations.forEach { nodeToEdit.stateDelta.annotationsOnThisNode.add(it) }
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+    }
+
+    /**
+     * Invokes [removeAnnotation] using the current node.
+     */
+    fun removeAnnotationFromCurrentMove(x: Int, y: Int) {
+        removeAnnotation(getCurrentMove(), x, y);
     }
 
     /**
      * Removes all annotation at the specified point from the current move. If one or more directional annotation has a
      * position here, it will be removed also.
      *
-     * This method emits an [onCurrentNodeDataUpdate] event once after all annotations have been removed.
+     * This method emits an [onNodeDataUpdate] event once after all annotations have been removed.
      */
-    fun removeAnnotationsFromCurrentMove(gridX: Int, gridY: Int) {
+    fun removeAnnotation(nodeToEdit: GameNode, x: Int, y: Int) {
         val annotationsToRemove = HashSet<Annotation>()
 
-        for (annotation in getAnnotationsOnCurrentMove()) {
-            val onThisPoint = when (annotation) {
-                is PointAnnotation -> {
-                    annotation.x == gridX && annotation.y == gridY
-                }
-                is DirectionalAnnotation -> {
-                    (annotation.x == gridX && annotation.y == gridY
-                            || annotation.xEnd == gridX && annotation.y == gridY)
-                }
-                else -> {
-                    throw IllegalStateException("Unsupported annotation type: " + annotation.javaClass.toString())
-                }
-            }
+        for (annotation in getAnnotations(nodeToEdit)) {
+            val onThisPoint = annotation.isOccupyingPosition(x, y)
 
             if (onThisPoint) {
                 annotationsToRemove.add(annotation)
@@ -264,17 +265,36 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         }
 
         annotationsToRemove.forEach { getCurrentMove().stateDelta.annotationsOnThisNode.remove(it) }
-        currentMoveUpdateEventHook.fireEvent(NodeEvent(getCurrentMove()))
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
     /**
-     * Deletes an annotation from the current move.
+     * Deletes an annotation from the current node.
      *
-     * This method emits a [onCurrentNodeDataUpdate] event.
+     * This method emits a [onNodeDataUpdate] event.
      */
     fun removeAnnotationFromCurrentMove(annotation: Annotation) {
-        getCurrentMove().stateDelta.annotationsOnThisNode.remove(annotation)
-        currentMoveUpdateEventHook.fireEvent(NodeEvent(getCurrentMove()))
+        removeAnnotation(getCurrentMove(), annotation);
+    }
+
+    /**
+     * Deletes an annotation from a specified node.
+     *
+     * This method emits a [onNodeDataUpdate] event.
+     */
+    fun removeAnnotation(nodeToEdit: GameNode, annotation: Annotation) {
+        nodeToEdit.stateDelta.annotationsOnThisNode.remove(annotation)
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+    }
+
+    /**
+     * Deletes the given annotations from a specified node.
+     *
+     * This method emits a single [onNodeDataUpdate] event after all annotations have been removed.
+     */
+    fun removeAnnotations(nodeToEdit: GameNode, annotations: Collection<Annotation>) {
+        annotations.forEach { nodeToEdit.stateDelta.annotationsOnThisNode.remove(it) }
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
     /**
@@ -286,10 +306,18 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
 
     /**
      *
-     * @return Set of all annotations that are present on this node.
+     * @return Set of all annotations on the current node.
      */
     fun getAnnotationsOnCurrentMove(): Set<Annotation> {
-        return getCurrentMove().stateDelta.annotationsOnThisNode
+        return getAnnotations(getCurrentMove());
+    }
+
+    /**
+     *
+     * @return Set of all annotations on the specified node.
+     */
+    fun getAnnotations(node: GameNode): Set<Annotation> {
+        return node.stateDelta.annotationsOnThisNode
     }
 
     /**
@@ -336,7 +364,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun setCurrentMove(node: GameNode) {
         _currentMove = node
 
-        currentNodeEventHook.fireEvent(NodeEvent(_currentMove))
+        onCurrentNodeChange().fireEvent(NodeEvent(getCurrentMove()))
     }
 
     /**
@@ -466,7 +494,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      */
     fun appendMove(node: GameNode) {
         gameTree.appendNode(getCurrentMove(), node)
-        nodeAdditionEventHook.fireEvent(NodeEvent(node))
+        onNodeAdd().fireEvent(NodeEvent(node))
     }
 
     /**
@@ -480,7 +508,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             throw IllegalArgumentException("Root node cannot be deleted")
 
         gameTree.removeNodeSubtree(node)
-        nodeDeletionEventHook.fireEvent(NodeEvent(node))
+        onNodeRemove().fireEvent(NodeEvent(node))
 
         if (_currentMove.isContinuationOf(node)) {
             _currentMove = node.parent!! // Since root cannot be deleted, all other nodes should have a parent
@@ -496,15 +524,13 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     }
 
     // -- Observable property declarations
-    private val currentNodeEventHook = NodeEventHook()
 
     /**
      * Emitter for current node change events. In other words, an event will be fired from this event hook
      * if a new game node becomes the current node.
      */
     fun onCurrentNodeChange(): NodeEventHook = currentNodeEventHook
-
-    private val nodeAdditionEventHook = NodeEventHook()
+    private val currentNodeEventHook = NodeEventHook()
 
     /**
      * Emitter for node addition events. This event is always emitted before [onCurrentNodeChange], clients
@@ -514,15 +540,13 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * To retrieve the correct current node, subscribe to [onCurrentNodeChange] instead.
      */
     fun onNodeAdd(): NodeEventHook = nodeAdditionEventHook
-
-    private val nodeDeletionEventHook = NodeEventHook()
+    private val nodeAdditionEventHook = NodeEventHook()
 
     /**
      * Emitter for node deletion events.
      */
     fun onNodeRemove(): NodeEventHook = nodeDeletionEventHook
-
-    private val currentMoveUpdateEventHook = NodeEventHook()
+    private val nodeDeletionEventHook = NodeEventHook()
 
     /**
      * Emitter for current node data update events.
@@ -530,6 +554,28 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This event does not represent a change in the current node, rather it is the change in the data on the current
      * node. To determine whether the current node itself has changed, subscribe to [onCurrentNodeChange] instead.
      */
-    fun onCurrentNodeDataUpdate(): NodeEventHook = currentMoveUpdateEventHook
+    // Events in this hook doesn't need to be fired explicitly.
+    fun onCurrentNodeDataUpdate(): NodeEventHook = currentNodeDataUpdateEventHook
+    private val currentNodeDataUpdateEventHook = NodeEventHook()
 
+    /**
+     * Emitter for node data update events that may or may not be the current move.
+     *
+     * To subscribe to node data updates for only the current game move, use [onCurrentNodeDataUpdate].
+     */
+    fun onNodeDataUpdate(): NodeEventHook = nodeDataUpdateEventHook
+    private val nodeDataUpdateEventHook = NodeEventHook()
+
+    // This init block has to be done last because the fields are initialized in order.
+    init {
+        val currentNodeDataUpdateEventEmitter = object : EventListener<NodeEvent> {
+            override fun onEvent(event: NodeEvent) {
+                if (event.node == getCurrentMove()) {
+                    onCurrentNodeDataUpdate().fireEvent(event)
+                }
+            }
+        }
+
+        onNodeDataUpdate().addListener(currentNodeDataUpdateEventEmitter)
+    }
 }

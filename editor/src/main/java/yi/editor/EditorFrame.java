@@ -17,6 +17,7 @@ import yi.editor.settings.Settings;
  */
 public class EditorFrame extends Stage {
 
+    private final GlobalAccelerators globalAccelerators;
     private final EditorMenuBar menuBar;
     private final EditorToolBar editorToolBar;
     private final ControlToolBar controlToolBar;
@@ -31,6 +32,8 @@ public class EditorFrame extends Stage {
 
     public EditorFrame(GameModel gameModel, ContentLayout layout) {
         this.gameModel = gameModel;
+        this.globalAccelerators = new GlobalAccelerators();
+        this.globalAccelerators.setUndoSystemHandler(new DefaultUndoSystemHandler());
 
         boardViewer = new GameBoardViewer(Settings.getCurrentGameBoardSettings());
         boardViewer.setGameModel(gameModel);
@@ -84,6 +87,7 @@ public class EditorFrame extends Stage {
             double newWidth = currentHeight * newAspectRatio;
 
             var newScene = new Scene(container, newWidth, currentHeight);
+            globalAccelerators.installFor(newScene);
             setScene(newScene);
             setWidth(newWidth);
             setHeight(currentHeight);
@@ -93,7 +97,9 @@ public class EditorFrame extends Stage {
             double startupWidth = startupSize.getWidth();
             double startupHeight = startupSize.getHeight();
 
-            setScene(new Scene(container, startupWidth, startupHeight));
+            var newScene = new Scene(container, startupWidth, startupHeight);
+            globalAccelerators.installFor(newScene);
+            setScene(newScene);
         }
 
         var minSize = newLayout.getMinimumWindowSize();
@@ -107,5 +113,23 @@ public class EditorFrame extends Stage {
 
     public GameTreeViewer getTreeViewer() {
         return treeViewer;
+    }
+
+
+    class DefaultUndoSystemHandler implements GlobalAccelerators.UndoSystemHandler {
+
+        @Override
+        public void requestUndo() {
+            if (boardViewer != null) {
+                boardViewer.requestUndo();
+            }
+        }
+
+        @Override
+        public void requestRedo() {
+            if (boardViewer != null) {
+                boardViewer.requestRedo();
+            }
+        }
     }
 }

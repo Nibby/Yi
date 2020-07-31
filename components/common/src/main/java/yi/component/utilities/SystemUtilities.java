@@ -1,4 +1,4 @@
-package yi.editor.utilities;
+package yi.component.utilities;
 
 public final class SystemUtilities {
 
