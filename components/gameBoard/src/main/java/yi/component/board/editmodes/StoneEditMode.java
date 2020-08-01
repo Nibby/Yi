@@ -1,7 +1,6 @@
 package yi.component.board.editmodes;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import yi.core.go.StoneColor;

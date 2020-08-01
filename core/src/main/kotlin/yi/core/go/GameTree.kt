@@ -11,7 +11,7 @@ open class GameTree constructor(rootNode: GameNode) {
     constructor() : this(GameNode())
 
     /**
-     * Appends a child node to a parent node in the tree.
+     * Appends a new child node to a parent node in the tree.
      *
      * @throws IllegalArgumentException if parent is part of another tree, child already has a parent, child is a root node, or parent == child
      */
@@ -38,7 +38,7 @@ open class GameTree constructor(rootNode: GameNode) {
      *
      * @throws IllegalArgumentException see kotlin docs for [appendNode]
      */
-    fun appendNode(child: GameNode) {
+    fun appendNewNodeToRoot(child: GameNode) {
         appendNode(rootNode, child)
     }
 
@@ -70,10 +70,12 @@ open class GameTree constructor(rootNode: GameNode) {
      */
     @Suppress("UNCHECKED_CAST") // Should be safe to cast as NodeType inherits from GameNode
     fun removeNodeSubtree(node: GameNode) {
-        if (!isDescendant(node))
+        if (!isDescendant(node)) {
             throw IllegalArgumentException("Cannot remove a node that is not part of this move tree")
+        }
 
         node.parent?.children?.remove(node)
+        node.parent = null
         node.children.forEach { child -> child.parent = null; removeNodeSubtree(child); }
         node.children.clear()
     }

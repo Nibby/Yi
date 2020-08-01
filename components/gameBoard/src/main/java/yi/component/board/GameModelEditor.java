@@ -7,6 +7,7 @@ import yi.core.go.GameModel;
 import yi.component.board.edits.Undoable;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -14,15 +15,16 @@ import java.util.Stack;
  * all changes to the game model to be submitted through this handler. Therefore, this class should be the only place that
  * directly interacts with {@link GameModel} state.
  */
-public final class GameBoardEditor {
+public final class GameModelEditor {
 
     private final Stack<Undoable> undoHistory = new Stack<>();
+    private int maxHistorySize = 30;
     private int positionInHistory = 0;
 
     private boolean editable = false;
     private AbstractEditMode editMode = EditMode.PLAY_MOVE;
 
-    GameBoardEditor() { }
+    GameModelEditor() { }
 
     public void recordAndApply(Undoable undoable, GameBoardManager manager) {
         var gameModel = getGameModelOrCrash(manager);
@@ -68,6 +70,15 @@ public final class GameBoardEditor {
 
         undoHistory.push(undoable);
         positionInHistory = undoHistory.indexOf(undoable);
+
+        pruneHistorySize();
+    }
+
+    private void pruneHistorySize() {
+        while (undoHistory.size() > maxHistorySize) {
+            undoHistory.remove(0);
+            --positionInHistory;
+        }
     }
 
     /**
@@ -90,7 +101,6 @@ public final class GameBoardEditor {
                 positionInHistory--;
             }
         }
-        System.out.println(positionInHistory + ", " + undoHistory.size());
     }
 
     /**
@@ -110,8 +120,6 @@ public final class GameBoardEditor {
         if (successful) {
             positionInHistory++;
         }
-
-        System.out.println(positionInHistory + ", " + undoHistory.size());
     }
 
     /**
@@ -152,7 +160,20 @@ public final class GameBoardEditor {
     }
 
     public void setEditMode(AbstractEditMode editMode) {
-        this.editMode = editMode;
+        this.editMode = Objects.requireNonNull(editMode, "Edit mode cannot be null. To disable editing, use setEditable(false)");
+    }
+
+    public int getMaxHistorySize() {
+        return maxHistorySize;
+    }
+
+    public void setMaxHistorySize(int maxHistorySize) {
+        if (maxHistorySize < 0) {
+            throw new IllegalArgumentException("Maximum history size must be a positive integer");
+        }
+
+        this.maxHistorySize = maxHistorySize;
+        pruneHistorySize();
     }
 
     private GameModel getGameModelOrCrash(GameBoardManager manager) {

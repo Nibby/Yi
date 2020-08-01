@@ -82,7 +82,7 @@ public final class GameBoardModel {
 
     /**
      * This must be package-private because we should never expose the model for other classes to access
-     * other than {@link GameBoardEditor}.
+     * other than {@link GameModelEditor}.
      *
      * @return The game model if it is set.
      */
@@ -100,7 +100,7 @@ public final class GameBoardModel {
 
     /**
      * Wraps a {@link GameModel} and exposes only methods that do not permit the modification of game state.
-     * Use {@link GameBoardEditor#recordAndApply(Undoable, GameBoardManager)} to edit to the game model.
+     * Use {@link GameModelEditor#recordAndApply(Undoable, GameBoardManager)} to edit to the game model.
      */
     public static final class GameNodeWrapper {
         private final GameNode node;
@@ -128,7 +128,7 @@ public final class GameBoardModel {
         }
 
         /**
-         * <b>Do not use this method to update node state</b>. Use {@link GameBoardEditor#recordAndApply(Undoable, GameBoardManager)}
+         * <b>Do not use this method to update node state</b>. Use {@link GameModelEditor#recordAndApply(Undoable, GameBoardManager)}
          * and its variants to make changes to the game model. Failure to do so breaks the undo/redo mechanism.
          *
          * @return The underlying game node wrapped by this class.

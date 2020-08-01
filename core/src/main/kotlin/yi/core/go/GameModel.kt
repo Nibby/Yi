@@ -24,7 +24,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
                 throw IllegalArgumentException("Node does not belong to the model game tree")
 
             field = value
-            internalCurrentNodeUpdate(field)
+            internalCurrentNodeUpdate(value)
+            currentNodeChangeEventHook.fireEvent(NodeEvent(value))
         }
 
     init {
@@ -470,7 +471,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     }
 
     /**
-     * Appends the [node] to the game tree and sets the current move to the new [node].
+     * Appends the node to the game tree and sets the current move to the new node.
      *
      * At this point the move is assumed to be legal and playable. Any rule validation should
      * take place before calling this method. In which case it may be preferable to define a
@@ -479,8 +480,22 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method first emits an [onNodeAdd] event, followed by [onCurrentNodeChange].
      */
     fun submitMove(node: GameNode) {
-        appendMove(node)
-        setCurrentMove(node)
+        submitMove(getCurrentMove(), node)
+    }
+
+    /**
+     * Appends the child to the parent node and set the child as the current move. The parent node
+     * must already exist in the game tree.
+     *
+     * At this point the move is assumed to be legal and playable. Any rule validation should
+     * take place before calling this method. In which case it may be preferable to define a
+     * custom entry point to the move submission process.
+     *
+     * This method first emits an [onNodeAdd] event, followed by [onCurrentNodeChange].
+     */
+    fun submitMove(parent: GameNode, child: GameNode) {
+        appendMove(parent, child)
+        setCurrentMove(child)
     }
 
     /**
@@ -493,8 +508,23 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method emits an [onNodeAdd] event.
      */
     fun appendMove(node: GameNode) {
-        gameTree.appendNode(getCurrentMove(), node)
-        onNodeAdd().fireEvent(NodeEvent(node))
+        appendMove(getCurrentMove(), node)
+    }
+
+    /**
+     * Appends a child node to an existing node (parent) on the tree.
+     *
+     * If the parent node has no children, the child move will be come its main branch
+     * continuation. Otherwise, it becomes a variation. This method will not update
+     * the current move to the newly appended node.
+     *
+     * Use [submitMove] to append and set the current node.
+     *
+     * This method emits an [onNodeAdd] event.
+     */
+    fun appendMove(parent: GameNode, child: GameNode) {
+        gameTree.appendNode(parent, child)
+        onNodeAdd().fireEvent(NodeEvent(child))
     }
 
     /**
@@ -503,9 +533,10 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method emits an [onNodeRemove] event.
      */
-    fun removeNode(node: GameNode) {
-        if (node.isRoot())
-            throw IllegalArgumentException("Root node cannot be deleted")
+    fun removeNodeSubtree(node: GameNode) {
+        if (node.isRoot()) {
+            throw IllegalArgumentException("Attempting to remove root node")
+        }
 
         gameTree.removeNodeSubtree(node)
         onNodeRemove().fireEvent(NodeEvent(node))
@@ -529,8 +560,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Emitter for current node change events. In other words, an event will be fired from this event hook
      * if a new game node becomes the current node.
      */
-    fun onCurrentNodeChange(): NodeEventHook = currentNodeEventHook
-    private val currentNodeEventHook = NodeEventHook()
+    fun onCurrentNodeChange(): NodeEventHook = currentNodeChangeEventHook
+    private val currentNodeChangeEventHook = NodeEventHook()
 
     /**
      * Emitter for node addition events. This event is always emitted before [onCurrentNodeChange], clients
