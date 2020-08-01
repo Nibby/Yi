@@ -44,10 +44,9 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../../build/core/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../core/src/test" />
-    <content url="file://$MODULE_DIR$/../../../core/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../core/test/integration" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../core/test/unit" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../core/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../../core/src/test/integration" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../core/src/test/unit" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

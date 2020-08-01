@@ -26,7 +26,7 @@ sourceSets {
 
     test {
         java {
-            srcDirs = ['test/unit', 'test/integration']
+            srcDirs = ['src/test/unit', 'src/test/integration']
         }
     }
 }
