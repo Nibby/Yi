@@ -151,12 +151,12 @@ class MoveTreeTest {
     fun `adding node to treeB when it is already in treeA should fail`() {
         val treeA = GameTree()
         val nodeA = GameNode()
-        treeA.appendNode(nodeA)
+        treeA.appendNewNodeToRoot(nodeA)
 
         val treeB = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            treeB.appendNode(nodeA)
+            treeB.appendNewNodeToRoot(nodeA)
         }
     }
 
@@ -166,7 +166,7 @@ class MoveTreeTest {
         val treeB = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            treeA.appendNode(treeB.rootNode)
+            treeA.appendNewNodeToRoot(treeB.rootNode)
         }
     }
 
@@ -175,7 +175,7 @@ class MoveTreeTest {
         val treeA = GameTree()
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            treeA.appendNode(treeA.rootNode)
+            treeA.appendNewNodeToRoot(treeA.rootNode)
         }
     }
 
@@ -191,7 +191,7 @@ class MoveTreeTest {
     fun `child node has correct position`() {
         val treeA = GameTree()
         val child1 = GameNode()
-        treeA.appendNode(child1)
+        treeA.appendNewNodeToRoot(child1)
 
         Assertions.assertEquals(1, child1.moveNumber)
         Assertions.assertEquals(1, child1.moveNumber)

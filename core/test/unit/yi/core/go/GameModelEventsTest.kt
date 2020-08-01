@@ -65,7 +65,7 @@ class GameModelEventsTest {
         model.onNodeRemove().addListener(eventListener);
 
         val submitResult = model.playMove(0, 0)
-        model.removeNode(submitResult.moveNode!!) // Has to be a legal move
+        model.removeNodeSubtree(submitResult.moveNode!!) // Has to be a legal move
         Thread.sleep(10)
         Assertions.assertTrue(eventReceived, "No event emitted")
     }

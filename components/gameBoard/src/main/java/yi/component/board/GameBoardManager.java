@@ -11,7 +11,7 @@ public final class GameBoardManager {
     public final GameBoardModel model = new GameBoardModel();
     public final GameBoardSize size = new GameBoardSize();
     public final GameBoardView view = new GameBoardView();
-    public final GameBoardEditor edit = new GameBoardEditor();
+    public final GameModelEditor edit = new GameModelEditor();
 
     GameBoardManager() { }
 
