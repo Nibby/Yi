@@ -21,8 +21,8 @@ jobs:
       run: chmod +x gradlew
     - name: Run Tests using Gradle
       run: ./gradlew test
-
     - name: Upload artifacts
+      if: always()
       uses: actions/upload-artifact@v2
       with:
         name: test-reports
