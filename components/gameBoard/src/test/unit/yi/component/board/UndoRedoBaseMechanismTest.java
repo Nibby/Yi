@@ -232,7 +232,7 @@ public final class UndoRedoBaseMechanismTest {
 
         // Method under test
         editor.recordAndApply(item3, manager);
-        runStateAssertions(originalHistorySize, 2, false, true, true, editor);
+        runStateAssertions(3, 2, false, true, true, editor);
     }
 
     @Test
