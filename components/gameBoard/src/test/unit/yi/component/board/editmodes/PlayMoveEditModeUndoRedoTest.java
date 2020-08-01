@@ -13,7 +13,7 @@ import yi.core.go.StoneColor;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PlayMoveEditModeUndoRedoTest {
+public final class PlayMoveEditModeUndoRedoTest {
 
     @Test
     public void testPlayMoveCreatesHistoryItem() {
