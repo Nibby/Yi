@@ -538,11 +538,18 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             throw IllegalArgumentException("Attempting to remove root node")
         }
 
+        // Do it here because the node lineage will be destroyed after removing node subtree.
+        // and we want to fire the current node change event after node removal event.
+        val readjustCurrentNode = _currentMove.isContinuationOf(node)
+
+        // Since root cannot be deleted, there will always be a parent for the node to be removed.
+        val nodeToAdjustTo = if (readjustCurrentNode) node.parent!! else null
+
         gameTree.removeNodeSubtree(node)
         onNodeRemove().fireEvent(NodeEvent(node))
 
-        if (_currentMove.isContinuationOf(node)) {
-            _currentMove = node.parent!! // Since root cannot be deleted, all other nodes should have a parent
+        if (readjustCurrentNode) {
+            _currentMove = nodeToAdjustTo!!
         }
     }
 
