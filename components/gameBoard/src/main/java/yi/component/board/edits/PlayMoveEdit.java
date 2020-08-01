@@ -1,18 +1,32 @@
 package yi.component.board.edits;
 
+import yi.core.go.GameModel;
 import yi.core.go.GameNode;
-import yi.core.go.*;
+import yi.core.go.MoveSubmitResult;
+import yi.core.go.MoveValidationResult;
 
 public final class PlayMoveEdit extends UndoableEdit {
 
-    private final int moveX;
-    private final int moveY;
+    private enum MoveType {
+        PLAY_MOVE,
+        PASS,
+        RESIGN
+    }
+
+    private final MoveType moveType;
+    private int moveX;
+    private int moveY;
     private GameNode parentOfSubmittedNode;
     private GameNode submittedNode;
 
-    public PlayMoveEdit(int moveX, int moveY) {
+    private PlayMoveEdit(int moveX, int moveY) {
+        this(MoveType.PLAY_MOVE);
         this.moveX = moveX;
         this.moveY = moveY;
+    }
+
+    private PlayMoveEdit(MoveType moveType) {
+        this.moveType = moveType;
     }
 
     @Override
@@ -58,5 +72,21 @@ public final class PlayMoveEdit extends UndoableEdit {
     @Override
     protected boolean canRollback() {
         return submittedNode != null;
+    }
+
+    GameNode getSubmittedNode() {
+        return submittedNode;
+    }
+
+    public static PlayMoveEdit forMove(int x, int y) {
+        return new PlayMoveEdit(x, y);
+    }
+
+    public static PlayMoveEdit forPass() {
+        return new PlayMoveEdit(MoveType.PASS);
+    }
+
+    public static PlayMoveEdit forResignation() {
+        return new PlayMoveEdit(MoveType.RESIGN);
     }
 }

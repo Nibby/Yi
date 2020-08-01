@@ -48,7 +48,7 @@ final class PlayMoveEditMode extends AbstractEditMode {
 
     @Override
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
-        var playMoveEdit = new PlayMoveEdit(gridX, gridY);
+        var playMoveEdit = PlayMoveEdit.forMove(gridX, gridY);
         manager.edit.recordAndApply(playMoveEdit, manager);
     }
 

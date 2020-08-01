@@ -41,7 +41,7 @@ public final class GameBoardViewer implements Component {
         container = new CanvasContainer(content);
         container.addSizeUpdateListener(newSize -> {
             if (gameModel != null) {
-                manager.onBoardSizeUpdate(newSize.getWidth(), newSize.getHeight(), gameModel);
+                manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), gameModel);
                 renderAll();
             }
         });
@@ -71,7 +71,7 @@ public final class GameBoardViewer implements Component {
         this.gameModel.onCurrentNodeChange().addListener(updateAllCanvas);
         this.gameModel.onCurrentNodeDataUpdate().addListener(updateAllCanvas);
 
-        manager.onGameModelSet(game);
+        manager.setGameModel(game);
         content.forEach(canvas -> canvas.onGameModelSet(game, manager));
     }
 
