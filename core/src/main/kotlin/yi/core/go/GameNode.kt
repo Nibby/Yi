@@ -68,7 +68,7 @@ open class GameNode constructor() {
      *
      * @return true if this node is the top-level ancestor of the game tree.
      */
-    fun isRoot(): Boolean = parent == null || markedAsRoot
+    fun isRoot(): Boolean = markedAsRoot
 
     /**
      *
