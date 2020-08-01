@@ -276,6 +276,50 @@ class PlayMoveTest {
         Assertions.assertEquals(2, model.getCurrentMove().children.size)
     }
 
+    @Test
+    fun `pass at a position where the next move is also pass will set current move to that node instead`() {
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+
+        val branchNode = model.playMove(0, 0).moveNode!!
+
+        model.playMove(1, 0)
+        model.toPreviousMove()
+        val firstPassNode = model.playPass().moveNode!!
+        model.toPreviousMove()
+
+        // Check setup is correct
+        Assertions.assertEquals(2, model.getCurrentMove().children.size)
+
+        // Pass again. This should set the current move to firstPassNode.
+        // No new branch will be created.
+        model.playPass()
+
+        Assertions.assertEquals(2, branchNode.children.size, "Child size changed after passing the second time.")
+        Assertions.assertEquals(firstPassNode, model.getCurrentMove(), "Current node is not at the original pass node.")
+    }
+
+    @Test
+    fun `resign at a position where the next move is also resign will set current move to that node instead`() {
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+
+        val branchNode = model.playMove(0, 0).moveNode!!
+
+        model.playMove(1, 0)
+        model.toPreviousMove()
+        val firstResignNode = model.playResign().moveNode!!
+        model.toPreviousMove()
+
+        // Check setup is correct
+        Assertions.assertEquals(2, model.getCurrentMove().children.size)
+
+        // Resign again. This should set the current move to firstResignNode.
+        // No new branch will be created.
+        model.playResign()
+
+        Assertions.assertEquals(2, branchNode.children.size, "Child size changed after resign for the second time.")
+        Assertions.assertEquals(firstResignNode, model.getCurrentMove(), "Current node is not at the original resign node.")
+    }
+
     // Only supports a 2x2 board for testing purposes
     private class TestingFourIntersectionXORHasher : GameStateHasher {
 

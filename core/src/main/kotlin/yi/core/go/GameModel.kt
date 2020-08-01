@@ -150,18 +150,44 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Play a pass for the next turn.
      */
     fun playPass(): MoveSubmitResult {
-        val newNode = GameMoveSubmitter.createMoveNodeForPass(getCurrentMove())
-        submitMove(newNode)
-        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        var existingContinuation: GameNode? = null
+
+        for (child in getCurrentMove().children) {
+            if (child.stateDelta.type == StateDelta.Type.PASS) {
+                existingContinuation = child
+            }
+        }
+
+        return if (existingContinuation != null) {
+            setCurrentMove(existingContinuation)
+            MoveSubmitResult(MoveValidationResult.OK, existingContinuation, true)
+        } else {
+            val newNode = GameMoveSubmitter.createMoveNodeForPass(getCurrentMove())
+            submitMove(newNode)
+            MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        }
     }
 
     /**
      * Resign the game for next turn.
      */
     fun playResign(): MoveSubmitResult {
-        val newNode = GameMoveSubmitter.createMoveNodeForResignation(getCurrentMove())
-        submitMove(newNode)
-        return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        var existingContinuation: GameNode? = null
+
+        for (child in getCurrentMove().children) {
+            if (child.stateDelta.type == StateDelta.Type.RESIGN) {
+                existingContinuation = child
+            }
+        }
+
+        return if (existingContinuation != null) {
+            setCurrentMove(existingContinuation)
+            MoveSubmitResult(MoveValidationResult.OK, existingContinuation, true)
+        } else {
+            val newNode = GameMoveSubmitter.createMoveNodeForResignation(getCurrentMove())
+            submitMove(newNode)
+            MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+        }
     }
 
     /**
