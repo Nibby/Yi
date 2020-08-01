@@ -60,9 +60,10 @@ public final class GameBoardSize {
 
         // Doesn't really matter the size of the grid bounds at this point, the proportion is what matters.
         // We will scale everything to the correct size later.
-        LayoutRectangle scaledGridBounds = new LayoutRectangle(gridFitRatio.getWidth(), gridFitRatio.getHeight());
-        double percentageMarginBetweenLabelsAndGrid = 0.035d;
-        LayoutRectangle gridSpacingBounds = scaledGridBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenLabelsAndGrid, scaledGridBounds));
+        var scaledGridBounds = new LayoutRectangle(gridFitRatio.getWidth(), gridFitRatio.getHeight());
+        var scaledStoneSize = (scaledGridBounds.getWidth() / gridWidth + scaledGridBounds.getHeight() / gridHeight) / 2;
+        var percentageStoneSizeToGridBounds = scaledStoneSize / scaledGridBounds.getWidth();
+        var gridSpacingBounds = scaledGridBounds.createParentWithMargin(getPixelValue(percentageStoneSizeToGridBounds, scaledGridBounds));
 
         coordinateLabelBounds = computeCoordinateLabelBounds(gridSpacingBounds, coordinateLabelPosition);
 
