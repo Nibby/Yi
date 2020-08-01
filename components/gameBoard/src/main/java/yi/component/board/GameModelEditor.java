@@ -176,6 +176,32 @@ public final class GameModelEditor {
         pruneHistorySize();
     }
 
+    public int getCurrentHistorySize() {
+        return undoHistory.size();
+    }
+
+    /**
+     *
+     * @return Current position in the undo stack history.
+     */
+    public int getCurrentPositionInHistory() {
+        return positionInHistory;
+    }
+
+    /**
+     * Retrieves the {@link Undoable} edit item in the undo stack at the given position.
+     *
+     * @param position Position index of the item.
+     * @return Item in undo history at the given position index.
+     */
+    public Undoable getHistoryItem(int position) {
+        if (position < 0 || position > undoHistory.size()) {
+            throw new IllegalArgumentException("Position out of bounds: " + position + ", must be within 0 - " + (undoHistory.size() - 1));
+        }
+
+        return undoHistory.get(position);
+    }
+
     private GameModel getGameModelOrCrash(GameBoardManager manager) {
         return manager.model.getGameModel().orElseThrow(() -> new IllegalStateException("Game model is not set"));
     }

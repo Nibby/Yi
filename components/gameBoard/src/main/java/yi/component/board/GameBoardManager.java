@@ -15,16 +15,16 @@ public final class GameBoardManager {
 
     GameBoardManager() { }
 
-    void onGameModelSet(GameModel game) {
+    public void setGameModel(GameModel game) {
         model.setGameModel(game);
         edit.setEditable(true);
     }
 
-    void onBoardSizeUpdate(double componentWidth, double componentHeight, GameModel game) {
+    public void setBoardCanvasSize(double componentWidth, double componentHeight, GameModel game) {
         size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.coordinateLabelPosition);
     }
 
-    void onGameUpdate(GameModel game) {
+    public void onGameUpdate(GameModel game) {
         model.update(game);
     }
 }
