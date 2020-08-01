@@ -3,7 +3,9 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../../../build/common/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../../components/common/src/test" />
+    <content url="file://$MODULE_DIR$/../../../../components/common/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../components/common/src/test/unit" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.common.main" />
