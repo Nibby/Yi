@@ -134,15 +134,29 @@ public class GameTreeStructurePerformanceTest {
     }
 
     private void testPerformance(GameModel model, long expectedDurationMillis) {
-        double startTime = System.nanoTime();
-        new GameTreeStructure(model);
-        double endTime = System.nanoTime();
+        // Warm up the VM by doing a few dry runs.
+        // Most of the time the fresh start is slower than subsequent attempts because of initialization overhead
+        for (int i = 0; i < 3; ++i) {
+            new GameTreeStructure(model);
+        }
 
-        double timeElapsed = endTime - startTime;
-        long timeElapsedMillis = TimeUnit.NANOSECONDS.toMillis(Math.round(timeElapsed));
+        long average = 0;
+        int trials = 5;
 
-        Assertions.assertTrue(timeElapsedMillis < expectedDurationMillis,
-                "Took " + timeElapsedMillis + "ms to construct tree structure, expected " + expectedDurationMillis + "ms");
+        for (int i = 0; i < trials; ++i) {
+            long startTime = System.nanoTime();
+            new GameTreeStructure(model);
+            long endTime = System.nanoTime();
+
+            long timeElapsed = endTime - startTime;
+            long timeElapsedMillis = TimeUnit.NANOSECONDS.toMillis(Math.round(timeElapsed));
+            average += timeElapsedMillis;
+        }
+
+        long averageTime = average / trials;
+
+        Assertions.assertTrue(averageTime <= expectedDurationMillis,
+                "Averaged " + averageTime + "ms out of " + trials + " runs to construct tree structure, expected " + expectedDurationMillis + "ms");
     }
 
     private GameModel createModelWithMainVariation(int nodeCount) {
