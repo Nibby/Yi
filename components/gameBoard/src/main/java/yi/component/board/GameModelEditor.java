@@ -22,7 +22,7 @@ public final class GameModelEditor {
     private int positionInHistory = 0;
 
     private boolean editable = false;
-    private AbstractEditMode editMode = EditMode.PLAY_MOVE;
+    private AbstractEditMode editMode = EditMode.playMove();
 
     GameModelEditor() { }
 

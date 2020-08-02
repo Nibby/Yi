@@ -18,6 +18,7 @@ dependencies {
 
     testImplementation rootProject.ext.commonDependencies.testImplementation
     testRuntimeOnly rootProject.ext.commonDependencies.testRuntimeOnly
+    // Integration test dependencies are beneath where testIntegration task is defined.
 }
 
 javafx {
@@ -76,4 +77,8 @@ task testIntegration(type: Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.testIntegration.output.classesDirs
     classpath = sourceSets.testIntegration.runtimeClasspath
+}
+
+dependencies {
+    testIntegrationImplementation rootProject.ext.javaFxDependencies.testIntegrationImplementation
 }
