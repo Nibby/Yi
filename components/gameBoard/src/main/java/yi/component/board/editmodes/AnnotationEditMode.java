@@ -118,12 +118,14 @@ public final class AnnotationEditMode extends AbstractEditMode {
     public void onMouseDrag(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         // TODO: Maybe allow re-positioning a directional annotation if it's dragged at either end?
 
-        if (dragAction == DragAction.CREATE) {
-            maybeCreateAnnotation(manager, gridX, gridY);
-        } else if (dragAction == DragAction.DELETE) {
-            removeAnnotationAt(manager, gridX, gridY, mouseSessionId);
-        } else {
-            throw new IllegalStateException("Unsupported drag action: " + dragAction.name());
+        if (AnnotationType.Companion.isPointAnnotation(typeToApply)) {
+            if (dragAction == DragAction.CREATE) {
+                maybeCreateAnnotation(manager, gridX, gridY);
+            } else if (dragAction == DragAction.DELETE) {
+                removeAnnotationAt(manager, gridX, gridY, mouseSessionId);
+            } else {
+                throw new IllegalStateException("Unsupported drag action: " + dragAction.name());
+            }
         }
     }
 
