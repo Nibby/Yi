@@ -21,7 +21,7 @@ allprojects {
 
     javafx {
         version = globalConfigurations.javaFxVersion
-        modules = ['javafx.controls']
+        modules = ['javafx.controls', 'javafx.swing']
     }
 
     configurations {
@@ -65,8 +65,23 @@ allprojects {
 
     task testUi(type: Test) {
         useJUnitPlatform()
+
         testClassesDirs = sourceSets.testUi.output.classesDirs
         classpath = sourceSets.testUi.runtimeClasspath
+
+        finalizedBy 'submitTestData'
+    }
+
+    task submitTestData() {
+        doLast {
+            def screenshotDir = "${projectDir}/testScreenshots"
+            copy {
+                from screenshotDir
+                include "**/*.png"
+                into "${rootProject.buildDir}/testScreenshots/${project.getName()}"
+            }
+            delete screenshotDir
+        }
     }
 
     dependencies {

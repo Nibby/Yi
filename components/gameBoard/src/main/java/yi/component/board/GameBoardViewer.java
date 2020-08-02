@@ -71,13 +71,15 @@ public final class GameBoardViewer implements Component {
         this.gameModel.onCurrentNodeChange().addListener(updateAllCanvas);
         this.gameModel.onCurrentNodeDataUpdate().addListener(updateAllCanvas);
 
+        manager.setBoardCanvasSize(container.getWidth(), container.getHeight(), game);
         manager.setGameModel(game);
         content.forEach(canvas -> canvas.onGameModelSet(game, manager));
+        renderAll();
     }
 
     /**
      * Set the edit method to apply when the board receives input events. In order for edits to be made,
-     * the board viewer must be {@link #setEditMode(AbstractEditMode) editable}.
+     * the board viewer must be editable.
      *
      * @param editMode The edit method
      */

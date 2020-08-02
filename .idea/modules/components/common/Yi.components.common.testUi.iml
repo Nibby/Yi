@@ -3,7 +3,9 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../../../build/common/classes/java/testUi" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../../components/common/src/testUI" />
+    <content url="file://$MODULE_DIR$/../../../../components/common/src/testUi">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../components/common/src/testUi" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.common.main" />
@@ -13,6 +15,7 @@
     <orderEntry type="library" name="Gradle: org.json:json:20171018" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:17.0.0" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:mac:11.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-swing:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:mac:11.0.2" level="project" />
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:11.0.2" level="project" />
