@@ -42,7 +42,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Run UI tests
-        run: ./gradlew testIntegration
+        run: ./gradlew testUi
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v2
