@@ -3,6 +3,9 @@ package yi.component.board;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import yi.component.utilities.ComparisonUtilities;
 import yi.component.utilities.ShapeUtilities;
 import yi.core.go.Annotation;
 import yi.core.go.StoneColor;
@@ -118,12 +121,30 @@ public final class AnnotationRenderer {
     }
 
     private static void renderArrow(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd, double stoneSize) {
-        double tipSize = stoneSize / 4d;
-
         renderLine(g, xStart, yStart, xEnd, yEnd);
-        // TODO: The arrow tips are NOT drawn properly. Need to consider all rotations using Math.sin() and Math.cos().
+
+        final double tipSize = stoneSize / 4d;
+
+        final double endMagnitude = Math.sqrt(Math.pow((xEnd - xStart), 2) + Math.pow((yEnd - yStart), 2));
+        final double xEndNormal = (xEnd - xStart) / endMagnitude;
+        final double yEndNormal = (yEnd - yStart) / endMagnitude;
+
+        final double xStartNormal = 0d;
+        final double yStartNormal = 1d;
+
+        final double dotProduct = xStartNormal * xEndNormal + yStartNormal * yEndNormal;
+        final double magnitude = Math.sqrt(Math.pow(xStartNormal, 2) + Math.pow(yStartNormal, 2)) * Math.sqrt(Math.pow(xEndNormal, 2) + Math.pow(yEndNormal, 2));
+        double angle = Math.toDegrees(Math.acos(dotProduct / magnitude));
+
+        if (xEndNormal > 0) {
+            angle = -angle;
+        }
+
+        var transform = g.getTransform();
+        g.setTransform(new Affine(new Rotate(angle, xEnd, yEnd)));
         renderLine(g, xEnd, yEnd, xEnd - tipSize, yEnd - tipSize);
-        renderLine(g, xEnd, yEnd, xEnd - tipSize, yEnd + tipSize);
+        renderLine(g, xEnd, yEnd, xEnd + tipSize, yEnd - tipSize);
+        g.setTransform(transform);
     }
 
     private static void renderLine(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd) {
