@@ -102,7 +102,7 @@ public final class GameBoardViewer implements Component {
      * the new model.
      *
      */
-    public void update() {
+    void update() {
         manager.onGameUpdate(this.gameModel);
         content.forEach(canvas -> canvas.onGameUpdate(this.gameModel, this.manager));
 
@@ -137,6 +137,10 @@ public final class GameBoardViewer implements Component {
 
     public void setGridColor(Color gridColor) {
         manager.view.boardGridColor = gridColor;
+    }
+
+    GameBoardManager _getManager() {
+        return manager;
     }
 
     @Override

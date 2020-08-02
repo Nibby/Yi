@@ -8,9 +8,17 @@ ext {
     ]
 
     javaFxDependencies = [
-            implementation: [ 'org.openjfx:javafx-plugin:0.0.9',
-                              'org.json:json:20171018',
-                              'org.jetbrains:annotations:17.0.0' ]
+            implementation: [
+                'org.openjfx:javafx-plugin:0.0.9',
+                'org.json:json:20171018',
+                'org.jetbrains:annotations:17.0.0'
+            ],
+
+            testIntegrationImplementation: [
+                'org.testfx:testfx-core:4.0.16-alpha',
+                'org.testfx:testfx-junit5:4.0.16-alpha',
+                'org.assertj:assertj-core:3.13.2'
+            ]
     ]
 
     javaCompileVersion = 11

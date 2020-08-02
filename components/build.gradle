@@ -68,4 +68,9 @@ allprojects {
         testClassesDirs = sourceSets.testIntegration.output.classesDirs
         classpath = sourceSets.testIntegration.runtimeClasspath
     }
+
+    dependencies {
+        testIntegrationCompile(sourceSets.main.output)
+        testIntegrationImplementation rootProject.ext.javaFxDependencies.testIntegrationImplementation
+    }
 }
