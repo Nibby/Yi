@@ -2,7 +2,6 @@ package yi.editor;
 
 import yi.component.board.GameBoardViewer;
 import yi.component.board.editmodes.AnnotationEditMode;
-import yi.component.board.editmodes.AbstractEditMode;
 import yi.component.board.editmodes.EditMode;
 import yi.core.go.AnnotationType;
 
@@ -14,7 +13,7 @@ public enum EditorTool {
     PLAY_MOVE {
         @Override
         public void apply(GameBoardViewer board) {
-            board.setEditMode(EditMode.PLAY_MOVE);
+            board.setEditMode(EditMode.playMove());
         }
     },
 
@@ -34,57 +33,49 @@ public enum EditorTool {
     ANNOTATE_TRIANGLE {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.TRIANGLE);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotation(AnnotationType.TRIANGLE));
         }
     },
     ANNOTATE_CIRCLE {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.CIRCLE);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotation(AnnotationType.CIRCLE));
         }
     },
     ANNOTATE_SQUARE {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.SQUARE);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotation(AnnotationType.SQUARE));
         }
     },
     ANNOTATE_CROSS {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.CROSS);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotation(AnnotationType.CROSS));
         }
     },
     ANNOTATE_LETTER {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationEditMode.LabelType.LETTER);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotationLabel(AnnotationEditMode.LabelType.LETTER));
         }
     },
     ANNOTATE_NUMBER {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationEditMode.LabelType.NUMBER);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotationLabel(AnnotationEditMode.LabelType.NUMBER));
         }
     },
     ANNOTATE_LINE {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.LINE);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotation(AnnotationType.LINE));
         }
     },
     ANNOTATE_ARROW {
         @Override
         public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.ARROW);
-            board.setEditMode(mode);
+            board.setEditMode(EditMode.annotation(AnnotationType.ARROW));
         }
     },
     ANNOTATE_DIM {
