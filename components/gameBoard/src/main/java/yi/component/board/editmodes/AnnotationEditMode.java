@@ -168,7 +168,9 @@ public final class AnnotationEditMode extends AbstractEditMode {
                 assert directionalAnnoFirstX >= 0 && directionalAnnoFirstY >= 0
                         : String.format("Invalid directional annotation starting point: (%d, %d).", directionalAnnoFirstX, directionalAnnoFirstY);
 
-                maybeCreateDirectionalAnnotation(manager, typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, gridX, gridY, mouseSessionId);
+                if (gridX != directionalAnnoFirstX || gridY != directionalAnnoFirstY) {
+                    maybeCreateDirectionalAnnotation(manager, typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, gridX, gridY, mouseSessionId);
+                }
                 resetDirectionalAnnotationCreateStep();
             }
         }
