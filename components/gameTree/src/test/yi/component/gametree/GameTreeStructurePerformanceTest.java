@@ -9,6 +9,7 @@ import yi.core.go.rules.GoGameRulesHandler;
 
 import java.util.concurrent.TimeUnit;
 
+// TODO: Move me into a performance test source set
 public class GameTreeStructurePerformanceTest {
 
     @Test
@@ -77,7 +78,7 @@ public class GameTreeStructurePerformanceTest {
             model.toPreviousMove(3);
         }
 
-        testPerformance(model, 60);
+        testPerformance(model, 160);
     }
 
     @Test
@@ -100,7 +101,7 @@ public class GameTreeStructurePerformanceTest {
             model.toNextMove();
         }
 
-        testPerformance(model, 300);
+        testPerformance(model, 400);
     }
 
     private void playMoveSomewhereVacant(GameModel model) {
