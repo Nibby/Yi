@@ -48,4 +48,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: integration-test-reports
-          path: build/**/reports/tests/testUi/*
+          path: |
+            build/**/reports/tests/testUi/*
+            build/testScreenshots/*
