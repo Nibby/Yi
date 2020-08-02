@@ -1,13 +1,14 @@
 package yi.component.board;
 
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
@@ -16,29 +17,40 @@ import yi.core.go.Annotation;
 import yi.core.go.GameModel;
 import yi.core.go.GameRules;
 
-import static org.assertj.core.api.Assertions.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static org.assertj.core.api.Assertions.fail;
 
 public abstract class GameBoardUITestBase {
 
     private GameBoardViewer board;
     private GameModel gameModel;
-    private Stage stage;
+    protected Stage stage;
 
     @Start
     public void start(Stage stage) {
-        gameModel = new GameModel(getBoardWidth(), getBoardHeight(), getGameRules());
+        this.stage = stage;
         board = new GameBoardViewer();
-        board.setGameModel(gameModel);
+
+        setGameModel(new GameModel(getBoardWidth(), getBoardHeight(), getGameRules()));
 
         var container = new BorderPane();
         container.setCenter(board.getComponent());
 
         var scene = new Scene(container, 600, 600);
         stage.setScene(scene);
-        stage.show();
-        stage.requestFocus();
 
-        this.stage = stage;
+        this.stage.show();
+        this.stage.requestFocus();
+    }
+
+    protected void setGameModel(GameModel gameModel) {
+        this.gameModel = gameModel;
+        board.setGameModel(gameModel);
     }
 
     @AfterEach
@@ -49,11 +61,35 @@ public abstract class GameBoardUITestBase {
         this.board = null;
         this.gameModel.dispose();
         this.gameModel = null;
+
+        System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024);
+        System.out.println("Total memory: " + Runtime.getRuntime().totalMemory() / 1024 / 1024);
+        System.out.println("Max memory: " + Runtime.getRuntime().maxMemory() / 1024 / 1024);
+        System.out.println();
     }
 
     protected abstract int getBoardWidth();
     protected abstract int getBoardHeight();
     protected abstract GameRules getGameRules();
+
+    protected boolean saveScreenshot(String folderName, String fileName) throws IOException {
+        var image = new WritableImage((int) stage.getWidth(), (int) stage.getHeight());
+        var snapshot = stage.getScene().snapshot(image);
+        var snapshotBufferedImage = SwingFXUtils.fromFXImage(snapshot, new BufferedImage((int) image.getWidth(), (int) image.getHeight(), BufferedImage.TYPE_INT_ARGB));
+
+        var screenshotDir = Paths.get("testScreenshots").resolve(folderName);
+
+        if (!Files.exists(screenshotDir)) {
+            Files.createDirectories(screenshotDir);
+        }
+
+        var screenshotFile = screenshotDir.resolve(fileName);
+
+        if (Files.exists(screenshotFile) && Files.isRegularFile(screenshotFile)) {
+            Files.delete(screenshotFile);
+        }
+        return ImageIO.write(snapshotBufferedImage, "png", screenshotFile.toFile());
+    }
 
     protected void drag(FxRobot robot, int xStart, int yStart, int xEnd, int yEnd) {
         robot.moveTo(board.getComponent(), Pos.TOP_LEFT, getIntersection(xStart, yStart), Motion.DEFAULT);

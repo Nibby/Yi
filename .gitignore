@@ -209,3 +209,5 @@ gradle-app.setting
 *.scss.map
 
 # End of https://www.gitignore.io/api/sass
+
+**/testScreenshots

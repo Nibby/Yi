@@ -23,10 +23,7 @@ public final class GameBoardModel {
     }
 
     public void update(GameModel gameModel) {
-        if (this.gameModel != gameModel) {
-            this.gameModel = gameModel;
-        }
-
+        this.gameModel = gameModel;
         this.currentGameState = this.gameModel.getCurrentGameState();
     }
 

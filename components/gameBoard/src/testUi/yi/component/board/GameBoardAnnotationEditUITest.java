@@ -34,14 +34,6 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
         super.dispose();
     }
 
-    @AfterEach
-    public void reportMemoryUsage() {
-        System.out.println("Used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024);
-        System.out.println("Total memory: " + Runtime.getRuntime().totalMemory() / 1024 / 1024);
-        System.out.println("Max memory: " + Runtime.getRuntime().maxMemory() / 1024 / 1024);
-        System.out.println();
-    }
-
     @Test
     public void testAddOne_PointAnnotation(FxRobot robot) {
         getBoard().setEditMode(EditMode.annotation(AnnotationType.SQUARE));
