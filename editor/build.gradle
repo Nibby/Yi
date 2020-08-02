@@ -25,10 +25,10 @@ javafx {
     modules = ['javafx.controls', 'javafx.media']
 }
 
-test {
-    useJUnitPlatform()
-
-    testClassesDirs = sourceSets.test.output
+idea {
+    module {
+        testSourceDirs += file("$projectDir/src/testIntegration")
+    }
 }
 
 sourceSets {
@@ -44,7 +44,13 @@ sourceSets {
 
     test {
         java {
-            srcDirs = ['test/unit', 'test/integration']
+            srcDirs = ['src/test']
+        }
+    }
+
+    testIntegration {
+        java {
+            srcDirs = ['src/testIntegration']
         }
     }
 }
@@ -54,4 +60,20 @@ application {
 
     mainClassName('yi.editor.Main')
     applicationDefaultJvmArgs = ["-ea", "-Duser.dir=$workingDirectory"]
+}
+
+configurations {
+    testIntegrationImplementation.extendsFrom testImplementation
+    testIntegrationRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+test {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.test.output
+}
+
+task testIntegration(type: Test) {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.testIntegration.output.classesDirs
+    classpath = sourceSets.testIntegration.runtimeClasspath
 }

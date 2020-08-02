@@ -3,10 +3,8 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../../build/editor/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../editor/src/test" />
-    <content url="file://$MODULE_DIR$/../../../editor/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../editor/test/integration" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../editor/test/unit" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../editor/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../../editor/src/test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

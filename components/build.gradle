@@ -24,6 +24,17 @@ allprojects {
         modules = ['javafx.controls']
     }
 
+    configurations {
+        testIntegrationImplementation.extendsFrom testImplementation
+        testIntegrationRuntimeOnly.extendsFrom testRuntimeOnly
+    }
+    
+    idea {
+        module {
+            testSourceDirs += file("$projectDir/src/testIntegration")
+        }
+    }
+
     sourceSets {
         main {
             java {
@@ -37,12 +48,24 @@ allprojects {
 
         test {
             java {
-                srcDirs = ['src/test/unit', 'src/test/integration']
+                srcDirs = ['src/test']
+            }
+        }
+
+        testIntegration {
+            java {
+                srcDirs = ['src/testIntegration']
             }
         }
     }
 
     test {
         useJUnitPlatform()
+    }
+
+    task testIntegration(type: Test) {
+        useJUnitPlatform()
+        testClassesDirs = sourceSets.testIntegration.output.classesDirs
+        classpath = sourceSets.testIntegration.runtimeClasspath
     }
 }
