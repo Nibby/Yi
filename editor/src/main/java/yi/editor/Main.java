@@ -2,11 +2,7 @@ package yi.editor;
 
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
-import yi.component.board.GameBoardViewer;
-import yi.component.gametree.GameTreeViewer;
 import yi.core.go.GameModel;
 import yi.core.go.GameRules;
 import yi.editor.settings.Settings;
@@ -19,7 +15,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Settings.load();
 
-        var gameModel = new GameModel(2, 1, GameRules.CHINESE);
+        var gameModel = new GameModel(19, 19, GameRules.CHINESE);
         var editorFrame = new EditorFrame(gameModel);
         editorFrame.show();
     }

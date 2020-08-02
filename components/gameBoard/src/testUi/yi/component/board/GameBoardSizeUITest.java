@@ -1,6 +1,7 @@
 package yi.component.board;
 
 import javafx.application.Platform;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,8 @@ import yi.core.go.GameModel;
 import yi.core.go.GameRules;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,6 +43,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
     @Timeout(value = 5, unit = TimeUnit.MINUTES)
     public void testSupportedSizes(FxRobot robot) throws InterruptedException {
         int supportedSizes = 24; //  1x1 -> 25x25
+        getBoardManager().setDebugMode(true);
 
         for (int w = 1; w < supportedSizes; ++w) {
             for (int h = 1; h < supportedSizes; ++h) {
@@ -52,7 +56,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
                         assertSizeCorrect();
                     }
                 });
-                Thread.sleep(10);
+                Thread.sleep(20);
             }
         }
     }
@@ -63,43 +67,49 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
 
         var sizeManager = getBoardManager().size;
         var stoneSize = sizeManager.getStoneSizeInPixels();
-        var stage = sizeManager.getStageBounds();
 
-        for (int i = 0; i < boardWidth; ++i) {
-            var stoneBounds = sizeManager.getStoneRenderPosition(i, 0);
-            var y = stoneBounds[1];
-            if (y < stage.getY()) {
-                failIt(i, 0, boardWidth, boardHeight);
+        Map<String, Rectangle> bounds = new HashMap<>();
+        bounds.put("stage", sizeManager.getStageBounds());
+        bounds.put("board", sizeManager.getBoardBounds());
+
+        for (String boundName : bounds.keySet()) {
+            Rectangle bound = bounds.get(boundName);
+
+            for (int i = 0; i < boardWidth; ++i) {
+                var stoneBounds = sizeManager.getStoneRenderPosition(i, 0);
+                var y = stoneBounds[1];
+                if (y < bound.getY()) {
+                    failIt(i, 0, boardWidth, boardHeight, boundName);
+                }
+
+                var bottomRow = boardHeight-1;
+                stoneBounds = sizeManager.getStoneRenderPosition(i, bottomRow);
+                y = stoneBounds[1];
+                if ((y + stoneSize) > bound.getY() + bound.getHeight()) {
+                    failIt(i, bottomRow, boardWidth, boardHeight, boundName);
+                }
             }
 
-            var bottomRow = boardHeight-1;
-            stoneBounds = sizeManager.getStoneRenderPosition(i, bottomRow);
-            y = stoneBounds[1];
-            if ((y + stoneSize) > stage.getHeight()) {
-                failIt(i, bottomRow, boardWidth, boardHeight);
+            for (int i = 0; i < boardHeight; ++i) {
+                var stoneBounds = sizeManager.getStoneRenderPosition(0, i);
+                var x = stoneBounds[0];
+                if (x < bound.getX()) {
+                    failIt(0, i, boardWidth, boardHeight, boundName);
+                }
+
+                var rightmostCol = boardWidth-1;
+                stoneBounds = sizeManager.getStoneRenderPosition(rightmostCol, i);
+                x = stoneBounds[0];
+                if ((x + stoneSize) > bound.getX() + bound.getWidth()) {
+                    failIt(rightmostCol, i, boardWidth, boardHeight, boundName);
+                }
             }
         }
-
-        for (int i = 0; i < boardHeight; ++i) {
-            var stoneBounds = sizeManager.getStoneRenderPosition(0, i);
-            var x = stoneBounds[0];
-            if (x < stage.getX()) {
-                failIt(0, i, boardWidth, boardHeight);
-            }
-
-            var rightmostCol = boardWidth-1;
-            stoneBounds = sizeManager.getStoneRenderPosition(rightmostCol, i);
-            x = stoneBounds[0];
-            if ((x + stoneSize) > stage.getWidth()) {
-                failIt(rightmostCol, i, boardWidth, boardHeight);
-            }
-        }
-
     }
 
-    private void failIt(int x, int y, int boardWidth, int boardHeight) {
+    private void failIt(int x, int y, int boardWidth, int boardHeight, String boundName) {
         String failMessage = "On " + boardWidth + "x" + boardHeight + " board, " +
-                "move at (" + x + ", " + y + ") is rendered out of bounds.";
+                "move at (" + x + ", " + y + ") is rendered out of " + boundName + " bounds.";
 
         try {
             getGameModel().playMoveIgnoringRules(x, y);

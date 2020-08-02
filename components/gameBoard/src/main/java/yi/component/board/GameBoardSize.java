@@ -35,10 +35,10 @@ public final class GameBoardSize {
      *
      * @param componentWidth Width of the board canvas
      * @param componentHeight Height of the board canvas
-     * @param gridWidth Number of board intersections horizontally
-     * @param gridHeight Number of board intersections vertically
+     * @param boardWidth Number of board intersections horizontally
+     * @param boardHeight Number of board intersections vertically
      */
-    void compute(double componentWidth, double componentHeight, int gridWidth, int gridHeight, CoordinateLabelPosition coordinateLabelPosition) {
+    void compute(double componentWidth, double componentHeight, int boardWidth, int boardHeight, CoordinateLabelPosition coordinateLabelPosition) {
         stageBounds = new Rectangle(0, 0, componentWidth, componentHeight);
 
         // Overview:
@@ -56,16 +56,15 @@ public final class GameBoardSize {
         // scale value).
 
         // We need to calculate a scaled version of stone size at this point to maintain the correct board ratio
-        Rectangle gridFitRatio = ShapeUtilities.centerFit(stageBounds, (double) gridWidth / (double) gridHeight, 0d);
+        Rectangle gridFitRatio = ShapeUtilities.centerFit(stageBounds, (double) boardWidth / (double) boardHeight, 0d);
 
         // Doesn't really matter the size of the grid bounds at this point, the proportion is what matters.
         // We will scale everything to the correct size later.
         var scaledGridBounds = new LayoutRectangle(gridFitRatio.getWidth(), gridFitRatio.getHeight());
-        var scaledStoneSize = (scaledGridBounds.getWidth() / gridWidth + scaledGridBounds.getHeight() / gridHeight) / 2;
-        var percentageStoneSizeToGridBounds = scaledStoneSize / scaledGridBounds.getWidth();
-        var gridSpacingBounds = scaledGridBounds.createParentWithMargin(getPixelValue(percentageStoneSizeToGridBounds, scaledGridBounds));
-
-        coordinateLabelBounds = computeCoordinateLabelBounds(gridSpacingBounds, coordinateLabelPosition);
+        var scaledStoneSize = (scaledGridBounds.getWidth() / boardWidth + scaledGridBounds.getHeight() / boardHeight) / 2;
+        var percentageStoneSizeToGridBounds = scaledStoneSize / Math.min(scaledGridBounds.getWidth(), scaledGridBounds.getHeight());
+        var stoneArea = scaledGridBounds.createParentWithMargin(getPixelValue(percentageStoneSizeToGridBounds, scaledGridBounds));
+        coordinateLabelBounds = computeCoordinateLabelBounds(stoneArea, coordinateLabelPosition);
 
         double percentageMarginBetweenBoardEdgeAndLabels = 0.01d;
         boardBounds = coordinateLabelBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenBoardEdgeAndLabels, coordinateLabelBounds));
@@ -77,14 +76,28 @@ public final class GameBoardSize {
         boardBounds.rescaleAndFinalize(stageBounds.getX(), stageBounds.getY(), stageBounds.getWidth(), stageBounds.getHeight(), marginFromEdgeInPixels, 1.0d, true);
 
         // Now we can finally calculate the correct stone size
-        double stoneSizeFromWidth = scaledGridBounds.getWidth() / (gridWidth-1);
-        double stoneSizeFromHeight = scaledGridBounds.getHeight() / (gridHeight-1);
+        double stoneSizeFromWidth = scaledGridBounds.getWidth() / ((boardWidth == 1) ? 1 : (boardWidth - 1));
+        double stoneSizeFromHeight = scaledGridBounds.getHeight() / ((boardHeight == 1) ? 1 : (boardHeight - 1));
+
         gridUnitSize = Math.min(stoneSizeFromWidth, stoneSizeFromHeight);
         // Space between two adjacent stones, expressed as a percentage of grid unit size
         double percentageStoneGap = 0.01d;
         stoneGapSize = gridUnitSize * percentageStoneGap;
         stoneSize = gridUnitSize - stoneGapSize;
-        gridBounds = scaledGridBounds;
+
+        // Now that we have the final stone size, we may need to clip from the original scaled grid bounds to center the intersections,
+        // because the first round of calculation was a rough estimate.
+        double actualGridWidth = gridUnitSize * (boardWidth - 1);
+        double actualGridHeight = gridUnitSize * (boardHeight - 1);
+
+        double excessGridWidth = scaledGridBounds.getWidth() - actualGridWidth;
+        double excessGridHeight = scaledGridBounds.getHeight() - actualGridHeight;
+
+        double horizontalClip = excessGridWidth / 2;
+        double verticalClip = excessGridHeight / 2;
+
+        gridBounds = ShapeUtilities.clip(scaledGridBounds.getX(), scaledGridBounds.getY(), scaledGridBounds.getWidth(), scaledGridBounds.getHeight(),
+                horizontalClip, verticalClip, horizontalClip, verticalClip);
 
         stoneShadowRadius = stoneSize / 8d;
         stoneShadowOffset = stoneSize / 16d;

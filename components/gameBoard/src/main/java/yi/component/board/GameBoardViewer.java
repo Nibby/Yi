@@ -123,6 +123,14 @@ public final class GameBoardViewer implements Component {
         }
     }
 
+    public boolean isDebugMode() {
+        return manager.isDebugMode();
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.manager.setDebugMode(debugMode);
+    }
+
     public void applySettings(GameBoardSettings settings) {
         settings.getBoardImage().ifPresent(this::setBoardImage);
         settings.getGridColor().ifPresent(this::setGridColor);

@@ -63,7 +63,15 @@ allprojects {
         useJUnitPlatform()
     }
 
-    task testUi(type: Test) {
+    def testScreenshotDir = "${rootProject.buildDir}/testScreenshots"
+
+    task clearTestData() {
+        doLast {
+            delete testScreenshotDir
+        }
+    }
+
+    task testUi(type: Test, dependsOn: clearTestData) {
         useJUnitPlatform()
 
         testClassesDirs = sourceSets.testUi.output.classesDirs
