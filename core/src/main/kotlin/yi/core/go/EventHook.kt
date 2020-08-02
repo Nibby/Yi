@@ -28,4 +28,11 @@ abstract class EventHook<EventType> {
     fun removeListener(listener: EventListener<EventType>) {
         listeners.remove(listener)
     }
+
+    /**
+     * Removes all listeners registered to this event hook.
+     */
+    fun removeAllListeners() {
+        listeners.clear()
+    }
 }

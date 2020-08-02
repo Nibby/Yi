@@ -3,8 +3,8 @@ ext {
             testImplementation: ['org.junit.jupiter:junit-jupiter-api:5.5.2'],
             testRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.5.2'],
 
-            testIntegrationImplementation: ['org.junit.jupiter:junit-jupiter-api:5.5.2'],
-            testIntegrationRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.5.2'],
+            testUiImplementation: ['org.junit.jupiter:junit-jupiter-api:5.5.2'],
+            testUiRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.5.2'],
     ]
 
     javaFxDependencies = [
@@ -14,7 +14,7 @@ ext {
                 'org.jetbrains:annotations:17.0.0'
             ],
 
-            testIntegrationImplementation: [
+            testUiImplementation: [
                 'org.testfx:testfx-core:4.0.16-alpha',
                 'org.testfx:testfx-junit5:4.0.16-alpha',
                 'org.assertj:assertj-core:3.13.2'

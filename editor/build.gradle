@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation rootProject.ext.commonDependencies.testImplementation
     testRuntimeOnly rootProject.ext.commonDependencies.testRuntimeOnly
-    // Integration test dependencies are beneath where testIntegration task is defined.
+    // Integration test dependencies are beneath where testUi task is defined.
 }
 
 javafx {
@@ -28,7 +28,7 @@ javafx {
 
 idea {
     module {
-        testSourceDirs += file("$projectDir/src/testIntegration")
+        testSourceDirs += file("$projectDir/src/testUi")
     }
 }
 
@@ -49,9 +49,9 @@ sourceSets {
         }
     }
 
-    testIntegration {
+    testUi {
         java {
-            srcDirs = ['src/testIntegration']
+            srcDirs = ['src/testUi']
         }
     }
 }
@@ -64,8 +64,8 @@ application {
 }
 
 configurations {
-    testIntegrationImplementation.extendsFrom testImplementation
-    testIntegrationRuntimeOnly.extendsFrom testRuntimeOnly
+    testUiImplementation.extendsFrom testImplementation
+    testUiRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 test {
@@ -73,12 +73,12 @@ test {
     testClassesDirs = sourceSets.test.output
 }
 
-task testIntegration(type: Test) {
+task testUi(type: Test) {
     useJUnitPlatform()
-    testClassesDirs = sourceSets.testIntegration.output.classesDirs
-    classpath = sourceSets.testIntegration.runtimeClasspath
+    testClassesDirs = sourceSets.testUi.output.classesDirs
+    classpath = sourceSets.testUi.runtimeClasspath
 }
 
 dependencies {
-    testIntegrationImplementation rootProject.ext.javaFxDependencies.testIntegrationImplementation
+    testUiImplementation rootProject.ext.javaFxDependencies.testUiImplementation
 }

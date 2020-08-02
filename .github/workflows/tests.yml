@@ -19,7 +19,7 @@ jobs:
         java-version: 11
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Run tests using Gradle
+    - name: Run unit tests
       run: ./gradlew test
     - name: Upload test reports
       if: always()
@@ -29,7 +29,7 @@ jobs:
         path: build/**/reports/tests/test/*
 
   integration-tests:
-    name: Integration Tests
+    name: UI Tests
     runs-on: windows-latest
 
     steps:
@@ -41,11 +41,11 @@ jobs:
           java-package: jdk+fx
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Run tests using Gradle
+      - name: Run UI tests
         run: ./gradlew testIntegration
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: integration-test-reports
-          path: build/**/reports/tests/testIntegration/*
+          path: build/**/reports/tests/testUi/*
