@@ -13,6 +13,8 @@ public final class GameBoardManager {
     public final GameBoardView view = new GameBoardView();
     public final GameModelEditor edit = new GameModelEditor();
 
+    private boolean debugMode = false;
+
     GameBoardManager() { }
 
     public void setGameModel(GameModel game) {
@@ -26,5 +28,13 @@ public final class GameBoardManager {
 
     public void onGameUpdate(GameModel game) {
         model.update(game);
+    }
+
+    boolean isDebugMode() {
+        return debugMode;
+    }
+
+    void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }

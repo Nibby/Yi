@@ -46,6 +46,27 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             renderBoardTexture(g, manager);
             renderCoordinateLabels(g, manager);
             renderGrid(g, manager);
+
+            if (manager.isDebugMode()) {
+                renderDebug(g, manager);
+            }
+        }
+
+        private static void renderDebug(GraphicsContext g, GameBoardManager manager) {
+            var size = manager.size;
+
+            var stage = size.getStageBounds();
+            g.setStroke(Color.RED);
+            g.setLineWidth(1d);
+            g.strokeRect(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+
+            var grid = size.getGridBounds();
+            g.setStroke(Color.BLUE);
+            g.strokeRect(grid.getX(), grid.getY(), grid.getWidth(), grid.getHeight());
+
+            var board = size.getBoardBounds();
+            g.setStroke(Color.MAGENTA);
+            g.strokeRect(board.getX(), board.getY(), board.getWidth(), board.getHeight());
         }
 
         private static void renderBackground(GraphicsContext g, GameBoardManager manager) {
