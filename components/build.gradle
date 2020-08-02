@@ -25,13 +25,13 @@ allprojects {
     }
 
     configurations {
-        testIntegrationImplementation.extendsFrom testImplementation
-        testIntegrationRuntimeOnly.extendsFrom testRuntimeOnly
+        testUiImplementation.extendsFrom testImplementation
+        testUiRuntimeOnly.extendsFrom testRuntimeOnly
     }
     
     idea {
         module {
-            testSourceDirs += file("$projectDir/src/testIntegration")
+            testSourceDirs += file("$projectDir/src/testUi")
         }
     }
 
@@ -52,9 +52,9 @@ allprojects {
             }
         }
 
-        testIntegration {
+        testUi {
             java {
-                srcDirs = ['src/testIntegration']
+                srcDirs = ['src/testUi']
             }
         }
     }
@@ -63,14 +63,14 @@ allprojects {
         useJUnitPlatform()
     }
 
-    task testIntegration(type: Test) {
+    task testUi(type: Test) {
         useJUnitPlatform()
-        testClassesDirs = sourceSets.testIntegration.output.classesDirs
-        classpath = sourceSets.testIntegration.runtimeClasspath
+        testClassesDirs = sourceSets.testUi.output.classesDirs
+        classpath = sourceSets.testUi.runtimeClasspath
     }
 
     dependencies {
-        testIntegrationCompile(sourceSets.main.output)
-        testIntegrationImplementation rootProject.ext.javaFxDependencies.testIntegrationImplementation
+        testUiCompile sourceSets.main.output
+        testUiImplementation rootProject.ext.javaFxDependencies.testUiImplementation
     }
 }

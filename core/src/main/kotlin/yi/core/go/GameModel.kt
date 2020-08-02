@@ -630,6 +630,19 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun onNodeDataUpdate(): NodeEventHook = nodeDataUpdateEventHook
     private val nodeDataUpdateEventHook = NodeEventHook()
 
+    /**
+     * Destroys the game model by removing all data from the game tree and clearing all event hook listeners.
+     */
+    fun dispose() {
+        onCurrentNodeChange().removeAllListeners()
+        onNodeAdd().removeAllListeners()
+        onNodeRemove().removeAllListeners()
+        onCurrentNodeDataUpdate().removeAllListeners()
+        onNodeDataUpdate().removeAllListeners()
+
+        getRootNode().children.forEach { removeNodeSubtree(it) }
+    }
+
     // This init block has to be done last because the fields are initialized in order.
     init {
         val currentNodeDataUpdateEventEmitter = object : EventListener<NodeEvent> {
