@@ -75,12 +75,12 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
     abstract class DirectionalAnnotation(type: AnnotationType, x: Int, y: Int, val xEnd: Int, val yEnd: Int) : Annotation(type, x, y) {
 
         override fun isOccupyingPosition(x: Int, y: Int): Boolean {
-            return this.x == x && this.y == y || this.x == xEnd && this.y == yEnd
+            return this.x == x && this.y == y || this.xEnd == x  && this.yEnd == y
         }
 
         override fun equals(other: Any?): Boolean {
             other?.let {
-                if (other is Annotation.DirectionalAnnotation) {
+                if (other is DirectionalAnnotation) {
                     return this.type == other.type && this.x == other.x && this.y == other.y
                             && this.xEnd == other.xEnd && this.yEnd == other.yEnd
                 }
@@ -98,9 +98,9 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
         }
     }
 
-    class Line(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : Annotation.DirectionalAnnotation(AnnotationType.LINE, xStart, yStart, xEnd, yEnd)
+    class Line(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : DirectionalAnnotation(AnnotationType.LINE, xStart, yStart, xEnd, yEnd)
 
-    class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : Annotation.DirectionalAnnotation(AnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
+    class Arrow(xStart: Int, yStart: Int, xEnd: Int, yEnd: Int) : DirectionalAnnotation(AnnotationType.ARROW, xStart, yStart, xEnd, yEnd)
 
     companion object {
 
