@@ -10,7 +10,7 @@ class GameModelTest {
     fun `model tree state is initialized correctly`() {
         val model = GameModel(19, 19, TestingGameRulesNoSuicide())
 
-        Assertions.assertEquals(model.gameTree.rootNode, model.getCurrentMove())
+        Assertions.assertEquals(model.gameTree.rootNode, model.getCurrentNode())
     }
 
     @Test
@@ -24,15 +24,15 @@ class GameModelTest {
                 .playMove(0, 1)
                 .playMove(1, 1) // <- Where current move will be at prior to deletion
 
-        model.toPreviousMove()
-        model.toPreviousMove()
-        val nodeToDelete = model.getCurrentMove()
-        val whereCurrentNodeShouldBeAt = model.toPreviousMove()!!
+        model.toPreviousNode()
+        model.toPreviousNode()
+        val nodeToDelete = model.getCurrentNode()
+        val whereCurrentNodeShouldBeAt = model.toPreviousNode()!!
 
-        model.toNextMove(3) // Set current move to child of the node to delete
+        model.toNextNode(3) // Set current move to child of the node to delete
         model.removeNodeSubtree(nodeToDelete) // Should adjust the current node to the parent of nodeToDelete
 
-        Assertions.assertEquals(whereCurrentNodeShouldBeAt, model.getCurrentMove())
+        Assertions.assertEquals(whereCurrentNodeShouldBeAt, model.getCurrentNode())
     }
 
 }

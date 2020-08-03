@@ -57,7 +57,7 @@ public class GameTreeStructureCorrectnessTest {
                 .playMove(0, 0)
                 .playMove(0, 1);
 
-        model.toPreviousMove(); // <- Goes back to (0, 0) aka first move
+        model.toPreviousNode(); // <- Goes back to (0, 0) aka first move
 
         model.beginMoveSequence()
                 .playMove(0, 2)
@@ -95,17 +95,17 @@ public class GameTreeStructureCorrectnessTest {
                 .playMove(0, 0)
                 .playMove(0, 1);
 
-        model.toPreviousMove(); // <- Goes back to (0, 0) aka first move
+        model.toPreviousNode(); // <- Goes back to (0, 0) aka first move
 
         model.beginMoveSequence()
                 .playMove(0, 2);
 
-        model.toPreviousMove();
+        model.toPreviousNode();
 
         model.beginMoveSequence()
                 .playMove(1, 2);
 
-        model.toPreviousMove();
+        model.toPreviousNode();
 
         model.beginMoveSequence()
                 .playMove(2, 2);
@@ -132,12 +132,12 @@ public class GameTreeStructureCorrectnessTest {
                 .playMove(1, 0)
                 .playMove(1 ,1);
 
-        model.toPreviousMove(3);
+        model.toPreviousNode(3);
         model.beginMoveSequence().playMove(2, 2).playMove(2, 1).playMove(2, 0);
-        model.toPreviousMove(3);
+        model.toPreviousNode(3);
         model.beginMoveSequence().playMove(1, 2).playMove(1, 0).playMove(0, 2);
-        model.toPreviousMove(3);
-        model.toNextMove(2);
+        model.toPreviousNode(3);
+        model.toNextNode(2);
 
         String[] expectedInitialStructure = {
                 "x  ",
@@ -174,18 +174,18 @@ public class GameTreeStructureCorrectnessTest {
                 .playMove(1, 0)
                 .playMove(1 ,1);
 
-        model.toPreviousMove();
+        model.toPreviousNode();
         model.beginMoveSequence().playMove(2, 2);
-        model.toPreviousMove();
+        model.toPreviousNode();
         model.beginMoveSequence().playMove(2, 1);
-        model.toPreviousMove();
+        model.toPreviousNode();
         model.beginMoveSequence().playMove(2, 0);
 
         // Create a wide horizontal track
-        model.toPreviousMove(2);
+        model.toPreviousNode(2);
         model.beginMoveSequence().playMove(1, 1);
 
-        model.toPreviousMove(3);
+        model.toPreviousNode(3);
         String[] expectedInitialStructure = {
                 "x    ",
                 "x    ",
@@ -235,16 +235,16 @@ public class GameTreeStructureCorrectnessTest {
                 .playMove(1 ,1);
 
         // Build side branch of length 1
-        model.toPreviousMove(3);
+        model.toPreviousNode(3);
         model.beginMoveSequence().playMove(2, 2);
 
         // Build two side branches of length 1
-        model.toPreviousMove();
-        model.toNextMove(2);
+        model.toPreviousNode();
+        model.toNextNode(2);
         model.beginMoveSequence().playMove(2, 1);
-        model.toPreviousMove();
+        model.toPreviousNode();
         model.beginMoveSequence().playMove(1, 2);
-        model.toPreviousMove(5); // Resets back to root
+        model.toPreviousNode(5); // Resets back to root
 
         String[] expectedInitialStructure = {
                 "x  ",
@@ -357,16 +357,16 @@ public class GameTreeStructureCorrectnessTest {
                 .playMove(2, 1);
 
         // Create two inner branches
-        model.toPreviousMove();
+        model.toPreviousNode();
         model.beginMoveSequence().playMove(2, 2);
-        model.toPreviousMove(2);
+        model.toPreviousNode(2);
         model.beginMoveSequence().playMove(2, 2).playMove(2, 1);
 
-        model.setCurrentMove(model.getRootNode());
+        model.setCurrentNode(model.getRootNode());
 
         // Create wide branch from root
         model.beginMoveSequence().playMove(0, 1).playMove(0, 2);
-        model.toPreviousMove(2);
+        model.toPreviousNode(2);
 
         String[] expectedInitialStructure = {
                 "x   ",
@@ -450,9 +450,9 @@ public class GameTreeStructureCorrectnessTest {
             String errorMessage = String.format("Unexpected node at %d,%d : '%s'", elementX, elementY, currentNode.toString());
             assertTrue(grids[elementX][elementY], errorMessage);
 
-            var children = currentNode.getNextMoves();
+            var children = currentNode.getNextNodes();
             if (children.size() > 0) {
-                currentNode.getNextMovesExcludingMainBranch().forEach(move -> testBranch(move, structure, grids));
+                currentNode.getNextNodesExcludingMainBranch().forEach(move -> testBranch(move, structure, grids));
                 currentNode = children.get(0);
             } else {
                 break;

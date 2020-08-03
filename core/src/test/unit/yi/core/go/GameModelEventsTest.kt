@@ -98,7 +98,7 @@ class GameModelEventsTest {
         Assertions.assertTrue(thirdMove.isPlayed())
 
         val nodeToEdit = thirdMove.moveNode!! // If the validation result is OK, then we should expect a non-null node here.
-        model.setCurrentMove(model.getRootNode()) // Set current move somewhere that's not the last move
+        model.setCurrentNode(model.getRootNode()) // Set current move somewhere that's not the last move
         model.addAnnotations(nodeToEdit, Collections.singleton(Annotation.Triangle(0, 0)))
 
         Thread.sleep(10)
@@ -159,9 +159,9 @@ class GameModelEventsTest {
                 .playMove(0, 1)
                 .playMove(1, 1)
 
-        model.toPreviousMove()
-        val nodeToDelete = model.getCurrentMove()
-        model.toNextMove() // Set current move to child of the node to delete
+        model.toPreviousNode()
+        val nodeToDelete = model.getCurrentNode()
+        model.toNextNode() // Set current move to child of the node to delete
         model.removeNodeSubtree(nodeToDelete) // Should adjust the current node to the parent of nodeToDelete
 
         Thread.sleep(10)

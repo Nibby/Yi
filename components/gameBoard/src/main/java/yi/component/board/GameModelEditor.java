@@ -3,10 +3,9 @@ package yi.component.board;
 import yi.component.board.editmodes.AbstractEditMode;
 import yi.component.board.editmodes.EditMode;
 import yi.component.board.edits.AnnotationEdit;
-import yi.core.go.GameModel;
 import yi.component.board.edits.Undoable;
+import yi.core.go.GameModel;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -27,7 +26,7 @@ public final class GameModelEditor {
     GameModelEditor() { }
 
     public void recordAndApply(Undoable undoable, GameBoardManager manager) {
-        var gameModel = getGameModelOrCrash(manager);
+        var gameModel = manager.getGameModel();
 
         boolean successful = undoable.performEdit(gameModel);
 
@@ -86,7 +85,7 @@ public final class GameModelEditor {
      * keeping the editing history. This means the action that was undone can be re-done.
      */
     public void performUndo(GameBoardManager manager) {
-        var gameModel = getGameModelOrCrash(manager);
+        var gameModel = manager.getGameModel();
 
         if (!canUndo()) {
             throw new IllegalStateException("Current position in history does not support undo." +
@@ -107,7 +106,7 @@ public final class GameModelEditor {
      * Re-perform the edit in the current position in history.
      */
     public void performRedo(GameBoardManager manager) {
-        var gameModel = getGameModelOrCrash(manager);
+        var gameModel = manager.getGameModel();
 
         if (!canRedo()) {
             throw new IllegalStateException("Current position in history does not support redo." +
@@ -200,9 +199,5 @@ public final class GameModelEditor {
         }
 
         return undoHistory.get(position);
-    }
-
-    private GameModel getGameModelOrCrash(GameBoardManager manager) {
-        return manager.model.getGameModel().orElseThrow(() -> new IllegalStateException("Game model is not set"));
     }
 }

@@ -113,7 +113,7 @@ public abstract class GameBoardUITestBase {
     }
 
     protected Annotation getAnnotationOrFail(int x, int y) {
-        return getGameModel().getCurrentMoveStateDelta().getAnnotationsOnThisNode().stream()
+        return getGameModel().getCurrentNode().getAnnotationsOriginal().stream()
                 .filter(annotation -> annotation.isOccupyingPosition(x, y))
                 .findAny()
                 .orElseGet(() -> {

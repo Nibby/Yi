@@ -39,8 +39,8 @@ public class GameTreeStructurePerformanceTest {
         // Create a branch of size 1 on each node in the main variation
         for (int i = 0; i < 300; ++i) {
             playMoveSomewhereVacant(model);
-            model.toPreviousMove();
-            model.toNextMove();
+            model.toPreviousNode();
+            model.toNextNode();
         }
 
         testPerformance(model, 30);
@@ -53,10 +53,10 @@ public class GameTreeStructurePerformanceTest {
         for (int i = 0; i < 300; ++i) {
             playMoveSomewhereVacant(model);
             playMoveSomewhereVacant(model);
-            model.toPreviousMove();
+            model.toPreviousNode();
             playMoveSomewhereVacant(model);
-            model.toPreviousMove(2);
-            model.toNextMove();
+            model.toPreviousNode(2);
+            model.toNextNode();
         }
 
         testPerformance(model, 80);
@@ -70,12 +70,12 @@ public class GameTreeStructurePerformanceTest {
             playMoveSomewhereVacant(model);
             playMoveSomewhereVacant(model);
             playMoveSomewhereVacant(model);
-            model.toPreviousMove(2);
+            model.toPreviousNode(2);
             playMoveSomewhereVacant(model);
-            model.toPreviousMove();
-            model.toNextMove();
+            model.toPreviousNode();
+            model.toNextNode();
             playMoveSomewhereVacant(model);
-            model.toPreviousMove(3);
+            model.toPreviousNode(3);
         }
 
         testPerformance(model, 160);
@@ -94,11 +94,11 @@ public class GameTreeStructurePerformanceTest {
                 playMoveSomewhereVacant(model);
                 playMoveSomewhereVacant(model);
                 playMoveSomewhereVacant(model);
-                model.toPreviousMove(4);
+                model.toPreviousNode(4);
             }
 
-            model.toPreviousMove(6);
-            model.toNextMove();
+            model.toPreviousNode(6);
+            model.toNextNode();
         }
 
         testPerformance(model, 400);
@@ -108,7 +108,7 @@ public class GameTreeStructurePerformanceTest {
         int w = model.getBoardWidth();
         int h = model.getBoardHeight();
 
-        var nextMoves = model.getCurrentMove().getNextMoves();
+        var nextNodes = model.getCurrentNode().getNextNodes();
 
         for (int x = 0; x < w; x++) {
             seekNext:
@@ -116,12 +116,12 @@ public class GameTreeStructurePerformanceTest {
 
                 // Ensure the move we play will definitely create a new node instead of re-using an existing one
                 // because another child has already played there.
-                for (GameNode nextMove : nextMoves) {
-                    nextMove.getStateDelta();
-                    if (nextMove.getStateDelta().getPrimaryMove() != null) {
-                        var move = nextMove.getStateDelta().getPrimaryMove();
-                        if (move.getY() == y && move.getX() == x)
+                for (GameNode nextNode : nextNodes) {
+                    if (nextNode.getPrimaryMove() != null) {
+                        var move = nextNode.getPrimaryMove();
+                        if (move != null && move.getY() == y && move.getX() == x) {
                             continue seekNext;
+                        }
                     }
                 }
 
@@ -184,7 +184,7 @@ public class GameTreeStructurePerformanceTest {
             }
         }
 
-        model.toPreviousMove(boardWidth * boardHeight - 1);
+        model.toPreviousNode(boardWidth * boardHeight - 1);
         return model;
     }
 

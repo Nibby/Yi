@@ -48,7 +48,7 @@ public final class PlayMoveEditModeUndoRedoTest {
         Assertions.assertTrue(editor.canUndo(), "Cannot undo after playing one move.");
         editor.performUndo(manager);
 
-        Assertions.assertEquals(model.getRootNode(), model.getCurrentMove(), "Current move not adjusted to root node after undoing first move.");
+        Assertions.assertEquals(model.getRootNode(), model.getCurrentNode(), "Current move not adjusted to root node after undoing first move.");
     }
 
     @Test
@@ -133,7 +133,7 @@ public final class PlayMoveEditModeUndoRedoTest {
             editor.performUndo(manager);
 
             Assertions.assertArrayEquals(expectedPositions[step], getBoardPosition(model), "Board position mismatch after undo once.");
-            Assertions.assertEquals(8 - step, model.getCurrentMove().getMoveHistory().size(), "Model node length differs from undo steps taken. " +
+            Assertions.assertEquals(8 - step, model.getCurrentNode().getMoveHistory().size(), "Model node length differs from undo steps taken. " +
                     "Error occurred at step " + step + ". The tree structure is not in sync with undo stack.");
 
             if (step <= initialBoardPosition.length - 1) {
@@ -188,14 +188,14 @@ public final class PlayMoveEditModeUndoRedoTest {
 
         var item1 = PlayMoveEdit.forMove(0, 0);
         editor.recordAndApply(item1, manager);
-        Assertions.assertEquals(model.getRootNode().getNextMoveInMainBranch(), model.getCurrentMove(), "Current move not at root after undo from one move tree.");
+        Assertions.assertEquals(model.getRootNode().getNextNodeInMainBranch(), model.getCurrentNode(), "Current move not at root after undo from one move tree.");
 
         editor.performUndo(manager);
-        Assertions.assertEquals(model.getRootNode(), model.getCurrentMove(), "Current move not at root after undo from one move tree.");
+        Assertions.assertEquals(model.getRootNode(), model.getCurrentNode(), "Current move not at root after undo from one move tree.");
 
         // Method under test
         editor.performRedo(manager);
-        Assertions.assertEquals(model.getRootNode().getNextMoveInMainBranch(), model.getCurrentMove(), "Current move not adjusted to root node after performing redo.");
+        Assertions.assertEquals(model.getRootNode().getNextNodeInMainBranch(), model.getCurrentNode(), "Current move not adjusted to root node after performing redo.");
     }
 
     @Test
@@ -221,21 +221,21 @@ public final class PlayMoveEditModeUndoRedoTest {
         var branch5 = PlayMoveEdit.forMove(1, 2);
         var branch6 = PlayMoveEdit.forMove(0, 1);
 
-        model.toPreviousMove();
+        model.toPreviousNode();
         editor.recordAndApply(branch1, manager);
-        model.toPreviousMove();
+        model.toPreviousNode();
         editor.recordAndApply(branch2, manager);
-        model.toPreviousMove();
+        model.toPreviousNode();
         editor.recordAndApply(branch3, manager);
-        model.toPreviousMove();
+        model.toPreviousNode();
         editor.recordAndApply(branch4, manager);
-        model.toPreviousMove();
+        model.toPreviousNode();
         editor.recordAndApply(branch5, manager);
-        model.toPreviousMove();
+        model.toPreviousNode();
         editor.recordAndApply(branch6, manager);
-        model.toPreviousMove(); // Restore back to branching point
+        model.toPreviousNode(); // Restore back to branching point
 
-        var branchesIncludingMain = model.getCurrentMove().getNextMoves();
+        var branchesIncludingMain = model.getCurrentNode().getNextNodes();
         Assertions.assertEquals(7, branchesIncludingMain.size());
 
         // The branches we expect to remain on the tree after each undo
@@ -313,13 +313,13 @@ public final class PlayMoveEditModeUndoRedoTest {
 
     private String[] getBoardPosition(GameModel model) {
         var state = model.getCurrentGameState();
-        var position = state.getGamePosition();
+        var position = state.getBoardPosition();
 
         String[] positionData = new String[model.getBoardHeight()];
         for (int y = 0; y < positionData.length; ++y) {
             StringBuilder rowData = new StringBuilder();
             for (int x = 0; x < model.getBoardWidth(); ++x) {
-                var stone = position.getStoneColorAt(x, y);
+                var stone = position.getStateAt(x, y);
                 if (stone == StoneColor.BLACK)
                     rowData.append("x");
                 else if (stone == StoneColor.WHITE)

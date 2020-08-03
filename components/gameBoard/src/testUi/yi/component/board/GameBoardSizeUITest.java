@@ -61,8 +61,8 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
     }
 
     private void assertSizeCorrect() {
-        var boardWidth = getBoardManager().model.getBoardWidth();
-        var boardHeight = getBoardManager().model.getBoardHeight();
+        var boardWidth = getBoardManager().getGameModel().getBoardWidth();
+        var boardHeight = getBoardManager().getGameModel().getBoardHeight();
 
         var sizeManager = getBoardManager().size;
         var stoneSize = sizeManager.getStoneSizeInPixels();

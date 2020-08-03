@@ -56,12 +56,12 @@ final class GameTreeStructure {
             }
 
             lastParent = currentNodeElement;
-            currentNode = currentNode.getNextMoveInMainBranch();
+            currentNode = currentNode.getNextNodeInMainBranch();
         }
 
         while (nodesToCreateSubtree.size() > 0) {
             var branchingPoint = nodesToCreateSubtree.pop();
-            var variations = branchingPoint.getNode().getNextMovesExcludingMainBranch();
+            var variations = branchingPoint.getNode().getNextNodesExcludingMainBranch();
 
             for (var child : variations) {
                 // As a MVP I think this recursion is fine. However...
@@ -316,7 +316,7 @@ final class GameTreeStructure {
                     ++columnToUse;
                 }
 
-                var nextMove = currentNode.getNextMoveInMainBranch();
+                var nextMove = currentNode.getNextNodeInMainBranch();
 
                 if (nextMove != null) {
                     currentNode = nextMove;

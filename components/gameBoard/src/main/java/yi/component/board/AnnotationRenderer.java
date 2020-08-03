@@ -5,7 +5,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
-import yi.component.utilities.ComparisonUtilities;
 import yi.component.utilities.ShapeUtilities;
 import yi.core.go.Annotation;
 import yi.core.go.StoneColor;
@@ -35,7 +34,10 @@ public final class AnnotationRenderer {
 
         // TODO: Work out how to color the annotation based on the underlying stone and board texture
         Color color;
-        var stone = manager.model.getCurrentGamePosition().getStoneColorAt(annotation.getX(), annotation.getY());
+        var stone = manager.getGameModel()
+                           .getCurrentGameState()
+                           .getBoardPosition()
+                           .getStateAt(annotation.getX(), annotation.getY());
 
         if (stone == StoneColor.BLACK) {
             color = Color.WHITE;

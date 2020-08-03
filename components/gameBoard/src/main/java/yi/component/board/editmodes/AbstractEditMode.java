@@ -6,7 +6,6 @@ import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
-import yi.component.utilities.GuiUtilities;
 
 import java.util.Optional;
 
@@ -34,9 +33,9 @@ public abstract class AbstractEditMode {
 
     protected void handleTreeNavigation(GameBoardManager manager, KeyEvent e) {
         if (e.getCode() == KeyCode.UP) {
-            manager.model.toPreviousMove();
+            manager.getGameModel().toPreviousNode();
         } else if (e.getCode() == KeyCode.DOWN) {
-            manager.model.toNextMove();
+            manager.getGameModel().toNextNode();
         } else if (e.getCode() == KeyCode.LEFT) {
             // TODO: Find the branching node and find a node of the same distance to root in its main branch.
         } else if (e.getCode() == KeyCode.RIGHT) {

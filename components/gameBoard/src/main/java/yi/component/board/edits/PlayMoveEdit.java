@@ -32,7 +32,7 @@ public final class PlayMoveEdit extends UndoableEdit {
     @Override
     protected boolean _rollbackEdit(GameModel gameModel) {
         gameModel.removeNodeSubtree(submittedNode);
-        gameModel.setCurrentMove(parentOfSubmittedNode); // Assuming parent is still on the tree
+        gameModel.setCurrentNode(parentOfSubmittedNode); // Assuming parent is still on the tree
         return true;
     }
 
@@ -51,7 +51,7 @@ public final class PlayMoveEdit extends UndoableEdit {
     }
 
     private boolean submitMoveForFirstTimeEdit(GameModel gameModel) {
-        var currentMoveBeforeNewMoveSubmission = gameModel.getCurrentMove();
+        var currentMoveBeforeNewMoveSubmission = gameModel.getCurrentNode();
 
         MoveSubmitResult moveSubmitResult = gameModel.submitMove(moveX, moveY);
         MoveValidationResult validationResult = moveSubmitResult.getValidationResult();

@@ -17,7 +17,7 @@ import java.util.*
  */
 class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRulesHandler, val stateHasher: GameStateHasher) {
 
-    internal val gameTree = GameTree()
+    internal val gameTree = GameTree(stateHasher.computeEmptyPositionHash(boardWidth, boardHeight))
     private var _currentMove = gameTree.rootNode
         set(value) {
             if (!gameTree.isDescendant(value))
@@ -27,10 +27,6 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             internalCurrentNodeUpdate(value)
             currentNodeChangeEventHook.fireEvent(NodeEvent(value))
         }
-
-    init {
-        gameTree.rootNode.stateDelta = StateDelta.forRootNode(stateHasher.computeEmptyPositionHash(boardWidth, boardHeight))
-    }
 
     private var stateHashHistory: List<Long> = LinkedList()
     private var stateCache = WeakHashMap<Long, GameState>()
@@ -49,10 +45,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         val nodeHistory = currentNode.getMoveHistory()
         if (nodeHistory.size > 1) {
             // Only count non-root and primary move updates for unique state
-            val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size)
-                    .filter { state -> state.stateDelta.type == StateDelta.Type.MOVE_PLAYED }
-
-            this.stateHashHistory = uniqueStateHistory.map { item -> item.stateDelta.stateHash }
+            val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size).filter { node -> node.getType() == GameNodeType.MOVE_PLAYED }
+            this.stateHashHistory = uniqueStateHistory.map { node -> node.getStateHash() }
         }
     }
 
@@ -78,11 +72,11 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return The result of the request. See [MoveSubmitResult] for more information.
      */
-    fun playMove(x: Int, y: Int): MoveSubmitResult {
+    fun submitMove(x: Int, y: Int): MoveSubmitResult {
         var identicalExistingMove: GameNode? = null
 
-        for (child in getCurrentMove().children) {
-            child.stateDelta.primaryMove?.let {
+        for (child in getCurrentNode().children) {
+            child.getPrimaryMove()?.let {
                 val moveX = it.x
                 val moveY = it.y
 
@@ -100,18 +94,18 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         val movePlayed: Boolean
 
         if (identicalExistingMove == null) {
-            val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, getCurrentMove(), true, Stone(x, y, getNextTurnStoneColor()))
+            val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, getCurrentNode(), true, Stone(x, y, getNextTurnStoneColor()))
 
             validationResult = validationAndNewNode.first
             node = validationAndNewNode.second
 
             if (validationResult == MoveValidationResult.OK) {
-                submitMove(node!!) // New node should not be null if validation result checks out
+                submitNode(node!!) // New node should not be null if validation result checks out
             }
 
             movePlayed = validationResult == MoveValidationResult.OK
         } else {
-            setCurrentMove(identicalExistingMove!!)
+            setCurrentNode(identicalExistingMove!!)
 
             validationResult = MoveValidationResult.OK
             node = identicalExistingMove
@@ -125,10 +119,10 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Forcefully submit a move to the game tree without validating it against the game rules. Use this method with prudence, as
      * it may result in an erroneous game state.
      */
-    fun playMoveIgnoringRules(x: Int, y: Int): MoveSubmitResult {
-        val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, getCurrentMove(), false, Stone(x, y, getNextTurnStoneColor()))
+    fun submitMoveWithoutValidation(x: Int, y: Int): MoveSubmitResult {
+        val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, getCurrentNode(), false, Stone(x, y, getNextTurnStoneColor()))
         val newNode: GameNode? = validationAndNewNode.second
-        submitMove(newNode!!)
+        submitNode(newNode!!)
 
         return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
     }
@@ -141,7 +135,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      */
     fun validateMoveAgainstRules(game: GameModel, x: Int, y: Int): MoveValidationResult {
         val proposedMove = Stone(x, y, game.getNextTurnStoneColor())
-        val validationAndDelta = GameMoveSubmitter.validateProposedMoveAndCreateStateUpdate(game, game.getCurrentMove(), proposedMove)
+        val validationAndDelta = GameMoveSubmitter.validateProposedMoveAndCreateStateUpdate(game, game.getCurrentNode(), proposedMove)
 
         return validationAndDelta.first
     }
@@ -149,21 +143,21 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     /**
      * Play a pass for the next turn.
      */
-    fun playPass(): MoveSubmitResult {
+    fun submitPass(): MoveSubmitResult {
         var existingContinuation: GameNode? = null
 
-        for (child in getCurrentMove().children) {
-            if (child.stateDelta.type == StateDelta.Type.PASS) {
+        for (child in getCurrentNode().children) {
+            if (child.getType() == GameNodeType.PASS) {
                 existingContinuation = child
             }
         }
 
         return if (existingContinuation != null) {
-            setCurrentMove(existingContinuation)
+            setCurrentNode(existingContinuation)
             MoveSubmitResult(MoveValidationResult.OK, existingContinuation, true)
         } else {
-            val newNode = GameMoveSubmitter.createMoveNodeForPass(getCurrentMove())
-            submitMove(newNode)
+            val newNode = GameMoveSubmitter.createMoveNodeForPass(getCurrentNode())
+            submitNode(newNode)
             MoveSubmitResult(MoveValidationResult.OK, newNode, true)
         }
     }
@@ -171,32 +165,52 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     /**
      * Resign the game for next turn.
      */
-    fun playResign(): MoveSubmitResult {
+    fun submitResign(): MoveSubmitResult {
         var existingContinuation: GameNode? = null
 
-        for (child in getCurrentMove().children) {
-            if (child.stateDelta.type == StateDelta.Type.RESIGN) {
+        for (child in getCurrentNode().children) {
+            if (child.getType() == GameNodeType.RESIGN) {
                 existingContinuation = child
             }
         }
 
         return if (existingContinuation != null) {
-            setCurrentMove(existingContinuation)
+            setCurrentNode(existingContinuation)
             MoveSubmitResult(MoveValidationResult.OK, existingContinuation, true)
         } else {
-            val newNode = GameMoveSubmitter.createMoveNodeForResignation(getCurrentMove())
-            submitMove(newNode)
+            val newNode = GameMoveSubmitter.createMoveNodeForResignation(getCurrentNode())
+            submitNode(newNode)
             MoveSubmitResult(MoveValidationResult.OK, newNode, true)
         }
     }
 
     /**
-     * Equivalent to invoking [getGameState] at [getCurrentMove].
+     * Submits a new node of delta type [StateDelta.getType().STONE_EDIT].
+     *
+     * The purpose of this node is to store all the manual edits made to the stones in the
+     * current game position. Multiple edits to stones should be made under a single stone edit
+     * node. In other words, for game records created within this game model, there should never
+     * be multiple consecutive stone edit nodes.
+     *
+     * Consecutive stone edit nodes are permitted in the game tree because other styles
+     * have been adopted by other programs / go servers.
+     *
+     * This method will not return anything, but its success can be guaranteed.
+     */
+    fun submitStoneEdit() {
+        val delta = StateDelta.forStoneEdit(getCurrentGameState().stateHash)
+        val node = GameNode(delta)
+
+        submitNode(node)
+    }
+
+    /**
+     * Equivalent to invoking [getGameState] at [getCurrentNode].
      *
      * @return The [GameState] at the current position.
      */
     fun getCurrentGameState(): GameState {
-        return getGameState(getCurrentMove())
+        return getGameState(getCurrentNode())
     }
 
     /**
@@ -208,7 +222,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         if (!gameTree.isDescendant(gameNode))
             throw IllegalArgumentException("Game node is not part of this move tree")
 
-        this.stateCache[gameNode.stateDelta.stateHash]?.let {
+        this.stateCache[gameNode.getStateHash()]?.let {
             return it
         }
 
@@ -219,24 +233,24 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         var prisonersBlack = 0
 
         var currentStateHash = stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
-        val annotations: HashSet<Annotation>
+        val annotations: Collection<Annotation>
 
         // Build the board state by traversing the history and apply the delta from root up to gameNode
         val pathToRoot = gameNode.getMoveHistory()
 
         pathToRoot.forEach { node ->
-            node.stateDelta.let { stateUpdate ->
-                positionState.apply(stateUpdate)
-                prisonersWhite += stateUpdate.captures.stream().filter { capture -> capture.stoneColor == StoneColor.BLACK }.count().toInt()
-                prisonersBlack += stateUpdate.captures.stream().filter { capture -> capture.stoneColor == StoneColor.WHITE }.count().toInt()
-                currentStateHash = stateUpdate.stateHash
-            }
+            val captures = node.getCapturesCopy()
+
+            positionState.apply(node.delta)
+            prisonersWhite += captures.stream().filter { capture -> capture.stoneColor == StoneColor.BLACK }.count().toInt()
+            prisonersBlack += captures.stream().filter { capture -> capture.stoneColor == StoneColor.WHITE }.count().toInt()
+            currentStateHash = node.getStateHash()
         }
 
-        annotations = pathToRoot.last.stateDelta.annotationsOnThisNode
+        annotations = pathToRoot.last.getAnnotationsCopy()
 
         val gameState = GameState(this, positionState, gameNode, prisonersWhite, prisonersBlack, annotations, currentStateHash)
-        this.stateCache[gameNode.stateDelta.stateHash] = gameState
+        this.stateCache[gameNode.getStateHash()] = gameState
 
         return gameState
     }
@@ -254,7 +268,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Calls [addAnnotations] using the current move.
      */
     fun addAnnotationsToCurrentMove(annotations: Collection<Annotation>) {
-        addAnnotations(getCurrentMove(), annotations);
+        addAnnotations(getCurrentNode(), annotations)
     }
 
     /**
@@ -263,7 +277,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method emits an [onCurrentNodeDataUpdate] event only once after all annotations have been added.
      */
     fun addAnnotations(nodeToEdit: GameNode, annotations: Collection<Annotation>) {
-        annotations.forEach { nodeToEdit.stateDelta.annotationsOnThisNode.add(it) }
+        nodeToEdit.addAnnotations(annotations)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
@@ -271,7 +285,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Invokes [removeAnnotation] using the current node.
      */
     fun removeAnnotationFromCurrentMove(x: Int, y: Int) {
-        removeAnnotation(getCurrentMove(), x, y);
+        removeAnnotation(getCurrentNode(), x, y)
     }
 
     /**
@@ -283,7 +297,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun removeAnnotation(nodeToEdit: GameNode, x: Int, y: Int) {
         val annotationsToRemove = HashSet<Annotation>()
 
-        for (annotation in getAnnotations(nodeToEdit)) {
+        val annotations = nodeToEdit.getAnnotationsCopy()
+        for (annotation in annotations) {
             val onThisPoint = annotation.isOccupyingPosition(x, y)
 
             if (onThisPoint) {
@@ -291,7 +306,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             }
         }
 
-        annotationsToRemove.forEach { getCurrentMove().stateDelta.annotationsOnThisNode.remove(it) }
+        getCurrentNode().removeAnnotations(annotationsToRemove)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
@@ -301,7 +316,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method emits a [onNodeDataUpdate] event.
      */
     fun removeAnnotationFromCurrentMove(annotation: Annotation) {
-        removeAnnotation(getCurrentMove(), annotation);
+        removeAnnotation(getCurrentNode(), annotation)
     }
 
     /**
@@ -310,7 +325,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method emits a [onNodeDataUpdate] event.
      */
     fun removeAnnotation(nodeToEdit: GameNode, annotation: Annotation) {
-        nodeToEdit.stateDelta.annotationsOnThisNode.remove(annotation)
+        nodeToEdit.removeAnnotation(annotation)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
@@ -320,14 +335,14 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method emits a single [onNodeDataUpdate] event after all annotations have been removed.
      */
     fun removeAnnotations(nodeToEdit: GameNode, annotations: Collection<Annotation>) {
-        annotations.forEach { nodeToEdit.stateDelta.annotationsOnThisNode.remove(it) }
+        nodeToEdit.removeAnnotations(annotations)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
     /**
      * @return The current position the game is at.
      */
-    fun getCurrentMove(): GameNode {
+    fun getCurrentNode(): GameNode {
         return _currentMove
     }
 
@@ -335,16 +350,16 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return Set of all annotations on the current node.
      */
-    fun getAnnotationsOnCurrentMove(): Set<Annotation> {
-        return getAnnotations(getCurrentMove());
+    fun getAnnotationsCopyOnCurrentNode(): Collection<Annotation> {
+        return getAnnotationsCopy(getCurrentNode())
     }
 
     /**
      *
      * @return Set of all annotations on the specified node.
      */
-    fun getAnnotations(node: GameNode): Set<Annotation> {
-        return node.stateDelta.annotationsOnThisNode
+    fun getAnnotationsCopy(node: GameNode): Collection<Annotation> {
+        return node.getAnnotationsCopy()
     }
 
     /**
@@ -368,10 +383,6 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         return ArrayList(stateHashHistory)
     }
 
-    fun getCurrentMoveStateDelta(): StateDelta {
-        return getCurrentMove().stateDelta
-    }
-
     /**
      * @return An integer representing the current move number, with zero being the root node.
      */
@@ -388,16 +399,16 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @throws IllegalArgumentException If the [node] is not part of the game tree.
      */
-    fun setCurrentMove(node: GameNode) {
+    fun setCurrentNode(node: GameNode) {
         _currentMove = node
 
-        onCurrentNodeChange().fireEvent(NodeEvent(getCurrentMove()))
+        onCurrentNodeChange().fireEvent(NodeEvent(getCurrentNode()))
     }
 
     /**
-     * @return The move preceding [getCurrentMove], or null if there is no previous move.
+     * @return The move preceding [getCurrentNode], or null if there is no previous move.
      */
-    fun getPreviousMove(): GameNode? {
+    fun getPreviousNode(): GameNode? {
         return _currentMove.parent
     }
 
@@ -407,18 +418,18 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * @return The previous move if it exists, otherwise [Optional.empty]
      */
     fun getPreviousMoveOptional(): Optional<GameNode> {
-        return Optional.ofNullable(getPreviousMove())
+        return Optional.ofNullable(getPreviousNode())
     }
 
     /**
      * Sets the current move to the previous move if it is not the root.
      * Otherwise, do nothing.
      *
-     * @return The move preceding [getCurrentMove], or null if there is no previous move.
+     * @return The move preceding [getCurrentNode], or null if there is no previous move.
      */
-    fun toPreviousMove(): GameNode? {
+    fun toPreviousNode(): GameNode? {
 
-        return toPreviousMove(1)
+        return toPreviousNode(1)
     }
 
     /**
@@ -428,7 +439,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return The node this method arrived at (which will be the new current node).
      */
-    fun toPreviousMove(steps: Int): GameNode {
+    fun toPreviousNode(steps: Int): GameNode {
         var newPosition = _currentMove
 
         for (i in 0 until steps) {
@@ -436,27 +447,18 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
                 newPosition = it
             }
         }
-        setCurrentMove(newPosition)
+        setCurrentNode(newPosition)
 
         return newPosition
     }
 
     /**
      *
-     * @return The move following [getCurrentMove] that is on the main branch, or null if
+     * @return The move following [getCurrentNode] that is on the main branch, or null if
      *         the current move is the last move in the variation.
      */
-    fun getNextMoveInMainVariation(): GameNode? {
-        return _currentMove.getNextMoveInMainBranch()
-    }
-
-    /**
-     *
-     * @return The move following [getCurrentMove] that is on the main branch, or [Optional.empty] if
-     *         the current move is the last move in the variation.
-     */
-    fun getNextMoveInMainVariationOptional(): Optional<GameNode> {
-        return _currentMove.getNextMoveInMainBranchOptional()
+    fun getNextNodeInMainVariation(): GameNode? {
+        return _currentMove.getNextNodeInMainBranch()
     }
 
     /**
@@ -473,8 +475,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return The next move if it is available, otherwise null.
      */
-    fun toNextMove(): GameNode {
-        return toNextMove(1)
+    fun toNextNode(): GameNode {
+        return toNextNode(1)
     }
 
     /**
@@ -483,7 +485,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return The node that this method arrived at (which will be the new current node).
      */
-    fun toNextMove(steps: Int): GameNode {
+    fun toNextNode(steps: Int): GameNode {
         var newPosition = _currentMove
 
         for (i in 0 until steps) {
@@ -491,7 +493,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
                 newPosition = newPosition.children[0]
             }
         }
-        setCurrentMove(newPosition)
+        setCurrentNode(newPosition)
 
         return newPosition
     }
@@ -505,8 +507,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method first emits an [onNodeAdd] event, followed by [onCurrentNodeChange].
      */
-    fun submitMove(node: GameNode) {
-        submitMove(getCurrentMove(), node)
+    fun submitNode(node: GameNode) {
+        submitMove(getCurrentNode(), node)
     }
 
     /**
@@ -521,7 +523,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      */
     fun submitMove(parent: GameNode, child: GameNode) {
         appendMove(parent, child)
-        setCurrentMove(child)
+        setCurrentNode(child)
     }
 
     /**
@@ -529,12 +531,12 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * become its main branch continuation. Otherwise, it becomes a variation. This method will not
      * update the current move to the new node.
      *
-     * Use [submitMove] to append and set the current node.
+     * Use [submitNode] to append and set the current node.
      *
      * This method emits an [onNodeAdd] event.
      */
     fun appendMove(node: GameNode) {
-        appendMove(getCurrentMove(), node)
+        appendMove(getCurrentNode(), node)
     }
 
     /**
@@ -544,7 +546,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * continuation. Otherwise, it becomes a variation. This method will not update
      * the current move to the newly appended node.
      *
-     * Use [submitMove] to append and set the current node.
+     * Use [submitNode] to append and set the current node.
      *
      * This method emits an [onNodeAdd] event.
      */
@@ -598,7 +600,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
 
     /**
      * Emitter for node addition events. This event is always emitted before [onCurrentNodeChange], clients
-     * should not use [getCurrentMove] in the listener code block because the information is almost always
+     * should not use [getCurrentNode] in the listener code block because the information is almost always
      * out of date.
      *
      * To retrieve the correct current node, subscribe to [onCurrentNodeChange] instead.
@@ -647,7 +649,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     init {
         val currentNodeDataUpdateEventEmitter = object : EventListener<NodeEvent> {
             override fun onEvent(event: NodeEvent) {
-                if (event.node == getCurrentMove()) {
+                if (event.node == getCurrentNode()) {
                     onCurrentNodeDataUpdate().fireEvent(event)
                 }
             }
