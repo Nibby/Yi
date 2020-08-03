@@ -6,11 +6,11 @@ package yi.core.go
 class MoveSequence constructor(private val game: GameModel) {
 
     /**
-     * Synonymous to [GameModel.playMove], but introduces an additional state check to verify the move is submitted successfully.
+     * Synonymous to [GameModel.submitMove], but introduces an additional state check to verify the move is submitted successfully.
      * Otherwise a [GameRulesException] is thrown to interrupt the sequence flow.
      */
     fun playMove(x: Int, y:Int): MoveSequence {
-        val result = game.playMove(x, y)
+        val result = game.submitMove(x, y)
         if (result.validationResult != MoveValidationResult.OK) {
             throw GameRulesException(result.validationResult, "Cannot play move ($x, $y) at node position ${game.getCurrentMove().moveNumber}: ${result.validationResult}")
         }
@@ -28,22 +28,22 @@ class MoveSequence constructor(private val game: GameModel) {
     }
 
     /**
-     * Synonymous to [GameModel.playPass].
+     * Synonymous to [GameModel.submitPass].
      *
-     * @see [GameModel.playPass]
+     * @see [GameModel.submitPass]
      */
     fun pass(): MoveSequence {
-        game.playPass()
+        game.submitPass()
         return this
     }
 
     /**
-     * Synonymous to [GameModel.playResign].
+     * Synonymous to [GameModel.submitResign].
      *
-     * @see [GameModel.playResign]
+     * @see [GameModel.submitResign]
      */
     fun resign(): MoveSequence {
-        game.playResign()
+        game.submitResign()
         return this
     }
 }
