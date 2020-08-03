@@ -42,7 +42,7 @@ public final class AnnotationEdit extends UndoableEdit {
         // TODO: As a defensive measure, we should probably validate the state is valid first before
         //       making any changes.
         gameModel.removeAnnotations(getAffectedNode(), annotationsToRemove);
-        gameModel.addAnnotationsToCurrentMove(annotationsToAdd);
+        gameModel.addAnnotationsToCurrentNode(annotationsToAdd);
 
         return true;
     }

@@ -5,7 +5,7 @@ import yi.core.go.Annotation.PointAnnotation
 import java.util.*
 
 /**
- * Annotations are special labels that can be added to a [GameNode] through [GameModel.addAnnotationToCurrentMove].
+ * Annotations are special labels that can be added to a [GameNode] through [GameModel.addAnnotationToCurrentNode].
  *
  * Unlike other game objects, annotations do not accumulate. They are only present on the game node it is added to.
  * Annotation positions use the same co-ordinate space as the game board.

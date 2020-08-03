@@ -319,7 +319,7 @@ public final class PlayMoveEditModeUndoRedoTest {
         for (int y = 0; y < positionData.length; ++y) {
             StringBuilder rowData = new StringBuilder();
             for (int x = 0; x < model.getBoardWidth(); ++x) {
-                var stone = position.getStateAt(x, y);
+                var stone = position.getStoneColorAt(x, y);
                 if (stone == StoneColor.BLACK)
                     rowData.append("x");
                 else if (stone == StoneColor.WHITE)

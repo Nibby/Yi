@@ -37,7 +37,7 @@ public final class AnnotationRenderer {
         var stone = manager.getGameModel()
                            .getCurrentGameState()
                            .getBoardPosition()
-                           .getStateAt(annotation.getX(), annotation.getY());
+                           .getStoneColorAt(annotation.getX(), annotation.getY());
 
         if (stone == StoneColor.BLACK) {
             color = Color.WHITE;

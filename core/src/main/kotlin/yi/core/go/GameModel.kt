@@ -72,7 +72,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return The result of the request. See [MoveSubmitResult] for more information.
      */
-    fun submitNode(x: Int, y: Int): MoveSubmitResult {
+    fun submitMove(x: Int, y: Int): MoveSubmitResult {
         var identicalExistingMove: GameNode? = null
 
         for (child in getCurrentNode().children) {
@@ -85,8 +85,9 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
                 }
             }
 
-            if (identicalExistingMove != null)
+            if (identicalExistingMove != null) {
                 break
+            }
         }
 
         val validationResult: MoveValidationResult
@@ -195,12 +196,14 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Consecutive stone edit nodes are permitted in the game tree because other styles
      * have been adopted by other programs / go servers.
      *
-     * This method will not return anything, but its success can be guaranteed.
+     * @return The newly created tree node for stone edits.
      */
-    fun submitStoneEdit() {
+    fun submitStoneEditNode(): GameNode {
         val delta = StateDelta.forStoneEdit(getCurrentGameState().stateHash)
         val node = GameNode(delta)
         submitNode(node)
+
+        return node
     }
 
     /**
@@ -221,8 +224,10 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         if (!gameTree.isDescendant(gameNode))
             throw IllegalArgumentException("Game node is not part of this move tree")
 
-        this.stateCache[gameNode.getStateHash()]?.let {
-            return it
+        if (gameNode.getType() == GameNodeType.MOVE_PLAYED) {
+            this.stateCache[gameNode.getStateHash()]?.let {
+                return it
+            }
         }
 
         // Only perform state resolution if we don't have a cached position
@@ -241,8 +246,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             val captures = node.getCapturesCopy()
 
             positionState.apply(node.delta)
-            prisonersWhite += captures.stream().filter { capture -> capture.stoneColor == StoneColor.BLACK }.count().toInt()
-            prisonersBlack += captures.stream().filter { capture -> capture.stoneColor == StoneColor.WHITE }.count().toInt()
+            prisonersWhite += captures.stream().filter { capture -> capture.color == StoneColor.BLACK }.count().toInt()
+            prisonersBlack += captures.stream().filter { capture -> capture.color == StoneColor.WHITE }.count().toInt()
             currentStateHash = node.getStateHash()
         }
 
@@ -254,19 +259,43 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         return gameState
     }
 
+    fun addStoneEditToCurrentNode(stoneEdit: Stone) {
+        addStoneEdit(getCurrentNode(), stoneEdit)
+    }
+
+    fun addStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
+        nodeToEdit.addStoneEdit(stoneEdit)
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+    }
+
+    fun addStoneEdits(nodeToEdit: GameNode, stoneEdits: Collection<Stone>) {
+        stoneEdits.forEach { nodeToEdit.addStoneEdit(it) }
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+    }
+
+    fun removeStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
+        nodeToEdit.removeStoneEdit(stoneEdit)
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+    }
+
+    fun removeStoneEdits(nodeToEdit: GameNode, stoneEdits: Collection<Stone>) {
+        stoneEdits.forEach { nodeToEdit.removeStoneEdit(it) }
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+    }
+
     /**
      * Adds one [Annotation] to the current move.
      *
      * This method emits an [onCurrentNodeDataUpdate] event.
      */
-    fun addAnnotationToCurrentMove(annotation: Annotation) {
-        addAnnotationsToCurrentMove(Collections.singleton(annotation))
+    fun addAnnotationToCurrentNode(annotation: Annotation) {
+        addAnnotationsToCurrentNode(Collections.singleton(annotation))
     }
 
     /**
      * Calls [addAnnotations] using the current move.
      */
-    fun addAnnotationsToCurrentMove(annotations: Collection<Annotation>) {
+    fun addAnnotationsToCurrentNode(annotations: Collection<Annotation>) {
         addAnnotations(getCurrentNode(), annotations)
     }
 
@@ -283,7 +312,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     /**
      * Invokes [removeAnnotation] using the current node.
      */
-    fun removeAnnotationFromCurrentMove(x: Int, y: Int) {
+    fun removeAnnotationFromCurrentNode(x: Int, y: Int) {
         removeAnnotation(getCurrentNode(), x, y)
     }
 
@@ -314,7 +343,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method emits a [onNodeDataUpdate] event.
      */
-    fun removeAnnotationFromCurrentMove(annotation: Annotation) {
+    fun removeAnnotationFromCurrentNode(annotation: Annotation) {
         removeAnnotation(getCurrentNode(), annotation)
     }
 
@@ -521,7 +550,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * become its main branch continuation. Otherwise, it becomes a variation. This method will not
      * update the current move to the new node.
      *
-     * Use [submitNode] to append and set the current node.
+     * Use [submitMove] to append and set the current node.
      *
      * This method emits an [onNodeAdd] event.
      */
@@ -536,7 +565,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * continuation. Otherwise, it becomes a variation. This method will not update
      * the current move to the newly appended node.
      *
-     * Use [submitNode] to append and set the current node.
+     * Use [submitMove] to append and set the current node.
      *
      * This method emits an [onNodeAdd] event.
      */

@@ -61,7 +61,7 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
     }
 
     private fun getHashValue(data: Stone): Long {
-        return getHashValue(data.stoneColor, data.x + data.y * boardWidth)
+        return getHashValue(data.color, data.x + data.y * boardWidth)
     }
 
     private fun getHashValue(color: StoneColor, position: Int): Long {

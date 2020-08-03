@@ -108,8 +108,6 @@ public final class GameBoardViewer implements Component {
     void update() {
         manager.onGameUpdate(this.gameModel);
         content.forEach(canvas -> canvas.onGameUpdate(this.gameModel, this.manager));
-
-        renderAll();
     }
 
     public void requestUndo() {

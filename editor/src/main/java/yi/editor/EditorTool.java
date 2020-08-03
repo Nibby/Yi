@@ -4,6 +4,7 @@ import yi.component.board.GameBoardViewer;
 import yi.component.board.editmodes.AnnotationEditMode;
 import yi.component.board.editmodes.EditMode;
 import yi.core.go.AnnotationType;
+import yi.core.go.StoneColor;
 
 /**
  * List of supported edit operations.
@@ -20,13 +21,13 @@ public enum EditorTool {
     ADD_BLACK_STONE {
         @Override
         public void apply(GameBoardViewer board) {
-
+            board.setEditMode(EditMode.editStones(StoneColor.BLACK));
         }
     },
     ADD_WHITE_STONE {
         @Override
         public void apply(GameBoardViewer board) {
-
+            board.setEditMode(EditMode.editStones(StoneColor.WHITE));
         }
     },
 
