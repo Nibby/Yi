@@ -2,8 +2,8 @@ package yi.component.gametree;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import yi.core.go.GameNode;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 import yi.core.go.MoveValidationResult;
 import yi.core.go.rules.GoGameRulesHandler;
 

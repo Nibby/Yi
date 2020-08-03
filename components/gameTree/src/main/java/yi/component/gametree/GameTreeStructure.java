@@ -1,8 +1,8 @@
 package yi.component.gametree;
 
 import org.jetbrains.annotations.Nullable;
-import yi.core.go.GameNode;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;

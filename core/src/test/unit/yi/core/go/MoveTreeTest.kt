@@ -2,7 +2,6 @@ package yi.core.go
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 
 /**
  * Test the tree hierarchy of [GameNode] is managed correctly by [GameTree]

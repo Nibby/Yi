@@ -2,7 +2,6 @@ package yi.component.gametree;
 
 import org.jetbrains.annotations.Nullable;
 import yi.core.go.GameNode;
-import yi.core.go.StateDelta;
 
 import java.util.Optional;
 

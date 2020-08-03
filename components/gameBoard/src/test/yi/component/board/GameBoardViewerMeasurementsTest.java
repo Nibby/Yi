@@ -1,11 +1,5 @@
 package yi.component.board;
 
-import org.junit.jupiter.api.Assertions;
-import yi.component.utilities.ComparisonUtilities;
-import yi.component.utilities.ShapeUtilities;
-import javafx.scene.shape.Rectangle;
-import org.junit.jupiter.api.Test;
-
 public final class GameBoardViewerMeasurementsTest {
 
     // TODO: These tests have been temporarily disabled because of frequent game board layout changes.

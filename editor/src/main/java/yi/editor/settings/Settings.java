@@ -1,9 +1,9 @@
 package yi.editor.settings;
 
+import org.json.JSONObject;
 import yi.component.board.GameBoardSettings;
 import yi.editor.Main;
 import yi.editor.utilities.JSON;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;

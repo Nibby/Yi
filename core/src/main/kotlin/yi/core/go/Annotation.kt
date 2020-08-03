@@ -1,5 +1,7 @@
 package yi.core.go
 
+import yi.core.go.Annotation.DirectionalAnnotation
+import yi.core.go.Annotation.PointAnnotation
 import java.util.*
 
 /**
