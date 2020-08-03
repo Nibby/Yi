@@ -56,7 +56,6 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
                         assertSizeCorrect();
                     }
                 });
-                Thread.sleep(20);
             }
         }
     }
