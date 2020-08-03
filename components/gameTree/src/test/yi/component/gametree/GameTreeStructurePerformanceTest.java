@@ -125,7 +125,7 @@ public class GameTreeStructurePerformanceTest {
                     }
                 }
 
-                boolean success = model.playMove(x, y).getValidationResult() == MoveValidationResult.OK;
+                boolean success = model.submitMove(x, y).getValidationResult() == MoveValidationResult.OK;
 
                 if (success) {
                     return;

@@ -41,7 +41,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)
-    public void testSupportedSizes(FxRobot robot) throws InterruptedException {
+    public void testSupportedSizes(FxRobot robot) {
         int supportedSizes = 24; //  1x1 -> 25x25
         getBoardManager().setDebugMode(true);
 
@@ -111,7 +111,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
                 "move at (" + x + ", " + y + ") is rendered out of " + boundName + " bounds.";
 
         try {
-            getGameModel().playMoveIgnoringRules(x, y);
+            getGameModel().submitMoveWithoutValidation(x, y);
             String screenshotName = boardWidth +"x" + boardHeight + "_at_" + x + "_" + y + ".png";
             boolean success = saveScreenshot("GameBoardSizeUITest", screenshotName);
 
