@@ -72,7 +72,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * @return The result of the request. See [MoveSubmitResult] for more information.
      */
-    fun submitMove(x: Int, y: Int): MoveSubmitResult {
+    fun submitNode(x: Int, y: Int): MoveSubmitResult {
         var identicalExistingMove: GameNode? = null
 
         for (child in getCurrentNode().children) {
@@ -200,7 +200,6 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun submitStoneEdit() {
         val delta = StateDelta.forStoneEdit(getCurrentGameState().stateHash)
         val node = GameNode(delta)
-
         submitNode(node)
     }
 
@@ -413,15 +412,6 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     }
 
     /**
-     * Java 8 friendly convenience method.
-     *
-     * @return The previous move if it exists, otherwise [Optional.empty]
-     */
-    fun getPreviousMoveOptional(): Optional<GameNode> {
-        return Optional.ofNullable(getPreviousNode())
-    }
-
-    /**
      * Sets the current move to the previous move if it is not the root.
      * Otherwise, do nothing.
      *
@@ -508,7 +498,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * This method first emits an [onNodeAdd] event, followed by [onCurrentNodeChange].
      */
     fun submitNode(node: GameNode) {
-        submitMove(getCurrentNode(), node)
+        submitNode(getCurrentNode(), node)
     }
 
     /**
@@ -521,8 +511,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method first emits an [onNodeAdd] event, followed by [onCurrentNodeChange].
      */
-    fun submitMove(parent: GameNode, child: GameNode) {
-        appendMove(parent, child)
+    fun submitNode(parent: GameNode, child: GameNode) {
+        appendNode(parent, child)
         setCurrentNode(child)
     }
 
@@ -535,8 +525,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method emits an [onNodeAdd] event.
      */
-    fun appendMove(node: GameNode) {
-        appendMove(getCurrentNode(), node)
+    fun appendNode(node: GameNode) {
+        appendNode(getCurrentNode(), node)
     }
 
     /**
@@ -550,7 +540,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      *
      * This method emits an [onNodeAdd] event.
      */
-    fun appendMove(parent: GameNode, child: GameNode) {
+    fun appendNode(parent: GameNode, child: GameNode) {
         gameTree.appendNode(parent, child)
         onNodeAdd().fireEvent(NodeEvent(child))
     }

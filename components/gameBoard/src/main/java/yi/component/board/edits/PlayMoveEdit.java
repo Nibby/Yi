@@ -46,14 +46,14 @@ public final class PlayMoveEdit extends UndoableEdit {
     }
 
     private boolean appendSubmittedNodeBackToGameTree(GameModel gameModel) {
-        gameModel.submitMove(parentOfSubmittedNode, submittedNode);
+        gameModel.submitNode(parentOfSubmittedNode, submittedNode);
         return true;
     }
 
     private boolean submitMoveForFirstTimeEdit(GameModel gameModel) {
         var currentMoveBeforeNewMoveSubmission = gameModel.getCurrentNode();
 
-        MoveSubmitResult moveSubmitResult = gameModel.submitMove(moveX, moveY);
+        MoveSubmitResult moveSubmitResult = gameModel.submitNode(moveX, moveY);
         MoveValidationResult validationResult = moveSubmitResult.getValidationResult();
 
         if (validationResult != MoveValidationResult.OK) {

@@ -11,7 +11,7 @@ class PlayMoveTest {
     fun `play first legal move has correct move tree state`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val result = model.submitMove(0, 0)
+        val result = model.submitNode(0, 0)
 
         Assertions.assertEquals(result.moveNode!!, model.getCurrentNode())
     }
@@ -20,7 +20,7 @@ class PlayMoveTest {
     fun `play first legal move returns correct move submission result`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val moveSubmitResult = model.submitMove(0, 0)
+        val moveSubmitResult = model.submitNode(0, 0)
 
         Assertions.assertEquals(MoveValidationResult.OK, moveSubmitResult.validationResult)
         Assertions.assertNotNull(moveSubmitResult.moveNode)
@@ -31,7 +31,7 @@ class PlayMoveTest {
     fun `play first legal move resolves to correct board position`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val moveSubmitResult = model.submitMove(0, 0)
+        val moveSubmitResult = model.submitNode(0, 0)
         val newNode = moveSubmitResult.moveNode
 
         val firstMoveGameState = model.getGameState(newNode!!)
@@ -44,7 +44,7 @@ class PlayMoveTest {
     fun `play five consecutive moves all have correct stone color`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val moveSubmitResult = model.submitMove(0, 0)
+        val moveSubmitResult = model.submitNode(0, 0)
         val newNode = moveSubmitResult.moveNode
 
         val firstMoveGameState = model.getGameState(newNode!!)
@@ -149,7 +149,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1)
 
-        val result = model.submitMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
+        val result = model.submitNode(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
 
         Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
     }
@@ -168,7 +168,7 @@ class PlayMoveTest {
                 .playMove(0, 0) // black captures and starts ko
 
         // This move should now be illegal because 1,0 was just captured
-        val submitResult = model.submitMove(1, 0)
+        val submitResult = model.submitNode(1, 0)
 
         Assertions.assertEquals(MoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
     }
@@ -182,7 +182,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1)
 
-        val submitResult = model.submitMove(0, 0) // Tries to play inside black territory (0 liberties)
+        val submitResult = model.submitNode(0, 0) // Tries to play inside black territory (0 liberties)
 
         Assertions.assertEquals(MoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
     }
@@ -199,7 +199,7 @@ class PlayMoveTest {
                 .playMove(1, 1)
                 .pass()
 
-        val submitResult = model.submitMove(0, 0) // Tries to play inside black territory (0 liberties
+        val submitResult = model.submitNode(0, 0) // Tries to play inside black territory (0 liberties
 
         Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
     }
@@ -211,7 +211,7 @@ class PlayMoveTest {
         model.beginMoveSequence()
                 .playMove(0, 0)
 
-        val result = model.submitMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
+        val result = model.submitNode(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
 
         Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
@@ -230,7 +230,7 @@ class PlayMoveTest {
                 .playMove(1, 1) // After playing this move black's entire group is self-captured. This move is not a board state repeat (of root empty state) because that doesn't count as a valid unique state.
                 .pass()
 
-        val result = model.submitMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
+        val result = model.submitNode(0, 0) // Playing at the position of move 1 again, which is a board position repeat
 
         Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
@@ -257,19 +257,19 @@ class PlayMoveTest {
                 .playMove(0, 0)
 
         // Assume both playMoves() succeed
-        val variationOne = model.submitMove(1, 0).moveNode
+        val variationOne = model.submitNode(1, 0).moveNode
         model.toPreviousNode()
-        val variationTwo = model.submitMove(0, 1).moveNode
+        val variationTwo = model.submitNode(0, 1).moveNode
 
         // back to first node, now playing (1, 0) should set current position to variationOne
         // and playing (0, 1) should set current position to variationTwo without creating new
         // nodes for both situations.
         model.toPreviousNode()
 
-        Assertions.assertEquals(variationOne, model.submitMove(1, 0).moveNode)
+        Assertions.assertEquals(variationOne, model.submitNode(1, 0).moveNode)
         model.toPreviousNode()
 
-        Assertions.assertEquals(variationTwo, model.submitMove(0, 1).moveNode)
+        Assertions.assertEquals(variationTwo, model.submitNode(0, 1).moveNode)
         model.toPreviousNode()
 
         // Check child size is still correct
@@ -280,9 +280,9 @@ class PlayMoveTest {
     fun `pass at a position where the next move is also pass will set current move to that node instead`() {
         val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
-        val branchNode = model.submitMove(0, 0).moveNode!!
+        val branchNode = model.submitNode(0, 0).moveNode!!
 
-        model.submitMove(1, 0)
+        model.submitNode(1, 0)
         model.toPreviousNode()
         val firstPassNode = model.submitPass().moveNode!!
         model.toPreviousNode()
@@ -302,9 +302,9 @@ class PlayMoveTest {
     fun `resign at a position where the next move is also resign will set current move to that node instead`() {
         val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
-        val branchNode = model.submitMove(0, 0).moveNode!!
+        val branchNode = model.submitNode(0, 0).moveNode!!
 
-        model.submitMove(1, 0)
+        model.submitNode(1, 0)
         model.toPreviousNode()
         val firstResignNode = model.submitResign().moveNode!!
         model.toPreviousNode()
