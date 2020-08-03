@@ -5,7 +5,7 @@ import java.util.*
 /**
  * A tuple that describes the state of a position.
  */
-class Stone constructor(val x: Int, val y: Int, val stoneColor: StoneColor) {
+class Stone constructor(val x: Int, val y: Int, val color: StoneColor) {
 
     /**
      * @return index-based position representation of this stone.
@@ -14,17 +14,17 @@ class Stone constructor(val x: Int, val y: Int, val stoneColor: StoneColor) {
 
     override fun equals(other: Any?): Boolean {
         if (other is Stone) {
-            return this.x == other.x && this.y == other.y && this.stoneColor == other.stoneColor
+            return this.x == other.x && this.y == other.y && this.color == other.color
         }
 
         return false
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(x, y, stoneColor)
+        return Objects.hash(x, y, color)
     }
 
     override fun toString(): String {
-        return "($x, $y): $stoneColor"
+        return "($x, $y): $color"
     }
 }

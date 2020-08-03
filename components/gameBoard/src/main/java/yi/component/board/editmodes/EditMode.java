@@ -1,6 +1,7 @@
 package yi.component.board.editmodes;
 
 import yi.core.go.AnnotationType;
+import yi.core.go.StoneColor;
 
 public final class EditMode {
 
@@ -19,5 +20,9 @@ public final class EditMode {
 
     public static AnnotationEditMode annotationLabel(AnnotationEditMode.LabelType labelType) {
         return new AnnotationEditMode(labelType);
+    }
+    
+    public static StoneEditMode editStones(StoneColor stoneColor) {
+        return new StoneEditMode(stoneColor);
     }
 }

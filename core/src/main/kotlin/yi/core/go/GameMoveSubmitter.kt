@@ -68,7 +68,7 @@ internal object GameMoveSubmitter {
 
         val nextTurnNumber = currentNode.moveNumber + 1
         val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextTurnNumber)
-        if (expectedStoneColorThisTurn != proposedMove.stoneColor)
+        if (expectedStoneColorThisTurn != proposedMove.color)
             return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)
 
         val currentGameState = gameModel.getGameState(currentNode)
@@ -84,7 +84,7 @@ internal object GameMoveSubmitter {
         // Create a copy of the current position, overwrite the intersection at the proposed move location with the proposed
         // stone color
         val testGamePosition = currentGamePosition.intersectionState.copyOf(currentGamePosition.intersectionState.size)
-        testGamePosition[proposedMovePosition] = proposedMove.stoneColor
+        testGamePosition[proposedMovePosition] = proposedMove.color
 
         // Check for captures:
         // Scan the intersections directly adjacent to the proposed move and obtain up to four strings of connected stones
@@ -108,7 +108,7 @@ internal object GameMoveSubmitter {
         val friendlyStrings = HashSet<StoneString>()
 
         // Sets values for the two buckets above
-        collateStrings(proposedMove.stoneColor, friendlyStrings, opponentStrings, strings)
+        collateStrings(proposedMove.color, friendlyStrings, opponentStrings, strings)
 
         var moveIsSuicidal = false
         val capturedStones = HashSet<Stone>()
@@ -161,7 +161,7 @@ internal object GameMoveSubmitter {
                 // and it does not qualify as a ko recapture.
                 if (lastKoRecaptureCapturedStones.size == 1
                         && lastKoRecaptureCapturedStones.iterator().next() == proposedMove
-                        && currentNode.getPrimaryMove()!!.stoneColor == proposedMove.stoneColor.getOpponent()) {
+                        && currentNode.getPrimaryMove()!!.color == proposedMove.color.getOpponent()) {
                     return Pair(MoveValidationResult.ERROR_KO_RECAPTURE, null)
                 }
             }
@@ -297,7 +297,7 @@ internal object GameMoveSubmitter {
             neighbor?.let {
                 val position = neighbor.getPosition(boardWidth)
 
-                val color = neighbor.stoneColor
+                val color = neighbor.color
                 if (color != StoneColor.NONE && color == stringColor) {
                     toVisit.add(position)
                 }

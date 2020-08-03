@@ -13,17 +13,17 @@ class GamePosition(private val boardWidth: Int, boardHeight: Int) {
         // Apply primary move
         if (update.primaryMove != null) {
             val primaryMove = update.primaryMove.getPosition(boardWidth)
-            intersectionState[primaryMove] = update.primaryMove.stoneColor
+            intersectionState[primaryMove] = update.primaryMove.color
         }
 
         // Apply captures
         update.captures.forEach { intersectionState[it.getPosition(boardWidth)] = StoneColor.NONE }
 
         // Apply helper stone updates
-        update.stoneEdits.forEach { intersectionState[it.x + it.y * boardWidth] = it.stoneColor }
+        update.stoneEdits.forEach { intersectionState[it.x + it.y * boardWidth] = it.color }
     }
 
-    fun getStateAt(x: Int, y:Int): StoneColor {
+    fun getStoneColorAt(x: Int, y:Int): StoneColor {
         return getStoneColorAt(x + y * boardWidth)
     }
 

@@ -65,7 +65,7 @@ class GameModelEventsTest {
         // Method under test
         model.onNodeRemove().addListener(eventListener)
 
-        val submitResult = model.submitNode(0, 0)
+        val submitResult = model.submitMove(0, 0)
         model.removeNodeSubtree(submitResult.moveNode!!) // Has to be a legal move
         Thread.sleep(10)
         Assertions.assertTrue(eventReceived, "No event emitted")
@@ -91,7 +91,7 @@ class GameModelEventsTest {
                 .playMove(0, 0)
                 .playMove(1, 0)
 
-        val thirdMove = model.submitNode(2, 0)
+        val thirdMove = model.submitMove(2, 0)
 
         // Sanity check
         Assertions.assertTrue(thirdMove.validationResult == MoveValidationResult.OK)
@@ -129,7 +129,7 @@ class GameModelEventsTest {
         model.onNodeDataUpdate().addListener(eventListenerForNodeData)
         model.onCurrentNodeDataUpdate().addListener(eventListenerForCurrentNodeData)
 
-        model.addAnnotationToCurrentMove(Annotation.Triangle(0, 0))
+        model.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
 
         Thread.sleep(10)
         Assertions.assertTrue(nodeDataUpdateEventReceived, "No event emitted from onNodeDataUpdate()")

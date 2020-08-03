@@ -172,6 +172,10 @@ class GameNode constructor(val delta: StateDelta) {
         stoneStates.forEach { stoneState -> addStoneEdit(stoneState) }
     }
 
+    internal fun removeStoneEdit(stoneEdit: Stone) {
+        delta.stoneEdits.remove(stoneEdit)
+    }
+
     internal fun addAnnotation(annotation: Annotation) {
         delta.annotations.add(annotation)
     }
