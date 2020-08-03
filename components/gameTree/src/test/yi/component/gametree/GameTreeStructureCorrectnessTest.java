@@ -1,14 +1,15 @@
 package yi.component.gametree;
 
 import org.junit.jupiter.api.Test;
-import yi.core.go.GameNode;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 import yi.core.go.rules.GoGameRulesHandler;
 
 import java.util.Collection;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that the layout of the tree is correct under different branching conditions.

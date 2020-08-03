@@ -1,9 +1,9 @@
 package yi.editor.settings;
 
-import yi.component.utilities.ComparisonUtilities;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
+import yi.component.utilities.ComparisonUtilities;
 
 import java.io.IOException;
 import java.nio.file.Files;

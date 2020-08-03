@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
 import yi.core.go.EventListener;
+import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.NodeEvent;
-import yi.core.go.GameModel;
 
 /**
  * A component which displays the game model and its nodes as a tree graph.

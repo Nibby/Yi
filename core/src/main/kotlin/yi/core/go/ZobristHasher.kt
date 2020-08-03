@@ -1,6 +1,5 @@
 package yi.core.go
 
-import java.lang.IllegalStateException
 import kotlin.random.Random
 
 /**

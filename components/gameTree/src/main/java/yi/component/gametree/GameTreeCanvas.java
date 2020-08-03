@@ -7,7 +7,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import yi.core.go.GameNode;
-import yi.core.go.StateDelta;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

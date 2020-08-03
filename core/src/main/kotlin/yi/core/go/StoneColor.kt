@@ -1,7 +1,5 @@
 package yi.core.go
 
-import java.lang.IllegalStateException
-
 enum class StoneColor constructor(val index: Byte) {
 
     NONE(0) {

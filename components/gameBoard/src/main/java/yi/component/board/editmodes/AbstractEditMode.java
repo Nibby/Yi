@@ -1,11 +1,11 @@
 package yi.component.board.editmodes;
 
+import javafx.scene.Cursor;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
-import javafx.scene.Cursor;
-import javafx.scene.canvas.GraphicsContext;
 
 import java.util.Optional;
 
