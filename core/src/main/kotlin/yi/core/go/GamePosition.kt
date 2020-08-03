@@ -20,10 +20,10 @@ class GamePosition(private val boardWidth: Int, boardHeight: Int) {
         update.captures.forEach { intersectionState[it.getPosition(boardWidth)] = StoneColor.NONE }
 
         // Apply helper stone updates
-        update.helperStoneUpdates.forEach { intersectionState[it.x + it.y * boardWidth] = it.stoneColor }
+        update.stoneEdits.forEach { intersectionState[it.x + it.y * boardWidth] = it.stoneColor }
     }
 
-    fun getStoneColorAt(x: Int, y:Int): StoneColor {
+    fun getStateAt(x: Int, y:Int): StoneColor {
         return getStoneColorAt(x + y * boardWidth)
     }
 

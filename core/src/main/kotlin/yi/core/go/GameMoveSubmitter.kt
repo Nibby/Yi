@@ -42,12 +42,12 @@ internal object GameMoveSubmitter {
     }
 
     fun createMoveNodeForPass(currentPosition: GameNode) : GameNode {
-        val passStateUpdate = StateDelta.forPassMove(currentPosition.stateDelta.stateHash)
+        val passStateUpdate = StateDelta.forPassMove(currentPosition.getStateHash())
         return GameNode(passStateUpdate)
     }
 
     fun createMoveNodeForResignation(currentPosition: GameNode) : GameNode {
-        val resignStateUpdate = StateDelta.forResignationMove(currentPosition.stateDelta.stateHash)
+        val resignStateUpdate = StateDelta.forResignationMove(currentPosition.getStateHash())
         return GameNode(resignStateUpdate)
     }
 
@@ -72,7 +72,7 @@ internal object GameMoveSubmitter {
             return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)
 
         val currentGameState = gameModel.getGameState(currentNode)
-        val currentGamePosition = currentGameState.gamePosition
+        val currentGamePosition = currentGameState.boardPosition
         if (currentGamePosition.getStoneColorAt(proposedMovePosition) != StoneColor.NONE)
             return Pair(MoveValidationResult.ERROR_NON_EMPTY_INTERSECTION, null)
 
@@ -141,7 +141,7 @@ internal object GameMoveSubmitter {
             stoneUpdates.remove(proposedMove)
         }
 
-        val newStateHash = gameModel.stateHasher.computeUpdateHash(currentNode.stateDelta.stateHash, stoneUpdates)
+        val newStateHash = gameModel.stateHasher.computeUpdateHash(currentNode.getStateHash(), stoneUpdates)
         val stateHashHistory = gameModel.getStateHashHistory()
 
         // Check if this new state repeats past board positions
@@ -155,13 +155,13 @@ internal object GameMoveSubmitter {
             if (newStatePosition - repeatHashPosition == 2) {
                 // Lastly, make sure we're trying to capture 1 opponent stone this turn and during opponent's capture, it's also 1 stone, and
                 // that captured stone is at the same location we're trying to play.
-                val lastKoRecaptureCapturedStones = currentNode.stateDelta.captures
+                val lastKoRecaptureCapturedStones = currentNode.getCaptures()
 
                 // Be as concise as possible because edge case 1x1 board self-capture can also result in the same conditions
                 // and it does not qualify as a ko recapture.
                 if (lastKoRecaptureCapturedStones.size == 1
                         && lastKoRecaptureCapturedStones.iterator().next() == proposedMove
-                        && currentNode.stateDelta.primaryMove!!.stoneColor == proposedMove.stoneColor.getOpponent()) {
+                        && currentNode.getPrimaryMove()!!.stoneColor == proposedMove.stoneColor.getOpponent()) {
                     return Pair(MoveValidationResult.ERROR_KO_RECAPTURE, null)
                 }
             }

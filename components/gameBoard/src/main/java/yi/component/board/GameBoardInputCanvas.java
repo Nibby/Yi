@@ -77,9 +77,9 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         double deltaY = e.getDeltaY();
 
         if (deltaY < 0) {
-            manager.model.toNextMove();
+            manager.getGameModel().toNextNode();
         } else if (deltaY > 0) {
-            manager.model.toPreviousMove();
+            manager.getGameModel().toPreviousNode();
         }
     }
 

@@ -13,7 +13,7 @@ class PlayMoveTest {
 
         val result = model.submitMove(0, 0)
 
-        Assertions.assertEquals(result.moveNode!!, model.getCurrentMove())
+        Assertions.assertEquals(result.moveNode!!, model.getCurrentNode())
     }
 
     @Test
@@ -35,7 +35,7 @@ class PlayMoveTest {
         val newNode = moveSubmitResult.moveNode
 
         val firstMoveGameState = model.getGameState(newNode!!)
-        val stoneColorAtPlayedMove = firstMoveGameState.gamePosition.getStoneColorAt(0, 0)
+        val stoneColorAtPlayedMove = firstMoveGameState.boardPosition.getStateAt(0, 0)
 
         Assertions.assertEquals(StoneColor.BLACK, stoneColorAtPlayedMove)
     }
@@ -48,7 +48,7 @@ class PlayMoveTest {
         val newNode = moveSubmitResult.moveNode
 
         val firstMoveGameState = model.getGameState(newNode!!)
-        val stoneColorAtPlayedMove = firstMoveGameState.gamePosition.getStoneColorAt(0, 0)
+        val stoneColorAtPlayedMove = firstMoveGameState.boardPosition.getStateAt(0, 0)
 
         Assertions.assertEquals(StoneColor.BLACK, stoneColorAtPlayedMove)
     }
@@ -64,9 +64,9 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1) // white removes last liberty, stone at 0,0 should be captured now
 
-        val gameState = model.getGameState(model.getCurrentMove())
+        val gameState = model.getGameState(model.getCurrentNode())
         Assertions.assertEquals(1, gameState.prisonersWhite)
-        Assertions.assertEquals(StoneColor.NONE, gameState.gamePosition.getStoneColorAt(0, 0))
+        Assertions.assertEquals(StoneColor.NONE, gameState.boardPosition.getStateAt(0, 0))
     }
 
     @Test
@@ -82,17 +82,17 @@ class PlayMoveTest {
                 .playMove(0, 2)
                 .playMove(1, 2) // After white plays this move, the three black stones on the left column should be all captured
 
-        val currentState = model.getGameState(model.getCurrentMove())
+        val currentState = model.getGameState(model.getCurrentNode())
 
         Assertions.assertEquals(3, currentState.prisonersWhite)
 
         // Check that stones are actually captured
-        Assertions.assertEquals(StoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 0))
-        Assertions.assertEquals(StoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 1))
-        Assertions.assertEquals(StoneColor.NONE, currentState.gamePosition.getStoneColorAt(0, 2))
-        Assertions.assertEquals(StoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 0))
-        Assertions.assertEquals(StoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 1))
-        Assertions.assertEquals(StoneColor.WHITE, currentState.gamePosition.getStoneColorAt(1, 2))
+        Assertions.assertEquals(StoneColor.NONE, currentState.boardPosition.getStateAt(0, 0))
+        Assertions.assertEquals(StoneColor.NONE, currentState.boardPosition.getStateAt(0, 1))
+        Assertions.assertEquals(StoneColor.NONE, currentState.boardPosition.getStateAt(0, 2))
+        Assertions.assertEquals(StoneColor.WHITE, currentState.boardPosition.getStateAt(1, 0))
+        Assertions.assertEquals(StoneColor.WHITE, currentState.boardPosition.getStateAt(1, 1))
+        Assertions.assertEquals(StoneColor.WHITE, currentState.boardPosition.getStateAt(1, 2))
     }
 
     @Test
@@ -106,8 +106,8 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(2, stateHashHistory.size)
-        Assertions.assertEquals(13, model.getCurrentMove().stateDelta.stateHash) // 0100b xor 1001b = 1101b (13)
-        Assertions.assertEquals(4, model.getCurrentMove().parent!!.stateDelta.stateHash) // 0100b (4)
+        Assertions.assertEquals(13, model.getCurrentNode().getStateHash()) // 0100b xor 1001b = 1101b (13)
+        Assertions.assertEquals(4, model.getCurrentNode().parent!!.getStateHash()) // 0100b (4)
     }
 
     @Test
@@ -121,7 +121,7 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.getCurrentMove().parent!!.stateDelta.stateHash) // 0100b (4)
+        Assertions.assertEquals(4, model.getCurrentNode().parent!!.getStateHash()) // 0100b (4)
     }
 
     @Test
@@ -135,7 +135,7 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.getCurrentMove().parent!!.stateDelta.stateHash) // 0100b (4)
+        Assertions.assertEquals(4, model.getCurrentNode().parent!!.getStateHash()) // 0100b (4)
     }
 
     @Test
@@ -242,7 +242,7 @@ class PlayMoveTest {
         model.beginMoveSequence()
                 .playMove(0, 0)
 
-        val currentMove = model.getCurrentMove()
+        val currentMove = model.getCurrentNode()
         Assertions.assertEquals(1, model.getCurrentMoveNumber()) // Sanity check
 
         val parent = currentMove.parent
@@ -258,22 +258,22 @@ class PlayMoveTest {
 
         // Assume both playMoves() succeed
         val variationOne = model.submitMove(1, 0).moveNode
-        model.toPreviousMove()
+        model.toPreviousNode()
         val variationTwo = model.submitMove(0, 1).moveNode
 
         // back to first node, now playing (1, 0) should set current position to variationOne
         // and playing (0, 1) should set current position to variationTwo without creating new
         // nodes for both situations.
-        model.toPreviousMove()
+        model.toPreviousNode()
 
         Assertions.assertEquals(variationOne, model.submitMove(1, 0).moveNode)
-        model.toPreviousMove()
+        model.toPreviousNode()
 
         Assertions.assertEquals(variationTwo, model.submitMove(0, 1).moveNode)
-        model.toPreviousMove()
+        model.toPreviousNode()
 
         // Check child size is still correct
-        Assertions.assertEquals(2, model.getCurrentMove().children.size)
+        Assertions.assertEquals(2, model.getCurrentNode().children.size)
     }
 
     @Test
@@ -283,19 +283,19 @@ class PlayMoveTest {
         val branchNode = model.submitMove(0, 0).moveNode!!
 
         model.submitMove(1, 0)
-        model.toPreviousMove()
+        model.toPreviousNode()
         val firstPassNode = model.submitPass().moveNode!!
-        model.toPreviousMove()
+        model.toPreviousNode()
 
         // Check setup is correct
-        Assertions.assertEquals(2, model.getCurrentMove().children.size)
+        Assertions.assertEquals(2, model.getCurrentNode().children.size)
 
         // Pass again. This should set the current move to firstPassNode.
         // No new branch will be created.
         model.submitPass()
 
         Assertions.assertEquals(2, branchNode.children.size, "Child size changed after passing the second time.")
-        Assertions.assertEquals(firstPassNode, model.getCurrentMove(), "Current node is not at the original pass node.")
+        Assertions.assertEquals(firstPassNode, model.getCurrentNode(), "Current node is not at the original pass node.")
     }
 
     @Test
@@ -305,19 +305,19 @@ class PlayMoveTest {
         val branchNode = model.submitMove(0, 0).moveNode!!
 
         model.submitMove(1, 0)
-        model.toPreviousMove()
+        model.toPreviousNode()
         val firstResignNode = model.submitResign().moveNode!!
-        model.toPreviousMove()
+        model.toPreviousNode()
 
         // Check setup is correct
-        Assertions.assertEquals(2, model.getCurrentMove().children.size)
+        Assertions.assertEquals(2, model.getCurrentNode().children.size)
 
         // Resign again. This should set the current move to firstResignNode.
         // No new branch will be created.
         model.submitResign()
 
         Assertions.assertEquals(2, branchNode.children.size, "Child size changed after resign for the second time.")
-        Assertions.assertEquals(firstResignNode, model.getCurrentMove(), "Current node is not at the original resign node.")
+        Assertions.assertEquals(firstResignNode, model.getCurrentNode(), "Current node is not at the original resign node.")
     }
 
     // Only supports a 2x2 board for testing purposes
@@ -343,7 +343,7 @@ class PlayMoveTest {
         )
 
         override fun computeStateHash(state: GameState, boardWidth: Int, boardHeight: Int): Long {
-            val position = state.gamePosition
+            val position = state.boardPosition
             var stateHash = computeEmptyPositionHash(boardWidth, boardHeight)
 
             for (intersection in 0..3) {

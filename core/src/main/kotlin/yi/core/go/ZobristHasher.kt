@@ -39,7 +39,7 @@ class ZobristHasher constructor(private val boardWidth: Int, boardHeight: Int) :
     }
 
     override fun computeStateHash(state: GameState, boardWidth: Int, boardHeight: Int): Long {
-        val position = state.gamePosition
+        val position = state.boardPosition
         var hash = computeEmptyPositionHash(boardWidth, boardHeight)
 
         position.intersectionState.forEachIndexed { stonePosition, stoneColor ->

@@ -1,46 +1,72 @@
 package yi.core.go
 
 /**
+ * Primary data storage for each [GameNode]. Only the game node class should interact with the state delta.
+ *
  * Represents the new changes (additions and/or deletions) since the last game position. This is the game state data
  * associated with each [GameNode].
- *
- * @param primaryMove The main move represented by the [GameNode]
- * @param captures The stones on the board that are captured
- * @param stateHash A hash code representing the current game state (not just the delta)
- * @param helperStoneUpdates Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
  */
-class StateDelta(val type: Type,
-                 val primaryMove: Stone?,
-                 val captures: Set<Stone>,
-                 val stateHash: Long,
-                 val helperStoneUpdates: HashSet<Stone>,
-                 val annotationsOnThisNode: HashSet<Annotation>) {
+class StateDelta {
 
-    enum class Type {
-        MOVE_PLAYED,
-        HELPER_STONE_EDIT,
-        PASS,
-        RESIGN,
-        ROOT,
+    internal val type: GameNodeType
+    internal val primaryMove: Stone?
+    internal val captures: Set<Stone>
+    internal val stateHash: Long
+    internal val stoneEdits: HashSet<Stone>
+    internal val annotations: HashSet<Annotation>
 
-        EMPTY,
-    }
+    /**
+     * @param primaryMove The main move represented by the [GameNode]
+     * @param captures The stones on the board that are captured
+     * @param stateHash A hash code representing the current game state (not just the delta)
+     * @param stoneEdits Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
+     * @param annotations List of annotations to be shown on the node with this delta
+     */
+    internal constructor(type: GameNodeType,
+                         primaryMove: Stone?,
+                         captures: Set<Stone>,
+                         stateHash: Long,
+                         stoneEdits: HashSet<Stone>,
+                         annotations: HashSet<Annotation>) {
 
-    constructor() : this(Type.EMPTY, null, HashSet<Stone>(), 0, HashSet<Stone>(), HashSet<Annotation>()) {
-        // Represents an empty state delta, the initial state for newly created game nodes
+        this.type = type
+        this.primaryMove = primaryMove
+        this.captures = captures
+        this.stateHash = stateHash
+        this.stoneEdits = stoneEdits
+        this.annotations = annotations
     }
 
     internal companion object Factory {
+        /**
+         * Instantiates a [StateDelta] that encapsulates information for a primary game move.
+         */
         fun forProposedMove(primaryMove: Stone, captures: HashSet<Stone>, stateHash: Long): StateDelta
-                = StateDelta(Type.MOVE_PLAYED, primaryMove, captures, stateHash, HashSet(), HashSet())
+                = StateDelta(GameNodeType.MOVE_PLAYED, primaryMove, captures, stateHash, HashSet(), HashSet())
 
-        fun forRootNode(emptyPositionStateHash: Long): StateDelta
-                = StateDelta(Type.ROOT, null, HashSet(), emptyPositionStateHash, HashSet(), HashSet())
+        /**
+         * Instantiates a default [StateDelta] for the root node of the game tree.
+         */
+        internal fun forRootNode(emptyPositionStateHash: Long): StateDelta
+                = StateDelta(GameNodeType.ROOT, null, HashSet(), emptyPositionStateHash, HashSet(), HashSet())
 
+        /**
+         * Instantiates a [StateDelta] to represent a pass.
+         */
         fun forPassMove(currentPositionStateHash: Long): StateDelta
-                = StateDelta(Type.PASS, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
+                = StateDelta(GameNodeType.PASS, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
 
+        /**
+         * Instantiates a [StateDelta] to represent a resignation.
+         */
         fun forResignationMove(currentPositionStateHash: Long): StateDelta
-                = StateDelta(Type.RESIGN, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
+                = StateDelta(GameNodeType.RESIGN, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
+
+        /**
+         * Instantiates an empty [StateDelta] to store updates to the game position through
+         * manual stone edits.
+         */
+        fun forStoneEdit(currentPositionStateHash: Long): StateDelta
+                = StateDelta(GameNodeType.STONE_EDIT, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
     }
 }

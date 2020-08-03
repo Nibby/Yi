@@ -66,7 +66,7 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
     }
 
     private void assertStateCorrect(int currentMoveNumber) {
-        var currentMove = getGameModel().getCurrentMove();
+        var currentMove = getGameModel().getCurrentNode();
 
         Assertions.assertEquals(currentMoveNumber, currentMove.getMoveNumber(), "Current move number mismatch");
         Assertions.assertTrue(nodeAddEventReceived, "onNodeAdd() event was not received for move #" + currentMoveNumber);

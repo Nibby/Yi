@@ -1,14 +1,8 @@
 package yi.core.go
 
-open class GameTree constructor(rootNode: GameNode) {
+open class GameTree constructor(internal var rootNode: GameNode) {
 
-    internal var rootNode: GameNode = rootNode
-
-    init {
-        this.rootNode.markAsRoot()
-    }
-
-    constructor() : this(GameNode())
+    constructor(emptyStateHash: Long) : this(GameNode(StateDelta.forRootNode(emptyStateHash)))
 
     /**
      * Appends a new child node to a parent node in the tree.

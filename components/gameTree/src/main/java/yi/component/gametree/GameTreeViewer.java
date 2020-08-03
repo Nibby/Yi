@@ -42,7 +42,7 @@ public final class GameTreeViewer implements Component {
         camera.addOffsetChangeListener(this::render);
 
         setGameModel(gameModel);
-        updateCameraAndRender(gameModel.getCurrentMove());
+        updateCameraAndRender(gameModel.getCurrentNode());
     }
 
     private void updateCameraAndRender(GameNode currentNode) {
@@ -55,7 +55,7 @@ public final class GameTreeViewer implements Component {
     }
 
     private void render() {
-        canvas.render(camera, treeStructure.getAllElements(), gameModel.getCurrentMove(), elementSize);
+        canvas.render(camera, treeStructure.getAllElements(), gameModel.getCurrentNode(), elementSize);
     }
 
     private final EventListener<NodeEvent> treeStructureChangeListener = (event) -> {
@@ -128,7 +128,7 @@ public final class GameTreeViewer implements Component {
 
                 treeStructure.getNodeElement(x, y).ifPresent(element -> {
                     var selectedNode = element.getNode();
-                    gameModel.setCurrentMove(selectedNode);
+                    gameModel.setCurrentNode(selectedNode);
                 });
             }
 

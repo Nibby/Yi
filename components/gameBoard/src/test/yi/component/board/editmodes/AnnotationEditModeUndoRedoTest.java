@@ -23,9 +23,9 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         // Method under test
-        var item1 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 0);
-        var item2 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 1);
-        var item3 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 2);
+        var item1 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0);
+        var item2 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 1);
+        var item3 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 2);
 
         editor.recordAndApply(item1, manager);
         editor.recordAndApply(item2, manager);
@@ -47,9 +47,9 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         // Method under test
-        var item1 = AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 0);
-        var item2 = AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 1);
-        var item3 = AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 2);
+        var item1 = AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0);
+        var item2 = AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 1);
+        var item3 = AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 2);
 
         editor.recordAndApply(item1, manager);
         editor.recordAndApply(item2, manager);
@@ -70,20 +70,21 @@ public final class AnnotationEditModeUndoRedoTest {
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);
 
-        var stateDelta = model.getCurrentMoveStateDelta();
-        Assertions.assertTrue(stateDelta.getAnnotationsOnThisNode().isEmpty(), "Unexpected annotations on root node before test.");
+        var node = model.getCurrentNode();
+        var annotations = node.getAnnotationsOriginal();
+        Assertions.assertTrue(annotations.isEmpty(), "Unexpected annotations on root node before test.");
 
-        var item1 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 0);
+        var item1 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0);
         editor.recordAndApply(item1, manager);
 
-        Assertions.assertEquals(1, stateDelta.getAnnotationsOnThisNode().size());
-        Assertions.assertEquals(new Annotation.Triangle(0, 0), stateDelta.getAnnotationsOnThisNode().iterator().next());
+        Assertions.assertEquals(1, annotations.size());
+        Assertions.assertEquals(new Annotation.Triangle(0, 0), annotations.iterator().next());
 
         // Method under test
         editor.performUndo(manager);
 
         // Assert
-        Assertions.assertEquals(0, stateDelta.getAnnotationsOnThisNode().size());
+        Assertions.assertEquals(0, annotations.size());
     }
 
     @Test
@@ -96,9 +97,9 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         // Same session, should be merged into one
-        var item1 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 0);
-        var item2 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(1, 0), 0);
-        var item3 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(2, 0), 0);
+        var item1 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0);
+        var item2 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 0), 0);
+        var item3 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(2, 0), 0);
 
         editor.recordAndApply(item1, manager);
         editor.recordAndApply(item2, manager);
@@ -112,7 +113,7 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.performUndo(manager);
 
         // Assert
-        Assertions.assertTrue(model.getCurrentMoveStateDelta().getAnnotationsOnThisNode().isEmpty(), "Annotations are not cleared after performing undo.");
+        Assertions.assertTrue(model.getAnnotationsCopyOnCurrentNode().isEmpty(), "Annotations are not cleared after performing undo.");
     }
 
     @Test
@@ -125,9 +126,9 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         // Same session, should be merged into one
-        var item1 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 0);
-        var item2 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(1, 0), 1);
-        var item3 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(2, 0), 2);
+        var item1 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0);
+        var item2 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 0), 1);
+        var item3 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(2, 0), 2);
 
         editor.recordAndApply(item1, manager);
         editor.recordAndApply(item2, manager);
@@ -143,7 +144,8 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.performUndo(manager);
 
         // Assert
-        var nodeAnnotations = model.getCurrentMoveStateDelta().getAnnotationsOnThisNode();
+        var node = model.getCurrentNode();
+        var nodeAnnotations = node.getAnnotationsOriginal();
 
         // Use the annotation equality properties to our advantage
         var expectedAnnotations = new HashSet<Annotation>();
@@ -170,7 +172,7 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         Runnable assertThirdEditState = () -> {
-            var annotations = model.getCurrentMoveStateDelta().getAnnotationsOnThisNode();
+            var annotations = model.getAnnotationsCopyOnCurrentNode();
 
             Assertions.assertEquals(9, annotations.size());
 
@@ -182,7 +184,7 @@ public final class AnnotationEditModeUndoRedoTest {
         };
 
         Runnable assertSecondEditState = () -> {
-            var annotations = model.getCurrentMoveStateDelta().getAnnotationsOnThisNode();
+            var annotations = model.getAnnotationsCopyOnCurrentNode();
 
             Assertions.assertEquals(4, annotations.size());
             Assertions.assertTrue(annotations.contains(new Annotation.Triangle(0, 0)));
@@ -192,7 +194,7 @@ public final class AnnotationEditModeUndoRedoTest {
         };
 
         Runnable assertFirstEditState = () -> {
-
+            // TODO
         };
 
 
@@ -201,9 +203,9 @@ public final class AnnotationEditModeUndoRedoTest {
         // ...
         // ...
         var edits = new Stack<AnnotationEdit>();
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 0));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(1, 0), 0));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(2, 0), 0));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 0), 0));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(2, 0), 0));
         edits.forEach(edit -> editor.recordAndApply(edit, manager));
         assertFirstEditState.run();
 
@@ -212,9 +214,9 @@ public final class AnnotationEditModeUndoRedoTest {
         // .x.
         // .x.
         edits.clear();
-        edits.push(AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(1, 0), 1));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(1, 1), 1));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(1, 2), 1));
+        edits.push(AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 0), 1));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 1), 1));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 2), 1));
         edits.forEach(edit -> editor.recordAndApply(edit, manager));
         assertSecondEditState.run();
 
@@ -223,20 +225,20 @@ public final class AnnotationEditModeUndoRedoTest {
         // ooo
         // ooo
         edits.clear();
-        edits.push(AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(1, 1), 2));
-        edits.push(AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(1, 2), 2));
-        edits.push(AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), 2));
-        edits.push(AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(2, 0), 2));
+        edits.push(AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 1), 2));
+        edits.push(AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 2), 2));
+        edits.push(AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 2));
+        edits.push(AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(2, 0), 2));
 
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(0, 0), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(1, 0), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(2, 0), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(0, 1), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(1, 1), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(2, 1), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(0, 2), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(1, 2), 2));
-        edits.push(AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Circle(2, 2), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(0, 0), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(1, 0), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(2, 0), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(0, 1), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(1, 1), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(2, 1), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(0, 2), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(1, 2), 2));
+        edits.push(AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Circle(2, 2), 2));
         edits.forEach(edit -> editor.recordAndApply(edit, manager));
         assertThirdEditState.run();
 
@@ -259,7 +261,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
         Assertions.assertTrue(editor.canUndo());
         editor.performUndo(manager);
-        Assertions.assertTrue(model.getCurrentMoveStateDelta().getAnnotationsOnThisNode().isEmpty());
+        Assertions.assertTrue(model.getAnnotationsCopyOnCurrentNode().isEmpty());
 
         Assertions.assertFalse(editor.canUndo());
 

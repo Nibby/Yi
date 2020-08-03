@@ -21,9 +21,9 @@ public final class AnnotationsEditModeMechanismTest {
 
         // Method under test
         final long sessionId = 0;
-        var item1 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), sessionId);
-        var item2 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(1, 0), sessionId);
-        var item3 = AnnotationEdit.forNew(manager.model.getCurrentMove(), new Annotation.Triangle(2, 0), sessionId);
+        var item1 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), sessionId);
+        var item2 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 0), sessionId);
+        var item3 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(2, 0), sessionId);
 
         editor.recordAndApply(item1, manager);
         editor.recordAndApply(item2, manager);
@@ -43,9 +43,9 @@ public final class AnnotationsEditModeMechanismTest {
         editor.setMaxHistorySize(3);
 
         final long sessionId = 0;
-        var item1 = AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(0, 0), sessionId);
-        var item2 = AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(1, 0), sessionId);
-        var item3 = AnnotationEdit.forRemoval(manager.model.getCurrentMove(), new Annotation.Triangle(2, 0), sessionId);
+        var item1 = AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), sessionId);
+        var item2 = AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(1, 0), sessionId);
+        var item3 = AnnotationEdit.forRemoval(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(2, 0), sessionId);
 
         // Method under test
         editor.recordAndApply(item1, manager);

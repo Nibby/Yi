@@ -1,7 +1,6 @@
 package yi.component.board.editmodes;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +12,6 @@ import yi.core.go.Annotation;
 import yi.core.go.AnnotationType;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -67,18 +65,18 @@ public final class AnnotationEditMode extends AbstractEditMode {
     }
 
     @Override
-    public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
-        if (manager.model.getCurrentMove().hasAnnotationAt(gridX, gridY)) {
+    public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int x, int y) {
+        if (manager.getGameModel().getCurrentNode().hasAnnotationAt(x, y)) {
             return;
         }
 
         Annotation temporary = null;
 
         if (AnnotationType.Companion.isPointAnnotation(typeToApply)) {
-            temporary = Annotation.Companion.createFromType(typeToApply, gridX, gridY, -1, -1, getNextLabelText(manager));
+            temporary = Annotation.Companion.createFromType(typeToApply, x, y, -1, -1, getNextLabelText(manager));
         } else if (AnnotationType.Companion.isDirectionalAnnotation(typeToApply)) {
             if (directionalAnnoStartPositionDefined) {
-                temporary = Annotation.Companion.createFromType(typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, gridX, gridY, "");
+                temporary = Annotation.Companion.createFromType(typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, x, y, "");
             }
         } else {
             throw new IllegalStateException("Unsupported annotation type: " + typeToApply);
@@ -95,11 +93,11 @@ public final class AnnotationEditMode extends AbstractEditMode {
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         generateNewMouseSessionId();
 
-        var annotationHere = manager.model.getCurrentMove().getAnnotationAt(gridX, gridY);
+        var annotationHere = manager.getGameModel().getCurrentNode().getAnnotationAt(gridX, gridY);
         boolean createRatherThanDelete;
 
-        if (annotationHere.isPresent()) {
-            var itsType = annotationHere.get().getType();
+        if (annotationHere != null) {
+            var itsType = annotationHere.getType();
             createRatherThanDelete = itsType != typeToApply;
         } else {
             createRatherThanDelete = true;
@@ -147,9 +145,9 @@ public final class AnnotationEditMode extends AbstractEditMode {
     private boolean directionalAnnoStartPositionDefined = false;
     
     private void maybeCreateAnnotation(GameBoardManager manager, int gridX, int gridY) {
-        Optional<Annotation> annotationHere = manager.model.getCurrentMove().getAnnotationAt(gridX, gridY);
+        Annotation annotationHere = manager.getGameModel().getCurrentNode().getAnnotationAt(gridX, gridY);
 
-        if (annotationHere.isPresent() && annotationHere.get().getType() == typeToApply) {
+        if (annotationHere != null && annotationHere.getType() == typeToApply) {
             return; // Same annotation. Letting the logic fall through introduces too much overhead.
         }
 
@@ -196,17 +194,19 @@ public final class AnnotationEditMode extends AbstractEditMode {
     }
 
     private static void removeAnnotationAt(GameBoardManager manager, int gridX, int gridY, long sessionId) {
-        manager.model.getCurrentMove().getAnnotationAt(gridX, gridY).ifPresent(annotationToRemove -> {
-            var currentMove = manager.model.getCurrentMove();
-            var deletionEdit = AnnotationEdit.forRemoval(currentMove, annotationToRemove, sessionId);
+        Annotation annotation = manager.getGameModel().getCurrentNode().getAnnotationAt(gridX, gridY);
+
+        if (annotation != null) {
+            var currentNode = manager.getGameModel().getCurrentNode();
+            var deletionEdit = AnnotationEdit.forRemoval(currentNode, annotation, sessionId);
 
             manager.edit.recordAndApply(deletionEdit, manager);
-        });
+        }
     }
 
     private static void createAnnotation(GameBoardManager manager, Annotation annotation, long sessionId) {
-        var currentMove = manager.model.getCurrentMove();
-        var additionEdit = AnnotationEdit.forNew(currentMove, annotation, sessionId);
+        var currentNode = manager.getGameModel().getCurrentNode();
+        var additionEdit = AnnotationEdit.forNew(currentNode, annotation, sessionId);
         manager.edit.recordAndApply(additionEdit, manager);
     }
 
@@ -232,7 +232,7 @@ public final class AnnotationEditMode extends AbstractEditMode {
 
         if (labelType == LabelType.LETTER) {
             var annoTexts =
-                    manager.model.getAllAnnotationsOnCurrentMove()
+                    manager.getGameModel().getCurrentNode().getAnnotationsOriginal()
                     .stream()
                     .filter(anno -> anno instanceof Annotation.Label)
                     .map(anno -> ((Annotation.Label) anno).getText())
@@ -258,7 +258,7 @@ public final class AnnotationEditMode extends AbstractEditMode {
         }
         else if (labelType == LabelType.NUMBER) {
             var maxNumber =
-                manager.model.getAllAnnotationsOnCurrentMove()
+                manager.getGameModel().getCurrentNode().getAnnotationsOriginal()
                     .stream()
                     .filter(anno -> anno instanceof Annotation.Label)
                     .map(anno -> ((Annotation.Label) anno).getText())

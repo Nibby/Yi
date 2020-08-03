@@ -1,17 +1,17 @@
 package yi.component.board;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
 import yi.core.go.StoneColor;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -118,14 +118,14 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
             Rectangle gridBounds = manager.size.getGridBounds();
 
-            for (int lineNumber = 0; lineNumber < manager.model.getBoardWidth(); ++lineNumber) {
+            for (int lineNumber = 0; lineNumber < manager.getGameModel().getBoardWidth(); ++lineNumber) {
                 double[] drawXY = manager.size.getGridRenderPosition(lineNumber, 0, 0);
                 double x = drawXY[0];
 
                 g.strokeLine(x, gridBounds.getY(), x, gridBounds.getY() + gridBounds.getHeight());
             }
 
-            for (int lineNumber = 0; lineNumber < manager.model.getBoardHeight(); ++lineNumber) {
+            for (int lineNumber = 0; lineNumber < manager.getGameModel().getBoardHeight(); ++lineNumber) {
                 double[] drawXY = manager.size.getGridRenderPosition(0, lineNumber, 0);
                 double y = drawXY[1];
 
@@ -135,25 +135,12 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             renderStarPoints(g, manager, gridLineThickness);
 
             g.setLineWidth(originalLineWidth);
-
-            // Debugging
-//            manager.viewOptions.setCoordinateLabelPosition(CoordinateLabelPosition.ALL_SIDES);
-//
-//            g.setStroke(Color.BLUE);
-//            var coordinates = manager.size.getCoordinateLabelBounds();
-//            g.strokeRect(coordinates.getX(), coordinates.getY(), coordinates.getWidth(), coordinates.getHeight());
-//
-//            g.setStroke(Color.RED);
-//            g.strokeRect(gridBounds.getX(), gridBounds.getY(), gridBounds.getWidth(), gridBounds.getHeight());
-//            double size = manager.size.getStoneSizeInPixels();
-//            g.strokeOval(getRenderedGridX(0, manager, size), getRenderedGridY(0, manager, size), size, size);
-//            g.strokeOval(getRenderedGridX(0, manager, size), getRenderedGridY(1, manager, size), size, size);
         }
 
         private static void renderStarPoints(GraphicsContext g, GameBoardManager manager, double lineWidth) {
             // Number of intersections on the game board, not sizing
-            int gameBoardWidth = manager.model.getBoardWidth();
-            int gameBoardHeight = manager.model.getBoardHeight();
+            int gameBoardWidth = manager.getGameModel().getBoardWidth();
+            int gameBoardHeight = manager.getGameModel().getBoardHeight();
 
             var starPointPositions = StarPointPosition.get(gameBoardWidth, gameBoardHeight);
             double starPointDiameter = lineWidth * 6d;
@@ -240,9 +227,9 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardStoneRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            var gamePosition = manager.model.getCurrentGamePosition();
-            StoneColor[] boardState = gamePosition.getIntersectionState();
-            int boardWidth = manager.model.getBoardWidth();
+            var boardPosition = manager.getGameModel().getCurrentGameState().getBoardPosition();
+            StoneColor[] boardState = boardPosition.getIntersectionState();
+            int boardWidth = manager.getGameModel().getBoardWidth();
 
             for (int i = 0; i < boardState.length; ++i) {
                 StoneColor state = boardState[i];
@@ -259,7 +246,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardAnnotationRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            Set<Annotation> annotations = manager.model.getCurrentGameState().getAnnotations();
+            // Not using a copy because this is performance-sensitive code
+            Collection<Annotation> annotations = manager.getGameModel().getCurrentNode().getAnnotationsOriginal();
 
             for (Annotation annotation : annotations) {
                 AnnotationRenderer.render(annotation, g, manager);
@@ -269,14 +257,15 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderCurrentMoveMarker(GraphicsContext g, GameBoardManager manager) {
-            manager.model.getCurrentMove().getPrimaryMove().ifPresent(stone -> {
-                int x = stone.getX();
-                int y = stone.getY();
+            var primaryMove = manager.getGameModel().getCurrentNode().getPrimaryMove();
+            if (primaryMove != null) {
+                int x = primaryMove.getX();
+                int y = primaryMove.getY();
 
-                if (!manager.model.getCurrentMove().hasAnnotationAt(x, y)) {
+                if (!manager.getGameModel().getCurrentNode().hasAnnotationAt(x, y)) {
                     AnnotationRenderer.render(new Annotation._Dot(x, y), g, manager);
                 }
-            });
+            }
         }
 
     }

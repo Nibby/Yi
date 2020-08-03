@@ -14,7 +14,7 @@ class ZobristHasherTest {
         val gameModel = GameModel(boardWidth, boardHeight, GameRules.CHINESE)
         val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GamePosition(boardWidth, boardHeight)
-        val currentNode = gameModel.getCurrentMove()
+        val currentNode = gameModel.getCurrentNode()
         val state = GameState(gameModel, gamePosition, currentNode, 0, 0, HashSet(), 0)
 
         val firstHash = zobrist.computeStateHash(state, boardWidth, boardHeight)
@@ -28,7 +28,7 @@ class ZobristHasherTest {
         val boardWidth = 3;
         val boardHeight = 3;
         val gameModel = GameModel(boardWidth, boardHeight, GameRules.CHINESE)
-        val currentNode = gameModel.getCurrentMove()
+        val currentNode = gameModel.getCurrentNode()
         val zobrist = ZobristHasher(gameModel.boardWidth, gameModel.boardHeight)
         val gamePosition = GamePosition(boardWidth, boardHeight)
 

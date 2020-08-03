@@ -2,11 +2,19 @@ package yi.core.go
 
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 /**
- * Represents a node on the [GameTree]. Each node may optionally store an instance of the current game state.
+ * Represents a node on the [GameTree]. Each node stores a [StateDelta] which represents
+ * the changes since the last game node.
  */
-open class GameNode constructor() {
+class GameNode constructor(val delta: StateDelta) {
+
+    init {
+        if (getType() == GameNodeType.ROOT) {
+            markAsRoot()
+        }
+    }
 
     internal var markedAsRoot: Boolean = false
 
@@ -17,22 +25,16 @@ open class GameNode constructor() {
 
     internal var children: ArrayList<GameNode> = ArrayList()
 
-    var stateDelta = StateDelta()
-        internal set
-
     var moveNumber: Int = 0
         internal set
-
-    constructor(data: StateDelta) : this() {
-        this.stateDelta = data;
-    }
 
     /**
      * Marks this node as the top-level ancestor node for the game tree.
      */
-    internal fun markAsRoot() {
-        if (parent != null)
+    private fun markAsRoot() {
+        if (parent != null) {
             throw IllegalStateException("Node has an active parent")
+        }
 
         root = this
         markedAsRoot = true
@@ -104,7 +106,7 @@ open class GameNode constructor() {
      *
      * @return All possible variations from this node.
      */
-    fun getNextMoves(): List<GameNode> {
+    fun getNextNodes(): List<GameNode> {
         return children
     }
 
@@ -113,7 +115,7 @@ open class GameNode constructor() {
      * @return List of all immediate descendant nodes from this node that is not part of the
      *         main variation.
      */
-    fun getNextMovesExcludingMainBranch(): List<GameNode> {
+    fun getNextNodesExcludingMainBranch(): List<GameNode> {
         val result = ArrayList<GameNode>()
 
         for (i in 1 until getVariationsCount()) {
@@ -129,19 +131,80 @@ open class GameNode constructor() {
      *
      * @return The next move in the main branch if it exists, otherwise null.
      */
-    fun getNextMoveInMainBranch(): GameNode? {
+    fun getNextNodeInMainBranch(): GameNode? {
         return if (getVariationsCount() > 0) children[0]
                else null
     }
 
-    /**
-     * Java 8 friendly convenience method. Equivalent to [getNextMoveInMainBranch] with an optional wrapper.
-     *
-     * @return The next move in the main branch if it exists, otherwise [Optional.empty]
-     */
-    fun getNextMoveInMainBranchOptional(): Optional<GameNode> = Optional.ofNullable(getNextMoveInMainBranch())
+    fun getType(): GameNodeType {
+        return delta.type
+    }
+
+    fun getPrimaryMove(): Stone? {
+        return delta.primaryMove
+    }
+
+    fun getCapturesCopy(): Collection<Stone> {
+        return HashSet<Stone>(getCaptures())
+    }
+
+    internal fun getCaptures(): Collection<Stone> {
+        return delta.captures
+    }
+
+    fun getStateHash(): Long {
+        return delta.stateHash
+    }
+
+    fun getStoneEditsCopy(): Collection<Stone> {
+        return HashSet<Stone>(getStoneEdits())
+    }
+
+    internal fun getStoneEdits(): Collection<Stone> {
+        return delta.stoneEdits
+    }
+
+    internal fun addStoneEdit(stoneState: Stone) {
+        delta.stoneEdits.add(stoneState)
+    }
+
+    internal fun addStoneEdits(stoneStates: Collection<Stone>) {
+        stoneStates.forEach { stoneState -> addStoneEdit(stoneState) }
+    }
+
+    internal fun addAnnotation(annotation: Annotation) {
+        delta.annotations.add(annotation)
+    }
+
+    internal fun addAnnotations(annotations: Collection<Annotation>) {
+        annotations.forEach { annotation -> addAnnotation(annotation) }
+    }
+
+    internal fun removeAnnotation(annotation: Annotation) {
+        delta.annotations.remove(annotation)
+    }
+
+    internal fun removeAnnotations(annotations: Collection<Annotation>) {
+        annotations.forEach { annotation -> removeAnnotation(annotation) }
+    }
+
+    fun getAnnotationsCopy(): Collection<Annotation> {
+        return HashSet<Annotation>(getAnnotationsOriginal())
+    }
+
+    fun getAnnotationsOriginal(): Collection<Annotation> {
+        return delta.annotations
+    }
 
     override fun toString(): String {
-        return "Node ($moveNumber): $stateDelta"
+        return "Node ($moveNumber): $delta"
+    }
+
+    fun hasAnnotationAt(x: Int, y: Int): Boolean {
+        return getAnnotationAt(x, y) != null;
+    }
+
+    fun getAnnotationAt(x: Int, y: Int): Annotation? {
+        return getAnnotationsOriginal().firstOrNull { it.isOccupyingPosition(x, y) }
     }
 }

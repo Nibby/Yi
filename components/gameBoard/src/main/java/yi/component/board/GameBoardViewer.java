@@ -46,6 +46,7 @@ public final class GameBoardViewer implements Component {
             }
         });
 
+        setEditable(true);
         applySettings(settings);
     }
 
