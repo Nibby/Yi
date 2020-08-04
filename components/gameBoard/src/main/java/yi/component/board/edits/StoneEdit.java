@@ -6,69 +6,140 @@ import yi.core.go.GameNode;
 import yi.core.go.Stone;
 import yi.core.go.StoneColor;
 
-import java.util.Objects;
+public abstract class StoneEdit extends UndoableEdit {
 
-/**
- * Helper stone edits are made to the current node if it is of delta type
- * {@link yi.core.go.GameNodeType#STONE_EDIT}. Otherwise, a new game node of this type
- * will be created by this edit.
- */
-public final class StoneEdit extends UndoableEdit {
+    public static StoneEdit.Add addStone(@Nullable GameNode nodeToEdit, int x, int y, StoneColor color) {
+        return new Add(nodeToEdit, x, y, color);
+    }
 
-    private boolean thisEditCreatedNewNode = false;
-    private GameNode nodeToEdit;
-    private final Stone editToPerform;
-    private final Stone editRemoved = null;
+    public static StoneEdit.Remove removeStone(@Nullable GameNode nodeToEdit, int x, int y) {
+        return new Remove(nodeToEdit, x, y);
+    }
 
-    public StoneEdit(@Nullable GameNode nodeToEdit, Stone stone) {
-        this.editToPerform = Objects.requireNonNull(stone);
+
+    private final boolean createNewNode;
+    protected GameNode nodeToEdit;
+
+    private StoneEdit(@Nullable GameNode nodeToEdit) {
+        this.createNewNode = nodeToEdit == null;
         this.nodeToEdit = nodeToEdit;
     }
 
     @Override
     protected boolean _rollbackEdit(GameModel gameModel) {
-        if (nodeToEdit == null) {
-            throw new IllegalStateException("Attempting to undo when nodeToEdit is null.");
+        boolean success = _rollbackStoneEdit(gameModel);
+
+        if (!success) {
+            return false;
         }
 
-        gameModel.removeStoneEdit(nodeToEdit, editToPerform);
-
-        // If this edit is the first edit that created the edit node, remove it
-        if (thisEditCreatedNewNode) {
-            if (!nodeToEdit.isLastMove()) {
-                throw new IllegalStateException("Node is not leaf despite this edit authored it.");
-            }
+        if (createNewNode) {
             gameModel.removeNodeSubtree(nodeToEdit);
-            thisEditCreatedNewNode = true;
         }
-        return false;
+
+        return true;
     }
 
     @Override
     protected boolean _performEdit(GameModel gameModel) {
-        if (nodeToEdit == null) {
+        if (createNewNode) {
             nodeToEdit = gameModel.submitStoneEditNode();
-            thisEditCreatedNewNode = true;
-        }
-        if (editToPerform.getColor() == StoneColor.NONE) {
-            // TODO: Need to remove the old edit and use the new one if an old exists
-            //       otherwise use the new.
-            gameModel.removeStoneEdit(nodeToEdit, editToPerform);
-        } else {
-            gameModel.addStoneEdit(nodeToEdit, editToPerform);
         }
 
-        return false;
+        return _performStoneEdit(gameModel);
     }
 
     @Override
     protected boolean canRollback() {
-        return false;
+        return true;
     }
 
-    public boolean createdNodeToEdit() {
-        return thisEditCreatedNewNode;
+    protected abstract boolean _performStoneEdit(GameModel gameModel);
+    protected abstract boolean _rollbackStoneEdit(GameModel gameModel);
+
+    private static final class Add extends StoneEdit {
+
+        private final Stone stoneEditToAdd;
+
+        private Add(@Nullable GameNode nodeToEdit, int x, int y, StoneColor color) {
+            super(nodeToEdit);
+
+            if (color == StoneColor.NONE) {
+                throw new IllegalArgumentException("Cannot add stone using StoneColor.NONE");
+            }
+
+            this.stoneEditToAdd = new Stone(x, y, color);
+        }
+
+        @Override
+        protected boolean _performStoneEdit(GameModel gameModel) {
+            assertStateCorrectBeforePerformEdit(gameModel);
+            gameModel.addStoneEdit(nodeToEdit, stoneEditToAdd);
+            return true;
+        }
+
+        @Override
+        protected boolean _rollbackStoneEdit(GameModel gameModel) {
+            assertStateCorrectBeforeRollbackEdit(gameModel);
+            gameModel.removeStoneEdit(nodeToEdit, stoneEditToAdd);
+            return true;
+        }
+
+        private void assertStateCorrectBeforePerformEdit(GameModel gameModel) {
+            int x = stoneEditToAdd.getX();
+            int y = stoneEditToAdd.getY();
+            var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
+            if (editHere != null) {
+                throw new IllegalStateException("Attempting to perform stone edit but a stone already exists at (" + x + ", " + y + ")");
+            }
+        }
+
+        private void assertStateCorrectBeforeRollbackEdit(GameModel gameModel) {
+            int x = stoneEditToAdd.getX();
+            int y = stoneEditToAdd.getY();
+            var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
+            if (editHere == null) {
+                throw new IllegalStateException("Attempting to un-add stone edit but no stone exist at (" + x + ", " + y + ")");
+            }
+        }
     }
 
+    private static final class Remove extends StoneEdit {
+
+        private final int x;
+        private final int y;
+        private Stone stoneEditToRemove;
+
+        private Remove(GameNode nodeToEdit, int x, int y) {
+            super(nodeToEdit);
+
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        protected boolean _performStoneEdit(GameModel gameModel) {
+            stoneEditToRemove = getStoneEditToRemove(gameModel);
+            gameModel.removeStoneEdit(nodeToEdit, stoneEditToRemove);
+            return true;
+        }
+
+        @Override
+        protected boolean _rollbackStoneEdit(GameModel gameModel) {
+            if (stoneEditToRemove == null) {
+                throw new IllegalStateException("No stone edit to remove");
+            }
+            gameModel.addStoneEdit(nodeToEdit, stoneEditToRemove);
+            return true;
+        }
+
+        private Stone getStoneEditToRemove(GameModel gameModel) {
+            var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
+            if (editHere == null) {
+                throw new IllegalStateException("No edit to remove at (" + x + ", " + y + ")");
+            }
+            return editHere;
+        }
+    }
 
 }

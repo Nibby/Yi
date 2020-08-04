@@ -211,4 +211,32 @@ class GameNode constructor(val delta: StateDelta) {
     fun getAnnotationAt(x: Int, y: Int): Annotation? {
         return getAnnotationsOriginal().firstOrNull { it.isOccupyingPosition(x, y) }
     }
+
+    /**
+     *
+     * @return stone edit on this node at the given position that is not [StoneColor.NONE] if it exists.
+     */
+    fun getNonEmptyStoneEditCopyAt(x: Int, y: Int): Stone? {
+        val edit = getStoneEditCopyAt(x, y)
+
+        if (edit != null) {
+            return if (edit.color != StoneColor.NONE) edit else null
+        }
+
+        return null
+    }
+
+    /**
+     *
+     * @return stone edit on this node at the given position if it exists.
+     */
+    fun getStoneEditCopyAt(x: Int, y: Int): Stone? {
+        val edit = delta.stoneEdits.firstOrNull { it.x == x && it.y == y }
+
+        if (edit != null) {
+            return Stone(edit.x, edit.y, StoneColor.valueOf(edit.color.name))
+        }
+
+        return null
+    }
 }

@@ -44,8 +44,7 @@ public final class StoneEditMode extends AbstractEditMode {
     private void editIntersectionAt(int x, int y, GameBoardManager manager) {
         var stoneHere = manager.getGameModel().getCurrentGameState().getBoardPosition().getStoneColorAt(x, y);
 
-        boolean createRatherThanDelete = stoneHere != colorToEdit;
-        StoneColor thisActionColor = createRatherThanDelete ? colorToEdit : StoneColor.NONE;
+        boolean createRatherThanDelete = stoneHere != colorToEdit && stoneHere == StoneColor.NONE;
         var currentNode = manager.getGameModel().getCurrentNode();
         GameNode nodeToEdit;
 
@@ -55,7 +54,14 @@ public final class StoneEditMode extends AbstractEditMode {
             nodeToEdit = currentNode;
         }
 
-        StoneEdit stoneEdit = new StoneEdit(nodeToEdit, new Stone(x, y, thisActionColor));
-        manager.edit.recordAndApply(stoneEdit, manager);
+        StoneEdit edit;
+
+        if (createRatherThanDelete) {
+            edit = StoneEdit.addStone(nodeToEdit, x, y, colorToEdit);
+        } else {
+            edit = StoneEdit.removeStone(nodeToEdit, x, y);
+        }
+
+        manager.edit.recordAndApply(edit, manager);
     }
 }
