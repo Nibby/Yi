@@ -66,8 +66,8 @@ internal object GameMoveSubmitter {
         if (proposedMovePosition < 0 || proposedMovePosition >= gameModel.getIntersectionCount())
             return Pair(MoveValidationResult.ERROR_POSITION_OUT_OF_BOUNDS, null)
 
-        val nextTurnNumber = currentNode.moveNumber + 1
-        val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextTurnNumber)
+        val nextMoveNumber = gameModel.playedMoveHistory.size
+        val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber)
         if (expectedStoneColorThisTurn != proposedMove.color)
             return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)
 

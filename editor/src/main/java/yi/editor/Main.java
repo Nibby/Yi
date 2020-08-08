@@ -15,7 +15,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Settings.load();
 
-        var gameModel = new GameModel(19, 19, GameRules.CHINESE);
+        var gameModel = new GameModel(2, 2, GameRules.CHINESE);
         var editorFrame = new EditorFrame(gameModel);
         editorFrame.show();
     }
