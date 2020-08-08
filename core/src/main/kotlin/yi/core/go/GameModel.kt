@@ -28,6 +28,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             currentNodeChangeEventHook.fireEvent(NodeEvent(value))
         }
 
+    internal var playedMoveHistory: List<GameNode> = LinkedList()
     private var stateHashHistory: List<Long> = LinkedList()
     private var stateCache = WeakHashMap<Long, GameState>()
 
@@ -43,6 +44,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
 
     private fun internalCurrentNodeUpdate(currentNode: GameNode) {
         val nodeHistory = currentNode.getMoveHistory()
+        this.playedMoveHistory = nodeHistory.filter { it.delta.type == GameNodeType.MOVE_PLAYED || it.delta.type == GameNodeType.PASS || it.delta.type == GameNodeType.RESIGN }
         if (nodeHistory.size > 1) {
             // Only count non-root and primary move updates for unique state
             val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size).filter { node -> node.getType() == GameNodeType.MOVE_PLAYED }
@@ -265,6 +267,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
 
     fun addStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
         nodeToEdit.addStoneEdit(stoneEdit)
+        nodeToEdit.recomputeStateHash(stateHasher, boardWidth, boardHeight)
+
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
@@ -275,11 +279,13 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
 
     fun removeStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
         nodeToEdit.removeStoneEdit(stoneEdit)
+        nodeToEdit.recomputeStateHash(stateHasher, boardWidth, boardHeight)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
     fun removeStoneEdits(nodeToEdit: GameNode, stoneEdits: Collection<Stone>) {
         stoneEdits.forEach { nodeToEdit.removeStoneEdit(it) }
+        nodeToEdit.recomputeStateHash(stateHasher, boardWidth, boardHeight)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
@@ -395,7 +401,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * @return The [StoneColor] for the stone that will be played on the next turn.
      */
     fun getNextTurnStoneColor(): StoneColor {
-        return rules.getStoneColorForTurn(getNextMoveNumber())
+        val nextMoveNumber = playedMoveHistory.size
+        return rules.getStoneColorForTurn(nextMoveNumber)
     }
 
     /**

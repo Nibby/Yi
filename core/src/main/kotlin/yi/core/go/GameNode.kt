@@ -239,4 +239,13 @@ class GameNode constructor(val delta: StateDelta) {
 
         return null
     }
+
+    internal fun recomputeStateHash(stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
+        val lastHash: Long =
+                if (parent != null) parent!!.getStateHash()
+                else stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)
+
+        val newHash = stateHasher.computeUpdateHash(lastHash, delta.stoneEdits)
+        delta.stateHash = newHash
+    }
 }

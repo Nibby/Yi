@@ -6,19 +6,21 @@ import yi.core.go.GameNode;
 import yi.core.go.Stone;
 import yi.core.go.StoneColor;
 
+import java.util.Optional;
+
 public abstract class StoneEdit extends UndoableEdit {
 
-    public static StoneEdit.Add addStone(@Nullable GameNode nodeToEdit, int x, int y, StoneColor color) {
+    public static StoneEdit.Add add(@Nullable GameNode nodeToEdit, int x, int y, StoneColor color) {
         return new Add(nodeToEdit, x, y, color);
     }
 
-    public static StoneEdit.Remove removeStone(@Nullable GameNode nodeToEdit, int x, int y) {
+    public static StoneEdit.Remove remove(@Nullable GameNode nodeToEdit, int x, int y) {
         return new Remove(nodeToEdit, x, y);
     }
 
 
     private final boolean createNewNode;
-    protected GameNode nodeToEdit;
+    private GameNode nodeToEdit;
 
     private StoneEdit(@Nullable GameNode nodeToEdit) {
         this.createNewNode = nodeToEdit == null;
@@ -27,7 +29,11 @@ public abstract class StoneEdit extends UndoableEdit {
 
     @Override
     protected boolean _rollbackEdit(GameModel gameModel) {
-        boolean success = _rollbackStoneEdit(gameModel);
+        if (nodeToEdit == null) {
+            throw new IllegalStateException("Attempting to undo before the edit action has been performed once.");
+        }
+
+        boolean success = _rollbackStoneEdit(gameModel, nodeToEdit);
 
         if (!success) {
             return false;
@@ -43,10 +49,17 @@ public abstract class StoneEdit extends UndoableEdit {
     @Override
     protected boolean _performEdit(GameModel gameModel) {
         if (createNewNode) {
-            nodeToEdit = gameModel.submitStoneEditNode();
+            if (nodeToEdit == null) {
+                // First time submitting node
+                nodeToEdit = gameModel.submitStoneEditNode();
+            } else {
+                // Subsequent re-do actions. Have to re-use this node because subsequent edits also refer to this node
+                // when undo/redoing their changes.
+                gameModel.submitNode(nodeToEdit);
+            }
         }
 
-        return _performStoneEdit(gameModel);
+        return _performStoneEdit(gameModel, nodeToEdit);
     }
 
     @Override
@@ -54,8 +67,8 @@ public abstract class StoneEdit extends UndoableEdit {
         return true;
     }
 
-    protected abstract boolean _performStoneEdit(GameModel gameModel);
-    protected abstract boolean _rollbackStoneEdit(GameModel gameModel);
+    protected abstract boolean _performStoneEdit(GameModel gameModel, GameNode nodeToEdit);
+    protected abstract boolean _rollbackStoneEdit(GameModel gameModel, GameNode nodeToEdit);
 
     private static final class Add extends StoneEdit {
 
@@ -63,23 +76,18 @@ public abstract class StoneEdit extends UndoableEdit {
 
         private Add(@Nullable GameNode nodeToEdit, int x, int y, StoneColor color) {
             super(nodeToEdit);
-
-            if (color == StoneColor.NONE) {
-                throw new IllegalArgumentException("Cannot add stone using StoneColor.NONE");
-            }
-
             this.stoneEditToAdd = new Stone(x, y, color);
         }
 
         @Override
-        protected boolean _performStoneEdit(GameModel gameModel) {
+        protected boolean _performStoneEdit(GameModel gameModel, GameNode nodeToEdit) {
             assertStateCorrectBeforePerformEdit(gameModel);
             gameModel.addStoneEdit(nodeToEdit, stoneEditToAdd);
             return true;
         }
 
         @Override
-        protected boolean _rollbackStoneEdit(GameModel gameModel) {
+        protected boolean _rollbackStoneEdit(GameModel gameModel, GameNode nodeToEdit) {
             assertStateCorrectBeforeRollbackEdit(gameModel);
             gameModel.removeStoneEdit(nodeToEdit, stoneEditToAdd);
             return true;
@@ -108,7 +116,7 @@ public abstract class StoneEdit extends UndoableEdit {
 
         private final int x;
         private final int y;
-        private Stone stoneEditToRemove;
+        private Stone stoneEdit;
 
         private Remove(GameNode nodeToEdit, int x, int y) {
             super(nodeToEdit);
@@ -118,27 +126,33 @@ public abstract class StoneEdit extends UndoableEdit {
         }
 
         @Override
-        protected boolean _performStoneEdit(GameModel gameModel) {
-            stoneEditToRemove = getStoneEditToRemove(gameModel);
-            gameModel.removeStoneEdit(nodeToEdit, stoneEditToRemove);
+        protected boolean _performStoneEdit(GameModel gameModel, GameNode nodeToEdit) {
+            // The stone we wish to remove can either exist as a stone edit in this node delta
+            // or in one of the parents... So there's no one size fit all solution.
+            //
+            // If there is an existing stone edit at this position, delete it.
+            // Otherwise, create a new stone edit which sets the intersection to NONE
+            var existingEditOnThisNode = getStoneEditToRemove(gameModel);
+
+            if (existingEditOnThisNode.isPresent()) {
+                stoneEdit = existingEditOnThisNode.get();
+                gameModel.removeStoneEdit(nodeToEdit, stoneEdit);
+            } else throw new IllegalStateException("No stone was created at (" + x + ", " + y + ") on this node.");
+
             return true;
         }
 
         @Override
-        protected boolean _rollbackStoneEdit(GameModel gameModel) {
-            if (stoneEditToRemove == null) {
-                throw new IllegalStateException("No stone edit to remove");
+        protected boolean _rollbackStoneEdit(GameModel gameModel, GameNode nodeToEdit) {
+            if (stoneEdit == null) {
+                throw new IllegalStateException("No stone edit to remove.");
             }
-            gameModel.addStoneEdit(nodeToEdit, stoneEditToRemove);
+            gameModel.addStoneEdit(nodeToEdit, stoneEdit);
             return true;
         }
 
-        private Stone getStoneEditToRemove(GameModel gameModel) {
-            var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
-            if (editHere == null) {
-                throw new IllegalStateException("No edit to remove at (" + x + ", " + y + ")");
-            }
-            return editHere;
+        private Optional<Stone> getStoneEditToRemove(GameModel gameModel) {
+            return Optional.ofNullable(gameModel.getCurrentNode().getStoneEditCopyAt(x, y));
         }
     }
 

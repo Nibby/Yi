@@ -11,30 +11,34 @@ class StateDelta {
     internal val type: GameNodeType
     internal val primaryMove: Stone?
     internal val captures: Set<Stone>
-    internal val stateHash: Long
+    internal var stateHash: Long
     internal val stoneEdits: HashSet<Stone>
     internal val annotations: HashSet<Annotation>
 
     /**
-     * @param primaryMove The main move represented by the [GameNode]
+     * @param primaryMove The main move represented by the [GameNode], this is added to the stone delta if not null.
      * @param captures The stones on the board that are captured
      * @param stateHash A hash code representing the current game state (not just the delta)
-     * @param stoneEdits Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
+     * @param stoneDelta Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
      * @param annotations List of annotations to be shown on the node with this delta
      */
     internal constructor(type: GameNodeType,
                          primaryMove: Stone?,
                          captures: Set<Stone>,
                          stateHash: Long,
-                         stoneEdits: HashSet<Stone>,
+                         stoneDelta: HashSet<Stone>,
                          annotations: HashSet<Annotation>) {
 
         this.type = type
         this.primaryMove = primaryMove
         this.captures = captures
         this.stateHash = stateHash
-        this.stoneEdits = stoneEdits
+        this.stoneEdits = stoneDelta
         this.annotations = annotations
+
+        this.primaryMove?.let {
+            stoneDelta.add(it)
+        }
     }
 
     internal companion object Factory {
