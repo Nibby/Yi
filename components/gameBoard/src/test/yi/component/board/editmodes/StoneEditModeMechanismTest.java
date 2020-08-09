@@ -7,7 +7,7 @@ import yi.component.board.GameBoardClassFactory;
 import yi.component.board.edits.StoneEdit;
 import yi.core.go.*;
 
-public class StoneEditModeMechanismTest {
+public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_NonEditNode_CreatesOne() {

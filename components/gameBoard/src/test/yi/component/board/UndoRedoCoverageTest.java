@@ -23,7 +23,7 @@ import java.util.Set;
  *
  * The test suites should be placed within the unit test package under {@code test/unit/yi.component.board}
  */
-public class UndoRedoCoverageTest {
+public final class UndoRedoCoverageTest {
 
     @Test
     public void testAllEditModesHaveTestSuite() throws IOException, ClassNotFoundException {
