@@ -68,8 +68,10 @@ open class GameTree constructor(internal var rootNode: GameNode) {
             throw IllegalArgumentException("Cannot remove a node that is not part of this move tree")
         }
 
-        node.parent?.children?.remove(node)
-        node.parent = null
+        if (!node.isRoot()) {
+            node.parent?.children?.remove(node)
+            node.parent = null
+        }
         node.children.forEach { child -> child.parent = null; removeNodeSubtree(child); }
         node.children.clear()
     }

@@ -419,6 +419,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     }
 
     /**
+     * The move number includes stone edit nodes as well as played moves, pass and resignations.
+     *
      * @return An integer representing the current move number, with zero being the root node.
      */
     fun getCurrentMoveNumber(): Int {
@@ -585,13 +587,12 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * Removes the node and its subtree from the model. If the current move is part of the subtree deleted,
      * it will be reset to the parent of the deleted node.
      *
+     * If the node to be deleted is the root, only its children will be removed and the current move will be
+     * set to root.
+     *
      * This method emits an [onNodeRemove] event.
      */
     fun removeNodeSubtree(node: GameNode) {
-        if (node.isRoot()) {
-            throw IllegalArgumentException("Attempting to remove root node")
-        }
-
         // Do it here because the node lineage will be destroyed after removing node subtree.
         // and we want to fire the current node change event after node removal event.
         val readjustCurrentNode = _currentMove.isContinuationOf(node)
@@ -600,6 +601,9 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         val nodeToAdjustTo = if (readjustCurrentNode) node.parent!! else null
 
         gameTree.removeNodeSubtree(node)
+
+        // TODO: If removing towards the start of a very large tree, the deletion is also fired for each node
+        //       which may lead to performance issues...
         onNodeRemove().fireEvent(NodeEvent(node))
 
         if (readjustCurrentNode) {
@@ -668,7 +672,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         onCurrentNodeDataUpdate().removeAllListeners()
         onNodeDataUpdate().removeAllListeners()
 
-        getRootNode().children.forEach { removeNodeSubtree(it) }
+        removeNodeSubtree(getRootNode())
     }
 
     // This init block has to be done last because the fields are initialized in order.
