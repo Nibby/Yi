@@ -44,7 +44,7 @@ public final class StoneEditMode extends AbstractEditMode {
         var currentNode = manager.getGameModel().getCurrentNode();
         GameNode nodeToEdit;
 
-        if (currentNode.getType() != GameNodeType.STONE_EDIT) {
+        if (currentNode.getType() != GameNodeType.STONE_EDIT && currentNode.getType() != GameNodeType.ROOT) {
             nodeToEdit = null;
         } else {
             nodeToEdit = currentNode;

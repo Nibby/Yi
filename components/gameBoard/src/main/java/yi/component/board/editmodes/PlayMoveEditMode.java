@@ -50,6 +50,7 @@ final class PlayMoveEditMode extends AbstractEditMode {
             var playMoveEdit = PlayMoveEdit.forMove(gridX, gridY);
             manager.edit.recordAndApply(playMoveEdit, manager);
         } else {
+            // TODO: This is only temporary.
             manager.getGameModel().submitPass();
         }
     }
