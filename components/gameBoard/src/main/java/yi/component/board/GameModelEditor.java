@@ -59,7 +59,6 @@ public final class GameModelEditor {
     }
 
     private void pushChangeToUndoHistory(Undoable undoable) {
-        System.out.println("Before Push: position=" + positionInHistory + ", maxSize=" + getCurrentHistorySize());
         if (positionInHistory < undoHistory.size() - 1) {
             // Discard the existing edit history
             int originalSize = undoHistory.size();
@@ -72,8 +71,6 @@ public final class GameModelEditor {
         positionInHistory = undoHistory.indexOf(undoable);
 
         pruneHistorySize();
-
-        System.out.println("After Push: position=" + positionInHistory + ", maxSize=" + getCurrentHistorySize());
     }
 
     private void pruneHistorySize() {
@@ -94,7 +91,6 @@ public final class GameModelEditor {
             throw new IllegalStateException("Current position in history does not support undo." +
                     " positionInHistory: " + positionInHistory + ", editHistorySize: " + undoHistory.size());
         }
-        System.out.println("Before Undo: position=" + positionInHistory + ", maxSize=" + getCurrentHistorySize());
         if (positionInHistory >= 0) {
             Undoable currentEdit = undoHistory.get(positionInHistory);
             boolean successful = currentEdit.rollbackEdit(gameModel);
@@ -103,7 +99,6 @@ public final class GameModelEditor {
                 positionInHistory--;
             }
         }
-        System.out.println("After Undo: position=" + positionInHistory + ", maxSize=" + getCurrentHistorySize());
     }
 
     /**
@@ -112,7 +107,6 @@ public final class GameModelEditor {
     public void performRedo(GameBoardManager manager) {
         var gameModel = manager.getGameModel();
 
-        System.out.println("Before Redo: position=" + positionInHistory + ", maxSize=" + getCurrentHistorySize());
         if (!canRedo()) {
             throw new IllegalStateException("Current position in history does not support redo." +
                     " positionInHistory: " + positionInHistory + ", editHistorySize: " + undoHistory.size());
@@ -124,7 +118,6 @@ public final class GameModelEditor {
         if (successful) {
             positionInHistory++;
         }
-        System.out.println("After Undo: position=" + positionInHistory + ", maxSize=" + getCurrentHistorySize());
     }
 
     /**
