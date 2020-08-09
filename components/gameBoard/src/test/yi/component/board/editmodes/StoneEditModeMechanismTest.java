@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.GameBoardClassFactory;
 import yi.component.board.edits.StoneEdit;
-import yi.core.go.GameModel;
-import yi.core.go.GameNodeType;
-import yi.core.go.GameRules;
-import yi.core.go.StoneColor;
+import yi.core.go.*;
 
 public class StoneEditModeMechanismTest {
 
@@ -151,6 +148,20 @@ public class StoneEditModeMechanismTest {
         Assertions.assertEquals(StoneColor.NONE, model.getCurrentGameState().getBoardPosition().getStoneColorAt(2, 0));
         Assertions.assertEquals(StoneColor.NONE, model.getCurrentGameState().getBoardPosition().getStoneColorAt(2, 1));
         Assertions.assertEquals(StoneColor.BLACK, model.getCurrentGameState().getBoardPosition().getStoneColorAt(2, 2));
+    }
+
+    @Test
+    public void testStoneEdit_onRootNode_doesNotCreateNewNode() {
+        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var manager = GameBoardClassFactory.createGameBoardManager();
+        manager.setGameModel(model);
+
+        var editStoneMode = EditMode.editStones(StoneColor.WHITE);
+        manager.edit.setEditMode(editStoneMode);
+        editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
+
+        Assertions.assertEquals(model.getRootNode(), model.getCurrentNode());
+        Assertions.assertEquals(new Stone(0, 0, StoneColor.WHITE), model.getRootNode().getStoneEditCopyAt(0, 0));
     }
 
 }
