@@ -2,7 +2,7 @@ package yi.component.board.editmodes;
 
 import org.junit.jupiter.api.Test;
 
-public class StoneEditModeUndoRedoTest {
+public final class StoneEditModeUndoRedoTest {
 
     @Test
     public void testAddRemoveStone_UndoRedoWorks() {
