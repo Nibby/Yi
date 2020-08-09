@@ -16,6 +16,7 @@ import org.testfx.robot.Motion;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
 import yi.core.go.GameRules;
+import yi.core.go.StoneColor;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -120,6 +121,10 @@ public abstract class GameBoardUITestBase {
                     fail("Expected an annotation at (" + x + ", " + y + ") but got none.");
                     return null;
                 });
+    }
+
+    protected StoneColor getStoneAt(int x, int y) {
+        return getGameModel().getCurrentGameState().getBoardPosition().getStoneColorAt(x, y);
     }
 
     public GameBoardViewer getBoard() {

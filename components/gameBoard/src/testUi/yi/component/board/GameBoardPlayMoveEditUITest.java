@@ -28,6 +28,7 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
         getGameModel().onNodeDataUpdate().addListener((event) -> Assertions.fail("Unexpected event received: onNodeDataUpdate()"));
     }
 
+    @AfterEach
     @Override
     protected void dispose() {
         super.dispose();
