@@ -3,6 +3,7 @@ package yi.editor;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
 import yi.core.go.GameModel;
@@ -86,7 +87,7 @@ public class EditorFrame extends Stage {
             double newAspectRatio = newLayout.getPreferredAspectRatio();
             double newWidth = currentHeight * newAspectRatio;
 
-            var newScene = new Scene(container, newWidth, currentHeight);
+            var newScene = new YiScene(container, newWidth, currentHeight);
             globalAccelerators.installFor(newScene);
             setScene(newScene);
             setWidth(newWidth);
@@ -97,7 +98,7 @@ public class EditorFrame extends Stage {
             double startupWidth = startupSize.getWidth();
             double startupHeight = startupSize.getHeight();
 
-            var newScene = new Scene(container, startupWidth, startupHeight);
+            var newScene = new YiScene(container, startupWidth, startupHeight);
             globalAccelerators.installFor(newScene);
             setScene(newScene);
         }

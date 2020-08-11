@@ -2,7 +2,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
-allprojects {
+subprojects {
     apply plugin: 'java'
     apply plugin: 'org.openjfx.javafxplugin'
 
