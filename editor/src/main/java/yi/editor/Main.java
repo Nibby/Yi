@@ -3,6 +3,7 @@ package yi.editor;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import yi.component.SkinManager;
 import yi.core.go.GameModel;
 import yi.core.go.GameRules;
 import yi.editor.settings.Settings;
@@ -13,6 +14,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        SkinManager.useDefaultSkin();
         Settings.load();
 
         var gameModel = new GameModel(2, 2, GameRules.CHINESE);

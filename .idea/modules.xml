@@ -22,7 +22,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.testUi.iml" filepath="$PROJECT_DIR$/.idea/modules/components/gameTree/Yi.components.gameTree.testUi.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/Yi.components.main.iml" filepath="$PROJECT_DIR$/.idea/modules/components/Yi.components.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/Yi.components.test.iml" filepath="$PROJECT_DIR$/.idea/modules/components/Yi.components.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/components/Yi.components.testUi.iml" filepath="$PROJECT_DIR$/.idea/modules/components/Yi.components.testUi.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/Yi.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/Yi.core.test.iml" />
