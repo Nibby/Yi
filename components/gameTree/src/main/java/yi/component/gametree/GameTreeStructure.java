@@ -91,7 +91,7 @@ final class GameTreeStructure {
      *
      * @return All the elements added so far in the tree structure.
      */
-    public Collection<TreeElement> getAllElements() {
+    public List<TreeElement> getAllElements() {
         return treeElementManager.getAllElements();
     }
 
@@ -101,8 +101,8 @@ final class GameTreeStructure {
 
     private static final class TreeElementManager {
 
-        private Collection<TreeElement> allElements = new HashSet<>();
-        private final Collection<TreeNodeElement> nodeElements = new HashSet<>();
+        private List<TreeElement> allElements = new ArrayList<>();
+        private final List<TreeNodeElement> nodeElements = new ArrayList<>();
         private TreeElementPositionStorage positionStorage = new TreeElementPositionStorage();
         private TreeElement currentHighlight;
 
@@ -110,7 +110,7 @@ final class GameTreeStructure {
             positionStorage.clear();
             allElements.clear();
 
-            allElements = new HashSet<>();
+            allElements = new ArrayList<>();
             positionStorage = new TreeElementPositionStorage();
         }
 
@@ -131,7 +131,7 @@ final class GameTreeStructure {
             return nodeElement;
         }
 
-        public Collection<TreeElement> getAllElements() {
+        public List<TreeElement> getAllElements() {
             return allElements;
         }
 
