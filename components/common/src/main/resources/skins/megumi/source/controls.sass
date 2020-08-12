@@ -1,0 +1,25 @@
+// Individual UI control styles
+@import "palette.sass"
+
+.scene, .tool-bar, .menu-bar, .split-pane
+  -fx-border-color: transparent
+  -fx-border-insets: 0px
+  -fx-background-color: $BACKGROUND_LIGHT
+
+.button, .toggle-button
+  -fx-background-color: $BACKGROUND_LIGHT
+
+.button:hover, .toggle-button:hover
+  -fx-background-color: $CONTROLS_BACKGROUND_HOVER
+
+.button:pressed
+  -fx-background-color: $CONTROLS_BACKGROUND_SELECTED
+
+.toggle-button:selected
+  -fx-background-color: $CONTROLS_BACKGROUND_SELECTED
+
+.split-pane-divider
+  -fx-padding: 0px 1px 0px 1px
+  -fx-border-color: transparent
+  -fx-background-color: $BACKGROUND_LIGHT
+  -fx-background-insets: 0px

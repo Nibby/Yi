@@ -619,6 +619,18 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         return gameTree.rootNode
     }
 
+    /**
+     *
+     * @return All the nodes in the current variation, starting from the root, ending at the current node.
+     */
+    fun getCurrentVariationHistory(): List<GameNode> {
+        var history = ArrayList<GameNode>()
+        history.add(getRootNode())
+        history.addAll(playedMoveHistory)
+
+        return history
+    }
+
     // -- Observable property declarations
 
     /**

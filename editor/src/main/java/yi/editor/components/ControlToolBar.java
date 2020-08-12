@@ -35,10 +35,6 @@ public final class ControlToolBar extends ToolBar {
                 Settings.general.setCurrentLayout(newLayout);
                 Settings.general.save();
             });
-
-            var separator = new Separator();
-            separator.setOrientation(Orientation.VERTICAL);
-            getItems().add(separator);
         }
     }
 
