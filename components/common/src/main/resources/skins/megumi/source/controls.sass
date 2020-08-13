@@ -7,9 +7,6 @@
   -fx-border-width: 0px
   -fx-background-color: $BACKGROUND_LIGHT
 
-.parent
-  -fx-border-width: 0px
-
 .button, .toggle-button
   -fx-background-color: $BACKGROUND_LIGHT
 
@@ -22,8 +19,15 @@
 .toggle-button:selected
   -fx-background-color: $CONTROLS_BACKGROUND_SELECTED
 
+.parent, .split-pane, .pane, .border-pane
+  -fx-border-color: transparent
+  -fx-border-width: 0px
+  -fx-border-insets: 0px
+  -fx-box-border: transparent
+  -fx-padding: 0px
+
 .split-pane-divider
   -fx-padding: 0px 1px 0px 1px
   -fx-border-color: transparent
-  -fx-background-color: $BACKGROUND_LIGHT
+  -fx-background-color: $BACKGROUND_DARK // Only to cover for the divider for the dark game tree. Need a better mechanism.
   -fx-background-insets: 0px
