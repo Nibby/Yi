@@ -14,6 +14,7 @@ import yi.core.go.GameNode;
 import yi.core.go.NodeEvent;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A component which displays the game model and its nodes as a tree graph.
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 public final class GameTreeViewer implements Component {
 
     private final CanvasContainer component;
+    private GameTreeViewerSettings settings = GameTreeViewerSettings.getDefault();
     private final GameTreeCanvas canvas;
     private final Camera camera;
 
@@ -47,6 +49,10 @@ public final class GameTreeViewer implements Component {
         updateCameraAndRender(gameModel.getCurrentNode());
     }
 
+    public void setSettings(GameTreeViewerSettings settings) {
+        this.settings = Objects.requireNonNull(settings);
+    }
+
     private void updateCameraAndRender(GameNode currentNode) {
         treeStructure.getNodeElements().parallelStream()
                 .filter(element -> element.getNode().equals(currentNode))
@@ -57,7 +63,7 @@ public final class GameTreeViewer implements Component {
     }
 
     private void render() {
-        canvas.render(camera, treeStructure.getAllElements(), gameModel.getCurrentNode(), gameModel.getCurrentVariationHistory(), elementSize);
+        canvas.render(settings, camera, treeStructure.getAllElements(), gameModel.getCurrentNode(), gameModel.getCurrentVariationHistory(), elementSize);
     }
 
     private final EventListener<NodeEvent> treeStructureChangeListener = (event) -> {

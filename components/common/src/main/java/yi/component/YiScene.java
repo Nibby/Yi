@@ -18,7 +18,7 @@ public class YiScene extends Scene {
     private void applySkin() {
         var skin = SkinManager.getUsedSkin();
         var skinCss = skin.getMainCssUrl();
-        System.out.println(skinCss);
+
         getStylesheets().add(skinCss);
     }
 
