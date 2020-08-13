@@ -1,17 +1,13 @@
 package yi.component.gametree;
 
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Pair;
 import yi.core.go.GameNode;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +17,8 @@ import java.util.stream.Collectors;
  * See {@link GameTreeViewer.CanvasInputHandler} for input handling aspects of the canvas.
  */
 final class GameTreeCanvas extends Canvas {
+
+    private static final double BRANCH_LINE_WIDTH = 2d;
 
     private final GraphicsContext graphics;
 
@@ -37,14 +35,14 @@ final class GameTreeCanvas extends Canvas {
         addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
     }
 
-    public void render(Camera camera, List<TreeElement> visibleElements, GameNode currentNode, List<GameNode> currentVariationHistory, GameTreeElementSize size) {
+    public void render(GameTreeViewerSettings settings, Camera camera, List<TreeElement> visibleElements, GameNode currentNode, List<GameNode> currentVariationHistory, GameTreeElementSize size) {
         graphics.clearRect(0, 0, getWidth(), getHeight());
-        graphics.setFill(GameTreeColors.BACKGROUND);
+        graphics.setFill(settings.getBackgroundColor());
         graphics.fillRect(0, 0, getWidth(), getHeight());
 
-        graphics.setStroke(GameTreeColors.NODE);
-        graphics.setLineWidth(2d);
-        graphics.setFill(GameTreeColors.NODE);
+        graphics.setStroke(settings.getNodeColor());
+        graphics.setLineWidth(BRANCH_LINE_WIDTH);
+        graphics.setFill(settings.getNodeColor());
 
         double offsetX = camera.getOffsetX();
         double offsetY = camera.getOffsetY();
@@ -57,27 +55,27 @@ final class GameTreeCanvas extends Canvas {
         final double gridWidth = size.getGridSize().getWidth();
         final double gridHeight = size.getGridSize().getHeight();
 
-        renderTracks(nodeElements, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
-        renderNodes(nodeElements, currentNode, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
+        renderTracks(settings, nodeElements, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
+        renderNodes(settings, nodeElements, currentNode, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
     }
 
-    private void renderNodes(List<TreeNodeElement> nodeElements, GameNode currentNode, List<GameNode> currentVariationHistory, double gridWidth, double gridHeight, double offsetX, double offsetY) {
+    private void renderNodes(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements, GameNode currentNode, List<GameNode> currentVariationHistory, double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (var nodeElement : nodeElements) {
             double x = nodeElement.getGridX() * gridWidth + offsetX;
             double y = nodeElement.getGridY() * gridHeight + offsetY;
 
-            graphics.setFill(GameTreeColors.NODE);
+            graphics.setFill(settings.getNodeColor());
 
             if (nodeElement.isHighlighted()) {
-                graphics.setFill(GameTreeColors.NODE_HOVER);
+                graphics.setFill(settings.getNodeHoverColor());
             }
 
             var node = nodeElement.getNode();
 
             if (node.equals(currentNode)) {
-                graphics.setFill(GameTreeColors.CURRENT_NODE);
+                graphics.setFill(settings.getCurrentNodeColor());
             } else if (currentVariationHistory.contains(node)) {
-                graphics.setFill(GameTreeColors.NODE_IN_CURRENT_VARIATION);
+                graphics.setFill(settings.getNodeInCurrentVariationColor());
             }
 
             var bounds = new Rectangle(x + 3, y + 3, gridWidth - 6, gridHeight - 6);
@@ -90,7 +88,8 @@ final class GameTreeCanvas extends Canvas {
         }
     }
 
-    private void renderTracks(List<TreeNodeElement> nodeElements, List<GameNode> currentVariationHistory, double gridWidth, double gridHeight, double offsetX, double offsetY) {
+    private void renderTracks(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements, List<GameNode> currentVariationHistory,
+                              double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (int i = nodeElements.size() - 1; i > 0; --i) {
             var nodeElement = nodeElements.get(i);
 
@@ -111,9 +110,9 @@ final class GameTreeCanvas extends Canvas {
                 var thisNode = nodeElement.getNode();
 
                 if (currentVariationHistory.contains(thisNode)) {
-                    graphics.setStroke(GameTreeColors.NODE_IN_CURRENT_VARIATION);
+                    graphics.setStroke(settings.getNodeInCurrentVariationColor());
                 } else {
-                    graphics.setStroke(GameTreeColors.NODE);
+                    graphics.setStroke(settings.getNodeColor());
                 }
 
                 // No need to re-draw the top branch line since the last child draws it first.
@@ -145,7 +144,7 @@ final class GameTreeCanvas extends Canvas {
                     graphics.strokeLine(pCenterX, pCenterY, centerX, pCenterY);
                 }
 
-                graphics.strokeLine(centerX, pCenterY+2, centerX, centerY);
+                graphics.strokeLine(centerX, pCenterY+BRANCH_LINE_WIDTH, centerX, centerY);
             });
         }
     }

@@ -2,10 +2,14 @@ package yi.editor;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
+import yi.component.gametree.GameTreeViewerSettings;
+import yi.component.utilities.GuiUtilities;
 import yi.core.go.GameModel;
 import yi.editor.components.ContentLayout;
 import yi.editor.components.ControlToolBar;
@@ -25,6 +29,7 @@ public class EditorFrame extends Stage {
 
     private final GameBoardViewer boardViewer;
     private final GameTreeViewer treeViewer;
+    private final GameTreeViewerSettings treeViewerSettings;
     private GameModel gameModel;
 
     public EditorFrame(GameModel gameModel) {
@@ -39,7 +44,15 @@ public class EditorFrame extends Stage {
         boardViewer = new GameBoardViewer(Settings.getCurrentGameBoardSettings());
         boardViewer.setGameModel(gameModel);
 
+        treeViewerSettings = new GameTreeViewerSettings();
+        treeViewerSettings.setBackgroundColor(GuiUtilities.getNormalized(43, 43, 43));
+        treeViewerSettings.setNodeColor(GuiUtilities.getNormalized(90, 90, 90));
+        treeViewerSettings.setNodeHoverColor(GuiUtilities.getNormalized(170, 170, 170));
+        treeViewerSettings.setNodeInCurrentVariationColor(GuiUtilities.getNormalized(203, 203, 203));
+        treeViewerSettings.setCurrentNodeColor(GuiUtilities.getNormalized(255, 255, 255));
+
         treeViewer = new GameTreeViewer(gameModel);
+        treeViewer.setSettings(treeViewerSettings);
 
         menuBar = new EditorMenuBar();
 
