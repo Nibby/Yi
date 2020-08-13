@@ -5,10 +5,6 @@
   -fx-background-color: #DDDDDD;
 }
 
-.parent {
-  -fx-border-width: 0px;
-}
-
 .button, .toggle-button {
   -fx-background-color: #DDDDDD;
 }
@@ -25,10 +21,18 @@
   -fx-background-color: #9CC7F2;
 }
 
+.parent, .split-pane, .pane, .border-pane {
+  -fx-border-color: transparent;
+  -fx-border-width: 0px;
+  -fx-border-insets: 0px;
+  -fx-box-border: transparent;
+  -fx-padding: 0px;
+}
+
 .split-pane-divider {
   -fx-padding: 0px 1px 0px 1px;
   -fx-border-color: transparent;
-  -fx-background-color: #DDDDDD;
+  -fx-background-color: #2B2B2B;
   -fx-background-insets: 0px;
 }
 
