@@ -13,7 +13,6 @@ import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.NodeEvent;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -63,7 +62,9 @@ public final class GameTreeViewer implements Component {
     }
 
     private void render() {
-        canvas.render(settings, camera, treeStructure.getAllElements(), gameModel.getCurrentNode(), gameModel.getCurrentVariationHistory(), elementSize);
+        var elements = treeStructure.getAllElements();
+        var currentNode = gameModel.getCurrentNode();
+        canvas.render(settings, camera, elements, currentNode, elementSize);
     }
 
     private final EventListener<NodeEvent> treeStructureChangeListener = (event) -> {
