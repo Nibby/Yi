@@ -35,7 +35,9 @@ final class GameTreeCanvas extends Canvas {
         addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
     }
 
-    public void render(GameTreeViewerSettings settings, Camera camera, List<TreeElement> visibleElements, GameNode currentNode, List<GameNode> currentVariationHistory, GameTreeElementSize size) {
+    public void render(GameTreeViewerSettings settings, Camera camera, List<TreeElement> visibleElements, GameNode currentNode, GameTreeElementSize size) {
+        var currentVariationHistory = currentNode.getMoveHistory();
+
         graphics.clearRect(0, 0, getWidth(), getHeight());
         graphics.setFill(settings.getBackgroundColor());
         graphics.fillRect(0, 0, getWidth(), getHeight());
@@ -125,8 +127,6 @@ final class GameTreeCanvas extends Canvas {
                     var continuationNode = parentIndexInHistory + 1 < currentVariationHistory.size() ? currentVariationHistory.get(parentIndexInHistory + 1) : null;
 
                     if (continuationNode != null) {
-                        assert parentNode.hasChild(continuationNode);
-
                         var continuationOrder = parentNode.getChildOrder(continuationNode);
                         var thisOrder = parentNode.getChildOrder(thisNode);
 
