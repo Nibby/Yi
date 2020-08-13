@@ -29,8 +29,8 @@ public final class GuiUtilities {
      * @param b255 Blue value, 0 - 255 inclusive
      * @return A color of the defined RGB value
      */
-    public static Color getNormalized(int r255, int g255, int b255) {
-        return getNormalized(r255, g255, b255, 1.0d);
+    public static Color getColor(int r255, int g255, int b255) {
+        return getColor(r255, g255, b255, 1.0d);
     }
 
     /**
@@ -44,7 +44,7 @@ public final class GuiUtilities {
      * @param b255 Blue value, 0 - 255 inclusive
      * @return A color of the defined RGB value
      */
-    public static Color getNormalized(int r255, int g255, int b255, double alpha1) {
+    public static Color getColor(int r255, int g255, int b255, double alpha1) {
         double r = r255 / 255d;
         double g = g255 / 255d;
         double b = b255 / 255d;

@@ -4,7 +4,7 @@ import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ShapeUtilitiesTest {
+public final class ShapeUtilitiesTest {
 
     @Test
     public void testCenterFit_squareContainerNoInsets_squareFitRatio() {
