@@ -1,6 +1,10 @@
 package yi.editor.components;
 
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import yi.component.SimpleListenerManager;
 import yi.editor.EditorTool;
 import yi.editor.utilities.IconUtilities;
@@ -56,20 +60,37 @@ public class EditorToolBar extends ToolBar {
         getItems().clear();
 
         // TODO: This is definitely not a good design. Rethink UI.
-        if (layout == ContentLayout.REVIEW) {
-            getItems().add(toolPlayMove);
-            getItems().add(toolAddBlackStone);
-            getItems().add(toolAddWhiteStone);
-            getItems().add(toolAnnotateTriangle);
-            getItems().add(toolAnnotateCircle);
-            getItems().add(toolAnnotateSquare);
-            getItems().add(toolAnnotateCross);
-            getItems().add(toolAnnotateText);
-            getItems().add(toolAnnotateNumber);
-            getItems().add(toolAnnotateLine);
-            getItems().add(toolAnnotateArrow);
-            getItems().add(toolAnnotateDim);
-        }
+        final int gap = 6;
+
+        getItems().add(toolPlayMove);
+        getItems().add(staticSpacer(gap));
+        getItems().add(toolAddBlackStone);
+        getItems().add(toolAddWhiteStone);
+        getItems().add(staticSpacer(gap));
+        getItems().add(toolAnnotateTriangle);
+        getItems().add(toolAnnotateCircle);
+        getItems().add(toolAnnotateSquare);
+        getItems().add(toolAnnotateCross);
+        getItems().add(toolAnnotateText);
+        getItems().add(toolAnnotateNumber);
+        getItems().add(toolAnnotateDim);
+        getItems().add(staticSpacer(gap));
+        getItems().add(toolAnnotateLine);
+        getItems().add(toolAnnotateArrow);
+    }
+
+    private Pane dynamicSpacer() {
+        var dynamicSpacer = new Pane();
+        HBox.setHgrow(dynamicSpacer, Priority.SOMETIMES);
+
+        return dynamicSpacer;
+    }
+
+    private Pane staticSpacer(int width) {
+        var spacer = new Pane();
+        spacer.setPrefWidth(width);
+
+        return spacer;
     }
 
     public void addToolSelectionListener(Consumer<EditorTool> listener) {

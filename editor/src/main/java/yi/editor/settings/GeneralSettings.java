@@ -46,8 +46,6 @@ public final class GeneralSettings extends SettingsModule {
     private void loadFromJson(JSONObject settings) {
         JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> selectedBoardThemeDirectory = value);
         JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> currentLayout = ContentLayout.getValue(value));
-
-
     }
 
     @Override

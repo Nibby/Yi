@@ -5,6 +5,28 @@
   -fx-background-color: #DDDDDD;
 }
 
+.menu-bar {
+  -fx-padding: 0px;
+  -fx-box-border: transparent;
+}
+
+.menu .label {
+  -fx-text-fill: #5C5C5C;
+}
+
+.menu:hover, .menu:selected {
+  -fx-background-color: #CCCCCC;
+}
+.menu:hover .label, .menu:selected .label {
+  -fx-text-fill: #5C5C5C;
+}
+
+.tool-bar .button, .tool-bar .toggle-button {
+  -fx-border-radius: 6px;
+  -fx-background-radius: 0px;
+  -fx-padding: 6px;
+}
+
 .button, .toggle-button {
   -fx-background-color: #DDDDDD;
 }
@@ -34,6 +56,10 @@
   -fx-border-color: transparent;
   -fx-background-color: #2B2B2B;
   -fx-background-insets: 0px;
+}
+
+* {
+  -fx-font-smoothing-type: gray;
 }
 
 /*# sourceMappingURL=skin.css.map */

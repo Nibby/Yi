@@ -23,7 +23,7 @@ public enum ContentLayout {
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
 
-            var board = frame.getBoardViewer().getComponent();
+            var board = frame.getBoardComponent();
             content.setCenter(board);
 
             // TODO: A footer component showing player name / color and move number
@@ -45,12 +45,12 @@ public enum ContentLayout {
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
 
-            var board = frame.getBoardViewer().getComponent();
-            var tree = frame.getTreeViewer().getComponent();
+            var board = frame.getBoardComponent();
+            var tree = frame.getTreeComponent();
 
             var splitPane = new SplitPane(board, tree);
             content.setCenter(splitPane);
-            SplitPane.setResizableWithParent(splitPane, false);
+            SplitPane.setResizableWithParent(tree, false);
 
             splitPane.getDividers().get(0).setPosition(0.7d);
             splitPane.getDividers().get(0).positionProperty().addListener(positionChanged -> {
@@ -58,6 +58,10 @@ public enum ContentLayout {
                 // Prevent sidebar covering too much board content
                 if (position < 0.7d) {
                     splitPane.setDividerPosition(0, 0.7d);
+                }
+
+                if (position > 0.85d) {
+                    splitPane.setDividerPosition(0, 0.85d);
                 }
             });
 

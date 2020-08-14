@@ -144,6 +144,10 @@ public final class GameBoardViewer implements Component {
         manager.view.backgroundImage = image;
     }
 
+    public Image getBackgroundImage() {
+        return manager.view.backgroundImage;
+    }
+
     public void setGridColor(Color gridColor) {
         manager.view.boardGridColor = gridColor;
     }
