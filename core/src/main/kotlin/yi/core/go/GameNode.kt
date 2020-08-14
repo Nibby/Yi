@@ -48,23 +48,7 @@ class GameNode constructor(val delta: StateDelta) {
      * @return true if the current node is a sequence continuation of the given node.
      */
     fun isContinuationOf(node: GameNode): Boolean {
-        var currentNode = this
-
-        val nodeDistance = node.moveNumber
-        var currentDistance = currentNode.moveNumber
-
-        while (!currentNode.isRoot()) {
-            if (currentNode == node)
-                return true
-
-            currentNode = currentNode.parent!! // Not root, should always have a parent
-            currentDistance--
-
-            if (currentDistance < nodeDistance)
-                return false
-        }
-
-        return false
+        return getMoveHistory().contains(node)
     }
 
     /**

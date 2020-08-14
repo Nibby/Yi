@@ -4,6 +4,7 @@ package yi.core.go
 
 import yi.core.go.rules.GoGameRulesHandler
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Primary model object representing one game of Go. The model is designed to be state-based --
@@ -49,6 +50,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             // Only count non-root and primary move updates for unique state
             val uniqueStateHistory = nodeHistory.subList(1, nodeHistory.size).filter { node -> node.getType() == GameNodeType.MOVE_PLAYED }
             this.stateHashHistory = uniqueStateHistory.map { node -> node.getStateHash() }
+        } else {
+            this.stateHashHistory = ArrayList()
         }
     }
 
@@ -598,7 +601,10 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         val readjustCurrentNode = _currentMove.isContinuationOf(node)
 
         // Since root cannot be deleted, there will always be a parent for the node to be removed.
-        val nodeToAdjustTo = if (readjustCurrentNode) node.parent!! else null
+        val nodeToAdjustTo = if (readjustCurrentNode) {
+            if (node.isRoot()) node
+            else node.parent!!
+        } else null
 
         gameTree.removeNodeSubtree(node)
 
