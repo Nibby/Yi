@@ -320,6 +320,19 @@ class PlayMoveTest {
         Assertions.assertEquals(firstResignNode, model.getCurrentNode(), "Current node is not at the original resign node.")
     }
 
+    @Test
+    fun `play move, remove it, play there again at root still works`() {
+        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
+        model.beginMoveSequence().playMove(0, 0)
+        model.removeNodeSubtree(model.getRootNode())
+
+        // Method under test
+        val result = model.submitMove(0, 0)
+
+        // Assert
+        Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
+    }
+
     // Only supports a 2x2 board for testing purposes
     private class TestingFourIntersectionXORHasher : GameStateHasher {
 
