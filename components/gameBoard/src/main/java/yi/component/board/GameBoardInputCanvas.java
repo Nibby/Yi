@@ -72,7 +72,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (e.getEventType() == KeyEvent.KEY_PRESSED) {
             manager.edit.getEditMode().onKeyPress(manager, e);
         }
-        e.consume();
+//        e.consume();
     }
 
     public void onScrollEvent(ScrollEvent e) {

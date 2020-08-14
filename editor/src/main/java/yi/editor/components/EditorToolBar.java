@@ -103,6 +103,7 @@ public class EditorToolBar extends ToolBar {
 
     private ToggleButton addEditToolButton(EditorTool editorTool, String iconResource, String tooltip) {
         var toggle = new ToggleButton();
+        toggle.setFocusTraversable(false);
         setUp(toggle, iconResource, tooltip);
 
         toggle.selectedProperty().addListener((observable, wasSelected, isSelected) -> {
