@@ -21,7 +21,8 @@ class GameNode constructor(val delta: StateDelta) {
     /** Reference to the root of the tree this node belongs to. */
     internal var root: GameNode? = null
 
-    internal var parent: GameNode? = null
+    var parent: GameNode? = null
+        internal set
 
     internal var children: ArrayList<GameNode> = ArrayList()
 

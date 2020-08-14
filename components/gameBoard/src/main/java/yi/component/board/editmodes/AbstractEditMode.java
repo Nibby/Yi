@@ -6,6 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
+import yi.component.board.edits.RemoveNodeEdit;
 
 import java.util.Optional;
 
@@ -29,6 +30,28 @@ public abstract class AbstractEditMode {
 
     public void onKeyPress(GameBoardManager manager, KeyEvent e) {
         handleTreeNavigation(manager, e);
+        handleNodeDeletion(manager, e);
+    }
+
+    private void handleNodeDeletion(GameBoardManager manager, KeyEvent e) {
+        if (e.getCode() == KeyCode.BACK_SPACE) {
+            var currentNode = manager.getGameModel().getCurrentNode();
+
+            if (!currentNode.isRoot()) {
+                var canRemove = false;
+
+                if (currentNode.isLastMove()) {
+                    canRemove = true;
+                } else {
+                    // TODO: Display a dialog
+                    canRemove = true;
+                }
+
+                if (canRemove) {
+                    manager.edit.recordAndApply(new RemoveNodeEdit(currentNode), manager);
+                }
+            }
+        }
     }
 
     protected void handleTreeNavigation(GameBoardManager manager, KeyEvent e) {

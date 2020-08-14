@@ -52,6 +52,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (!manager.edit.isEditable()) {
             return;
         }
+        requestFocus();
         retrieveCursorPosition(e.getX(), e.getY());
 
         if (manager.edit.isEditable()) {
@@ -71,6 +72,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (e.getEventType() == KeyEvent.KEY_PRESSED) {
             manager.edit.getEditMode().onKeyPress(manager, e);
         }
+        e.consume();
     }
 
     public void onScrollEvent(ScrollEvent e) {
