@@ -1,5 +1,6 @@
 package yi.editor;
 
+import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import yi.component.YiScene;
@@ -9,7 +10,6 @@ import yi.component.gametree.GameTreeViewerSettings;
 import yi.component.utilities.GuiUtilities;
 import yi.core.go.GameModel;
 import yi.editor.components.ContentLayout;
-import yi.editor.components.ControlToolBar;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorToolBar;
 import yi.editor.settings.Settings;
@@ -22,7 +22,6 @@ public class EditorFrame extends Stage {
     private final GlobalAccelerators globalAccelerators;
     private final EditorMenuBar menuBar;
     private final EditorToolBar editorToolBar;
-    private final ControlToolBar controlToolBar;
 
     private final GameBoardViewer boardViewer;
     private final GameTreeViewer treeViewer;
@@ -30,7 +29,7 @@ public class EditorFrame extends Stage {
     private GameModel gameModel;
 
     public EditorFrame(GameModel gameModel) {
-        this(gameModel, Settings.general.getCurrentLayout());
+        this(gameModel, ContentLayout.REVIEW);
     }
 
     public EditorFrame(GameModel gameModel, ContentLayout layout) {
@@ -38,15 +37,16 @@ public class EditorFrame extends Stage {
         this.globalAccelerators = new GlobalAccelerators();
         this.globalAccelerators.setUndoSystemHandler(new DefaultUndoSystemHandler());
 
-        boardViewer = new GameBoardViewer(Settings.getCurrentGameBoardSettings());
-        boardViewer.setGameModel(gameModel);
-
         treeViewerSettings = new GameTreeViewerSettings();
         treeViewerSettings.setBackgroundColor(GuiUtilities.getColor(43, 43, 43));
         treeViewerSettings.setNodeColor(GuiUtilities.getColor(90, 90, 90));
         treeViewerSettings.setNodeHoverColor(GuiUtilities.getColor(170, 170, 170));
         treeViewerSettings.setNodeInCurrentVariationColor(GuiUtilities.getColor(203, 203, 203));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
+
+        var boardSettings = Settings.getCurrentGameBoardSettings();
+        boardViewer = new GameBoardViewer(boardSettings);
+        boardViewer.setGameModel(gameModel);
 
         treeViewer = new GameTreeViewer(gameModel);
         treeViewer.setSettings(treeViewerSettings);
@@ -56,10 +56,8 @@ public class EditorFrame extends Stage {
         editorToolBar = new EditorToolBar();
         editorToolBar.addToolSelectionListener(this::setTool);
 
-        controlToolBar = new ControlToolBar();
-        controlToolBar.addLayoutOptionsValueListener(this::setLayout);
-
         setLayout(layout);
+//        initStyle(StageStyle.UNDECORATED);
     }
 
     private void setTool(EditorTool tool) {
@@ -73,18 +71,7 @@ public class EditorFrame extends Stage {
 
         var controlPane = new BorderPane();
         controlPane.setTop(menuBar);
-
-        var toolBarPane = new BorderPane();
-        {
-            toolBarPane.setCenter(editorToolBar);
-            toolBarPane.setLeft(controlToolBar);
-
-            toolBarPane.heightProperty().addListener(newHeight -> {
-                editorToolBar.setPrefHeight(toolBarPane.getHeight());
-                controlToolBar.setMinHeight(toolBarPane.getHeight());
-            });
-        }
-        controlPane.setCenter(toolBarPane);
+        controlPane.setBottom(editorToolBar);
 
         var container = new BorderPane();
         container.setTop(controlPane);
@@ -118,29 +105,24 @@ public class EditorFrame extends Stage {
         setMinHeight(minSize.getHeight());
     }
 
-    public GameBoardViewer getBoardViewer() {
-        return boardViewer;
+    public Parent getBoardComponent() {
+        return boardViewer.getComponent();
     }
 
-    public GameTreeViewer getTreeViewer() {
-        return treeViewer;
+    public Parent getTreeComponent() {
+        return treeViewer.getComponent();
     }
-
 
     class DefaultUndoSystemHandler implements GlobalAccelerators.UndoSystemHandler {
 
         @Override
         public void requestUndo() {
-            if (boardViewer != null) {
-                boardViewer.requestUndo();
-            }
+            boardViewer.requestUndo();
         }
 
         @Override
         public void requestRedo() {
-            if (boardViewer != null) {
-                boardViewer.requestRedo();
-            }
+            boardViewer.requestRedo();
         }
     }
 }
