@@ -28,6 +28,9 @@ sourceSets {
         java {
             srcDirs = ['src/test/unit', 'src/test/integration']
         }
+        resources {
+            srcDir 'resources'
+        }
     }
 }
 
