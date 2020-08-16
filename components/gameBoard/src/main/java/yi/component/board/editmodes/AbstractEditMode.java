@@ -40,7 +40,7 @@ public abstract class AbstractEditMode {
             if (!currentNode.isRoot()) {
                 var canRemove = false;
 
-                if (currentNode.isLastMove()) {
+                if (currentNode.isLastMoveInThisVariation()) {
                     canRemove = true;
                 } else {
                     // TODO: Display a dialog

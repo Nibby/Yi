@@ -78,9 +78,13 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * @return The result of the request. See [MoveSubmitResult] for more information.
      */
     fun submitMove(x: Int, y: Int): MoveSubmitResult {
+        return submitMove(getCurrentNode(), x, y)
+    }
+
+    fun submitMove(parent: GameNode, x: Int, y: Int): MoveSubmitResult {
         var identicalExistingMove: GameNode? = null
 
-        for (child in getCurrentNode().children) {
+        for (child in parent.children) {
             child.getPrimaryMove()?.let {
                 val moveX = it.x
                 val moveY = it.y
@@ -100,7 +104,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         val movePlayed: Boolean
 
         if (identicalExistingMove == null) {
-            val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, getCurrentNode(), true, Stone(x, y, getNextTurnStoneColor()))
+            val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, parent, Stone(x, y, getNextTurnStoneColor()))
 
             validationResult = validationAndNewNode.first
             node = validationAndNewNode.second
@@ -122,13 +126,32 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     }
 
     /**
-     * Forcefully submit a move to the game tree without validating it against the game rules. Use this method with prudence, as
-     * it may result in an erroneous game state.
+     * Forcefully submit a child move to the current move without validating it against the game rules. This means that
+     * the move will be placed at the position regardless if it is legal. Nearby captures will still be calculated.
+     *
+     * This method is often used by file importers to tolerate potentially corrupt or incorrect game states when
+     * importing a game file. Normal gameplay should submit moves using [submitMove] and its variants instead.
+     *
+     * Use this method with prudence, as it may result in an erroneous game state.
      */
     fun submitMoveWithoutValidation(x: Int, y: Int): MoveSubmitResult {
-        val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, getCurrentNode(), false, Stone(x, y, getNextTurnStoneColor()))
+        return submitMoveWithoutValidation(_currentMove, x, y, getNextTurnStoneColor())
+    }
+
+    /**
+     * Forcefully submit a child move to an existing node in the game tree without validating it against
+     * the game rules. This means that the move will be placed at the position regardless if it is legal.
+     * Nearby captures will still be calculated.
+     *
+     * This method is often used by file importers to tolerate potentially corrupt or incorrect game states when
+     * importing a game file. Normal gameplay should submit moves using [submitMove] and its variants instead.
+     *
+     * Use this method with prudence, as it may result in an erroneous game state.
+     */
+    fun submitMoveWithoutValidation(parent: GameNode, x: Int, y: Int, stoneColor: StoneColor): MoveSubmitResult {
+        val validationAndNewNode = GameMoveSubmitter.createMoveNodeForProposedMove(this, parent, Stone(x, y, stoneColor), ignoreRules = true)
         val newNode: GameNode? = validationAndNewNode.second
-        submitNode(newNode!!)
+        submitNode(parent, newNode!!)
 
         return MoveSubmitResult(MoveValidationResult.OK, newNode, true)
     }
@@ -204,10 +227,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
      * @return The newly created tree node for stone edits.
      */
     fun submitStoneEditNode(): GameNode {
-        val delta = StateDelta.forStoneEdit(getCurrentGameState().stateHash)
-        val node = GameNode(delta)
+        val node = GameMoveSubmitter.createMoveNodeForStoneEdit(getCurrentNode())
         submitNode(node)
-
         return node
     }
 
@@ -269,26 +290,12 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     }
 
     fun addStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
-        nodeToEdit.addStoneEdit(stoneEdit)
-        nodeToEdit.recomputeStateHash(stateHasher, boardWidth, boardHeight)
-
-        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
-    }
-
-    fun addStoneEdits(nodeToEdit: GameNode, stoneEdits: Collection<Stone>) {
-        stoneEdits.forEach { nodeToEdit.addStoneEdit(it) }
+        nodeToEdit.addStoneEdit(stoneEdit, stateHasher, boardWidth, boardHeight)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
     fun removeStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
-        nodeToEdit.removeStoneEdit(stoneEdit)
-        nodeToEdit.recomputeStateHash(stateHasher, boardWidth, boardHeight)
-        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
-    }
-
-    fun removeStoneEdits(nodeToEdit: GameNode, stoneEdits: Collection<Stone>) {
-        stoneEdits.forEach { nodeToEdit.removeStoneEdit(it) }
-        nodeToEdit.recomputeStateHash(stateHasher, boardWidth, boardHeight)
+        nodeToEdit.removeStoneEdit(stoneEdit, stateHasher, boardWidth, boardHeight)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
     }
 
