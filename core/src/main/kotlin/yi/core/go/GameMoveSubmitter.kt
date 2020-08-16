@@ -10,33 +10,29 @@ import kotlin.collections.HashSet
 internal object GameMoveSubmitter {
 
     /**
-     * Creates a new move node from the proposed move at a specified game position. If [validateBeforeCreate] is true, this method will first check
+     * Creates a new move node from the proposed move at a specified game position. If [ignoreRules] is true, this method will first check
      * if the proposed move complies with the game rules before creating the new node.
      *
      * @param gameModel The game to create the new move for.
      * @param currentPosition The parent node of the newly created move node. In other words, the game state on which to play the new move.
-     * @param validateBeforeCreate Whether to validate the move against the game rules first. If this is non-null, and the proposed move is not in compliance with game rules,
-     *                             then no new node be created.
      * @param proposedMove Information pertaining to the proposed move, see [Stone]
+     * @param ignoreRules Whether to ignore rule violation when evaluating this move. If this is true, and the proposed move is not in
+     * compliance with game rules, it will be played anyway. This is false by default.
      */
-    fun createMoveNodeForProposedMove(gameModel: GameModel, currentPosition: GameNode, validateBeforeCreate: Boolean, proposedMove: Stone)
+    fun createMoveNodeForProposedMove(gameModel: GameModel, currentPosition: GameNode, proposedMove: Stone, ignoreRules: Boolean = false)
             : Pair<MoveValidationResult, GameNode?> {
 
-        var validationResult = MoveValidationResult.OK
+        var validationResult: MoveValidationResult
         val update: StateDelta?
 
-        if (validateBeforeCreate) {
-            val validationAndDelta = validateProposedMoveAndCreateStateUpdate(gameModel, currentPosition, proposedMove)
-            validationResult = validationAndDelta.first
+        val validationAndDelta = validateProposedMoveAndCreateStateUpdate(gameModel, currentPosition, proposedMove, ignoreRules)
+        validationResult = validationAndDelta.first
 
-            if (validationResult != MoveValidationResult.OK) {
-                return Pair(validationResult, null)
-            }
-
-            update = validationAndDelta.second!!
-        } else {
-            update = StateDelta.forProposedMove(proposedMove, HashSet(), 0)
+        if (validationResult != MoveValidationResult.OK) {
+            return Pair(validationResult, null)
         }
+
+        update = validationAndDelta.second!!
 
         return Pair(validationResult, GameNode(update))
     }
@@ -51,30 +47,42 @@ internal object GameMoveSubmitter {
         return GameNode(resignStateUpdate)
     }
 
+    fun createMoveNodeForStoneEdit(currentPosition: GameNode): GameNode {
+        val stoneEditUpdate = StateDelta.forStoneEdit(currentPosition.getStateHash())
+        return GameNode(stoneEditUpdate)
+    }
+
     /**
      * Validates the [proposedMove] against the game rules and if the move is legal (as given by [MoveValidationResult.OK]), returns a [StateDelta]
      * representing the game state updates caused by playing this move on the game board.
      *
-     * @param gameModel Game information this move belongs to
-     * @param currentNode The position at which the new move will be validated
-     * @param proposedMove Information pertaining to the proposed move, see [Stone]
+     * @param gameModel Game information this move belongs to.
+     * @param currentNode The position at which the new move will be validated.
+     * @param proposedMove Information pertaining to the proposed move, see [Stone].
+     * @param ignoreRules Whether to ignore the game rules when validating this move.
      */
-    fun validateProposedMoveAndCreateStateUpdate(gameModel: GameModel, currentNode: GameNode, proposedMove: Stone)
+    fun validateProposedMoveAndCreateStateUpdate(gameModel: GameModel, currentNode: GameNode, proposedMove: Stone, ignoreRules: Boolean = false)
             : Pair<MoveValidationResult, StateDelta?> {
 
         val proposedMovePosition = proposedMove.getPosition(gameModel.boardWidth)
         if (proposedMovePosition < 0 || proposedMovePosition >= gameModel.getIntersectionCount())
             return Pair(MoveValidationResult.ERROR_POSITION_OUT_OF_BOUNDS, null)
 
-        val nextMoveNumber = gameModel.playedMoveHistory.size
-        val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber)
-        if (expectedStoneColorThisTurn != proposedMove.color)
-            return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)
-
         val currentGameState = gameModel.getGameState(currentNode)
         val currentGamePosition = currentGameState.boardPosition
-        if (currentGamePosition.getStoneColorAt(proposedMovePosition) != StoneColor.NONE)
-            return Pair(MoveValidationResult.ERROR_NON_EMPTY_INTERSECTION, null)
+
+        if (!ignoreRules) {
+            val nextMoveNumber = gameModel.playedMoveHistory.size
+            val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber)
+
+            if (expectedStoneColorThisTurn != proposedMove.color) {
+                return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)
+            }
+
+            if (currentGamePosition.getStoneColorAt(proposedMovePosition) != StoneColor.NONE) {
+                return Pair(MoveValidationResult.ERROR_NON_EMPTY_INTERSECTION, null)
+            }
+        }
 
         /*
             Procedure reference: https://www.red-bean.com/sgf/ff5/m_vs_ax.htm
@@ -118,11 +126,13 @@ internal object GameMoveSubmitter {
                              else
                                 HashSet() // If we capture opponent first, then even if the played move has no liberties, it's not a self capture
 
-        if (capturesOfOpponent.size == 0 && capturesOfSelf.size > 0) {
-            moveIsSuicidal = true
+        if (!ignoreRules) {
+            if (capturesOfOpponent.size == 0 && capturesOfSelf.size > 0) {
+                moveIsSuicidal = true
 
-            if (!gameModel.rules.allowSuicideMoves()) {
-                return Pair(MoveValidationResult.ERROR_MOVE_SUICIDAL, null)
+                if (!gameModel.rules.allowSuicideMoves()) {
+                    return Pair(MoveValidationResult.ERROR_MOVE_SUICIDAL, null)
+                }
             }
         }
 
@@ -144,29 +154,31 @@ internal object GameMoveSubmitter {
         val newStateHash = gameModel.stateHasher.computeUpdateHash(currentNode.getStateHash(), stoneUpdates)
         val stateHashHistory = gameModel.getStateHashHistory()
 
-        // Check if this new state repeats past board positions
-        if (stateHashHistory.contains(newStateHash)) {
-            // Determine the reason of repetition. The two important distinction is an illegal ko recapture vs generic position repeat.
-            // An illegal ko recapture is an immediate repetition of currentNode.parent state (2 states ago from the perspective of the new node)
-            // Whereas a generic position repeat is a repetition of any state other than a ko recapture.
-            val newStatePosition = stateHashHistory.size
-            val repeatHashPosition = stateHashHistory.indexOf(newStateHash)
+        if (!ignoreRules) {
+            // Check if this new state repeats past board positions
+            if (stateHashHistory.contains(newStateHash)) {
+                // Determine the reason of repetition. The two important distinction is an illegal ko recapture vs generic position repeat.
+                // An illegal ko recapture is an immediate repetition of currentNode.parent state (2 states ago from the perspective of the new node)
+                // Whereas a generic position repeat is a repetition of any state other than a ko recapture.
+                val newStatePosition = stateHashHistory.size
+                val repeatHashPosition = stateHashHistory.indexOf(newStateHash)
 
-            if (newStatePosition - repeatHashPosition == 2) {
-                // Lastly, make sure we're trying to capture 1 opponent stone this turn and during opponent's capture, it's also 1 stone, and
-                // that captured stone is at the same location we're trying to play.
-                val lastKoRecaptureCapturedStones = currentNode.getCaptures()
+                if (newStatePosition - repeatHashPosition == 2) {
+                    // Lastly, make sure we're trying to capture 1 opponent stone this turn and during opponent's capture, it's also 1 stone, and
+                    // that captured stone is at the same location we're trying to play.
+                    val lastKoRecaptureCapturedStones = currentNode.getCaptures()
 
-                // Be as concise as possible because edge case 1x1 board self-capture can also result in the same conditions
-                // and it does not qualify as a ko recapture.
-                if (lastKoRecaptureCapturedStones.size == 1
-                        && lastKoRecaptureCapturedStones.iterator().next() == proposedMove
-                        && currentNode.getPrimaryMove()!!.color == proposedMove.color.getOpponent()) {
-                    return Pair(MoveValidationResult.ERROR_KO_RECAPTURE, null)
+                    // Be as concise as possible because edge case 1x1 board self-capture can also result in the same conditions
+                    // and it does not qualify as a ko recapture.
+                    if (lastKoRecaptureCapturedStones.size == 1
+                            && lastKoRecaptureCapturedStones.iterator().next() == proposedMove
+                            && currentNode.getPrimaryMove()!!.color == proposedMove.color.getOpponent()) {
+                        return Pair(MoveValidationResult.ERROR_KO_RECAPTURE, null)
+                    }
                 }
-            }
 
-            return Pair(MoveValidationResult.ERROR_POSITION_REPEAT, null)
+                return Pair(MoveValidationResult.ERROR_POSITION_REPEAT, null)
+            }
         }
 
         val update = StateDelta.forProposedMove(proposedMove, capturedStones, newStateHash)

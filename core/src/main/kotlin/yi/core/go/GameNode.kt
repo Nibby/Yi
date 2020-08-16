@@ -61,7 +61,7 @@ class GameNode constructor(val delta: StateDelta) {
      *
      * @return true if this node is the last move in its branch.
      */
-    fun isLastMove(): Boolean = parent != null && children.size == 0
+    fun isLastMoveInThisVariation(): Boolean = parent != null && children.size == 0
 
     /**
      *
@@ -165,16 +165,19 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.stoneEdits
     }
 
-    internal fun addStoneEdit(stoneState: Stone) {
+    internal fun addStoneEdit(stoneState: Stone, stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
         delta.stoneEdits.add(stoneState)
+        recomputeStateHash(stateHasher, boardWidth, boardHeight)
     }
 
-    internal fun addStoneEdits(stoneStates: Collection<Stone>) {
-        stoneStates.forEach { stoneState -> addStoneEdit(stoneState) }
+    internal fun addStoneEdits(stoneStates: Collection<Stone>, stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
+        stoneStates.forEach { stoneState -> delta.stoneEdits.add(stoneState) }
+        recomputeStateHash(stateHasher, boardWidth, boardHeight)
     }
 
-    internal fun removeStoneEdit(stoneEdit: Stone) {
+    internal fun removeStoneEdit(stoneEdit: Stone, stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
         delta.stoneEdits.remove(stoneEdit)
+        recomputeStateHash(stateHasher, boardWidth, boardHeight)
     }
 
     internal fun addAnnotation(annotation: Annotation) {
@@ -239,6 +242,42 @@ class GameNode constructor(val delta: StateDelta) {
         }
 
         return null
+    }
+
+    /**
+     * Stores a series of key value pairs that are not semantically meaningful to this application, but is
+     * present in the node data (usually from an externally loaded file). This way the data can be persisted
+     * when the user saves their document from this application.
+     */
+    fun putMetadata(key: String, value: String) {
+        putMetadata(key, listOf(value))
+    }
+
+    /**
+     * Stores a series of key value pairs that are not semantically meaningful to this application, but is
+     * present in the node data (usually from an externally loaded file). This way the data can be persisted
+     * when the user saves their document from this application.
+     */
+    fun putMetadata(key: String, value: List<String>) {
+        delta.metadata[key] = value
+    }
+
+    /**
+     * Stores a series of key value pairs that are not semantically meaningful to this application, but is
+     * present in the node data (usually from an externally loaded file). This way the data can be persisted
+     * when the user saves their document from this application.
+     */
+    fun putMetadata(data: Map<String, List<String>>) {
+        for (key in data.keys) {
+            putMetadata(key, data.getValue(key))
+        }
+    }
+
+    /**
+     * @return The metadata property with the specified key from this node. If no such property exists, returns an empty list.
+     */
+    fun getMetadata(key: String): List<String> {
+        return delta.metadata.getOrDefault(key, listOf())
     }
 
     internal fun recomputeStateHash(stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {

@@ -14,6 +14,7 @@ class StateDelta {
     internal var stateHash: Long
     internal val stoneEdits: HashSet<Stone>
     internal val annotations: HashSet<Annotation>
+    internal val metadata: HashMap<String, List<String>>
 
     /**
      * @param primaryMove The main move represented by the [GameNode], this is added to the stone delta if not null.
@@ -35,6 +36,7 @@ class StateDelta {
         this.stateHash = stateHash
         this.stoneEdits = stoneDelta
         this.annotations = annotations
+        this.metadata = HashMap()
 
         this.primaryMove?.let {
             stoneDelta.add(it)

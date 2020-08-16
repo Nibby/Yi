@@ -48,7 +48,7 @@ interface FileFormatHandler {
      * @apiNote Each format handler is a singleton accessible from [FileFormat],
      * therefore operations must be designed to be stateless.
      */
-    fun load(file: InputStream): GameModel
+    fun doImport(file: InputStream): GameModel
 
     /**
      * Saves the game model to the destination file, replacing the original file if it exists.
@@ -59,5 +59,5 @@ interface FileFormatHandler {
      * @apiNote Each format handler is a singleton accessible from [FileFormat],
      * therefore operations must be designed to be stateless.
      */
-    fun save(gameModel: GameModel, destination: OutputStream)
+    fun doExport(gameModel: GameModel, destination: OutputStream)
 }
