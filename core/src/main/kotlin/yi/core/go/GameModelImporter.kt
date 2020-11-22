@@ -27,9 +27,9 @@ object GameModelImporter {
      * @param resourceClass Reference class to supply the classpath used to find the resource.
      * @return Parsed game model from the specified file.
      *
-     * @throws BadFormatException If the file content is corrupted or does not comply with the current format.
+     * @throws GameParseException If the file content is corrupted or does not comply with the current format.
      */
-    @Throws(BadFormatException::class)
+    @Throws(GameParseException::class)
     fun fromInternalResources(fileResourceUrl: String, format: FileFormat, resourceClass: Class<*>): GameModel {
         val handler = format.getHandler()
         val inputStream = resourceClass.getResourceAsStream(fileResourceUrl)
@@ -52,12 +52,12 @@ object GameModelImporter {
      * @param filePath The path to the game model data file.
      * @return [GameModel] that represents the game data in the file.
      *
-     * @throws BadFormatException If the file is corrupted, or a fatal file format error occurs.
+     * @throws GameParseException If the file is corrupted, or a fatal file format error occurs.
      * @throws UnsupportedOperationException If the file format is ambiguous.
      * Use a [format-specific][.fromFile] version to resolve this issue.
      * @throws IOException Issues with identifying or setting up the input stream for the file.
      */
-    @Throws(BadFormatException::class, IOException::class)
+    @Throws(GameParseException::class, IOException::class)
     fun fromFile(filePath: Path): GameModel {
         val name = filePath.fileName.toString()
         val extensionDot = name.lastIndexOf(".")
@@ -85,15 +85,15 @@ object GameModelImporter {
      * @param format Format of the game file.
      * @return [GameModel] that represents the game data in the file.
      *
-     * @throws BadFormatException If the file is corrupted, or a fatal file format error occurs.
+     * @throws GameParseException If the file is corrupted, or a fatal file format error occurs.
      * @throws IOException Issues with identifying or setting up the input stream for the file.
      */
-    @Throws(BadFormatException::class, IOException::class)
+    @Throws(GameParseException::class, IOException::class)
     fun fromFile(filePath: Path, format: FileFormat): GameModel {
         return _fromFile(filePath, format.getHandler())
     }
 
-    @Throws(BadFormatException::class, IOException::class)
+    @Throws(GameParseException::class, IOException::class)
     private fun _fromFile(filePath: Path, handler: FileFormatHandler): GameModel {
         val inputStream = Files.newInputStream(filePath, StandardOpenOption.READ)
         return handler.doImport(inputStream)
