@@ -1,11 +1,12 @@
 package yi.component.board;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import yi.core.go.GameModel;
+import yi.core.go.GameModelImporter;
+import yi.core.go.GameParseException;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -39,12 +40,12 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     @Override
-    public void onGameModelSet(GameModel model, GameBoardManager manager) {
+    public void onGameModelSet(GameModel newModel, GameBoardManager manager) {
 
     }
 
     @Override
-    public void onGameUpdate(GameModel game, GameBoardManager manager) {
+    public void onGameUpdate(GameModel gameModel, GameBoardManager manager) {
 
     }
 
@@ -72,7 +73,6 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (e.getEventType() == KeyEvent.KEY_PRESSED) {
             manager.edit.getEditMode().onKeyPress(manager, e);
         }
-//        e.consume();
     }
 
     public void onScrollEvent(ScrollEvent e) {

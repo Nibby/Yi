@@ -23,7 +23,7 @@ abstract class GameBoardCanvas extends Canvas {
 
     protected abstract void _render(GraphicsContext g, GameBoardManager manager);
 
-    public abstract void onGameModelSet(GameModel model, GameBoardManager manager);
+    public abstract void onGameModelSet(GameModel newModel, GameBoardManager manager);
 
-    public abstract void onGameUpdate(GameModel game, GameBoardManager manager);
+    public abstract void onGameUpdate(GameModel gameModel, GameBoardManager manager);
 }

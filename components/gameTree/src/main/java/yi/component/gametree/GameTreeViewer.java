@@ -29,7 +29,7 @@ public final class GameTreeViewer implements Component {
     private GameTreeStructure treeStructure;
     private final GameTreeElementSize elementSize;
 
-    public GameTreeViewer(GameModel gameModel) {
+    public GameTreeViewer() {
         canvas = new GameTreeCanvas();
         canvas.addInputHandler(new CanvasInputHandler());
 
@@ -43,9 +43,6 @@ public final class GameTreeViewer implements Component {
         });
 
         camera.addOffsetChangeListener(this::render);
-
-        setGameModel(gameModel);
-        updateCameraAndRender(gameModel.getCurrentNode());
     }
 
     public void setSettings(GameTreeViewerSettings settings) {
@@ -88,6 +85,8 @@ public final class GameTreeViewer implements Component {
         this.gameModel.onCurrentNodeChange().addListener(currentMoveChangeListener);
         this.gameModel.onNodeAdd().addListener(treeStructureChangeListener);
         this.gameModel.onNodeRemove().addListener(treeStructureChangeListener);
+
+        updateCameraAndRender(model.getCurrentNode());
     }
 
     @Override

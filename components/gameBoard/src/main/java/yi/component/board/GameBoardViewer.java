@@ -1,18 +1,20 @@
 package yi.component.board;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
 import yi.component.board.editmodes.AbstractEditMode;
-import yi.core.go.EventListener;
-import yi.core.go.GameModel;
-import yi.core.go.NodeEvent;
+import yi.core.go.*;
 
+import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.function.Function;
 
 /**
  * The core interface component that handles the display of the game board, as well as user input to browse
@@ -26,7 +28,6 @@ public final class GameBoardViewer implements Component {
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
-    private GameModel gameModel;
 
     public GameBoardViewer() {
         this(new GameBoardSettings());
@@ -40,14 +41,36 @@ public final class GameBoardViewer implements Component {
 
         container = new CanvasContainer(content);
         container.addSizeUpdateListener(newSize -> {
-            if (gameModel != null) {
-                manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), gameModel);
+            if (manager.getGameModel() != null) {
+                manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), manager.getGameModel());
                 renderAll();
             }
         });
 
         setEditable(true);
         applySettings(settings);
+    }
+
+    public void setDragAndDropBehaviour(Function<List<File>, Boolean> dragEventConsumer) {
+        inputCanvas.setOnDragOver(event -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        inputCanvas.setOnDragDropped(event -> {
+            var dragboard = event.getDragboard();
+            var success = false;
+
+            if (dragboard.hasFiles()) {
+                var draggedFiles = dragboard.getFiles();
+                success = dragEventConsumer.apply(draggedFiles);
+            }
+
+            event.setDropCompleted(success);
+            event.consume();
+        });
     }
 
     private void renderAll() {
@@ -59,22 +82,21 @@ public final class GameBoardViewer implements Component {
     /**
      * Invoked when the game board should display a new game model.
      *
-     * @param game The game model to subscribe to
+     * @param newModel The game model to subscribe to
      */
-    public void setGameModel(GameModel game) {
-        if (this.gameModel != null) {
-            this.gameModel.onCurrentNodeChange().removeListener(updateAllCanvas);
-            this.gameModel.onCurrentNodeDataUpdate().removeListener(updateAllCanvas);
+    public void setGameModel(GameModel newModel) {
+        var currentModel = manager.getGameModel();
+        if (currentModel != null) {
+            currentModel.onCurrentNodeChange().removeListener(updateAllCanvas);
+            currentModel.onCurrentNodeDataUpdate().removeListener(updateAllCanvas);
         }
 
-        this.gameModel = game;
+        newModel.onCurrentNodeChange().addListener(updateAllCanvas);
+        newModel.onCurrentNodeDataUpdate().addListener(updateAllCanvas);
 
-        this.gameModel.onCurrentNodeChange().addListener(updateAllCanvas);
-        this.gameModel.onCurrentNodeDataUpdate().addListener(updateAllCanvas);
-
-        manager.setBoardCanvasSize(container.getWidth(), container.getHeight(), game);
-        manager.setGameModel(game);
-        content.forEach(canvas -> canvas.onGameModelSet(game, manager));
+        manager.setBoardCanvasSize(container.getWidth(), container.getHeight(), newModel);
+        manager.setGameModel(newModel);
+        content.forEach(canvas -> canvas.onGameModelSet(newModel, manager));
         renderAll();
     }
 
@@ -106,8 +128,8 @@ public final class GameBoardViewer implements Component {
      *
      */
     void update() {
-        manager.onGameUpdate(this.gameModel);
-        content.forEach(canvas -> canvas.onGameUpdate(this.gameModel, this.manager));
+        manager.onGameUpdate(manager.getGameModel());
+        content.forEach(canvas -> canvas.onGameUpdate(manager.getGameModel(), this.manager));
     }
 
     public void requestUndo() {
