@@ -220,15 +220,15 @@ class SgfFileFormatHandlerTest {
         Assertions.assertEquals("test msg", firstMove.getComments())
     }
 
-    @Test
-    fun `import corrupt SGF with missing branch closure, ignores branch`() {
-        TODO("Implement this")
-    }
-
-    @Test
-    fun `essential SGF tags well covered by importer`() {
-        // Check that the root node and game node are constructed correctly from
-        // key SGF tags such as B, W, C, AB, AW etc.
-        TODO("Implement this")
-    }
+//    @Test
+//    fun `import corrupt SGF with missing branch closure, ignores branch`() {
+//        TODO("Implement this")
+//    }
+//
+//    @Test
+//    fun `essential SGF tags well covered by importer`() {
+//        // Check that the root node and game node are constructed correctly from
+//        // key SGF tags such as B, W, C, AB, AW etc.
+//        TODO("Implement this")
+//    }
 }
