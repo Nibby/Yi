@@ -8,10 +8,23 @@ import yi.component.utilities.SystemUtilities;
 import static javafx.scene.input.KeyCombination.ModifierValue.DOWN;
 import static javafx.scene.input.KeyCombination.ModifierValue.UP;
 
+/**
+ * Manages a list of shortcut-keys that can be triggered across the application,
+ * regardless of the currently focused component. These actions should be reserved
+ * for the most common operations only, such as save, new document etc.
+ * <p/>
+ * These accelerators must be installed once for each new {@link Scene} through
+ * {@link #installFor(Scene)}, ideally prior to setting the scene visible.
+ */
 public final class GlobalAccelerators {
 
     private UndoSystemHandler undoSystem;
 
+    /**
+     * Installs all global accelerator hotkeys for the scene.
+     *
+     * @param scene Scene to have global accelerators applied.
+     */
     void installFor(Scene scene) {
         installUndoSystemAccelerators(scene);
     }
@@ -42,6 +55,10 @@ public final class GlobalAccelerators {
         this.undoSystem = undoSystem;
     }
 
+    /**
+     * Responds to the undo and redo action requests triggered by the global accelerator
+     * hotkey.
+     */
     interface UndoSystemHandler {
         void requestUndo();
         void requestRedo();
