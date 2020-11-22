@@ -11,8 +11,10 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
-/*
-    See SGF format specification: https://www.red-bean.com/sgf/user_guide/index.html
+/**
+ * Parses game data of Smart Go Format (SGF) into a [GameModel]
+ *
+ * See SGF format specification at: https://www.red-bean.com/sgf/user_guide/index.html
  */
 internal class SgfFileFormatHandler : FileFormatHandler {
 
@@ -65,15 +67,16 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private const val SGF_MARKUP_ARROW = "AR"
         private const val SGF_MARKUP_LINE = "LN"
         private const val SGF_MARKUP_SL = "SL" // Old, TODO: What's this?
+        private const val SGF_COMMENT = "C"
     }
 
     private object SgfImporter {
+
         fun doImport(reader: InputStreamReader): GameModel {
             var charCode: Int
             var char: Char? = null
             var gameModel: GameModel? = null
 
-            // Parsing steps
             val branchStack = Stack<SgfBranch>()
             var readCharNextLoop = true
 
@@ -100,17 +103,15 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     val nodeData = readResult.first
                     char = readResult.second
 
-                    val organizedNodeData = organizeNodeData(nodeData)
-//                    println("Read $nodeData")
-//                    println("$organizedNodeData")
-//                    println()
+                    val organizedNodeData = asKeyValuePairs(nodeData)
+                    removeMalformedData(organizedNodeData);
 
                     // We're already at the next token, so we want the next loop to evaluate this.
                     readCharNextLoop = false
 
                     if (gameModel == null) {
                         if (branchStack.size != 1) {
-                            throw BadFormatException("No main branch defined before providing node definition")
+                            throw GameParseException("No main branch defined before providing node definition")
                         }
 
                         // Root node, create the model and setup the rest
@@ -130,7 +131,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             } while (true)
 
             if (gameModel == null) {
-                throw BadFormatException("Premature end of file")
+                throw GameParseException("Premature end of file")
             }
 
             return gameModel
@@ -162,12 +163,13 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
                 val gameRules = GameRules.parse(ruleset[0]).orElse(GameRules.CHINESE)
                 val gameModel = GameModel(width, height, gameRules)
+                gameModel.getRootNode().putMetadata(rootNodeData.getAsHashMap())
 
                 // TODO: Enumerate other node data here
 
                 return gameModel
             } catch (e: NumberFormatException) {
-                throw BadFormatException("Invalid board size values: $boardSize")
+                throw GameParseException("Invalid board size values: $boardSize")
             }
         }
 
@@ -175,6 +177,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             val gameNode = parseNodeType(nodeData, parentNode, gameModel)
             parseHelperStones(nodeData, gameNode, gameModel)
             parseAnnotations(nodeData, gameNode, gameModel)
+
+            gameNode.delta.comments = nodeData.getOrDefault(SGF_COMMENT, listOf(""))[0]
 
             val unusedData = nodeData.getUnusedData()
             gameNode.putMetadata(unusedData)
@@ -266,10 +270,14 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         }
 
         /*
-            Yi makes some arbitrary distinctions between different node types, where each node type represents the main information stored on that node.
-            This information is interpreted from the presence (or absence) of notable tag keys and values.
+            Yi makes some arbitrary distinctions between different node types,
+            where each node type represents the main information stored on that node.
 
-            This step must be performed first before parsing other type of node information as this will create the node itself.
+            This information is interpreted from the presence (or absence) of notable
+            tag keys and values.
+
+            This step must be performed first before parsing other type of node
+            information as this will create the node itself.
          */
         private fun parseNodeType(nodeData: SgfNodeData, parentNode: GameNode, gameModel: GameModel): GameNode {
             var gameNode: GameNode? = null
@@ -323,10 +331,10 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         }
 
         /**
-         * Interprets the raw node data by sorting them into a data structure that allows programmatic retrieval of
-         * individual key-value pairs.
+         * Interprets the raw node data by sorting them into a data structure
+         * that allows programmatic retrieval of individual key-value pairs.
          */
-        private fun organizeNodeData(nodeData: String): SgfNodeData {
+        private fun asKeyValuePairs(nodeData: String): SgfNodeData {
             val result = HashMap<String, ArrayList<String>>()
             var readingKeyRatherThanValue = true
 
@@ -361,8 +369,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         // such as the arrow AR[aa:bb] where the values represent
                         // start-to-end coordinates for the two-point annotation. In this case
                         // we will store the values together as one entry.
-                        val key = tagKey.toString()
-                        val value = tagValue.toString()
+                        val key = tagKey.toString().trim()
+                        var value = tagValue.toString()
 
                         result.putIfAbsent(key, ArrayList())
                         result[key]!!.add(value)
@@ -387,12 +395,34 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             return SgfNodeData(result)
         }
 
+        /*
+            Removes tags with data that does not conform to the expected format so that
+            valid data tags are still loaded.
+         */
+        private fun removeMalformedData(organizedNodeData: SgfNodeData) {
+            for (formatConstraint in SgfTagFormatConstraints.values()) {
+                val tagKey = formatConstraint.tagKey
+                if (organizedNodeData.containsKey(tagKey)) {
+                    val valuesToRemove = ArrayList<String>()
+                    for (value in organizedNodeData[tagKey]) {
+                        if (!formatConstraint.isValueValid(value)) {
+                            valuesToRemove.add(value)
+                        }
+                    }
+                    for (value in valuesToRemove) {
+                        organizedNodeData.removeValueForKey(tagKey, value)
+                    }
+                }
+            }
+        }
+
         /**
-         * Reads a sequence of String from an input stream until one of the delimiters is reached.
+         * Reads a sequence of characters from an input stream until one of the
+         * delimiters is reached.
          *
-         * @return A result pair where the first element is the String that is read, including the
-         * delimiter. The second element is the delimiter character the operation stopped at for quick
-         * access.
+         * @return A result pair where the first element is the String that is read,
+         * including the terminal delimiter. The second element is the delimiter character
+         * the read operation stopped at, for quick access.
          */
         fun readUntil(reader: InputStreamReader, vararg delimiters: Char): Pair<String, Char> {
             var charCode: Int
@@ -402,7 +432,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             do {
                 charCode = reader.read()
                 if (charCode == -1) {
-                    throw BadFormatException("Premature end of file")
+                    throw GameParseException("Premature end of file")
                 }
                 char = charCode.toChar()
                 buffer.append(char)
@@ -411,10 +441,12 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             return Pair(buffer.toString(), char)
         }
 
-        private val SGF_COORDINATES = "abcdefghijklmnopqrstuvwxyz"
+        private const val SGF_COORDINATES = "abcdefghijklmnopqrstuvwxyz"
+
         fun convertCoordinates(sgfCoords: String): Array<Int> {
             val x = SGF_COORDINATES.indexOf(sgfCoords.toLowerCase()[0])
             val y = SGF_COORDINATES.indexOf(sgfCoords.toLowerCase()[1])
+            // TODO: If the co-ordinate data is malformed, x,y may be negative values. Handle this.
             return arrayOf(x, y)
         }
 
@@ -425,7 +457,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         // This is essentially a wrapper for the layers of ugly generics so that we don't have to
         // pass the raw generic types everywhere. Plus if we decide to change the data structure,
         // the usage won't be affected.
-        private class SgfNodeData(private val data: Map<String, List<String>>) {
+        private class SgfNodeData(private val data: HashMap<String, ArrayList<String>>) {
 
             // Keep track of the data tags that we've used to store meaningful information so that
             // we can store the unused tags as client-side metadata. This way we don't lose information
@@ -439,13 +471,21 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
             fun getOrDefault(key: String, defaultValue: List<String>): List<String> {
                 usedData.add(key)
-                return data.getOrDefault(key, defaultValue)
+                return if (defaultValue is ArrayList<String>) {
+                    data.getOrDefault(key, defaultValue)
+                } else {
+                    data.getOrDefault(key, ArrayList(defaultValue))
+                }
             }
 
             fun containsKey(key: String): Boolean {
                 return data.containsKey(key)
             }
 
+            /**
+             * @return Map of tag keys and their corresponding values that are not used
+             * to construct the game node.
+             */
             fun getUnusedData(): Map<String, List<String>> {
                 val result = HashMap<String, List<String>>()
                 for (key in data.keys) {
@@ -456,12 +496,141 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 return result
             }
 
+            /**
+             * Removes the key and all its values from the node data.
+             */
+            fun removeKey(tagKey: String) {
+                data.remove(tagKey)
+            }
+
+            /**
+             * Removes the value for a key. If multiple values are equal to
+             * the value to be removed, then all of them are removed. If after
+             * this operation the key has no more values, then the key is
+             * removed also.
+             */
+            fun removeValueForKey(tagKey: String, valueToRemove: String) {
+                if (containsKey(tagKey)) {
+                    while (data[tagKey]!!.contains(valueToRemove)) {
+                        println("Removed $valueToRemove")
+                        data[tagKey]!!.remove(valueToRemove)
+                    }
+
+                    if (data[tagKey]!!.isEmpty()) {
+                        removeKey(tagKey)
+                    }
+                }
+            }
+
             override fun toString(): String {
                 return data.toString()
+            }
+
+            fun getAsHashMap(): Map<String, List<String>> {
+                return data
             }
         }
 
         private class SgfBranch(var parentNode: GameNode?, var latestNode: GameNode?)
+
+
+        /**
+         * Defines the value format of some SGF tags so that its validity can be verified.
+         * Invalid SGF tags are skipped to avoid creating a bad game tree from malformed
+         * game file data.
+         */
+        private enum class SgfTagFormatConstraints(val tagKey: String, vararg val acceptableValueFormats: SgfTagValueType) {
+
+            B("B", SgfTagValueType.Empty, SgfTagValueType.OnePointLocation),
+            W("W", SgfTagValueType.Empty, SgfTagValueType.OnePointLocation),
+
+            MA("MA", SgfTagValueType.OnePointLocation),
+            SQ("SQ", SgfTagValueType.OnePointLocation),
+            TR("TR", SgfTagValueType.OnePointLocation),
+            CR("CR", SgfTagValueType.OnePointLocation),
+            DD("DD", SgfTagValueType.OnePointLocation),
+            LB("LB", SgfTagValueType.LabelAnnotation),
+
+            AR("AR", SgfTagValueType.TwoPointLocation),
+            LN("LN", SgfTagValueType.TwoPointLocation),
+
+            KM("KM", SgfTagValueType.Numerical)
+
+            ;
+
+            fun isValueValid(valueToTest: String): Boolean {
+                for (format in acceptableValueFormats) {
+                    if (format.isValueValid(valueToTest)) {
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+
+        private enum class SgfTagValueType {
+            Empty {
+                override fun isValueValid(valueToTest: String): Boolean {
+                    return valueToTest.isEmpty()
+                }
+            },
+
+
+            OnePointLocation {
+                override fun isValueValid(valueToTest: String): Boolean {
+                    return valueToTest.length == 2 // format "aa"
+                            && isValidCoordinateValue(valueToTest[0])
+                            && isValidCoordinateValue(valueToTest[1])
+                }
+            },
+
+            TwoPointLocation {
+                override fun isValueValid(valueToTest: String): Boolean {
+                    return valueToTest.length == 5 // format "aa:bb"
+                            && isValidCoordinateValue(valueToTest[0])
+                            && isValidCoordinateValue(valueToTest[1])
+                            && valueToTest[2] == ':'
+                            && isValidCoordinateValue(valueToTest[3])
+                            && isValidCoordinateValue(valueToTest[4])
+
+                }
+            },
+
+            LabelAnnotation {
+                override fun isValueValid(valueToTest: String): Boolean {
+                    val dataSegments = valueToTest.split(":")
+                    return dataSegments.size == 2 // format "ab:TextData"
+                            && dataSegments[0].length == 2
+                            && isValidCoordinateValue(valueToTest[0])
+                            && isValidCoordinateValue(valueToTest[1])
+                            && valueToTest[2] == ':'
+                            && dataSegments[1].isNotEmpty()
+                }
+            },
+
+            Numerical {
+                override fun isValueValid(valueToTest: String): Boolean {
+                    return try {
+                        java.lang.Double.parseDouble(valueToTest)
+                        true
+                    } catch (e: NumberFormatException) {
+                        false
+                    }
+                }
+            }
+
+            /*
+                Fields like "Comment" are purely textual, and have no format constraints,
+                so we don't list them here.
+             */
+            ;
+
+            abstract fun isValueValid(valueToTest: String): Boolean
+
+            fun isValidCoordinateValue(value: Char): Boolean {
+                return SGF_COORDINATES.indexOf(value) >= 0
+            }
+        }
     }
 
     private object SgfExporter {

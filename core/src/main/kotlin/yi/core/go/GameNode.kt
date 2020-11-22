@@ -245,6 +245,14 @@ class GameNode constructor(val delta: StateDelta) {
     }
 
     /**
+     *
+     * @return Comments associated with this move, or empty string if none.
+     */
+    fun getComments(): String {
+        return delta.comments
+    }
+
+    /**
      * Stores a series of key value pairs that are not semantically meaningful to this application, but is
      * present in the node data (usually from an externally loaded file). This way the data can be persisted
      * when the user saves their document from this application.
@@ -274,9 +282,30 @@ class GameNode constructor(val delta: StateDelta) {
     }
 
     /**
-     * @return The metadata property with the specified key from this node. If no such property exists, returns an empty list.
+     * This method is used for cases where exactly one metadata value is expected
+     * for the given key. For scenarios where multiple values may be present, use
+     * [getMetadataMultiValue] instead.
+     *
+     * This method will generate an [IllegalArgumentException] if more than one value
+     * is present for the key.
+     *
+     * @return The one and only metadata value associated with this key.
      */
-    fun getMetadata(key: String): List<String> {
+    fun getMetadataSingleValue(key: String): String? {
+        val values = getMetadataMultiValue(key)
+
+        if (values.size > 1) {
+            throw IllegalArgumentException("More than 1 value present for key \"$key\"")
+        }
+
+        return if (values.isEmpty()) null else values[0]
+    }
+
+    /**
+     * @return All the values associated with this metadata key on this node.
+     *         If no such property exists, returns an empty list.
+     */
+    fun getMetadataMultiValue(key: String): List<String> {
         return delta.metadata.getOrDefault(key, listOf())
     }
 
