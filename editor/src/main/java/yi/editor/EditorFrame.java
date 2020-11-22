@@ -3,16 +3,21 @@ package yi.editor;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
 import yi.component.gametree.GameTreeViewerSettings;
 import yi.component.utilities.GuiUtilities;
 import yi.core.go.GameModel;
+import yi.core.go.GameModelImporter;
+import yi.core.go.GameParseException;
 import yi.editor.components.ContentLayout;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorToolBar;
 import yi.editor.settings.Settings;
+
+import java.io.IOException;
 
 /**
  * The main frame for an editor session.
@@ -46,9 +51,9 @@ public class EditorFrame extends Stage {
 
         var boardSettings = Settings.getCurrentGameBoardSettings();
         boardViewer = new GameBoardViewer(boardSettings);
-        boardViewer.setGameModel(gameModel);
+        enableDragAndDropToOpenFile(boardViewer);
 
-        treeViewer = new GameTreeViewer(gameModel);
+        treeViewer = new GameTreeViewer();
         treeViewer.setSettings(treeViewerSettings);
 
         menuBar = new EditorMenuBar();
@@ -57,7 +62,32 @@ public class EditorFrame extends Stage {
         editorToolBar.addToolSelectionListener(this::setTool);
 
         setLayout(layout);
+        setGameModel(gameModel);
 //        initStyle(StageStyle.UNDECORATED);
+    }
+
+    private void enableDragAndDropToOpenFile(GameBoardViewer boardViewer) {
+        boardViewer.setDragAndDropBehaviour(files -> {
+            var success = false;
+            if (files.size() == 1) {
+                var file = files.get(0);
+                try {
+                    var importedGameModel = GameModelImporter.INSTANCE.fromFile(file.toPath());
+                    setGameModel(importedGameModel);
+                } catch (GameParseException | IOException e) {
+                    // TODO: Handle this in an error dialog so that users know something
+                    //       went wrong with their file rather than throwing a stack trace
+                    //       in their faces.
+                    e.printStackTrace();
+                }
+            }
+            return success;
+        });
+    }
+
+    public void setGameModel(@NotNull GameModel gameModel) {
+        boardViewer.setGameModel(gameModel);
+        treeViewer.setGameModel(gameModel);
     }
 
     private void setTool(EditorTool tool) {

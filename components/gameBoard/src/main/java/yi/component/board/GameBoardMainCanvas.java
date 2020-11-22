@@ -215,12 +215,12 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     }
 
     @Override
-    public void onGameModelSet(GameModel model, GameBoardManager manager) {
+    public void onGameModelSet(GameModel newModel, GameBoardManager manager) {
 
     }
 
     @Override
-    public void onGameUpdate(GameModel game, GameBoardManager manager) {
+    public void onGameUpdate(GameModel gameModel, GameBoardManager manager) {
         render(manager);
     }
 

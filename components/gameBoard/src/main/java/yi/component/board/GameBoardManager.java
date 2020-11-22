@@ -1,6 +1,7 @@
 package yi.component.board;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import yi.core.go.GameModel;
 
 import java.util.Objects;
@@ -20,10 +21,6 @@ public final class GameBoardManager {
 
     GameBoardManager() { }
 
-    public void setGameModel(@NotNull GameModel gameModel) {
-        this.model = Objects.requireNonNull(gameModel);
-    }
-
     public void setBoardCanvasSize(double componentWidth, double componentHeight, GameModel game) {
         size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.coordinateLabelPosition);
     }
@@ -40,7 +37,13 @@ public final class GameBoardManager {
         this.debugMode = debugMode;
     }
 
-    public GameModel getGameModel() {
-        return Objects.requireNonNull(model);
+    public void setGameModel(@NotNull GameModel gameModel) {
+        // TODO: This method was made public because of test cases. Consider using
+        //       jigsaw project structure to sort out the method visibilities.
+        this.model = Objects.requireNonNull(gameModel);
+    }
+
+    public @Nullable GameModel getGameModel() {
+        return model;
     }
 }
