@@ -9,7 +9,6 @@ import javafx.scene.shape.Rectangle;
 import yi.core.go.GameNode;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Manages the rendering of the game tree.

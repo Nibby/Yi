@@ -1,12 +1,11 @@
 package yi.component.board;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import yi.core.go.GameModel;
-import yi.core.go.GameModelImporter;
-import yi.core.go.GameParseException;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**

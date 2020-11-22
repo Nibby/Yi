@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
 import yi.component.Component;
 import yi.component.board.editmodes.AbstractEditMode;
-import yi.core.go.*;
+import yi.core.go.EventListener;
+import yi.core.go.GameModel;
+import yi.core.go.NodeEvent;
 
 import java.io.File;
 import java.util.List;

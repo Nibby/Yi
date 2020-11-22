@@ -1,10 +1,8 @@
 package yi.component.board;
 
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
