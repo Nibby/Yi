@@ -3,7 +3,6 @@ package yi.core.go.docformat
 import yi.core.go.GameModel
 import java.io.InputStream
 import java.io.OutputStream
-import java.nio.file.Path
 
 /**
  * Specifies the contract for a supported file format that a [yi.core.go.GameModel]

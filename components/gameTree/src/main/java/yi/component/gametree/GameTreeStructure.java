@@ -6,7 +6,6 @@ import yi.core.go.GameNode;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 
 /**
  * Handles the layout presentation of the nodes in the game tree. Internally, the tree structure is

@@ -1,7 +1,5 @@
 package yi.editor.components;
 
-import javafx.geometry.Orientation;
-import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import yi.component.SimpleListenerManager;
