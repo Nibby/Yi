@@ -29,6 +29,8 @@ class GameNode constructor(val delta: StateDelta) {
     var moveNumber: Int = 0
         internal set
 
+    private var cachedMoveHistory: LinkedList<GameNode>? = null
+
     /**
      * Marks this node as the top-level ancestor node for the game tree.
      */
@@ -68,6 +70,10 @@ class GameNode constructor(val delta: StateDelta) {
      * @return A chain of nodes that led up to the current node, starting from the root node.
      */
     fun getMoveHistory(): LinkedList<GameNode> {
+        cachedMoveHistory?.let {
+            return it
+        }
+
         val path = LinkedList<GameNode>()
         var node: GameNode? = this
 
@@ -75,7 +81,7 @@ class GameNode constructor(val delta: StateDelta) {
             path.add(0, node)
             node = node.parent
         }
-
+        cachedMoveHistory = path
         return path
     }
 
