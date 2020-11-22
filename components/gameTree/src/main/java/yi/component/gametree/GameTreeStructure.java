@@ -6,6 +6,7 @@ import yi.core.go.GameNode;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 /**
  * Handles the layout presentation of the nodes in the game tree. Internally, the tree structure is
@@ -29,6 +30,20 @@ final class GameTreeStructure {
     public void reconstruct() {
         treeElementManager.reset();
         createSubtree(null, gameModel.getRootNode());
+    }
+
+    /**
+     * Retrieves the {@link TreeElement} representation for the given node if it is
+     * present.
+     *
+     * @param gameNode Node to retrieve.
+     *
+     * @return The object on the tree graph representing the given node.
+     *         Maybe {@code null} if the game node is not present on the tree structure.
+     */
+    public Optional<TreeNodeElement> getTreeNodeElementForNode(GameNode gameNode) {
+        TreeNodeElement treeElement = treeElementManager.gameNodeToTreeElement.get(gameNode);
+        return Optional.ofNullable(treeElement);
     }
 
     /*
@@ -95,6 +110,34 @@ final class GameTreeStructure {
         return treeElementManager.getAllElements();
     }
 
+    /**
+     * Retrieves a list of {@link TreeNodeElement} that lie within the bounds of a
+     * rectangular region defined by {@code (startX, startY)} on the top left corner to
+     * {@code (endX, endY)} on the bottom right corner. Logical grid units are used.
+     *
+     * @param startX Top left x position
+     * @param startY Top left y position
+     * @param endX Bottom right x position
+     * @param endY Bottom right y position
+     *
+     * @return All the {@link TreeNodeElement} that lie within this region.
+     */
+    public List<TreeNodeElement> getNodeElementsWithinRectangularRegion(int startX, int startY, int endX, int endY) {
+        var result = new ArrayList<TreeNodeElement>();
+
+        for (int x = startX; x < endX; ++x) {
+            for (int y = startY; y < endY; ++y) {
+                treeElementManager.positionStorage.getElement(x, y).ifPresent(element -> {
+                    if (element instanceof TreeNodeElement) {
+                        result.add(element);
+                    }
+                });
+            }
+        }
+
+        return result;
+    }
+
     public boolean setHighlightedGrid(int x, int y) {
         return treeElementManager.setHighlightedGrid(x, y);
     }
@@ -102,7 +145,7 @@ final class GameTreeStructure {
     private static final class TreeElementManager {
 
         private List<TreeElement> allElements = new ArrayList<>();
-        private final List<TreeNodeElement> nodeElements = new ArrayList<>();
+        private final Map<GameNode, TreeNodeElement> gameNodeToTreeElement = new HashMap<>();
         private TreeElementPositionStorage positionStorage = new TreeElementPositionStorage();
         private TreeElement currentHighlight;
 
@@ -119,23 +162,23 @@ final class GameTreeStructure {
          * tree structure spacing algorithm.
          *
          * @param parentElement The node element of the parent node of <code>nodeToAdd</code>
-         * @param nodeToAdd The new node to be added to the position storage.
+         * @param gameNodeToAdd The new node to be added to the position storage.
          * @param firstNodeInThisBranch The first node in the branch of <code>nodeToAdd</code>
          * @return A new {@link TreeNodeElement} that wraps the <code>nodeToAdd</code>
          */
-        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
-            var nodeElement = positionStorage.addNode(parentElement, nodeToAdd, firstNodeInThisBranch);
-            allElements.add(nodeElement);
-            nodeElements.add(nodeElement);
+        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode gameNodeToAdd, GameNode firstNodeInThisBranch) {
+            var treeNodeElement = positionStorage.addNode(parentElement, gameNodeToAdd, firstNodeInThisBranch);
+            allElements.add(treeNodeElement);
+            gameNodeToTreeElement.put(gameNodeToAdd, treeNodeElement);
 
-            return nodeElement;
+            return treeNodeElement;
         }
 
         public List<TreeElement> getAllElements() {
             return allElements;
         }
 
-        public Collection<TreeNodeElement> getNodeElements() { return nodeElements; }
+        public Collection<TreeNodeElement> getNodeElements() { return gameNodeToTreeElement.values(); }
 
         /**
          * A highlighted grid may have some special rendering on the grid space or the element stored on it.
@@ -170,6 +213,7 @@ final class GameTreeStructure {
      */
     private static final class TreeElementPositionStorage {
 
+        // Map of <X, <Y, Element>> where (X, Y) denote the grid position of the element
         private final Map<Integer, Map<Integer, TreeElement>> elementPositions = new HashMap<>();
         private final Map<GameNode, Integer> branchHeadToColumn = new HashMap<>();
 

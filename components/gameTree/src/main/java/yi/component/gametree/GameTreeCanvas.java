@@ -35,7 +35,9 @@ final class GameTreeCanvas extends Canvas {
         addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
     }
 
-    public void render(GameTreeViewerSettings settings, Camera camera, List<TreeElement> visibleElements, GameNode currentNode, GameTreeElementSize size) {
+    public void render(GameTreeViewerSettings settings, Camera camera,
+                       List<TreeNodeElement> visibleElements, GameNode currentNode,
+                       GameTreeElementSize size) {
         var currentVariationHistory = currentNode.getMoveHistory();
 
         graphics.clearRect(0, 0, getWidth(), getHeight());
@@ -49,19 +51,16 @@ final class GameTreeCanvas extends Canvas {
         double offsetX = camera.getOffsetX();
         double offsetY = camera.getOffsetY();
 
-        List<TreeNodeElement> nodeElements = visibleElements.stream()
-                .filter(element -> element instanceof TreeNodeElement)
-                .map(nodeElement -> (TreeNodeElement) nodeElement)
-                .collect(Collectors.toList());
-
         final double gridWidth = size.getGridSize().getWidth();
         final double gridHeight = size.getGridSize().getHeight();
 
-        renderTracks(settings, nodeElements, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
-        renderNodes(settings, nodeElements, currentNode, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
+        renderTracks(settings, visibleElements, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
+        renderNodes(settings, visibleElements, currentNode, currentVariationHistory, gridWidth, gridHeight, offsetX, offsetY);
     }
 
-    private void renderNodes(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements, GameNode currentNode, List<GameNode> currentVariationHistory, double gridWidth, double gridHeight, double offsetX, double offsetY) {
+    private void renderNodes(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements,
+                             GameNode currentNode, List<GameNode> currentVariationHistory,
+                             double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (var nodeElement : nodeElements) {
             double x = nodeElement.getGridX() * gridWidth + offsetX;
             double y = nodeElement.getGridY() * gridHeight + offsetY;

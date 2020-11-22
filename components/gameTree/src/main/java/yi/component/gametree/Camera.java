@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A drawing offset manager that determines the drawing position of all the elements on the tree canvas.
- * Supports a smooth panning animation.
+ * A drawing offset manager that determines the draw position of all the elements on
+ * the tree canvas. Supports a smooth panning animation.
  */
 final class Camera {
 

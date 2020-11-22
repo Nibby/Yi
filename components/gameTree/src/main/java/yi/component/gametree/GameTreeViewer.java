@@ -13,6 +13,7 @@ import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.NodeEvent;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -50,18 +51,34 @@ public final class GameTreeViewer implements Component {
     }
 
     private void updateCameraAndRender(GameNode currentNode) {
-        treeStructure.getNodeElements().parallelStream()
-                .filter(element -> element.getNode().equals(currentNode))
-                .findAny()
-                .ifPresent(currentNodeElement -> camera.setCenterElementWithAnimation(currentNodeElement, elementSize.getGridSize()));
+        treeStructure.getTreeNodeElementForNode(currentNode)
+                .ifPresent(treeElement -> camera.setCenterElementWithAnimation(treeElement, elementSize.getGridSize()));
 
         render();
     }
 
     private void render() {
-        var elements = treeStructure.getAllElements();
+        var elements = getVisibleElementsInViewport();
         var currentNode = gameModel.getCurrentNode();
+
         canvas.render(settings, camera, elements, currentNode, elementSize);
+    }
+
+    private List<TreeNodeElement> getVisibleElementsInViewport() {
+        var gridWidth = elementSize.getGridSize().getWidth();
+        var gridHeight = elementSize.getGridSize().getHeight();
+        var offsetX = -camera.getOffsetX();
+        var offsetY = -camera.getOffsetY();
+
+        var startX = (int) Math.floor(offsetX / gridWidth) - 1;
+        var startY = (int) Math.floor(offsetY / gridHeight) - 1;
+        var endX = startX + (int) Math.ceil(canvas.getWidth() / gridWidth) + 2;
+        var endY = startY + (int) Math.ceil(canvas.getHeight() / gridHeight) + 2;
+
+//        System.out.println(offsetX + " " + offsetY + " , " + canvas.getWidth() + " " + canvas.getHeight());
+//        System.out.println(startX + " " + startY + " " + endX + " " + endY);
+
+        return treeStructure.getNodeElementsWithinRectangularRegion(startX, startY, endX, endY);
     }
 
     private final EventListener<NodeEvent> treeStructureChangeListener = (event) -> {
