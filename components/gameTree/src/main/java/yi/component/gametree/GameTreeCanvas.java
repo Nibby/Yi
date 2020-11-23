@@ -64,26 +64,51 @@ final class GameTreeCanvas extends Canvas {
             double x = nodeElement.getGridX() * gridWidth + offsetX;
             double y = nodeElement.getGridY() * gridHeight + offsetY;
 
-            graphics.setFill(settings.getNodeColor());
+            var nodeColor = settings.getNodeColor();
 
             if (nodeElement.isHighlighted()) {
-                graphics.setFill(settings.getNodeHoverColor());
+                nodeColor = settings.getNodeHoverColor();
             }
 
             var node = nodeElement.getNode();
 
             if (node.equals(currentNode)) {
-                graphics.setFill(settings.getCurrentNodeColor());
+                nodeColor = settings.getCurrentNodeColor();
             } else if (currentVariationHistory.contains(node)) {
-                graphics.setFill(settings.getNodeInCurrentVariationColor());
+                nodeColor = settings.getNodeInCurrentVariationColor();
             }
+
+            graphics.setFill(nodeColor);
+            graphics.setStroke(nodeColor);
 
             var bounds = new Rectangle(x + 3, y + 3, gridWidth - 6, gridHeight - 6);
 
             if (node.isRoot()) {
-                graphics.fillRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                // Triangle
+                double[] xPoints = {
+                        bounds.getX(), bounds.getX() + bounds.getWidth() / 2, bounds.getX() + bounds.getWidth()
+                };
+                double[] yPoints = {
+                        bounds.getY() + bounds.getHeight(), bounds.getY(), bounds.getY() + bounds.getHeight(),
+                };
+
+                graphics.fillPolygon(xPoints, yPoints, 3);
             } else {
-                graphics.fillOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                switch (node.getDelta().getType()) {
+                    case PASS:
+                    case RESIGN:
+                        graphics.setFill(settings.getBackgroundColor());
+                        graphics.fillOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                        graphics.strokeOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                        break;
+                    case STONE_EDIT:
+                        graphics.fillRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                        break;
+                    default:
+                        graphics.fillOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                        break;
+                }
+
             }
         }
     }

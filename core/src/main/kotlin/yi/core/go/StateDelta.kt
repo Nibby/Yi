@@ -8,7 +8,7 @@ package yi.core.go
  */
 class StateDelta {
 
-    internal val type: GameNodeType
+    val type: GameNodeType
     internal val primaryMove: Stone?
     internal val captures: Set<Stone>
     internal var stateHash: Long
