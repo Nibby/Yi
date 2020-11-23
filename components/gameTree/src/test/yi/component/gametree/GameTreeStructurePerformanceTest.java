@@ -1,5 +1,6 @@
 package yi.component.gametree;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.core.go.GameModel;
@@ -198,6 +199,12 @@ public class GameTreeStructurePerformanceTest {
         @Override
         public boolean allowSuicideMoves() {
             return false;
+        }
+
+        @NotNull
+        @Override
+        public String getInternalName() {
+            return "Testing";
         }
     }
 }

@@ -2,8 +2,10 @@
 
 package yi.core.go
 
+import yi.core.go.docformat.FileFormat
 import yi.core.go.rules.GoGameRulesHandler
 import java.lang.IllegalStateException
+import java.nio.file.Path
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -33,6 +35,10 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     internal var playedMoveHistory: List<GameNode> = LinkedList()
     private var stateHashHistory: List<Long> = LinkedList()
     private var stateCache = WeakHashMap<Long, GameState>()
+
+    var lastSavePath: Path? = null
+    var lastSaveFormat: FileFormat? = null
+    var isModified = false
 
     init {
         if (boardWidth < 1 || boardHeight < 1)
@@ -137,6 +143,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             }
 
             movePlayed = validationResult == MoveValidationResult.OK
+            markAsModified()
         } else {
             setCurrentNode(identicalExistingMove!!)
 
@@ -315,11 +322,13 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun addStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
         nodeToEdit.addStoneEdit(stoneEdit, stateHasher, boardWidth, boardHeight)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        markAsModified()
     }
 
     fun removeStoneEdit(nodeToEdit: GameNode, stoneEdit: Stone) {
         nodeToEdit.removeStoneEdit(stoneEdit, stateHasher, boardWidth, boardHeight)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        markAsModified()
     }
 
     /**
@@ -346,6 +355,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun addAnnotations(nodeToEdit: GameNode, annotations: Collection<Annotation>) {
         nodeToEdit.addAnnotations(annotations)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        markAsModified()
     }
 
     /**
@@ -375,6 +385,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
 
         getCurrentNode().removeAnnotations(annotationsToRemove)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        markAsModified()
     }
 
     /**
@@ -394,6 +405,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun removeAnnotation(nodeToEdit: GameNode, annotation: Annotation) {
         nodeToEdit.removeAnnotation(annotation)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        markAsModified()
     }
 
     /**
@@ -404,6 +416,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun removeAnnotations(nodeToEdit: GameNode, annotations: Collection<Annotation>) {
         nodeToEdit.removeAnnotations(annotations)
         onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        markAsModified()
     }
 
     /**
@@ -585,6 +598,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun submitNode(parent: GameNode, child: GameNode) {
         appendNode(parent, child)
         setCurrentNode(child)
+        markAsModified()
     }
 
     /**
@@ -614,6 +628,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
     fun appendNode(parent: GameNode, child: GameNode) {
         gameTree.appendNode(parent, child)
         onNodeAdd().fireEvent(NodeEvent(child))
+        markAsModified()
     }
 
     /**
@@ -645,6 +660,8 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         if (readjustCurrentNode) {
             _currentMove = nodeToAdjustTo!!
         }
+
+        markAsModified()
     }
 
     /**
@@ -722,5 +739,9 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
         }
 
         onNodeDataUpdate().addListener(currentNodeDataUpdateEventEmitter)
+    }
+
+    fun markAsModified() {
+        this.isModified = true
     }
 }

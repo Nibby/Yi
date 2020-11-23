@@ -12,4 +12,6 @@ abstract class GoGameRulesHandler {
 
     abstract fun allowSuicideMoves(): Boolean
 
+    abstract fun getInternalName(): String
+
 }
