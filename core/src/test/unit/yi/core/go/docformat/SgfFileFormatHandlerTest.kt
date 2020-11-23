@@ -2,10 +2,8 @@ package yi.core.go.docformat
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import yi.core.go.*
 import yi.core.go.Annotation
-import yi.core.go.GameModelImporter
-import yi.core.go.GameNodeType
-import yi.core.go.StoneColor
 import java.util.concurrent.TimeUnit
 
 class SgfFileFormatHandlerTest {
@@ -220,15 +218,56 @@ class SgfFileFormatHandlerTest {
         Assertions.assertEquals("test msg", firstMove.getComments())
     }
 
-//    @Test
-//    fun `import corrupt SGF with missing branch closure, ignores branch`() {
-//        TODO("Implement this")
-//    }
-//
-//    @Test
-//    fun `essential SGF tags well covered by importer`() {
-//        // Check that the root node and game node are constructed correctly from
-//        // key SGF tags such as B, W, C, AB, AW etc.
-//        TODO("Implement this")
-//    }
+    @Test
+    fun `essential SGF tags well covered by importer`() {
+        // Check that the root node and game node are constructed correctly from
+        // key SGF tags such as B, W, C, AB, AW etc.
+        val gameModel = GameModelImporter.fromInternalResources("/sgf/standard.sgf", FileFormat.SGF, this::class.java)
+
+        val rootNode = gameModel.getRootNode()
+        val annotations = rootNode.getAnnotationsCopy()
+
+        Assertions.assertEquals(GameNodeType.ROOT, rootNode.delta.type)
+        Assertions.assertEquals(13, annotations.size)
+        Assertions.assertTrue(annotations.contains(Annotation.Square(0, 0)), "Square missing at (0, 0)")
+        Assertions.assertTrue(annotations.contains(Annotation.Triangle(0, 1)), "Triangle missing at (0, 1)")
+        Assertions.assertTrue(annotations.contains(Annotation.Cross(1, 0)), "Cross missing at (1, 0)")
+        Assertions.assertTrue(annotations.contains(Annotation.Circle(1, 1)), "Circle missing at (1, 1)")
+        Assertions.assertTrue(annotations.contains(Annotation.Label(2, 0, "1")), "Label '1' missing at (2, 0)")
+        Assertions.assertTrue(annotations.contains(Annotation.Label(3, 0, "2")), "Label '2' missing at (3, 0)")
+        Assertions.assertTrue(annotations.contains(Annotation.Label(4, 0, "3")), "Label '3' missing at (4, 0)")
+        Assertions.assertTrue(annotations.contains(Annotation.Label(2, 1, "A")), "Label 'A' missing at (2, 1)")
+        Assertions.assertTrue(annotations.contains(Annotation.Label(3, 1, "B")), "Label 'B' missing at (3, 1)")
+        Assertions.assertTrue(annotations.contains(Annotation.Label(4, 1, "C")), "Label 'C' missing at (4, 1)")
+        Assertions.assertTrue(annotations.contains(Annotation.Line(18, 0, 18, 3)), "Line missing (18, 0) -> (18, 3)")
+        Assertions.assertTrue(annotations.contains(Annotation.Arrow(17, 0, 17, 3)), "Arrow missing (17, 0) -> (17, 3)")
+        Assertions.assertTrue(annotations.contains(Annotation.Arrow(16, 3, 16, 0)), "Arrow missing (16, 3) -> (16, 0)")
+
+        val move1 = rootNode.getNextNodeInMainBranch()!!
+        Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move1.delta.type, "Move 1 node type incorrect")
+        Assertions.assertEquals(Stone(3, 3, StoneColor.BLACK), move1.getPrimaryMove()!!, "First move stone position incorrect")
+        Assertions.assertEquals(2, move1.getNextNodes().size, "First move continuation size incorrect")
+
+        val move1a = move1.getNextNodesExcludingMainBranch()[0]
+        Assertions.assertEquals(GameNodeType.STONE_EDIT, move1a.delta.type, "Move 1 variation node type incorrect")
+
+        val move2 = move1.getNextNodeInMainBranch()!!
+        Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move2.delta.type, "Move 2 node type incorrect")
+        Assertions.assertEquals(Stone(15, 3, StoneColor.WHITE), move2.getPrimaryMove()!!, "Second move stone position incorrect")
+        Assertions.assertEquals(2, move2.getNextNodes().size, "Second move continuation size incorrect")
+
+        val move2a = move1.getNextNodesExcludingMainBranch()[0]
+        Assertions.assertEquals(GameNodeType.STONE_EDIT, move2a.delta.type, "Move 2 variation node type incorrect")
+
+        val move3 = move2.getNextNodeInMainBranch()!!
+        Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move3.delta.type, "Move 3 node type incorrect")
+        Assertions.assertEquals(Stone(3, 16, StoneColor.BLACK), move3.getPrimaryMove()!!, "Second move stone position incorrect")
+        Assertions.assertEquals(1, move3.getNextNodes().size, "Third move continuation size incorrect")
+
+        val move4 = move3.getNextNodeInMainBranch()!!
+        Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move4.delta.type, "Move 4 node type incorrect")
+
+        val move5 = move4.getNextNodeInMainBranch()!!
+        Assertions.assertEquals(GameNodeType.PASS, move5.delta.type, "Move 5 node type incorrect")
+    }
 }

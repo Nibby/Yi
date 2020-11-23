@@ -87,8 +87,9 @@ public final class GameBoardViewer implements Component {
      * @param newModel The game model to subscribe to
      */
     public void setGameModel(GameModel newModel) {
-        var currentModel = manager.getGameModel();
-        if (currentModel != null) {
+        if (manager.hasGameModel()) {
+            var currentModel = manager.getGameModel();
+
             currentModel.onCurrentNodeChange().removeListener(updateAllCanvas);
             currentModel.onCurrentNodeDataUpdate().removeListener(updateAllCanvas);
         }
@@ -99,6 +100,7 @@ public final class GameBoardViewer implements Component {
         manager.setBoardCanvasSize(container.getWidth(), container.getHeight(), newModel);
         manager.setGameModel(newModel);
         content.forEach(canvas -> canvas.onGameModelSet(newModel, manager));
+
         renderAll();
     }
 

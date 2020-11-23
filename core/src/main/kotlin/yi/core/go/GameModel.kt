@@ -3,6 +3,7 @@
 package yi.core.go
 
 import yi.core.go.rules.GoGameRulesHandler
+import java.lang.IllegalStateException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -52,6 +53,28 @@ class GameModel(val boardWidth: Int, val boardHeight: Int, val rules: GoGameRule
             this.stateHashHistory = uniqueStateHistory.map { node -> node.getStateHash() }
         } else {
             this.stateHashHistory = ArrayList()
+        }
+    }
+
+    /**
+     * Adjusts the root node of the game model. This is commonly used for loading a game
+     * model from file, where the root node may contain additional metadata.
+     *
+     * This operation should only be performed once immediately after creating the game
+     * model. If the current root node has descendants, the method will throw an
+     * [IllegalStateException].
+     */
+    @Suppress("FunctionName") // Using underscore to denote non-standard operation
+    internal fun _setRootNode(rootNode: GameNode) {
+        if (gameTree.rootNode.getNextNodes().isNotEmpty()) {
+            throw IllegalStateException("Cannot set root node after it has descendants. " +
+                    "This operation should be performed before adding any additional nodes.")
+        }
+
+        val updateCurrentMove = _currentMove == gameTree.rootNode
+        gameTree.rootNode = rootNode
+        if (updateCurrentMove) {
+            _currentMove = rootNode
         }
     }
 
