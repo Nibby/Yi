@@ -31,6 +31,7 @@ public final class AnnotationRenderer {
 
         Rectangle stoneBounds = new Rectangle(x, y, stoneSize, stoneSize);
         Rectangle annoBounds = ShapeUtilities.clip(stoneBounds, stoneSize / 4d);
+        var smallerBounds = ShapeUtilities.clip(annoBounds, stoneSize/24d);
 
         // TODO: Work out how to color the annotation based on the underlying stone and board texture
         Color color;
@@ -56,15 +57,13 @@ public final class AnnotationRenderer {
                 renderTriangle(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
                 break;
             case SQUARE:
-                renderSquare(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
+                renderSquare(g, smallerBounds.getX(), smallerBounds.getY(), smallerBounds.getWidth());
                 break;
             case CIRCLE:
-                // Use slightly bigger radius so that it appears roughly the same size as a square
-                var bigBounds = ShapeUtilities.clip(stoneBounds, stoneSize / 5d);
-                renderCircle(g, bigBounds.getX(), bigBounds.getY(), bigBounds.getWidth());
+                renderCircle(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
                 break;
             case CROSS:
-                renderCross(g, annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
+                renderCross(g, smallerBounds.getX(), smallerBounds.getY(), smallerBounds.getWidth());
                 break;
             case LABEL:
                 assert annotation instanceof Annotation.Label;
