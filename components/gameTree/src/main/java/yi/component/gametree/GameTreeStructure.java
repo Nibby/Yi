@@ -121,10 +121,14 @@ final class GameTreeStructure {
      *
      * @return All the {@link TreeNodeElement} that lie within this region.
      */
-    public List<TreeNodeElement> getNodeElementsWithinRectangularRegion(int startX, int startY, int endX, int endY) {
+    public List<TreeNodeElement> getNodeElementsWithinVerticalRegion(int startX, int startY, int endX, int endY) {
+        var itemsHorizontally = (endY - startY) * 10;
         var result = new ArrayList<TreeNodeElement>();
 
-        for (int x = startX; x < endX; ++x) {
+        // Draw excessively on the horizontal axis so that variations very far away from the current
+        // branch still have their branch lines drawn, even when the variation node themselves are
+        // out of the viewport.
+        for (int x = startX; x < endX + itemsHorizontally; ++x) {
             for (int y = startY; y < endY; ++y) {
                 treeElementManager.positionStorage.getElement(x, y).ifPresent(element -> {
                     if (element instanceof TreeNodeElement) {

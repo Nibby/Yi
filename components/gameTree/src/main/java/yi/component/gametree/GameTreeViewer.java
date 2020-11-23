@@ -78,7 +78,7 @@ public final class GameTreeViewer implements Component {
 //        System.out.println(offsetX + " " + offsetY + " , " + canvas.getWidth() + " " + canvas.getHeight());
 //        System.out.println(startX + " " + startY + " " + endX + " " + endY);
 
-        return treeStructure.getNodeElementsWithinRectangularRegion(startX, startY, endX, endY);
+        return treeStructure.getNodeElementsWithinVerticalRegion(startX, startY, endX, endY);
     }
 
     private final EventListener<NodeEvent> treeStructureChangeListener = (event) -> {
