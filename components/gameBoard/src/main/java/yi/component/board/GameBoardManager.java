@@ -1,7 +1,6 @@
 package yi.component.board;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import yi.core.go.GameModel;
 
 import java.util.Objects;
@@ -43,7 +42,12 @@ public final class GameBoardManager {
         this.model = Objects.requireNonNull(gameModel);
     }
 
-    public @Nullable GameModel getGameModel() {
+    public @NotNull GameModel getGameModel() {
+        Objects.requireNonNull(model, "No game model set. Use setGameModel() once before calling getGameModel()");
         return model;
+    }
+
+    public boolean hasGameModel() {
+        return model != null;
     }
 }

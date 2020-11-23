@@ -37,19 +37,39 @@ internal object GameMoveSubmitter {
         return Pair(validationResult, GameNode(update))
     }
 
+    /**
+     * TODO: document this
+     */
     fun createMoveNodeForPass(currentPosition: GameNode) : GameNode {
         val passStateUpdate = StateDelta.forPassMove(currentPosition.getStateHash())
         return GameNode(passStateUpdate)
     }
 
+    /**
+     * TODO: document this
+     */
     fun createMoveNodeForResignation(currentPosition: GameNode) : GameNode {
         val resignStateUpdate = StateDelta.forResignationMove(currentPosition.getStateHash())
         return GameNode(resignStateUpdate)
     }
 
+    /**
+     * TODO: document this
+     */
     fun createMoveNodeForStoneEdit(currentPosition: GameNode): GameNode {
         val stoneEditUpdate = StateDelta.forStoneEdit(currentPosition.getStateHash())
         return GameNode(stoneEditUpdate)
+    }
+
+    /**
+     * TODO: document this
+     */
+    fun createMoveNodeForRoot(gameModel: GameModel): GameNode {
+        val width = gameModel.boardWidth
+        val height = gameModel.boardHeight
+        val emptyPositionHash = gameModel.stateHasher.computeEmptyPositionHash(width, height)
+        val rootDelta = StateDelta.forRootNode(emptyPositionHash)
+        return GameNode(rootDelta)
     }
 
     /**

@@ -116,6 +116,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
                         // Root node, create the model and setup the rest
                         gameModel = createGameModel(organizedNodeData)
+
                         branchStack.peek().parentNode = gameModel.getRootNode()
                         branchStack.peek().latestNode = gameModel.getRootNode()
                         continue
@@ -163,7 +164,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
                 val gameRules = GameRules.parse(ruleset[0]).orElse(GameRules.CHINESE)
                 val gameModel = GameModel(width, height, gameRules)
-                gameModel.getRootNode().putMetadata(rootNodeData.getAsHashMap())
+                gameModel._setRootNode(parseNode(rootNodeData, null, gameModel))
 
                 // TODO: Enumerate other node data here
 
@@ -173,7 +174,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
         }
 
-        private fun parseNode(nodeData: SgfNodeData, parentNode: GameNode, gameModel: GameModel): GameNode {
+        private fun parseNode(nodeData: SgfNodeData, parentNode: GameNode?, gameModel: GameModel): GameNode {
             val gameNode = parseNodeType(nodeData, parentNode, gameModel)
             parseHelperStones(nodeData, gameNode, gameModel)
             parseAnnotations(nodeData, gameNode, gameModel)
@@ -279,12 +280,14 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             This step must be performed first before parsing other type of node
             information as this will create the node itself.
          */
-        private fun parseNodeType(nodeData: SgfNodeData, parentNode: GameNode, gameModel: GameModel): GameNode {
+        private fun parseNodeType(nodeData: SgfNodeData, parentNode: GameNode?, gameModel: GameModel): GameNode {
             var gameNode: GameNode? = null
             var gamePrimaryMove: Stone? = null
             var gameNodeType: GameNodeType = GameNodeType.STONE_EDIT
 
-            if (nodeData.containsKey(SGF_BLACK_MOVE)) {
+            if (parentNode == null) {
+                gameNodeType = GameNodeType.ROOT
+            } else if (nodeData.containsKey(SGF_BLACK_MOVE)) {
                 val sgfCoords = nodeData[SGF_BLACK_MOVE][0]
 
                 if (sgfCoords.isEmpty()) {
@@ -309,22 +312,24 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
 
             if (gameNodeType == GameNodeType.MOVE_PLAYED) {
-                val results = GameMoveSubmitter.createMoveNodeForProposedMove(gameModel, parentNode, gamePrimaryMove!!, true)
+                val results = GameMoveSubmitter.createMoveNodeForProposedMove(gameModel, parentNode!!, gamePrimaryMove!!, true)
                 val validationResult = results.first
                 assert(validationResult == MoveValidationResult.OK)
                 gameNode = results.second!!
             } else if (gameNodeType == GameNodeType.STONE_EDIT) {
-                gameNode = GameMoveSubmitter.createMoveNodeForStoneEdit(parentNode)
+                gameNode = GameMoveSubmitter.createMoveNodeForStoneEdit(parentNode!!)
             } else if (gameNodeType == GameNodeType.PASS) {
-                gameNode = GameMoveSubmitter.createMoveNodeForPass(parentNode)
+                gameNode = GameMoveSubmitter.createMoveNodeForPass(parentNode!!)
                 // TODO: There's actually no differentiation between passing and resigning. The resignation node is
                 //       handled as a pass, except that the root node game result is set to W+R or B+R.
+            } else if (gameNodeType == GameNodeType.ROOT) {
+                gameNode = GameMoveSubmitter.createMoveNodeForRoot(gameModel)
             }
 
             if (gameNode == null) {
                 // TODO: Probably unlikely given that we have a good coverage. But if we do get here then maybe just
                 //      insert a generic node?
-                gameNode = GameMoveSubmitter.createMoveNodeForStoneEdit(parentNode)
+                gameNode = GameMoveSubmitter.createMoveNodeForStoneEdit(parentNode!!)
             }
 
             return gameNode
