@@ -56,7 +56,7 @@ public class EditorFrame extends Stage {
         treeViewer = new GameTreeViewer();
         treeViewer.setSettings(treeViewerSettings);
 
-        menuBar = new EditorMenuBar();
+        menuBar = new EditorMenuBar(this);
 
         editorToolBar = new EditorToolBar();
         editorToolBar.addToolSelectionListener(this::setTool);
