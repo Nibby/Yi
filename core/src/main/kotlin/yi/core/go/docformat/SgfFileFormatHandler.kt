@@ -5,6 +5,7 @@ import yi.core.go.Annotation
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
@@ -40,23 +41,33 @@ internal class SgfFileFormatHandler : FileFormatHandler {
     }
 
     override fun doExport(gameModel: GameModel, destination: OutputStream) {
-        TODO("Not yet implemented")
+        val writer = destination.writer(Charsets.UTF_8)
+        writer.use {
+            return SgfExporter.doExport(gameModel, writer)
+        }
     }
 
     companion object {
-        private const val BRANCH_START = '('
-        private const val BRANCH_END = ')'
-        private const val NODE_START = ';'
-        private const val TAG_VALUE_START = '['
-        private const val TAG_VALUE_END = ']'
+        private const val SGF_COORDINATES = "abcdefghijklmnopqrstuvwxyz"
+
+        private const val DELIM_BRANCH_START = '('
+        private const val DELIM_BRANCH_END = ')'
+        private const val DELIM_NODE_START = ';'
+        private const val DELIM_TAG_VALUE_START = '['
+        private const val DELIM_TAG_VALUE_END = ']'
+        private const val DELIM_TAG_VALUE_SPLIT = ':'
 
         private const val SGF_BOARD_SIZE = "SZ"
         private const val SGF_RULESET = "RU"
+        private const val SGF_KOMI = "KM"
+        private const val SGF_CHARSET = "CA"
+        private const val SGF_GAME_TYPE = "GM"
+        private const val SGF_FILE_FORMAT = "FF"
         private const val SGF_BLACK_MOVE = "B"
         private const val SGF_WHITE_MOVE = "W"
         private const val SGF_ADD_BLACK = "AB"
         private const val SGF_ADD_WHITE = "AW"
-        private const val SGF_ADD_ERASE = "AE" // OGS makes use of this to remove a stone at a position
+        private const val SGF_ADD_ERASE = "AE"
         private const val SGF_MARKUP_CROSS = "MA"
         private const val SGF_MARKUP_TRIANGLE = "TR"
         private const val SGF_MARKUP_CIRCLE = "CR"
@@ -90,15 +101,15 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     }
                 }
 
-                if (char == BRANCH_START) {
+                if (char == DELIM_BRANCH_START) {
                     val parent = if (branchStack.isEmpty()) null else branchStack.peek().latestNode
                     branchStack.push(SgfBranch(parent, parent))
                     readCharNextLoop = true
-                } else if (char == BRANCH_END) {
+                } else if (char == DELIM_BRANCH_END) {
                     branchStack.pop()
                     readCharNextLoop = true
-                } else if (char == NODE_START) {
-                    val readResult = readUntil(reader, BRANCH_START, BRANCH_END, NODE_START)
+                } else if (char == DELIM_NODE_START) {
+                    val readResult = readUntil(reader, DELIM_BRANCH_START, DELIM_BRANCH_END, DELIM_NODE_START)
 
                     val nodeData = readResult.first
                     char = readResult.second
@@ -357,13 +368,13 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 }
 
                 if (readingKeyRatherThanValue) {
-                    if (char == TAG_VALUE_START) {
+                    if (char == DELIM_TAG_VALUE_START) {
                         readingKeyRatherThanValue = false
                     } else {
                         tagKey.append(char)
                     }
                 } else {
-                    if (char == TAG_VALUE_END) {
+                    if (char == DELIM_TAG_VALUE_END) {
                         // Some annotations have multi-part values in the following format:
                         // AB[aa][bb][cc]
                         // So if at the end of one value term we immediately encounter a new
@@ -382,7 +393,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         readingKeyRatherThanValue = true
 
                         if (index < nodeData.length - 1) {
-                            if (nodeData[index+1] == TAG_VALUE_START) {
+                            if (nodeData[index+1] == DELIM_TAG_VALUE_START) {
                                 readingKeyRatherThanValue = false
                                 skipNextChar = true
                             } else {
@@ -445,8 +456,6 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
             return Pair(buffer.toString(), char)
         }
-
-        private const val SGF_COORDINATES = "abcdefghijklmnopqrstuvwxyz"
 
         fun convertCoordinates(sgfCoords: String): Array<Int> {
             val x = SGF_COORDINATES.indexOf(sgfCoords.toLowerCase()[0])
@@ -639,6 +648,210 @@ internal class SgfFileFormatHandler : FileFormatHandler {
     }
 
     private object SgfExporter {
-        // TODO: Implement me!
+
+        fun doExport(gameModel: GameModel, writer: OutputStreamWriter) {
+            exportBranch(gameModel, gameModel.getRootNode(), writer)
+        }
+
+        private fun exportBranch(gameModel: GameModel, branchStartNode: GameNode, writer: OutputStreamWriter) {
+            var currentNode = branchStartNode
+            var done = false
+            writer.write(DELIM_BRANCH_START.toString())
+            while (!done) {
+                exportNode(gameModel, currentNode, writer)
+
+                if (currentNode.hasAlternativeNextMoves()) {
+                    for (branchingChild in currentNode.getNextNodes()) {
+                        exportBranch(gameModel, branchingChild, writer)
+                    }
+                    done = true;
+                } else {
+                    if (!currentNode.isLastMoveInThisVariation()) {
+                        currentNode = currentNode.getNextNodeInMainBranch()!!
+                    } else {
+                        done = true
+                    }
+                }
+            }
+            writer.write(DELIM_BRANCH_END.toString())
+        }
+
+        private fun exportNode(gameModel: GameModel, currentNode: GameNode, writer: OutputStreamWriter) {
+            writer.write(DELIM_NODE_START.toString())
+
+            if (currentNode.isRoot()) {
+                exportRootNodeData(gameModel, currentNode, writer)
+            }
+
+            exportPlayedMoveData(currentNode, writer)
+            exportStoneEditData(currentNode, writer)
+            exportAnnotationData(currentNode, writer)
+            exportCommentData(currentNode, writer)
+
+            // TODO: Export other metadata?
+        }
+
+        private fun exportRootNodeData(gameModel: GameModel, rootNode: GameNode, writer: OutputStreamWriter) {
+            writeTag(SGF_GAME_TYPE, "1", writer)
+            writeTag(SGF_FILE_FORMAT, "4", writer)
+
+            val boardSizeValue: String = if (gameModel.boardWidth == gameModel.boardHeight) {
+                gameModel.boardWidth.toString()
+            } else {
+                gameModel.boardWidth.toString() + DELIM_TAG_VALUE_SPLIT + gameModel.boardHeight.toString()
+            }
+            writeTag(SGF_BOARD_SIZE, boardSizeValue, writer)
+
+            writeTag(SGF_KOMI, gameModel.rules.getKomi().toString(), writer)
+            writeTag(SGF_RULESET, gameModel.rules.getInternalName(), writer)
+        }
+
+        private fun exportAnnotationData(currentNode: GameNode, writer: OutputStreamWriter) {
+            val annotationData = HashMap<String, ArrayList<String>>()
+
+            for (annotation in currentNode.getAnnotationsOriginal()) {
+                @Suppress("ThrowableNotThrown") // Anticipating future additions
+                val key = when (annotation.type) {
+                    AnnotationType.CIRCLE -> SGF_MARKUP_CIRCLE
+                    AnnotationType.SQUARE -> SGF_MARKUP_SQUARE
+                    AnnotationType.TRIANGLE -> SGF_MARKUP_TRIANGLE
+                    AnnotationType.CROSS -> SGF_MARKUP_CROSS
+                    AnnotationType.LABEL -> SGF_MARKUP_LABEL
+                    AnnotationType.FADE -> SGF_MARKUP_DIM
+                    AnnotationType.ARROW -> SGF_MARKUP_ARROW
+                    AnnotationType.LINE -> SGF_MARKUP_LINE
+                    else -> throw NotImplementedError("Unimplemented annotation type for export: ${annotation.type}")
+                }
+
+                annotationData.putIfAbsent(key, ArrayList())
+
+                when (annotation) {
+                    is Annotation.PointAnnotation -> {
+                        val x = annotation.x
+                        val y = annotation.y
+                        val coordinate = getSgfCoordinates(x, y)
+                        annotationData[key]!!.add(coordinate)
+                    }
+                    is Annotation.DirectionalAnnotation -> {
+                        val xStart = annotation.x
+                        val yStart = annotation.y
+                        val xEnd = annotation.xEnd
+                        val yEnd = annotation.yEnd
+                        val coordinate = getSgfCoordinates(xStart, yStart) + DELIM_TAG_VALUE_SPLIT + getSgfCoordinates(xEnd, yEnd)
+                        annotationData[key]!!.add(coordinate)
+                    }
+                    else -> {
+                        throw NotImplementedError("Unrecognised annotation type for export: " + annotation.javaClass)
+                    }
+                }
+            }
+
+            writeTags(annotationData, writer)
+        }
+
+        private fun exportStoneEditData(currentNode: GameNode, writer: OutputStreamWriter) {
+            val stoneEditData = HashMap<String, ArrayList<String>>()
+
+            for (stoneEdit in currentNode.getStoneEdits()) {
+                if (stoneEdit == currentNode.getPrimaryMove()) {
+                    continue
+                }
+
+                val color = stoneEdit.color
+                val x = stoneEdit.x
+                val y = stoneEdit.y
+
+                val key = when (color) {
+                    StoneColor.BLACK -> SGF_ADD_BLACK
+                    StoneColor.WHITE -> SGF_ADD_WHITE
+                    StoneColor.NONE -> SGF_ADD_ERASE // Erase a stone from the position
+                }
+
+                val coordinate = getSgfCoordinates(x, y)
+
+                stoneEditData.putIfAbsent(key, ArrayList())
+                stoneEditData[key]!!.add(coordinate)
+            }
+
+            writeTags(stoneEditData, writer)
+        }
+
+        private fun exportPlayedMoveData(currentNode: GameNode, writer: OutputStreamWriter) {
+            val moveType = currentNode.getType()
+            var primaryMove: Stone? = null
+
+            if (moveType == GameNodeType.MOVE_PLAYED
+                    || moveType == GameNodeType.PASS
+                    || moveType == GameNodeType.RESIGN) {
+                primaryMove = currentNode.getPrimaryMove()!!
+            }
+
+            primaryMove?.let {
+                val coordinates = if (moveType == GameNodeType.MOVE_PLAYED) getSgfCoordinates(it) else ""
+                val color = it.color
+                val key: String
+
+                key = when (color) {
+                    StoneColor.BLACK -> SGF_BLACK_MOVE
+                    StoneColor.WHITE -> SGF_WHITE_MOVE
+                    else -> throw NotImplementedError("Unsupported stone color: $color")
+                }
+
+                writeTag(key, coordinates, writer)
+            }
+        }
+
+        private fun exportCommentData(currentNode: GameNode, writer: OutputStreamWriter) {
+            if (currentNode.getComments().isNotBlank()) {
+                writeTag(SGF_COMMENT, currentNode.getComments(), writer)
+            }
+        }
+
+        private fun writeTags(data: Map<String, List<String>>, writer: OutputStreamWriter) {
+            for (key in data.keys) {
+                writeTag(key, data[key]!!, writer)
+            }
+        }
+
+        private fun writeTag(tagKey: String, atomicValue: String, writer: OutputStreamWriter) {
+            writeTag(tagKey, listOf(atomicValue), writer)
+        }
+
+        private fun writeTag(tagKey: String, tagValues: List<String>, writer: OutputStreamWriter) {
+            assert(tagValues.isNotEmpty()) { "Cannot write empty values" }
+            writer.write(tagKey)
+            for (value in tagValues) {
+                writeDelimiter(DELIM_TAG_VALUE_START, writer)
+                val escapedValue = escapeDelimiters(value)
+                writer.write(escapedValue)
+                writeDelimiter(DELIM_TAG_VALUE_END, writer)
+            }
+        }
+
+        private fun writeDelimiter(delimiter: Char, writer: OutputStreamWriter) {
+            writer.write(delimiter.toString())
+        }
+
+        private val reservedValueCharacters = arrayOf(DELIM_TAG_VALUE_END, DELIM_TAG_VALUE_START)
+
+        private fun escapeDelimiters(value: String): String {
+            var result = value
+            for (reservedChar in reservedValueCharacters) {
+                result = result.replace(reservedChar.toString(), "\\$reservedChar", true)
+            }
+            return result
+        }
+
+        private fun getSgfCoordinates(move: Stone): String {
+            return getSgfCoordinates(move.x, move.y)
+        }
+
+        private fun getSgfCoordinates(x: Int, y: Int): String {
+            if (x < 0 || y < 0 || x > SGF_COORDINATES.length - 1 || y > SGF_COORDINATES.length - 1) {
+                throw IllegalArgumentException("Illegal SGF position: ($x, $y). Value should be between " +
+                        "0-${SGF_COORDINATES.length-1}")
+            }
+            return SGF_COORDINATES[x].toString() + SGF_COORDINATES[y].toString()
+        }
     }
 }

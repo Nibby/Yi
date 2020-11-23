@@ -63,7 +63,7 @@ class GameNode constructor(val delta: StateDelta) {
      *
      * @return true if this node is the last move in its branch.
      */
-    fun isLastMoveInThisVariation(): Boolean = parent != null && children.size == 0
+    fun isLastMoveInThisVariation(): Boolean = children.size == 0
 
     /**
      *

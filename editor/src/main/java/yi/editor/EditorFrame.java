@@ -18,6 +18,7 @@ import yi.editor.components.EditorToolBar;
 import yi.editor.settings.Settings;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * The main frame for an editor session.
@@ -86,8 +87,16 @@ public class EditorFrame extends Stage {
     }
 
     public void setGameModel(@NotNull GameModel gameModel) {
+        this.gameModel = gameModel;
         boardViewer.setGameModel(gameModel);
         treeViewer.setGameModel(gameModel);
+    }
+
+    public @NotNull GameModel getGameModel() {
+        Objects.requireNonNull(gameModel, "No game model is set. " +
+                "setGameModel() must be called once before caling getGameModel().");
+
+        return gameModel;
     }
 
     private void setTool(EditorTool tool) {

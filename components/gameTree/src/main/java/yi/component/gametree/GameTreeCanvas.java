@@ -94,7 +94,7 @@ final class GameTreeCanvas extends Canvas {
 
                 graphics.fillPolygon(xPoints, yPoints, 3);
             } else {
-                switch (node.getDelta().getType()) {
+                switch (node.getType()) {
                     case PASS:
                     case RESIGN:
                         graphics.setFill(settings.getBackgroundColor());

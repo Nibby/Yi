@@ -10,4 +10,8 @@ class ChineseRulesHandler : GoGameRulesHandler() {
         return false
     }
 
+    override fun getInternalName(): String {
+        return "Chinese"
+    }
+
 }

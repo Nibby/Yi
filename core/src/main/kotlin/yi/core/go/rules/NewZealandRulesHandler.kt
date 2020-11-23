@@ -10,4 +10,8 @@ class NewZealandRulesHandler : GoGameRulesHandler() {
         return true
     }
 
+    override fun getInternalName(): String {
+        return "New Zealand"
+    }
+
 }
