@@ -57,7 +57,13 @@ sourceSets {
 }
 
 application {
-    def workingDirectory = Paths.get(System.getProperty("user.dir")).getParent().resolve("temp").toString()
+    def workingDirectory = Paths.get(System.getProperty("user.dir"))
+    // This is to work around a strange bug where the property "user.dir" returns
+    // the current module path on macOS, but returns Yi project path on Windows 10.
+    if (project.name == workingDirectory.getFileName().toString()) {
+        workingDirectory = workingDirectory.getParent()
+    }
+    workingDirectory = workingDirectory.resolve("temp")
 
     mainClassName('yi.editor.Main')
     applicationDefaultJvmArgs = ["-ea", "-Duser.dir=$workingDirectory"]
