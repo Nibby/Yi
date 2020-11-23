@@ -10,7 +10,6 @@ import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 /**
  * Parses game data of Smart Go Format (SGF) into a [GameModel]
@@ -191,9 +190,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             parseAnnotations(nodeData, gameNode, gameModel)
 
             gameNode.delta.comments = nodeData.getOrDefault(SGF_COMMENT, listOf(""))[0]
-
-            val unusedData = nodeData.getUnusedData()
-            gameNode.putMetadata(unusedData)
+            gameNode.putMetadata(nodeData.getAsHashMap())
 
             return gameNode
         }
@@ -473,18 +470,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         // the usage won't be affected.
         private class SgfNodeData(private val data: HashMap<String, ArrayList<String>>) {
 
-            // Keep track of the data tags that we've used to store meaningful information so that
-            // we can store the unused tags as client-side metadata. This way we don't lose information
-            // that the application doesn't support when the user decides to save the document again.
-            private val usedData = HashSet<String>()
-
             operator fun get(key: String): List<String> {
-                usedData.add(key)
                 return data.getValue(key)
             }
 
             fun getOrDefault(key: String, defaultValue: List<String>): List<String> {
-                usedData.add(key)
                 return if (defaultValue is ArrayList<String>) {
                     data.getOrDefault(key, defaultValue)
                 } else {
@@ -494,20 +484,6 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
             fun containsKey(key: String): Boolean {
                 return data.containsKey(key)
-            }
-
-            /**
-             * @return Map of tag keys and their corresponding values that are not used
-             * to construct the game node.
-             */
-            fun getUnusedData(): Map<String, List<String>> {
-                val result = HashMap<String, List<String>>()
-                for (key in data.keys) {
-                    if (!usedData.contains(key)) {
-                        result[key] = data.getValue(key)
-                    }
-                }
-                return result
             }
 
             /**
