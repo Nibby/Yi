@@ -167,8 +167,10 @@ class SgfFileFormatHandlerTest {
         GameModelImporter.fromInternalResources("/sgf/1000_nodes.sgf", FileFormat.SGF, this::class.java)
         val finishTime = System.nanoTime()
 
-        val maxDurationMs = 500L
-        Assertions.assertTrue(finishTime - startTime < TimeUnit.MILLISECONDS.toNanos(maxDurationMs), "Too slow. Expected < $maxDurationMs")
+        val maxDurationMs = 800L
+        val duration = (finishTime - startTime)
+        Assertions.assertTrue(duration < TimeUnit.MILLISECONDS.toNanos(maxDurationMs),
+                "Too slow. Expected < $maxDurationMs, got $duration")
     }
 
     @Test
