@@ -90,7 +90,8 @@ public final class AnnotationRenderer {
                 assert annotation instanceof Annotation.Label;
                 Objects.requireNonNull(font, "Annotation font cannot be null when drawing labels");
                 renderLabel(g, ((Annotation.Label) annotation).getText(), font,
-                        annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth(), annoBounds.getHeight());
+                        annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth(), annoBounds.getHeight(),
+                        stone == StoneColor.NONE);
                 break;
             case FADE:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
@@ -141,8 +142,19 @@ public final class AnnotationRenderer {
         }
     }
 
+    private static final Color ANNOTATION_BACKGROUND_COLOR = new Color(1d, 1d, 1d, 0.2d);
+
     private static void renderLabel(GraphicsContext g, String text, Font font,
-                                    double x, double y, double width, double height) {
+                                    double x, double y, double width, double height,
+                                    boolean drawBackground) {
+        if (drawBackground) {
+            var textFill = g.getFill();
+            var overflow = width / 4;
+            g.setFill(ANNOTATION_BACKGROUND_COLOR);
+            g.fillOval(x-overflow, y-overflow, width+overflow*2, height+overflow*2);
+            g.setFill(textFill);
+        }
+
         Text metricsTest = new Text(text);
         g.setFont(font);
         metricsTest.setFont(font);
