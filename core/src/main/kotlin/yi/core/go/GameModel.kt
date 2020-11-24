@@ -41,9 +41,14 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
     var lastSaveFormat: FileFormat? = null
     var isModified = false
 
+    // Metadata
+    var komi: Float = rules.getDefaultKomi()
+    var handicaps: Int = 0
+
     init {
-        if (boardWidth < 1 || boardHeight < 1)
+        if (boardWidth < 1 || boardHeight < 1) {
             throw IllegalArgumentException("Invalid board dimensions: $boardWidth x $boardHeight")
+        }
     }
 
     constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler)
@@ -471,8 +476,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
      * @return The [StoneColor] for the stone that will be played on the next turn.
      */
     fun getNextTurnStoneColor(): StoneColor {
-        val nextMoveNumber = playedMoveHistory.size
-        return rules.getStoneColorForTurn(nextMoveNumber)
+        return rules.getStoneColorForTurn(playedMoveHistory.size, handicaps > 0)
     }
 
     /**

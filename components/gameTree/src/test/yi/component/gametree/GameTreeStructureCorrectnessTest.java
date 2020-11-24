@@ -22,7 +22,7 @@ public class GameTreeStructureCorrectnessTest {
     private static final class TestingRules extends GoGameRulesHandler {
 
         @Override
-        public float getKomi() {
+        public float getDefaultKomi() {
             return 0;
         }
 

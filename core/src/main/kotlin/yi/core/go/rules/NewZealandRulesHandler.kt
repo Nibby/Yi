@@ -2,7 +2,7 @@ package yi.core.go.rules
 
 class NewZealandRulesHandler : GoGameRulesHandler() {
 
-    override fun getKomi(): Float {
+    override fun getDefaultKomi(): Float {
         return 7F
     }
 

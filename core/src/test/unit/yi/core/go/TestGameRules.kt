@@ -4,7 +4,7 @@ import yi.core.go.rules.GoGameRulesHandler
 
 class TestGameRules {
     class TestingGameRulesNoSuicide : GoGameRulesHandler() {
-        override fun getKomi(): Float = 6.5F
+        override fun getDefaultKomi(): Float = 6.5F
         override fun allowSuicideMoves(): Boolean = false
         override fun getInternalName(): String {
             return "TestingRulesNoSuicide"
@@ -12,7 +12,7 @@ class TestGameRules {
     }
 
     class TestingGameRulesSuicideAllowed : GoGameRulesHandler() {
-        override fun getKomi(): Float = 6.5F
+        override fun getDefaultKomi(): Float = 6.5F
         override fun allowSuicideMoves(): Boolean = true
         override fun getInternalName(): String {
             return "TestingRulesSuicide"
