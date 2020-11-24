@@ -4,9 +4,7 @@ import yi.core.go.*
 import yi.core.go.Annotation
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.io.OutputStream
 import java.io.OutputStreamWriter
-import java.nio.charset.Charset
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -34,16 +32,13 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         TODO("Not yet implemented")
     }
 
-    override fun doImport(file: InputStream): GameModel {
-        val reader = file.reader(Charset.defaultCharset()) // TODO: The SGF file may specify the charset to use in the root node, maybe pre-scan the document and set it first?
+    override fun doImport(reader: InputStreamReader): GameModel {
+        // TODO: The SGF file may specify the charset to use in the root node, maybe pre-scan the document and set it first?
         return SgfImporter.doImport(reader)
     }
 
-    override fun doExport(gameModel: GameModel, destination: OutputStream) {
-        val writer = destination.writer(Charsets.UTF_8)
-        writer.use {
-            return SgfExporter.doExport(gameModel, writer)
-        }
+    override fun doExport(gameModel: GameModel, destination: OutputStreamWriter) {
+        return SgfExporter.doExport(gameModel, destination)
     }
 
     companion object {

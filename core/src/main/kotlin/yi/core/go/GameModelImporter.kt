@@ -35,7 +35,7 @@ object GameModelImporter {
     fun fromInternalResources(fileResourceUrl: String, format: FileFormat, resourceClass: Class<*>): GameModel {
         val handler = format.getHandler()
         val inputStream = resourceClass.getResourceAsStream(fileResourceUrl)
-        return handler.doImport(inputStream)
+        return handler.doImport(inputStream.reader(Charsets.UTF_8))
     }
 
     /**
@@ -98,7 +98,7 @@ object GameModelImporter {
     @Throws(GameParseException::class, IOException::class)
     private fun _fromFile(filePath: Path, handler: FileFormatHandler): GameModel {
         val inputStream = Files.newInputStream(filePath, StandardOpenOption.READ)
-        return handler.doImport(inputStream)
+        return handler.doImport(inputStream.reader(Charsets.UTF_8))
     }
 
     private fun getRecognizedFormats(formatEvaluator: Function<FileFormat, Boolean>): Set<FileFormat> {
