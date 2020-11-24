@@ -524,27 +524,27 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private class SgfBranch(var parentNode: GameNode?, var latestNode: GameNode?)
 
 
-        /**
+        /*
          * Defines the value format of some SGF tags so that its validity can be verified.
          * Invalid SGF tags are skipped to avoid creating a bad game tree from malformed
          * game file data.
          */
-        private enum class SgfTagFormatConstraints(val tagKey: String, vararg val acceptableValueFormats: SgfTagValueType) {
+        private enum class SgfTagFormatConstraints(val tagKey: String, vararg val acceptableValueFormats: SgfTagValueConstraint) {
 
-            B("B", SgfTagValueType.Empty, SgfTagValueType.OnePointLocation),
-            W("W", SgfTagValueType.Empty, SgfTagValueType.OnePointLocation),
+            B("B", SgfTagValueConstraint.Empty, SgfTagValueConstraint.OnePointLocation),
+            W("W", SgfTagValueConstraint.Empty, SgfTagValueConstraint.OnePointLocation),
 
-            MA("MA", SgfTagValueType.OnePointLocation),
-            SQ("SQ", SgfTagValueType.OnePointLocation),
-            TR("TR", SgfTagValueType.OnePointLocation),
-            CR("CR", SgfTagValueType.OnePointLocation),
-            DD("DD", SgfTagValueType.OnePointLocation),
-            LB("LB", SgfTagValueType.LabelAnnotation),
+            MA("MA", SgfTagValueConstraint.OnePointLocation),
+            SQ("SQ", SgfTagValueConstraint.OnePointLocation),
+            TR("TR", SgfTagValueConstraint.OnePointLocation),
+            CR("CR", SgfTagValueConstraint.OnePointLocation),
+            DD("DD", SgfTagValueConstraint.OnePointLocation),
+            LB("LB", SgfTagValueConstraint.LabelAnnotation),
 
-            AR("AR", SgfTagValueType.TwoPointLocation),
-            LN("LN", SgfTagValueType.TwoPointLocation),
+            AR("AR", SgfTagValueConstraint.TwoPointLocation),
+            LN("LN", SgfTagValueConstraint.TwoPointLocation),
 
-            KM("KM", SgfTagValueType.Numerical)
+            KM("KM", SgfTagValueConstraint.Numerical)
 
             ;
 
@@ -558,7 +558,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
         }
 
-        private enum class SgfTagValueType {
+        private enum class SgfTagValueConstraint {
             Empty {
                 override fun isValueValid(valueToTest: String): Boolean {
                     return valueToTest.isEmpty()
