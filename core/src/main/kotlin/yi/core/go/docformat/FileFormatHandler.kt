@@ -1,10 +1,7 @@
 package yi.core.go.docformat
 
 import yi.core.go.GameModel
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.OutputStream
-import java.io.OutputStreamWriter
+import java.io.*
 
 /**
  * Specifies the contract for a supported file format that a [yi.core.go.GameModel]
@@ -39,7 +36,7 @@ interface FileFormatHandler {
      *
      * @return true if the file is likely of this format.
      */
-    fun isLikelyLoadable(file: InputStream): Boolean
+    fun isLikelyLoadable(file: BufferedReader): Boolean
 
     /**
      * Attempt to parse the specified file into a [GameModel], assuming the file is of this format.
@@ -47,7 +44,7 @@ interface FileFormatHandler {
      * @apiNote Each format handler is a singleton accessible from [FileFormat],
      * therefore operations must be designed to be stateless.
      */
-    fun doImport(file: InputStreamReader): GameModel
+    fun doImport(file: BufferedReader): GameModel
 
     /**
      * Saves the game model to the destination file, replacing the original file if it exists.
@@ -58,5 +55,5 @@ interface FileFormatHandler {
      * @apiNote Each format handler is a singleton accessible from [FileFormat],
      * therefore operations must be designed to be stateless.
      */
-    fun doExport(gameModel: GameModel, destination: OutputStreamWriter)
+    fun doExport(gameModel: GameModel, destination: BufferedWriter)
 }
