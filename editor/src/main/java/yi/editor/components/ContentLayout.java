@@ -104,16 +104,16 @@ public enum ContentLayout {
 
     /**
      *
-     * @return The default window dimensions when {@link EditorFrame} is first launched with this
-     *         layout selected.
+     * @return The default window dimensions when {@link EditorFrame} is first launched
+     *         with this layout selected.
      */
     public abstract Dimension2D getMinimumWindowSize();
 
 
     /**
      * Each layout may display extra (or fewer) components which require a custom adequate
-     * aspect ratio. This value will be used to adjust window size upon switching to the layout
-     * so that its contents can fit properly within the window.
+     * aspect ratio. This value will be used to adjust window size upon switching to the
+     * layout so that its contents can fit properly within the window.
      *
      * @return The preferred width/height ratio for this layout.
      */
@@ -139,8 +139,8 @@ public enum ContentLayout {
     /**
      *
      * @param serializedValue The content layout setting value serialized as a string.
-     * @return The enum value equivalent of the serialized value, or {@link #getDefaultValue()} if the value is
-     *         malformed or unsupported.
+     * @return The enum value equivalent of the serialized value, or {@link #getDefaultValue()}
+     *         if the value is malformed or unsupported.
      */
     public static ContentLayout getValue(@Nullable String serializedValue) {
         try {

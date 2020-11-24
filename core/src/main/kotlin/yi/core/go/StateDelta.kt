@@ -1,10 +1,11 @@
 package yi.core.go
 
 /**
- * Primary data storage for each [GameNode]. Only the game node class should interact with the state delta.
+ * Primary data storage for each [GameNode]. Only the game node class should interact with
+ * the state delta.
  *
- * Represents the new changes (additions and/or deletions) since the last game position. This is the game state data
- * associated with each [GameNode].
+ * Represents the new changes (additions and/or deletions) since the last game position.
+ * This is the game state data associated with each [GameNode].
  */
 class StateDelta {
 
@@ -18,10 +19,12 @@ class StateDelta {
     internal var comments: String
 
     /**
-     * @param primaryMove The main move represented by the [GameNode], this is added to the stone delta if not null.
+     * @param primaryMove The main move represented by the [GameNode], this is added to
+     * the stone delta if not null.
      * @param captures The stones on the board that are captured
      * @param stateHash A hash code representing the current game state (not just the delta)
-     * @param stoneDelta Other changes in stone state on the game position (typically associated with adding or removing helper stones using an editor)
+     * @param stoneDelta Other changes in stone state on the game position (typically
+     * associated with adding or removing helper stones using an editor)
      * @param annotations List of annotations to be shown on the node with this delta
      */
     internal constructor(type: GameNodeType,
@@ -47,7 +50,8 @@ class StateDelta {
 
     internal companion object Factory {
         /**
-         * Instantiates a [StateDelta] that encapsulates information for a primary game move.
+         * Instantiates a [StateDelta] that encapsulates information for a primary game
+         * move.
          */
         fun forProposedMove(primaryMove: Stone, captures: HashSet<Stone>, stateHash: Long): StateDelta
                 = StateDelta(GameNodeType.MOVE_PLAYED, primaryMove, captures, stateHash, HashSet(), HashSet())

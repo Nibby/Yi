@@ -7,7 +7,8 @@ open class GameTree constructor(internal var rootNode: GameNode) {
     /**
      * Appends a new child node to a parent node in the tree.
      *
-     * @throws IllegalArgumentException if parent is part of another tree, child already has a parent, child is a root node, or parent == child
+     * @throws IllegalArgumentException if parent is part of another tree, child already
+     * has a parent, child is a root node, or parent == child
      */
     fun appendNode(parent: GameNode, child: GameNode) {
         if (!isDescendant(parent))
@@ -27,8 +28,8 @@ open class GameTree constructor(internal var rootNode: GameNode) {
     }
 
     /**
-     * Convenience method that is equivalent to [appendNode] with [rootNode] as parent. In other words,
-     * appends the child node as a direct descendant of the tree root.
+     * Convenience method that is equivalent to [appendNode] with [rootNode] as parent.
+     * In other words, appends the child node as a direct descendant of the tree root.
      *
      * @throws IllegalArgumentException see kotlin docs for [appendNode]
      */
@@ -37,10 +38,12 @@ open class GameTree constructor(internal var rootNode: GameNode) {
     }
 
     /**
-     * Removes the specified node from the game tree, erasing association with its parent and children.
+     * Removes the specified node from the game tree, erasing association with its parent
+     * and children.
      *
-     * Performing this operation will divide the tree if the node is not a leaf. To remove all children and their
-     * descendants, use [removeNodeSubtree] to completely remove all descendants following the removed node.
+     * Performing this operation will divide the tree if the node is not a leaf. To remove
+     * all children and their descendants, use [removeNodeSubtree] to completely remove
+     * all descendants following the removed node.
      *
      * @param node The node to be removed from the game tree
      * @throws IllegalArgumentException If the node to be removed does not belong to this tree
@@ -55,12 +58,13 @@ open class GameTree constructor(internal var rootNode: GameNode) {
     }
 
     /**
-     * Removes the specified node from the game tree, erasing association with its parent and children, as well as
-     * removing all descendants associated with the node. This will erase the entire subtree starting from the given
-     * node.
+     * Removes the specified node from the game tree, erasing association with its parent
+     * and children, as well as removing all descendants associated with the node.
+     * This will erase the entire subtree starting from the given node.
      *
      * @param node The node and its subtree to be removed from the game tree
-     * @throws IllegalArgumentException If the node to be removed does not belong to this tree
+     * @throws IllegalArgumentException If the node to be removed does not belong to this
+     * tree
      */
     @Suppress("UNCHECKED_CAST") // Should be safe to cast as NodeType inherits from GameNode
     fun removeNodeSubtree(node: GameNode) {

@@ -113,7 +113,8 @@ final class GameTreeCanvas extends Canvas {
         }
     }
 
-    private void renderTracks(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements, List<GameNode> currentVariationHistory,
+    private void renderTracks(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements,
+                              List<GameNode> currentVariationHistory,
                               double gridWidth, double gridHeight, double offsetX, double offsetY) {
         for (int i = nodeElements.size() - 1; i > 0; --i) {
             var nodeElement = nodeElements.get(i);
@@ -147,7 +148,8 @@ final class GameTreeCanvas extends Canvas {
 
                 if (currentVariationHistory.contains(parentNode)) {
                     var parentIndexInHistory = currentVariationHistory.indexOf(parentNode);
-                    var continuationNode = parentIndexInHistory + 1 < currentVariationHistory.size() ? currentVariationHistory.get(parentIndexInHistory + 1) : null;
+                    var continuationNode = parentIndexInHistory + 1 < currentVariationHistory.size()
+                            ? currentVariationHistory.get(parentIndexInHistory + 1) : null;
 
                     if (continuationNode != null) {
                         var continuationOrder = parentNode.getChildOrder(continuationNode);

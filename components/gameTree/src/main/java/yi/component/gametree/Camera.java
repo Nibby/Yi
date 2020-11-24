@@ -51,7 +51,8 @@ final class Camera {
      * using {@link #addOffsetChangeListener(Runnable)}.
      *
      * @param centeredItem Element to center on
-     * @param gridSize Size of each grid in the tree structure, can be obtained from {@link GameTreeElementSize#getGridSize()}
+     * @param gridSize Size of each grid in the tree structure, can be obtained from
+     * {@link GameTreeElementSize#getGridSize()}
      */
     public void setCenterElementWithAnimation(TreeElement centeredItem, Dimension2D gridSize) {
         int gridX = centeredItem.getGridX();

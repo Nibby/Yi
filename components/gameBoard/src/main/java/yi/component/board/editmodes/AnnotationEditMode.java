@@ -164,17 +164,20 @@ public final class AnnotationEditMode extends AbstractEditMode {
                 directionalAnnoStartPositionDefined = true;
             } else {
                 assert directionalAnnoFirstX >= 0 && directionalAnnoFirstY >= 0
-                        : String.format("Invalid directional annotation starting point: (%d, %d).", directionalAnnoFirstX, directionalAnnoFirstY);
+                        : String.format("Invalid directional annotation starting point: (%d, %d).",
+                        directionalAnnoFirstX, directionalAnnoFirstY);
 
                 if (gridX != directionalAnnoFirstX || gridY != directionalAnnoFirstY) {
-                    maybeCreateDirectionalAnnotation(manager, typeToApply, directionalAnnoFirstX, directionalAnnoFirstY, gridX, gridY, mouseSessionId);
+                    maybeCreateDirectionalAnnotation(manager, typeToApply, directionalAnnoFirstX,
+                            directionalAnnoFirstY, gridX, gridY, mouseSessionId);
                 }
                 resetDirectionalAnnotationCreateStep();
             }
         }
     }
 
-    private static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType, int gridX, int gridY, String nextLabelText, long sessionId) {
+    private static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType,
+                                              int gridX, int gridY, String nextLabelText, long sessionId) {
         if (!AnnotationType.Companion.isPointAnnotation(annotationType)) {
             throw new IllegalArgumentException("Not a point annotation: " + annotationType.name());
         }
@@ -184,7 +187,8 @@ public final class AnnotationEditMode extends AbstractEditMode {
         createAnnotation(manager, pointAnno, sessionId);
     }
 
-    private static void maybeCreateDirectionalAnnotation(GameBoardManager manager, AnnotationType annotationType, int startX, int startY, int endX, int endY, long sessionId) {
+    private static void maybeCreateDirectionalAnnotation(GameBoardManager manager, AnnotationType annotationType,
+                                                         int startX, int startY, int endX, int endY, long sessionId) {
         if (!AnnotationType.Companion.isDirectionalAnnotation(annotationType)) {
             throw new IllegalArgumentException("Not a directional annotation: " + annotationType.name());
         }

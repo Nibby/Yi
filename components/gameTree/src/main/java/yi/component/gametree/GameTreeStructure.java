@@ -8,11 +8,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Handles the layout presentation of the nodes in the game tree. Internally, the tree structure is
- * hosted within a grid space, where (0, 0) is on top left, and denotes the root element of the tree.
- * Elements are enumerated downwards (positive y-axis) and sideways (positive x-axis).
- * <p/>
- *
+ * Handles the layout presentation of the nodes in the game tree. Internally, the tree
+ * structure is hosted within a grid space, where (0, 0) is on top left, and denotes the
+ * root element of the tree. Elements are enumerated downwards (positive y-axis) and
+ * sideways (positive x-axis).
  */
 final class GameTreeStructure {
 
@@ -161,15 +160,16 @@ final class GameTreeStructure {
         }
 
         /**
-         * Wraps a new node as an element and determine its location in the tree structure. This is the entry point to the
-         * tree structure spacing algorithm.
+         * Wraps a new node as an element and determine its location in the tree structure.
+         * This is the entry point to the tree structure spacing algorithm.
          *
          * @param parentElement The node element of the parent node of <code>nodeToAdd</code>
          * @param gameNodeToAdd The new node to be added to the position storage.
          * @param firstNodeInThisBranch The first node in the branch of <code>nodeToAdd</code>
          * @return A new {@link TreeNodeElement} that wraps the <code>nodeToAdd</code>
          */
-        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode gameNodeToAdd, GameNode firstNodeInThisBranch) {
+        public TreeNodeElement addNode(TreeNodeElement parentElement, GameNode gameNodeToAdd,
+                                       GameNode firstNodeInThisBranch) {
             var treeNodeElement = positionStorage.addNode(parentElement, gameNodeToAdd, firstNodeInThisBranch);
             allElements.add(treeNodeElement);
             gameNodeToTreeElement.put(gameNodeToAdd, treeNodeElement);
@@ -184,9 +184,9 @@ final class GameTreeStructure {
         public Collection<TreeNodeElement> getNodeElements() { return gameNodeToTreeElement.values(); }
 
         /**
-         * A highlighted grid may have some special rendering on the grid space or the element stored on it.
-         * Only one grid may be highlighted at a time. Highlighting a new grid will automatically unhighlight the
-         * previous.
+         * A highlighted grid may have some special rendering on the grid space or the
+         * element stored on it. Only one grid may be highlighted at a time. Highlighting
+         * a new grid will automatically unhighlight the previous.
          *
          * @param x X ordinate of the highlighted grid
          * @param y Y ordinate of the highlighted gri d
@@ -210,9 +210,10 @@ final class GameTreeStructure {
     }
 
     /**
-     * Maps all the elements displayed on the game tree within an internal grid space, where (0,0) is the
-     * top-left grid reserved for the root node. Subsequent nodes are mapped downwards (along the Y-axis),
-     * and subsequent variations are mapped sideways (along the X-axis).
+     * Maps all the elements displayed on the game tree within an internal grid space,
+     * where (0,0) is the top-left grid reserved for the root node. Subsequent nodes are
+     * mapped downwards (along the Y-axis), and subsequent variations are mapped sideways
+     * (along the X-axis).
      */
     private static final class TreeElementPositionStorage {
 
@@ -220,7 +221,8 @@ final class GameTreeStructure {
         private final Map<Integer, Map<Integer, TreeElement>> elementPositions = new HashMap<>();
         private final Map<GameNode, Integer> branchHeadToColumn = new HashMap<>();
 
-        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
+        public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode nodeToAdd,
+                                       GameNode firstNodeInThisBranch) {
             int[] vacantPosition = prepareForNextNode(nodeParent, nodeToAdd, firstNodeInThisBranch);
             int x = vacantPosition[0];
             int y = vacantPosition[1];
@@ -242,31 +244,35 @@ final class GameTreeStructure {
                 if (elementThere != null && elementThere.equals(nodeToRemove)) {
                     elementPositions.get(x).remove(y, elementThere);
                 } else {
-                    throw new IllegalStateException("There is a different node at (" + x + ", " + y + ")");
+                    throw new IllegalStateException("There is a different node at ("
+                            + x + ", " + y + ")");
                 }
             }
         }
 
         private void assertNotOccupied(int x, int y) {
             if (isPositionOccupied(x, y)) {
-                throw new IllegalArgumentException("The position at (" + x + ", " + y + ") is already occupied");
+                throw new IllegalArgumentException("The position at (" + x + ", " + y + ") " +
+                        "is already occupied");
             }
         }
 
         /**
-         * Gets the next nearest vacant position to place the child of this parent element. The parent
-         * must be part of the game tree. If the parent element is null, the vacant position will be the
-         * position of the tree root node.
+         * Gets the next nearest vacant position to place the child of this parent element.
+         * The parent must be part of the game tree. If the parent element is null, the
+         * vacant position will be the position of the tree root node.
          *
-         * This method will change the state of the position storage by adding tracks to grids that are
-         * unsuitable to place new nodes.
+         * This method will change the state of the position storage by adding tracks to
+         * grids that are unsuitable to place new nodes.
          *
          * @param parentElement The element to find vacant child node position for
-         * @return An array of size 2, representing the (x, y) position in the element position space.
+         * @return An array of size 2, representing the (x, y) position in the element
+         * position space.
          *
          * @throws IllegalArgumentException If the element is not part of the position storage.
          */
-        private int[] prepareForNextNode(@Nullable TreeNodeElement parentElement, GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
+        private int[] prepareForNextNode(@Nullable TreeNodeElement parentElement,
+                                         GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
             if (nodeToAdd.equals(firstNodeInThisBranch)) {
                 if (!branchHeadToColumn.containsKey(firstNodeInThisBranch)) {
                     computeColumnForNewBranch(parentElement, firstNodeInThisBranch);

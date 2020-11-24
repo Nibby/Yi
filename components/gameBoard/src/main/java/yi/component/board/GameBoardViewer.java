@@ -19,8 +19,8 @@ import java.util.Stack;
 import java.util.function.Function;
 
 /**
- * The core interface component that handles the display of the game board, as well as user input to browse
- * and edit {@link GameModel} data.
+ * The core interface component that handles the display of the game board, as well as user
+ * input to browse and edit {@link GameModel} data.
  */
 public final class GameBoardViewer implements Component {
 

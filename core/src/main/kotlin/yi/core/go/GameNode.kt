@@ -171,17 +171,20 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.stoneEdits
     }
 
-    internal fun addStoneEdit(stoneState: Stone, stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
+    internal fun addStoneEdit(stoneState: Stone, stateHasher: GameStateHasher,
+                              boardWidth: Int, boardHeight: Int) {
         delta.stoneEdits.add(stoneState)
         recomputeStateHash(stateHasher, boardWidth, boardHeight)
     }
 
-    internal fun addStoneEdits(stoneStates: Collection<Stone>, stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
+    internal fun addStoneEdits(stoneStates: Collection<Stone>, stateHasher: GameStateHasher,
+                               boardWidth: Int, boardHeight: Int) {
         stoneStates.forEach { stoneState -> delta.stoneEdits.add(stoneState) }
         recomputeStateHash(stateHasher, boardWidth, boardHeight)
     }
 
-    internal fun removeStoneEdit(stoneEdit: Stone, stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
+    internal fun removeStoneEdit(stoneEdit: Stone, stateHasher: GameStateHasher,
+                                 boardWidth: Int, boardHeight: Int) {
         delta.stoneEdits.remove(stoneEdit)
         recomputeStateHash(stateHasher, boardWidth, boardHeight)
     }
@@ -224,7 +227,8 @@ class GameNode constructor(val delta: StateDelta) {
 
     /**
      *
-     * @return stone edit on this node at the given position that is not [StoneColor.NONE] if it exists.
+     * @return stone edit on this node at the given position that is not
+     * [StoneColor.NONE] if it exists.
      */
     fun getNonEmptyStoneEditCopyAt(x: Int, y: Int): Stone? {
         val edit = getStoneEditCopyAt(x, y)
@@ -259,27 +263,26 @@ class GameNode constructor(val delta: StateDelta) {
     }
 
     /**
-     * Stores a series of key value pairs that are not semantically meaningful to this application, but is
-     * present in the node data (usually from an externally loaded file). This way the data can be persisted
-     * when the user saves their document from this application.
+     * Stores a series of key value pairs that are not semantically meaningful to this
+     * application, but is present in the node data (usually from an externally loaded file).
      */
     fun putMetadata(key: String, value: String) {
         putMetadata(key, listOf(value))
     }
 
     /**
-     * Stores a series of key value pairs that are not semantically meaningful to this application, but is
-     * present in the node data (usually from an externally loaded file). This way the data can be persisted
-     * when the user saves their document from this application.
+     * Stores a series of key value pairs that are not semantically meaningful to this
+     * application, but is present in the node data (usually from an externally loaded file).
      */
     fun putMetadata(key: String, value: List<String>) {
         delta.metadata[key] = value
     }
 
     /**
-     * Stores a series of key value pairs that are not semantically meaningful to this application, but is
-     * present in the node data (usually from an externally loaded file). This way the data can be persisted
-     * when the user saves their document from this application.
+     * Stores a series of key value pairs that are not semantically meaningful to this
+     * application, but is present in the node data (usually from an externally loaded file).
+     * This way the data can be persisted when the user saves their document from this
+     * application.
      */
     fun putMetadata(data: Map<String, List<String>>) {
         for (key in data.keys) {
@@ -315,7 +318,7 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.metadata.getOrDefault(key, listOf())
     }
 
-    internal fun recomputeStateHash(stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
+    private fun recomputeStateHash(stateHasher: GameStateHasher, boardWidth: Int, boardHeight: Int) {
         val lastHash: Long =
                 if (parent != null) parent!!.getStateHash()
                 else stateHasher.computeEmptyPositionHash(boardWidth, boardHeight)

@@ -13,7 +13,8 @@ import java.util.function.Consumer;
  */
 public final class ControlToolBar extends ToolBar {
 
-    private final SimpleListenerManager<ContentLayout> layoutOptionsSimpleListenerManager = new SimpleListenerManager<>();
+    private final SimpleListenerManager<ContentLayout> layoutOptionsSimpleListenerManager
+            = new SimpleListenerManager<>();
     private final ToggleButton toggleReviewMode;
 
     @SuppressWarnings("UnusedLabel")

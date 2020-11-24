@@ -6,10 +6,13 @@ import yi.component.utilities.ShapeUtilities;
 import java.util.Optional;
 
 /**
- * Manages the size parameters for drawing the game board. Properties in this class are usually dynamically calculated depending on
- * the dimension of the game board canvas. For that reason, many properties use a hard-coded percentage rather than some constant value.
+ * Manages the size parameters for drawing the game board. Properties in this class are
+ * usually dynamically calculated depending on the dimension of the game board canvas.
+ * For that reason, many properties use a hard-coded percentage rather than some constant
+ * value.
  *
- * The percentage is usually taken from the shorter side of a boundary (i.e. {@code Math.min(a, b) * percentage}.
+ * The percentage is usually taken from the shorter side of a boundary
+ * (i.e. {@code Math.min(a, b) * percentage}.
  */
 public final class GameBoardSize {
 
@@ -30,36 +33,42 @@ public final class GameBoardSize {
     GameBoardSize() { }
 
     /**
-     * Recalculates the board sizing using a custom margin. The margin is the space between the edges of the canvas to the start of the
-     * game board.
+     * Recalculates the board sizing using a custom margin. The margin is the space between
+     * the edges of the canvas to the start of the game board.
      *
      * @param componentWidth Width of the board canvas
      * @param componentHeight Height of the board canvas
      * @param boardWidth Number of board intersections horizontally
      * @param boardHeight Number of board intersections vertically
      */
-    void compute(double componentWidth, double componentHeight, int boardWidth, int boardHeight, CoordinateLabelPosition coordinateLabelPosition) {
+    void compute(double componentWidth, double componentHeight, int boardWidth, int boardHeight,
+                 CoordinateLabelPosition coordinateLabelPosition) {
         stageBounds = new Rectangle(0, 0, componentWidth, componentHeight);
 
         // Overview:
         // =========
-        // Start by approximating a reasonable size of the go board based on the total intersection width-to-height ratio,
-        // then we find the maximum rectangle inside the stage of such ratio, which serves as the basis of the grid intersections.
-        // This should give us a good starting point for estimating a square stone size and board scale appropriate for the current
-        // stage dimensions.
+        // Start by approximating a reasonable size of the go board based on the total
+        // intersection width-to-height ratio, then we find the maximum rectangle inside
+        // the stage of such ratio, which serves as the basis of the grid intersections.
+        // This should give us a good starting point for estimating a square stone size
+        // and board scale appropriate for the current stage dimensions.
         //
-        // It is a lot easier to preserve rectangle proportions incrementally (i.e. by adding spacing around an existing known size) than
-        // than to subtract from an existing component, we adopt the former approach. First we define the correct ratio of the board
-        // intersection area (which ensures the stone size is square), then we expand from this region to obtain co-ordinate label bounds,
-        // board bounds, board border bounds etc. The sizing of these boundaries will overflow the viewport (stage) at this point, but
-        // we will re-scale them at the final step, making the top-level container fit within the stage (and rescale all inner components based on the
-        // scale value).
+        // It is a lot easier to preserve rectangle proportions incrementally
+        // (i.e. by adding spacing around an existing known size) than to subtract from
+        // an existing component, we adopt the former approach. First we define the correct
+        // ratio of the board intersection area (which ensures the stone size is square),
+        // then we expand from this region to obtain co-ordinate label bounds, board bounds,
+        // board border bounds etc. The sizing of these boundaries will overflow the viewport
+        // (stage) at this point, but we will re-scale them at the final step, making the
+        // top-level container fit within the stage (and rescale all inner components based
+        // on the scale value).
 
-        // We need to calculate a scaled version of stone size at this point to maintain the correct board ratio
+        // We need to calculate a scaled version of stone size at this point to maintain
+        // the correct board ratio
         Rectangle gridFitRatio = ShapeUtilities.centerFit(stageBounds, (double) boardWidth / (double) boardHeight, 0d);
 
-        // Doesn't really matter the size of the grid bounds at this point, the proportion is what matters.
-        // We will scale everything to the correct size later.
+        // Doesn't really matter the size of the grid bounds at this point, the proportion
+        // is what matters. We will scale everything to the correct size later.
         var scaledGridBounds = new LayoutRectangle(gridFitRatio.getWidth(), gridFitRatio.getHeight());
         var scaledStoneSize = (scaledGridBounds.getWidth() / boardWidth + scaledGridBounds.getHeight() / boardHeight) / 2;
         var percentageStoneSizeToGridBounds = scaledStoneSize / Math.min(scaledGridBounds.getWidth(), scaledGridBounds.getHeight());
@@ -69,8 +78,9 @@ public final class GameBoardSize {
         double percentageMarginBetweenBoardEdgeAndLabels = 0.01d;
         boardBounds = coordinateLabelBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenBoardEdgeAndLabels, coordinateLabelBounds));
         // Expressed as a percentage of total canvas width/height
-        // Rescale everything. All the objects are referenced internally by LayoutRectangle, so the entire hierarchy will be updated
-        // These are percentages of the shorter side of board dimensions rather than total size
+        // Rescale everything. All the objects are referenced internally by
+        // LayoutRectangle, so the entire hierarchy will be updated. These are percentages
+        // of the shorter side of board dimensions rather than total size
         double percentageMarginFromEdge = 0.02d;
         double marginFromEdgeInPixels = percentageMarginFromEdge * Math.min(stageBounds.getWidth(), stageBounds.getHeight());
         boardBounds.rescaleAndFinalize(stageBounds.getX(), stageBounds.getY(), stageBounds.getWidth(), stageBounds.getHeight(), marginFromEdgeInPixels, 1.0d, true);
@@ -85,8 +95,9 @@ public final class GameBoardSize {
         stoneGapSize = gridUnitSize * percentageStoneGap;
         stoneSize = gridUnitSize - stoneGapSize;
 
-        // Now that we have the final stone size, we may need to clip from the original scaled grid bounds to center the intersections,
-        // because the first round of calculation was a rough estimate.
+        // Now that we have the final stone size, we may need to clip from the original
+        // scaled grid bounds to center the intersections, because the first round of
+        // calculation was a rough estimate.
         double actualGridWidth = gridUnitSize * (boardWidth - 1);
         double actualGridHeight = gridUnitSize * (boardHeight - 1);
 
@@ -104,9 +115,11 @@ public final class GameBoardSize {
     }
 
     /*
-        Determines how the grid boundaries are arranged within the game board based on the co-ordinate label orientation.
+        Determines how the grid boundaries are arranged within the game board based on the
+        co-ordinate label orientation.
      */
-    private LayoutRectangle computeCoordinateLabelBounds(LayoutRectangle gridBounds, CoordinateLabelPosition coordinateLabelPosition) {
+    private LayoutRectangle computeCoordinateLabelBounds(LayoutRectangle gridBounds,
+                                                         CoordinateLabelPosition coordinateLabelPosition) {
         double marginLeft = 0, marginTop = 0, marginBottom = 0, marginRight = 0;
         double minSide = Math.min(gridBounds.getWidth(), gridBounds.getHeight());
         double percentageMarginForCoordinateLabels = 0.03d;
@@ -133,7 +146,8 @@ public final class GameBoardSize {
             throw new IllegalStateException("Unimplemented coordinate label position: " + coordinateLabelPosition);
         }
 
-        return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, containerStrategy);
+        return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight,
+                marginBottom, containerStrategy);
     }
 
     public Rectangle getStageBounds() {
@@ -161,11 +175,13 @@ public final class GameBoardSize {
     }
 
     /**
-     * Returns the drawing position of logical position (gridX, gridY) for an object of size objectWidth by objectHeight.
-     * The returned position will automatically be adjusted such that drawing an object of this size will make the intersection
+     * Returns the drawing position of logical position (gridX, gridY) for an object of
+     * size objectWidth by objectHeight. The returned position will automatically be
+     * adjusted such that drawing an object of this size will make the intersection
      * at the center of the object.
      * <p/>
-     * To convert a drawing position to logical board position, see {@link #getGridPosition(double, double)}
+     * To convert a drawing position to logical board position, see
+     * {@link #getGridPosition(double, double)}
      *
      * @param gridX Logical x position on the game board
      * @param gridY Logical y position on the game board
@@ -183,12 +199,13 @@ public final class GameBoardSize {
     }
 
     /**
-     * From a given render (or mouse) position, returns the logical board intersection the position corresponds to.
+     * From a given render (or mouse) position, returns the logical board intersection
+     * the position corresponds to.
      *
      * @param x Drawn x position
      * @param y Drawn y position
-     * @return The logical board intersection represented by the provided draw position, or {@link Optional#empty()} if
-     *         the position is not within grid boundaries.
+     * @return The logical board intersection represented by the provided draw position,
+     *         or {@link Optional#empty()} if the position is not within grid boundaries.
      */
     public Optional<int[]> getGridPosition(double x, double y) {
         Rectangle gridBounds = getGridBounds();
@@ -255,7 +272,8 @@ public final class GameBoardSize {
 
     /**
      *
-     * @return The side of {@link #boardBounds} used to calculate percentages related to the board component.
+     * @return The side of {@link #boardBounds} used to calculate percentages related to
+     * the board component.
      */
     private double getBoardBoundsPercentageMetric() {
         return Math.min(boardBounds.getWidth(), boardBounds.getHeight());
@@ -292,8 +310,9 @@ public final class GameBoardSize {
     }
 
     /**
-     * A rectangle with one child hierarchy. The child rectangle is assumed to be fully contained within this rectangle.
-     * When the parent rectangle is rescaled, the child will also be rescaled accordingly.
+     * A rectangle with one child hierarchy. The child rectangle is assumed to be fully
+     * contained within this rectangle. When the parent rectangle is rescaled, the child
+     * will also be rescaled accordingly.
      * <p/>
      * Each rectangle should have a (x, y) position at (0, 0).
      */
@@ -324,32 +343,39 @@ public final class GameBoardSize {
          * @see #createParentWithMargin(double, double, double, double, ContainerStrategy)
          */
         public LayoutRectangle createParentWithMargin(double marginOnAllSides) {
-            return createParentWithMargin(marginOnAllSides, marginOnAllSides, marginOnAllSides, marginOnAllSides);
+            return createParentWithMargin(marginOnAllSides, marginOnAllSides,
+                    marginOnAllSides, marginOnAllSides);
         }
 
         /**
          * 
          * @see #createParentWithMargin(double, double, double, double, ContainerStrategy)
          */
-        public LayoutRectangle createParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom) {
-            return createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom, ContainerStrategy.CENTER);
+        public LayoutRectangle createParentWithMargin(double marginLeft, double marginTop,
+                                                      double marginRight, double marginBottom) {
+            return createParentWithMargin(marginLeft, marginTop, marginRight, marginBottom,
+                    ContainerStrategy.CENTER);
         }
 
         /**
-         * Create and return a parent for this rectangle whose child is set to this instance. The parent will fully contain the child
-         * rectangle and have its position starting at (0, 0). The child position will be updated with the margin data depending on the
+         * Create and return a parent for this rectangle whose child is set to this instance.
+         * The parent will fully contain the child rectangle and have its position starting
+         * at (0, 0). The child position will be updated with the margin data depending on the
          * container strategy.
          *
          * @param marginLeft Space to the left of the child before reaching left edge of parent
          * @param marginTop Space above the child before reaching top edge of parent
          * @param marginRight Space to the right of the child before reaching the right edge of parent
          * @param marginBottom Space to the bottom of the child before reaching the bottom edge of parent
-         * @param strategy How the child fits inside the parent. It is set to {@link ContainerStrategy#CENTER} by default, which means the
+         * @param strategy How the child fits inside the parent. It is set to
+         *                 {@link ContainerStrategy#CENTER} by default, which means the
          *                 child will be centered in the parent bounds.
          *
          * @return The parent rectangle for this instance.
          */
-        private LayoutRectangle createParentWithMargin(double marginLeft, double marginTop, double marginRight, double marginBottom, ContainerStrategy strategy) {
+        private LayoutRectangle createParentWithMargin(double marginLeft, double marginTop,
+                                                       double marginRight, double marginBottom,
+                                                       ContainerStrategy strategy) {
             assertNotFinalized();
 
             this.marginLeft = marginLeft;
@@ -391,11 +417,13 @@ public final class GameBoardSize {
         }
 
         /**
-         * Scales all the contents within this rectangle to an appropriate size while preserving width to height ratio and
-         * centers the scaled version inside the component bounds.
+         * Scales all the contents within this rectangle to an appropriate size while
+         * preserving width to height ratio and centers the scaled version inside the
+         * component bounds.
          * <p/>
-         * Additionally, marks this rectangle and its entire sub-hierarchy as finalized. This means no more changes can
-         * be made to this rectangle and its hierarchy after this operation.
+         * Additionally, marks this rectangle and its entire sub-hierarchy as finalized.
+         * This means no more changes can be made to this rectangle and its hierarchy
+         * after this operation.
          *
          * @param containerX Container bounds to center this component within
          * @param containerY Container bounds to center this component within
@@ -403,7 +431,10 @@ public final class GameBoardSize {
          * @param containerHeight Container bounds to center this component within
          * @param parentScale Scale used to transform parent rectangle dimensions
          */
-        public void rescaleAndFinalize(double containerX, double containerY, double containerWidth, double containerHeight, double margin, double parentScale, boolean firstIteration) {
+        public void rescaleAndFinalize(double containerX, double containerY,
+                                       double containerWidth, double containerHeight,
+                                       double margin, double parentScale,
+                                       boolean firstIteration) {
             assertNotFinalized();
 
             double originalWidth = getWidth();

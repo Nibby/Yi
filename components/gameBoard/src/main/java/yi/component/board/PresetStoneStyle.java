@@ -13,13 +13,18 @@ public enum PresetStoneStyle {
 
     CERAMIC_BICONVEX {
 
-        final RadialGradient blackGradient = createRadialGradient(new Stop(0d, Color.color(0.45d, 0.45d, 0.45d, 1d)), new Stop(0.99d, Color.color(0.1d, 0.1d, 0.0d, 1d)));
-        final RadialGradient whiteGradient = createRadialGradient(new Stop(0d, Color.color(0.92d, 0.92d, 0.92d, 1d)), new Stop(0.99d, Color.color(0.82d, 0.82d, 0.82d, 1d)));
+        final RadialGradient blackGradient = createRadialGradient(
+                new Stop(0d, Color.color(0.45d, 0.45d, 0.45d, 1d)),
+                new Stop(0.99d, Color.color(0.1d, 0.1d, 0.0d, 1d)));
+        final RadialGradient whiteGradient = createRadialGradient(
+                new Stop(0d, Color.color(0.92d, 0.92d, 0.92d, 1d)),
+                new Stop(0.99d, Color.color(0.82d, 0.82d, 0.82d, 1d)));
 
         DropShadow dropShadow = null;
 
         @Override
-        public void _render(GraphicsContext g, GameBoardManager manager, StoneColor color, double x, double y, double size) {
+        public void _render(GraphicsContext g, GameBoardManager manager, StoneColor color,
+                            double x, double y, double size) {
             updateDropShadowIfNecessary(manager);
 
             RadialGradient gradient = null;
@@ -63,13 +68,16 @@ public enum PresetStoneStyle {
             double rgCenterX = 0.35d;
             double rgCenterY = 0.35d;
 
-            return new RadialGradient(rgFocusAngle, rgFocusDistance, rgCenterX, rgCenterY, rgRadius, true, CycleMethod.NO_CYCLE, stops);
+            return new RadialGradient(rgFocusAngle, rgFocusDistance, rgCenterX, rgCenterY,
+                    rgRadius, true, CycleMethod.NO_CYCLE, stops);
         }
     };
 
-    protected abstract void _render(GraphicsContext g, GameBoardManager manager, StoneColor color, double x, double y, double size);
+    protected abstract void _render(GraphicsContext g, GameBoardManager manager,
+                                    StoneColor color, double x, double y, double size);
 
-    public void render(GraphicsContext g, GameBoardManager manager, StoneColor color, int gridX, int gridY) {
+    public void render(GraphicsContext g, GameBoardManager manager, StoneColor color,
+                       int gridX, int gridY) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] position = manager.size.getStoneRenderPosition(gridX, gridY);
         double x = position[0];

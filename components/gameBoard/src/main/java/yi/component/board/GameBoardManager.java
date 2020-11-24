@@ -21,7 +21,8 @@ public final class GameBoardManager {
     GameBoardManager() { }
 
     public void setBoardCanvasSize(double componentWidth, double componentHeight, GameModel game) {
-        size.compute(componentWidth, componentHeight, game.getBoardWidth(), game.getBoardHeight(), view.coordinateLabelPosition);
+        size.compute(componentWidth, componentHeight, game.getBoardWidth(),
+                game.getBoardHeight(), view.coordinateLabelPosition);
     }
 
     public void onGameUpdate(GameModel game) {
@@ -43,7 +44,8 @@ public final class GameBoardManager {
     }
 
     public @NotNull GameModel getGameModel() {
-        Objects.requireNonNull(model, "No game model set. Use setGameModel() once before calling getGameModel()");
+        Objects.requireNonNull(model, "No game model set. Use setGameModel() once " +
+                "before calling getGameModel()");
         return model;
     }
 

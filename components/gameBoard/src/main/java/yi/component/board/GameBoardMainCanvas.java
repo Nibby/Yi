@@ -74,7 +74,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
             if (backgroundImage != null) {
                 Rectangle stage = manager.size.getStageBounds();
-                g.drawImage(backgroundImage, stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+                g.drawImage(backgroundImage, stage.getX(), stage.getY(), stage.getWidth(),
+                        stage.getHeight());
             }
         }
 
@@ -86,7 +87,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             g.setEffect(BOARD_BORDER_SHADOW);
 
             Rectangle boardBounds = manager.size.getBoardBounds();
-            g.drawImage(manager.view.boardImage, boardBounds.getX(), boardBounds.getY(), boardBounds.getWidth(), boardBounds.getHeight());
+            g.drawImage(manager.view.boardImage, boardBounds.getX(), boardBounds.getY(),
+                    boardBounds.getWidth(), boardBounds.getHeight());
 
             g.setEffect(null);
 
@@ -95,7 +97,10 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 g.setGlobalAlpha(0.1d);
                 final double borderThickness = boardBounds.getWidth() / 100d;
                 g.setLineWidth(borderThickness);
-                g.strokeRect(boardBounds.getX() + borderThickness / 2, boardBounds.getY() + borderThickness / 2, boardBounds.getWidth() - borderThickness, boardBounds.getHeight() - borderThickness);
+                g.strokeRect(boardBounds.getX() + borderThickness / 2,
+                        boardBounds.getY() + borderThickness / 2,
+                        boardBounds.getWidth() - borderThickness,
+                        boardBounds.getHeight() - borderThickness);
                 g.setGlobalAlpha(1.0d);
             }
 
