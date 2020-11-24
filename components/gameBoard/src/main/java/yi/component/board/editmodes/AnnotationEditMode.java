@@ -2,11 +2,13 @@ package yi.component.board.editmodes;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
+import javafx.scene.text.Font;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.component.board.AnnotationRenderer;
 import yi.component.board.GameBoardManager;
+import yi.component.board.GameBoardSize;
 import yi.component.board.edits.AnnotationEdit;
 import yi.core.go.Annotation;
 import yi.core.go.AnnotationType;
@@ -84,9 +86,13 @@ public final class AnnotationEditMode extends AbstractEditMode {
 
         if (temporary != null) {
             g.setGlobalAlpha(0.5d);
-            AnnotationRenderer.render(temporary, g, manager);
+            AnnotationRenderer.render(temporary, g, manager, getLabelFont(manager.size));
             g.setGlobalAlpha(1.0d);
         }
+    }
+
+    private Font getLabelFont(GameBoardSize size) {
+        return AnnotationRenderer.getAndCacheLabelFont(size, this.getClass());
     }
 
     @Override
