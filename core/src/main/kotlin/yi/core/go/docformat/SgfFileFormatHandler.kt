@@ -27,8 +27,14 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         return setOf("sgf")
     }
 
-    override fun isLikelyLoadable(file: BufferedReader): Boolean {
-        TODO("Not yet implemented")
+    override fun isLikelyLoadable(reader: BufferedReader): Boolean {
+        val charArray = CharArray(64)
+        val read = reader.read(charArray, 0, charArray.size)
+        return if (read > 0) {
+            charArray.toString().contains("GM[1]")
+        } else {
+            false
+        }
     }
 
     override fun doImport(reader: BufferedReader): GameModel {
@@ -36,8 +42,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         return SgfImporter.doImport(reader)
     }
 
-    override fun doExport(gameModel: GameModel, destination: BufferedWriter) {
-        return SgfExporter.doExport(gameModel, destination)
+    override fun doExport(gameModel: GameModel, writer: BufferedWriter) {
+        return SgfExporter.doExport(gameModel, writer)
     }
 
     companion object {

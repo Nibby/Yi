@@ -36,7 +36,7 @@ interface FileFormatHandler {
      *
      * @return true if the file is likely of this format.
      */
-    fun isLikelyLoadable(file: BufferedReader): Boolean
+    fun isLikelyLoadable(reader: BufferedReader): Boolean
 
     /**
      * Attempt to parse the specified file into a [GameModel], assuming the file is of this format.
@@ -44,7 +44,7 @@ interface FileFormatHandler {
      * @apiNote Each format handler is a singleton accessible from [FileFormat],
      * therefore operations must be designed to be stateless.
      */
-    fun doImport(file: BufferedReader): GameModel
+    fun doImport(reader: BufferedReader): GameModel
 
     /**
      * Saves the game model to the destination file, replacing the original file if it exists.
@@ -55,5 +55,5 @@ interface FileFormatHandler {
      * @apiNote Each format handler is a singleton accessible from [FileFormat],
      * therefore operations must be designed to be stateless.
      */
-    fun doExport(gameModel: GameModel, destination: BufferedWriter)
+    fun doExport(gameModel: GameModel, writer: BufferedWriter)
 }
