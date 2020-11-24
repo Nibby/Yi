@@ -1,9 +1,12 @@
 package yi.component;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 public class YiScene extends Scene {
+
+    private static final String CSS_FONT = "/font.css";
 
     public YiScene(Parent root) {
         super(root);
@@ -19,7 +22,10 @@ public class YiScene extends Scene {
         var skin = SkinManager.getUsedSkin();
         var skinCss = skin.getMainCssUrl();
 
-        getStylesheets().add(skinCss);
+        ObservableList<String> stylesheets = getStylesheets();
+
+        stylesheets.add(skinCss);
+        stylesheets.add(YiScene.class.getResource(CSS_FONT).toString());
     }
 
 }

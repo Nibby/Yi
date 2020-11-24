@@ -1,6 +1,7 @@
 package yi.editor;
 
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
@@ -124,8 +125,7 @@ public class EditorFrame extends Stage {
             double newWidth = currentHeight * newAspectRatio;
 
             var newScene = new YiScene(container, newWidth, currentHeight);
-            globalAccelerators.installFor(newScene);
-            setScene(newScene);
+            setYiScene(newScene);
             setWidth(newWidth);
             setHeight(currentHeight);
         } else {
@@ -135,13 +135,24 @@ public class EditorFrame extends Stage {
             double startupHeight = startupSize.getHeight();
 
             var newScene = new YiScene(container, startupWidth, startupHeight);
-            globalAccelerators.installFor(newScene);
-            setScene(newScene);
+            setYiScene(newScene);
         }
 
         var minSize = newLayout.getMinimumWindowSize();
         setMinWidth(minSize.getWidth());
         setMinHeight(minSize.getHeight());
+    }
+
+    /**
+     * Wrapper for {@link #setScene(Scene)} but also runs some custom routines.
+     * It is highly recommended to use this method rather than the base {@link #setScene(Scene)}
+     * so that scenes support as many editor features as possible.
+     *
+     * @param newScene Scene to set.
+     */
+    private void setYiScene(@NotNull YiScene newScene) {
+        globalAccelerators.installFor(newScene);
+        setScene(newScene);
     }
 
     public Parent getBoardComponent() {
