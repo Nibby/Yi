@@ -253,9 +253,10 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         public static void render(GraphicsContext g, GameBoardManager manager) {
             // Not using a copy because this is performance-sensitive code
             Collection<Annotation> annotations = manager.getGameModel().getCurrentNode().getAnnotationsOriginal();
+            var font = AnnotationRenderer.getAndCacheLabelFont(manager.size, BoardAnnotationRenderer.class);
 
             for (Annotation annotation : annotations) {
-                AnnotationRenderer.render(annotation, g, manager);
+                AnnotationRenderer.render(annotation, g, manager, font);
             }
 
             renderCurrentMoveMarker(g, manager);
@@ -268,7 +269,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 int y = primaryMove.getY();
 
                 if (!manager.getGameModel().getCurrentNode().hasAnnotationAt(x, y)) {
-                    AnnotationRenderer.render(new Annotation._Dot(x, y), g, manager);
+                    AnnotationRenderer.render(new Annotation._Dot(x, y), g, manager, null);
                 }
             }
         }

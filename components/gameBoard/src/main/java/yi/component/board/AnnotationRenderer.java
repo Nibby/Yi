@@ -1,21 +1,40 @@
 package yi.component.board;
 
+import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
+import org.jetbrains.annotations.Nullable;
+import yi.component.FontManager;
+import yi.component.utilities.ComparisonUtilities;
 import yi.component.utilities.ShapeUtilities;
 import yi.core.go.Annotation;
 import yi.core.go.StoneColor;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public final class AnnotationRenderer {
 
     private AnnotationRenderer() { }
 
-    public static void render(Annotation annotation, GraphicsContext g, GameBoardManager manager) {
+    /**
+     * Draws an annotation at the target position.
+     *
+     * @param annotation Annotation to draw.
+     * @param g Graphics context.
+     * @param manager Game board manager.
+     * @param font Font used to draw annotation labels, can be {@code null} if it does not
+     *             apply to non-label annotations.
+     */
+    public static void render(Annotation annotation, GraphicsContext g,
+                              GameBoardManager manager, @Nullable Font font) {
         if (annotation instanceof Annotation.PointAnnotation) {
-            renderPointAnnotation((Annotation.PointAnnotation) annotation, g, manager);
+            renderPointAnnotation((Annotation.PointAnnotation) annotation, g, manager, font);
         } else if (annotation instanceof Annotation.DirectionalAnnotation) {
             renderDirectionalAnnotation((Annotation.DirectionalAnnotation) annotation, g, manager);
         } else {
@@ -24,7 +43,8 @@ public final class AnnotationRenderer {
     }
 
     private static void renderPointAnnotation(Annotation.PointAnnotation annotation,
-                                              GraphicsContext g, GameBoardManager manager) {
+                                              GraphicsContext g, GameBoardManager manager,
+                                              @Nullable Font font) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] position = manager.size.getStoneRenderPosition(annotation.getX(), annotation.getY());
         double x = position[0];
@@ -68,8 +88,9 @@ public final class AnnotationRenderer {
                 break;
             case LABEL:
                 assert annotation instanceof Annotation.Label;
-                renderLabel(g, ((Annotation.Label) annotation).getText(), annoBounds.getX(),
-                        annoBounds.getY(), annoBounds.getWidth());
+                Objects.requireNonNull(font, "Annotation font cannot be null when drawing labels");
+                renderLabel(g, ((Annotation.Label) annotation).getText(), font,
+                        annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth(), annoBounds.getHeight());
                 break;
             case FADE:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
@@ -120,8 +141,16 @@ public final class AnnotationRenderer {
         }
     }
 
-    private static void renderLabel(GraphicsContext g, String text, double x, double y, double width) {
-        g.fillText(text, x, y, width);
+    private static void renderLabel(GraphicsContext g, String text, Font font,
+                                    double x, double y, double width, double height) {
+        Text metricsTest = new Text(text);
+        g.setFont(font);
+        metricsTest.setFont(font);
+        Bounds bounds = metricsTest.getBoundsInLocal();
+        g.fillText(text,
+                x + width / 2 - bounds.getWidth() / 2,
+                y + height / 2 - bounds.getHeight() / 2 + g.getFont().getSize(),
+                width);
     }
 
     private static void renderArrow(GraphicsContext g, double xStart, double yStart,
@@ -207,5 +236,32 @@ public final class AnnotationRenderer {
 
     private static void unsupportedType(Annotation annotation) {
         throw new IllegalStateException("Unsupported annotation type: " + annotation.getClass().toString());
+    }
+
+    /**
+     * Returns the font used to render label annotations. The font is then cached in
+     * {@link FontManager} until the board size has changed.
+     *
+     * @param size Game board size manager.
+     * @param callerClass Class calling the draw routine. Each class has one cached font
+     *                    object. See {@link FontManager#putCachedFont(Class, Font)}.
+     * @return Font used to draw label annotations.
+     */
+    public static Font getAndCacheLabelFont(GameBoardSize size, Class<?> callerClass) {
+        double expectedLabelFontSize = size.getStoneSizeInPixels() / 2d;
+        Optional<Font> cachedFont = FontManager.getCachedFont(callerClass);
+        if (cachedFont.isPresent()) {
+            double cachedSize = cachedFont.get().getSize();
+            boolean sameSize = ComparisonUtilities.doubleEquals(expectedLabelFontSize, cachedSize);
+
+            if (sameSize) {
+                return cachedFont.get();
+            }
+        }
+
+        var defaultFont = FontManager.getDefaultFont();
+        var newFont = new Font(defaultFont.getFamily(), size.getStoneSizeInPixels() / 2);
+        FontManager.putCachedFont(callerClass, newFont);
+        return newFont;
     }
 }
