@@ -26,7 +26,7 @@ internal object GameMoveSubmitter {
                                       proposedMove: Stone, ignoreRules: Boolean = false)
             : Pair<MoveValidationResult, GameNode?> {
 
-        var validationResult: MoveValidationResult
+        val validationResult: MoveValidationResult
         val update: StateDelta?
 
         val validationAndDelta = validateProposedMoveAndCreateStateUpdate(gameModel,
@@ -100,7 +100,7 @@ internal object GameMoveSubmitter {
 
         if (!ignoreRules) {
             val nextMoveNumber = gameModel.playedMoveHistory.size
-            val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber)
+            val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber, gameModel.handicaps > 0)
 
             if (expectedStoneColorThisTurn != proposedMove.color) {
                 return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)

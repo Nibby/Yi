@@ -2,7 +2,7 @@ package yi.core.go.rules
 
 class ChineseRulesHandler : GoGameRulesHandler() {
 
-    override fun getKomi(): Float {
+    override fun getDefaultKomi(): Float {
         return 7.5f
     }
 

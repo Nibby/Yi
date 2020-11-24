@@ -56,6 +56,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private const val DELIM_TAG_VALUE_END = ']'
         private const val DELIM_TAG_VALUE_SPLIT = ':'
 
+        private const val SGF_GAME_PLACE = "PC" // Place where the game was played
         private const val SGF_BOARD_SIZE = "SZ"
         private const val SGF_RULESET = "RU"
         private const val SGF_KOMI = "KM"
@@ -174,7 +175,13 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
                 val gameRules = GameRules.parse(ruleset[0]).orElse(GameRules.CHINESE)
                 val gameModel = GameModel(width, height, gameRules)
-                gameModel._setRootNode(parseNode(rootNodeData, null, gameModel))
+                val rootNode = parseNode(rootNodeData, null, gameModel)
+                gameModel._setRootNode(rootNode)
+
+                val pcValue = rootNodeData.getOrDefault(SGF_GAME_PLACE, listOf(""));
+                if (pcValue[0].contains("OGS: https://online-go.com/game/")) {
+                    processOgsModel(gameModel, rootNode)
+                }
 
                 // TODO: Enumerate other node data here
 
@@ -182,6 +189,12 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             } catch (e: NumberFormatException) {
                 throw GameParseException("Invalid board size values: $boardSize")
             }
+        }
+
+        private fun processOgsModel(gameModel: GameModel, rootNode: GameNode) {
+            // OGS is missing a HA[] value representing handicap stone count. So we have
+            // to manually count them through the number of AB[] tags on root.
+            gameModel.handicaps = rootNode.getMetadataMultiValue(SGF_ADD_BLACK).size
         }
 
         private fun parseNode(nodeData: SgfNodeData, parentNode: GameNode?, gameModel: GameModel): GameNode {
@@ -687,7 +700,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
             writeTag(SGF_BOARD_SIZE, boardSizeValue, writer)
 
-            writeTag(SGF_KOMI, gameModel.rules.getKomi().toString(), writer)
+            writeTag(SGF_KOMI, gameModel.rules.getDefaultKomi().toString(), writer)
             writeTag(SGF_RULESET, gameModel.rules.getInternalName(), writer)
         }
 
