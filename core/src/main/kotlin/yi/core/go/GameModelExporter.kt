@@ -8,7 +8,7 @@ object GameModelExporter {
 
     fun toFile(gameModel: GameModel, destination: Path, format: FileFormat) {
         val outputStream = Files.newOutputStream(destination)
-        val writer = outputStream.writer(Charsets.UTF_8);
+        val writer = outputStream.bufferedWriter(Charsets.UTF_8)
         writer.use {
             format.getHandler().doExport(gameModel, writer)
         }

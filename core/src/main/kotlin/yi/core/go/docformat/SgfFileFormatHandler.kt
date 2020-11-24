@@ -2,9 +2,8 @@ package yi.core.go.docformat
 
 import yi.core.go.*
 import yi.core.go.Annotation
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.BufferedReader
+import java.io.BufferedWriter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -28,16 +27,16 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         return setOf("sgf")
     }
 
-    override fun isLikelyLoadable(file: InputStream): Boolean {
+    override fun isLikelyLoadable(file: BufferedReader): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun doImport(reader: InputStreamReader): GameModel {
+    override fun doImport(reader: BufferedReader): GameModel {
         // TODO: The SGF file may specify the charset to use in the root node, maybe pre-scan the document and set it first?
         return SgfImporter.doImport(reader)
     }
 
-    override fun doExport(gameModel: GameModel, destination: OutputStreamWriter) {
+    override fun doExport(gameModel: GameModel, destination: BufferedWriter) {
         return SgfExporter.doExport(gameModel, destination)
     }
 
@@ -77,7 +76,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
     private object SgfImporter {
 
-        fun doImport(reader: InputStreamReader): GameModel {
+        fun doImport(reader: BufferedReader): GameModel {
             var charCode: Int
             var char: Char? = null
             var gameModel: GameModel? = null
@@ -432,7 +431,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
          * including the terminal delimiter. The second element is the delimiter character
          * the read operation stopped at, for quick access.
          */
-        fun readUntil(reader: InputStreamReader, vararg delimiters: Char): Pair<String, Char> {
+        fun readUntil(reader: BufferedReader, vararg delimiters: Char): Pair<String, Char> {
             var charCode: Int
             var char: Char
             val buffer = StringBuilder()
@@ -620,11 +619,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
     private object SgfExporter {
 
-        fun doExport(gameModel: GameModel, writer: OutputStreamWriter) {
+        fun doExport(gameModel: GameModel, writer: BufferedWriter) {
             exportBranch(gameModel, gameModel.getRootNode(), writer)
         }
 
-        private fun exportBranch(gameModel: GameModel, branchStartNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportBranch(gameModel: GameModel, branchStartNode: GameNode, writer: BufferedWriter) {
             var currentNode = branchStartNode
             var done = false
             writer.write(DELIM_BRANCH_START.toString())
@@ -647,7 +646,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writer.write(DELIM_BRANCH_END.toString())
         }
 
-        private fun exportNode(gameModel: GameModel, currentNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportNode(gameModel: GameModel, currentNode: GameNode, writer: BufferedWriter) {
             writer.write(DELIM_NODE_START.toString())
 
             if (currentNode.isRoot()) {
@@ -662,7 +661,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             // TODO: Export other metadata?
         }
 
-        private fun exportRootNodeData(gameModel: GameModel, rootNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportRootNodeData(gameModel: GameModel, rootNode: GameNode, writer: BufferedWriter) {
             writeTag(SGF_GAME_TYPE, "1", writer)
             writeTag(SGF_FILE_FORMAT, "4", writer)
 
@@ -677,7 +676,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writeTag(SGF_RULESET, gameModel.rules.getInternalName(), writer)
         }
 
-        private fun exportAnnotationData(currentNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportAnnotationData(currentNode: GameNode, writer: BufferedWriter) {
             val annotationData = HashMap<String, ArrayList<String>>()
 
             for (annotation in currentNode.getAnnotationsOriginal()) {
@@ -720,7 +719,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writeTags(annotationData, writer)
         }
 
-        private fun exportStoneEditData(currentNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportStoneEditData(currentNode: GameNode, writer: BufferedWriter) {
             val stoneEditData = HashMap<String, ArrayList<String>>()
 
             for (stoneEdit in currentNode.getStoneEdits()) {
@@ -747,7 +746,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writeTags(stoneEditData, writer)
         }
 
-        private fun exportPlayedMoveData(currentNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportPlayedMoveData(currentNode: GameNode, writer: BufferedWriter) {
             val moveType = currentNode.getType()
             var primaryMove: Stone? = null
 
@@ -772,23 +771,23 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
         }
 
-        private fun exportCommentData(currentNode: GameNode, writer: OutputStreamWriter) {
+        private fun exportCommentData(currentNode: GameNode, writer: BufferedWriter) {
             if (currentNode.getComments().isNotBlank()) {
                 writeTag(SGF_COMMENT, currentNode.getComments(), writer)
             }
         }
 
-        private fun writeTags(data: Map<String, List<String>>, writer: OutputStreamWriter) {
+        private fun writeTags(data: Map<String, List<String>>, writer: BufferedWriter) {
             for (key in data.keys) {
                 writeTag(key, data[key]!!, writer)
             }
         }
 
-        private fun writeTag(tagKey: String, atomicValue: String, writer: OutputStreamWriter) {
+        private fun writeTag(tagKey: String, atomicValue: String, writer: BufferedWriter) {
             writeTag(tagKey, listOf(atomicValue), writer)
         }
 
-        private fun writeTag(tagKey: String, tagValues: List<String>, writer: OutputStreamWriter) {
+        private fun writeTag(tagKey: String, tagValues: List<String>, writer: BufferedWriter) {
             assert(tagValues.isNotEmpty()) { "Cannot write empty values" }
             writer.write(tagKey)
             for (value in tagValues) {
@@ -799,7 +798,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
         }
 
-        private fun writeDelimiter(delimiter: Char, writer: OutputStreamWriter) {
+        private fun writeDelimiter(delimiter: Char, writer: BufferedWriter) {
             writer.write(delimiter.toString())
         }
 
