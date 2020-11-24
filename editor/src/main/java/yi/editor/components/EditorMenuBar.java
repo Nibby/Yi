@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static yi.editor.Translations.Menu.*;
+
 /**
  * Primary menu bar for {@link yi.editor.EditorFrame}.
  */
@@ -21,21 +23,20 @@ public class EditorMenuBar extends MenuBar {
 
     public EditorMenuBar(EditorFrame frame) {
         var fileMenu = createFileMenu(frame);
-
-        var editMenu = new Menu("Edit");
-        var toolsMenu = new Menu("Tools");
-        var viewMenu = new Menu("View");
-        var windowMenu = new Menu("Window");
-        var helpMenu = new Menu("Help");
+        var editMenu = new Menu(MENU_EDIT.getLocalised());
+        var toolsMenu = new Menu(MENU_TOOLS.getLocalised());
+        var viewMenu = new Menu(MENU_VIEW.getLocalised());
+        var windowMenu = new Menu(MENU_WINDOW.getLocalised());
+        var helpMenu = new Menu(MENU_HELP.getLocalised());
 
         getMenus().addAll(fileMenu, editMenu, toolsMenu, viewMenu, windowMenu, helpMenu);
-        setUseSystemMenuBar(true);
+        setUseSystemMenuBar(false);
     }
 
     private Menu createFileMenu(EditorFrame frame) {
-        var fileMenu = new Menu("File");
+        var fileMenu = new Menu(MENU_FILE.getLocalised());
 
-        var newGame = new MenuItem("New Game");
+        var newGame = new MenuItem(ITEM_NEW_GAME.getLocalised());
         newGame.setOnAction(event -> {
             // TODO: Show a new dialog prompting for new game document information.
             //       The values below are hard-coded, and are temporary.
@@ -66,10 +67,10 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var open = new MenuItem("Open Game");
+        var open = new MenuItem(ITEM_OPEN_GAME.getLocalised());
         open.setOnAction(event -> {
             var fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Game");
+            fileChooser.setTitle(ITEM_OPEN_GAME.getLocalised());
             File selectedFile = fileChooser.showOpenDialog(frame);
             if (selectedFile != null) {
                 try {
@@ -82,7 +83,7 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var save = new MenuItem("Save");
+        var save = new MenuItem(ITEM_SAVE_GAME.getLocalised());
         save.setOnAction(event -> {
             var existingModel = frame.getGameModel();
             Path saveFilePath = existingModel.getLastSavePath();
@@ -96,7 +97,7 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var saveAs = new MenuItem("Save As");
+        var saveAs = new MenuItem(ITEM_SAVE_AS_GAME.getLocalised());
         saveAs.setOnAction(event -> {
             var existingModel = frame.getGameModel();
             Path saveFilePath = promptAndStoreSaveFile(existingModel, frame);
