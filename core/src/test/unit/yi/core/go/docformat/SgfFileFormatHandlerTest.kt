@@ -174,16 +174,19 @@ class SgfFileFormatHandlerTest {
     }
 
     @Test
-    fun `import SGF with comment containing escaped delimiter symbols, parses comment and game file correctly`() {
-        // TODO: Implement this in a new commit.
-//        // Method under test
-//        val gameModel = GameModelImporter.fromInternalResources("/sgf/escapedSymbols.sgf", FileFormat.SGF, this::class.java)
-//
-//        val firstNode = gameModel.getRootNode().getNextNodeInMainBranch()!!
-//        Assertions.assertEquals("This comment has an escaped tag close ] character and meta-escaped characters \\]", firstNode.getComments())
-//
-//        val secondNode = firstNode.getNextNodeInMainBranch()!!
-//        Assertions.assertTrue(secondNode.isLastMoveInThisVariation())
+    fun `import SGF with tag values containing escaped delimiter symbols, parses correctly`() {
+        // Method under test
+        val gameModel = GameModelImporter.fromInternalResources("/sgf/escapedSymbols.sgf", FileFormat.SGF, this::class.java)
+
+        val firstNode = gameModel.getRootNode().getNextNodeInMainBranch()!!
+        Assertions.assertEquals("This comment has an escaped tag close ] character and meta-escaped characters \\\\]",
+                firstNode.getComments(), "Escape symbols not parsed correctly")
+
+        val customTagValue = firstNode.getMetadataSingleValue("CUSTOM_TAG")
+        Assertions.assertEquals("] \\[ ]", customTagValue, "Custom tag value not correct")
+
+        val secondNode = firstNode.getNextNodeInMainBranch()!!
+        Assertions.assertTrue(secondNode.isLastMoveInThisVariation())
     }
 
     @Test

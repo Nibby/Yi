@@ -366,6 +366,15 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     }
                 } else {
                     if (char == DELIM_TAG_VALUE_END) {
+                        if (tagValue.lastIndex >= 0 && tagValue[tagValue.lastIndex] == '\\') {
+                            // Tags such as comments may contain free-form text data
+                            // including the value-end delimiter ']'. When this is part
+                            // of the value itself, it is escaped with a leading forward
+                            // slash.
+                            tagValue.replace(tagValue.lastIndex, tagValue.lastIndex+1, char.toString())
+                            continue
+                        }
+
                         // Some annotations have multi-part values in the following format:
                         // AB[aa][bb][cc]
                         // So if at the end of one value term we immediately encounter a new
