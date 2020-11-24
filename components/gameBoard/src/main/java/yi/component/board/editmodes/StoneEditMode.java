@@ -72,7 +72,8 @@ public final class StoneEditMode extends AbstractEditMode {
         } else if (stoneEditHere != null) {
             // There may not be a stone here, but that could either mean:
             // 1. There is no stone edit here either (the intersection has always been empty)
-            // 2. There was a stone last move, and a stone edit of StoneColor.NONE exists here which erased it from the position.
+            // 2. There was a stone last move, and a stone edit of StoneColor.NONE exists here
+            //    which erased it from the position.
             assert stoneEditHere.getColor() == StoneColor.NONE;
             edit = StoneEdit.remove(nodeToEdit, x, y);
         } else {

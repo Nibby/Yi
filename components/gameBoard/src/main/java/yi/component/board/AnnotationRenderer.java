@@ -23,7 +23,8 @@ public final class AnnotationRenderer {
         }
     }
 
-    private static void renderPointAnnotation(Annotation.PointAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
+    private static void renderPointAnnotation(Annotation.PointAnnotation annotation,
+                                              GraphicsContext g, GameBoardManager manager) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] position = manager.size.getStoneRenderPosition(annotation.getX(), annotation.getY());
         double x = position[0];
@@ -67,7 +68,8 @@ public final class AnnotationRenderer {
                 break;
             case LABEL:
                 assert annotation instanceof Annotation.Label;
-                renderLabel(g, ((Annotation.Label) annotation).getText(), annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth());
+                renderLabel(g, ((Annotation.Label) annotation).getText(), annoBounds.getX(),
+                        annoBounds.getY(), annoBounds.getWidth());
                 break;
             case FADE:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
@@ -86,7 +88,8 @@ public final class AnnotationRenderer {
         g.setLineWidth(originalLineWidth);
     }
 
-    private static void renderDirectionalAnnotation(Annotation.DirectionalAnnotation annotation, GraphicsContext g, GameBoardManager manager) {
+    private static void renderDirectionalAnnotation(Annotation.DirectionalAnnotation annotation,
+                                                    GraphicsContext g, GameBoardManager manager) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] start = manager.size.getGridRenderPosition(annotation.getX(), annotation.getY(), 0d);
         double[] end = manager.size.getGridRenderPosition(annotation.getXEnd(), annotation.getYEnd(), 0d);
@@ -121,7 +124,8 @@ public final class AnnotationRenderer {
         g.fillText(text, x, y, width);
     }
 
-    private static void renderArrow(GraphicsContext g, double xStart, double yStart, double xEnd, double yEnd, double stoneSize) {
+    private static void renderArrow(GraphicsContext g, double xStart, double yStart,
+                                    double xEnd, double yEnd, double stoneSize) {
         renderLine(g, xStart, yStart, xEnd, yEnd);
 
         final double tipSize = stoneSize / 4d;
@@ -134,7 +138,9 @@ public final class AnnotationRenderer {
         final double yStartNormal = 1d;
 
         final double dotProduct = xStartNormal * xEndNormal + yStartNormal * yEndNormal;
-        final double magnitude = Math.sqrt(Math.pow(xStartNormal, 2) + Math.pow(yStartNormal, 2)) * Math.sqrt(Math.pow(xEndNormal, 2) + Math.pow(yEndNormal, 2));
+        final double magnitude = Math.sqrt(Math.pow(xStartNormal, 2)
+                + Math.pow(yStartNormal, 2)) * Math.sqrt(Math.pow(xEndNormal, 2)
+                + Math.pow(yEndNormal, 2));
         double angle = Math.toDegrees(Math.acos(dotProduct / magnitude));
 
         if (xEndNormal > 0) {

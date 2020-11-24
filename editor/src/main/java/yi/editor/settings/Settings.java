@@ -73,7 +73,8 @@ public final class Settings {
      * @return The top-level directory for storing all program settings
      */
     public static Path getRootPath() {
-        return Objects.requireNonNull(rootPath, "Top level settings path is not initialized. Settings path operations should not be called in SettingsModule constructors.");
+        return Objects.requireNonNull(rootPath, "Top level settings path is not initialized. " +
+                "Settings path operations should not be called in SettingsModule constructors.");
     }
 
     /**

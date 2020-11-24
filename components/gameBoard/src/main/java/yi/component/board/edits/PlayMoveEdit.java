@@ -61,7 +61,8 @@ public final class PlayMoveEdit extends UndoableEdit {
         }
 
         if (!moveSubmitResult.isPlayed()) {
-            throw new IllegalStateException("Move is not played internally, is it returning the result before being submitted to the game tree?");
+            throw new IllegalStateException("Move is not played internally, is it returning " +
+                    "the result before being submitted to the game tree?");
         }
 
         submittedNode = moveSubmitResult.getMoveNode();

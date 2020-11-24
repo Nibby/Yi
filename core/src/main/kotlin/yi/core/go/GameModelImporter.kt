@@ -22,9 +22,11 @@ object GameModelImporter {
     /**
      * Parses the an internal file in the classpath as a [GameModel].
      *
-     * @param fileResourceUrl URL of the file resource in the classpath, starting with a leading backslash.
+     * @param fileResourceUrl URL of the file resource in the classpath, starting with a
+     * leading backslash.
      * @param format Format of the game file.
-     * @param resourceClass Reference class to supply the classpath used to find the resource.
+     * @param resourceClass Reference class to supply the classpath used to find the
+     * resource.
      * @return Parsed game model from the specified file.
      *
      * @throws GameParseException If the file content is corrupted or does not comply with the current format.

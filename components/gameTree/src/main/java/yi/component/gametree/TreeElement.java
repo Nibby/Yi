@@ -1,7 +1,8 @@
 package yi.component.gametree;
 
 /**
- * A displayable object on the game tree. Each element is constructed and managed by the {@link GameTreeStructure}.
+ * A displayable object on the game tree. Each element is constructed and managed by the
+ * {@link GameTreeStructure}.
  */
 public interface TreeElement {
 

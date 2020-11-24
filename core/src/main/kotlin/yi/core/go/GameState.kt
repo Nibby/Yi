@@ -1,9 +1,11 @@
 package yi.core.go
 
 /**
- * Represents the game position at a given [GameNode]. Yi's implementation of game position is based on an incremental model.
- * This means that each [GameNode] does not store the full game state at each position, rather, only the delta -- the change in
- * game state since the previous node. Therefore each node does not contain all the information to know the entire game state.
+ * Represents the game position at a given [GameNode]. Yi's implementation of game
+ * position is based on an incremental model. This means that each [GameNode] does not
+ * store the full game state at each position, rather, only the delta -- the change in
+ * game state since the previous node. Therefore each node does not contain all the
+ * information to know the entire game state.
  *
  * To obtain the full game state at a given [GameNode], use [GameModel.getCurrentGameState]
  *

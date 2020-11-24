@@ -30,7 +30,8 @@ public abstract class StoneEdit extends UndoableEdit {
     @Override
     protected boolean _rollbackEdit(GameModel gameModel) {
         if (nodeToEdit == null) {
-            throw new IllegalStateException("Attempting to undo before the edit action has been performed once.");
+            throw new IllegalStateException("Attempting to undo before the edit action " +
+                    "has been performed once.");
         }
 
         boolean success = _rollbackStoneEdit(gameModel, nodeToEdit);
@@ -53,8 +54,8 @@ public abstract class StoneEdit extends UndoableEdit {
                 // First time submitting node
                 nodeToEdit = gameModel.submitStoneEditNode();
             } else {
-                // Subsequent re-do actions. Have to re-use this node because subsequent edits also refer to this node
-                // when undo/redoing their changes.
+                // Subsequent re-do actions. Have to re-use this node because subsequent
+                // edits also refer to this node when undo/redoing their changes.
                 gameModel.submitNode(nodeToEdit);
             }
         }
@@ -98,7 +99,8 @@ public abstract class StoneEdit extends UndoableEdit {
             int y = stoneEditToAdd.getY();
             var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
             if (editHere != null) {
-                throw new IllegalStateException("Attempting to perform stone edit but a stone already exists at (" + x + ", " + y + ")");
+                throw new IllegalStateException("Attempting to perform stone edit but a " +
+                        "stone already exists at (" + x + ", " + y + ")");
             }
         }
 
@@ -107,7 +109,8 @@ public abstract class StoneEdit extends UndoableEdit {
             int y = stoneEditToAdd.getY();
             var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
             if (editHere == null) {
-                throw new IllegalStateException("Attempting to un-add stone edit but no stone exist at (" + x + ", " + y + ")");
+                throw new IllegalStateException("Attempting to un-add stone edit but no " +
+                        "stone exist at (" + x + ", " + y + ")");
             }
         }
     }
@@ -137,7 +140,8 @@ public abstract class StoneEdit extends UndoableEdit {
             if (existingEditOnThisNode.isPresent()) {
                 stoneEdit = existingEditOnThisNode.get();
                 gameModel.removeStoneEdit(nodeToEdit, stoneEdit);
-            } else throw new IllegalStateException("No stone was created at (" + x + ", " + y + ") on this node.");
+            } else throw new IllegalStateException("No stone was created at ("
+                    + x + ", " + y + ") on this node.");
 
             return true;
         }

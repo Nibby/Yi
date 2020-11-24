@@ -42,7 +42,9 @@ public final class GameBoardThemeSettings extends SettingsModule {
 
     @Override
     public void load() {
-        Path themeDirectory = Settings.getRootPath().resolve(Settings.THEME_DIRECTORY_NAME).resolve("board");
+        Path themeDirectory = Settings.getRootPath()
+                                      .resolve(Settings.THEME_DIRECTORY_NAME)
+                                      .resolve("board");
         if (!Files.exists(themeDirectory)) {
             try {
                 Files.createDirectories(themeDirectory);
@@ -53,7 +55,8 @@ public final class GameBoardThemeSettings extends SettingsModule {
 
         Path selectedThemeDirectory = themeDirectory.resolve(getSelectedThemeDirectory());
         if (!Files.exists(selectedThemeDirectory)) {
-            throw new IllegalStateException("Cannot find board theme: theme directory \"" + selectedThemeDirectory + "\" is missing!");
+            throw new IllegalStateException("Cannot find board theme: theme directory \""
+                    + selectedThemeDirectory + "\" is missing!");
         }
 
         try {

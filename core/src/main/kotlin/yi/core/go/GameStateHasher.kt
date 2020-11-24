@@ -1,9 +1,10 @@
 package yi.core.go
 
 /**
- * Transforms a [GameState] into a hash code such that the hash code is unique if and only if the game position is unique.
- * This is used to implement whole board positional repeat detection. Implementations must ensure that there is no
- * collision in hash code between unique game positions.
+ * Transforms a [GameState] into a hash code such that the hash code is unique if and
+ * only if the game position is unique. This is used to implement whole board positional
+ * repeat detection. Implementations must ensure that there is no collision in hash code
+ * between unique game positions.
  */
 interface GameStateHasher {
 

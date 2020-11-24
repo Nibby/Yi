@@ -9,8 +9,8 @@ import yi.core.go.GameModel;
 import java.util.Optional;
 
 /**
- * Handles and manages all keyboard and mouse input to the {@link GameBoardViewer}. Performs rapid repaints of
- * lightweight objects (such as the transparent intersection cursor).
+ * Handles and manages all keyboard and mouse input to the {@link GameBoardViewer}.
+ * Performs rapid repaints of lightweight objects (such as the transparent intersection cursor).
  */
 final class GameBoardInputCanvas extends GameBoardCanvas {
 

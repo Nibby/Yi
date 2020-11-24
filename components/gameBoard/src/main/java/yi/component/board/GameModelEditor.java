@@ -10,9 +10,10 @@ import java.util.Objects;
 import java.util.Stack;
 
 /**
- * Manages all the edits made to the game model, providing support for undo and redo actions. The editing model requires
- * all changes to the game model to be submitted through this handler. Therefore, this class should be the only place that
- * directly interacts with {@link GameModel} state.
+ * Manages all the edits made to the game model, providing support for undo and redo actions.
+ * The editing model requires all changes to the game model to be submitted through this handler.
+ *
+ * Therefore, this class should be the only place that directly interacts with {@link GameModel} state.
  */
 public final class GameModelEditor {
 

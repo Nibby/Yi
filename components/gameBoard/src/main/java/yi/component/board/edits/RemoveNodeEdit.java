@@ -22,7 +22,8 @@ public final class RemoveNodeEdit extends UndoableEdit {
     @Override
     protected boolean _rollbackEdit(GameModel gameModel) {
         if (!parentOfNodeToRemove.isContinuationOf(gameModel.getRootNode())) {
-            throw new IllegalStateException("Attempting to re-do but parent node is no longer part of the game tree");
+            throw new IllegalStateException("Attempting to re-do but parent node is no " +
+                    "longer part of the game tree");
         }
 
         gameModel.submitNode(parentOfNodeToRemove, nodeToRemove);
