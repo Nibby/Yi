@@ -10,6 +10,7 @@ import yi.component.i18n.Language;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.EditorFrame;
+import yi.editor.Yi;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,16 +34,20 @@ public class EditorMenuBar extends MenuBar {
         var windowMenu = new YiMenu(MENU_WINDOW);
         var helpMenu = new YiMenu(MENU_HELP);
 
-        var debugMenu = new Menu("Debug");
-        {
-            for (Language l : Language.getSupportedLanguages()) {
-                var languageItem = new MenuItem(l.getName());
-                languageItem.setOnAction(e -> I18n.setCurrentLanguage(l));
-                debugMenu.getItems().add(languageItem);
+        getMenus().addAll(fileMenu, editMenu, toolsMenu, viewMenu, windowMenu, helpMenu);
+
+        if (Yi.isRunningFromSource()) {
+            var debugMenu = new Menu("Debug");
+            {
+                for (Language l : Language.getSupportedLanguages()) {
+                    var languageItem = new MenuItem(l.getName());
+                    languageItem.setOnAction(e -> I18n.setCurrentLanguage(l));
+                    debugMenu.getItems().add(languageItem);
+                }
             }
+            getMenus().add(debugMenu);
         }
 
-        getMenus().addAll(fileMenu, editMenu, toolsMenu, viewMenu, windowMenu, helpMenu, debugMenu);
         setUseSystemMenuBar(true);
     }
 

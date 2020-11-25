@@ -65,7 +65,7 @@ public class EditorFrame extends Stage {
 
         setLayout(layout);
         setGameModel(gameModel);
-//        initStyle(StageStyle.UNDECORATED);
+        setTitle(Yi.getProgramName());
     }
 
     private void enableDragAndDropToOpenFile(GameBoardViewer boardViewer) {
