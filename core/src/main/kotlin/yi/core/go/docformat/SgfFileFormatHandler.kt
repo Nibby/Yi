@@ -47,39 +47,40 @@ internal class SgfFileFormatHandler : FileFormatHandler {
     }
 
     companion object {
-        private const val SGF_COORDINATES = "abcdefghijklmnopqrstuvwxyz"
+        internal const val SGF_COORDINATES = "abcdefghijklmnopqrstuvwxyz"
 
-        private const val DELIM_BRANCH_START = '('
-        private const val DELIM_BRANCH_END = ')'
-        private const val DELIM_NODE_START = ';'
-        private const val DELIM_TAG_VALUE_START = '['
-        private const val DELIM_TAG_VALUE_END = ']'
-        private const val DELIM_TAG_VALUE_SPLIT = ':'
+        internal const val DELIM_BRANCH_START = '('
+        internal const val DELIM_BRANCH_END = ')'
+        internal const val DELIM_NODE_START = ';'
+        internal const val DELIM_TAG_VALUE_START = '['
+        internal const val DELIM_TAG_VALUE_END = ']'
+        internal const val DELIM_TAG_VALUE_SPLIT = ':'
 
-        private const val SGF_GAME_PLACE = "PC" // Place where the game was played
-        private const val SGF_HANDICAP_COUNT = "HA"
-        private const val SGF_BOARD_SIZE = "SZ"
-        private const val SGF_RULESET = "RU"
-        private const val SGF_KOMI = "KM"
-        private const val SGF_CHARSET = "CA"
-        private const val SGF_GAME_TYPE = "GM"
-        private const val SGF_FILE_FORMAT = "FF"
-        private const val SGF_BLACK_MOVE = "B"
-        private const val SGF_WHITE_MOVE = "W"
-        private const val SGF_ADD_BLACK = "AB"
-        private const val SGF_ADD_WHITE = "AW"
-        private const val SGF_ADD_ERASE = "AE"
-        private const val SGF_MARKUP_CROSS = "MA"
-        private const val SGF_MARKUP_TRIANGLE = "TR"
-        private const val SGF_MARKUP_CIRCLE = "CR"
-        private const val SGF_MARKUP_SQUARE = "SQ"
-        private const val SGF_MARKUP_LABEL = "LB"
-        private const val SGF_MARKUP_LETTER = "L" // Old, TODO: support it?
-        private const val SGF_MARKUP_DIM = "DD"
-        private const val SGF_MARKUP_ARROW = "AR"
-        private const val SGF_MARKUP_LINE = "LN"
-        private const val SGF_MARKUP_SL = "SL" // Old, TODO: What's this?
-        private const val SGF_COMMENT = "C"
+        internal const val SGF_APPLICATION = "AP" // Program that saved this document
+        internal const val SGF_GAME_PLACE = "PC" // Place where the game was played
+        internal const val SGF_HANDICAP_COUNT = "HA"
+        internal const val SGF_BOARD_SIZE = "SZ"
+        internal const val SGF_RULESET = "RU"
+        internal const val SGF_KOMI = "KM"
+        internal const val SGF_CHARSET = "CA"
+        internal const val SGF_GAME_TYPE = "GM"
+        internal const val SGF_FILE_FORMAT = "FF"
+        internal const val SGF_BLACK_MOVE = "B"
+        internal const val SGF_WHITE_MOVE = "W"
+        internal const val SGF_ADD_BLACK = "AB"
+        internal const val SGF_ADD_WHITE = "AW"
+        internal const val SGF_ADD_ERASE = "AE"
+        internal const val SGF_MARKUP_CROSS = "MA"
+        internal const val SGF_MARKUP_TRIANGLE = "TR"
+        internal const val SGF_MARKUP_CIRCLE = "CR"
+        internal const val SGF_MARKUP_SQUARE = "SQ"
+        internal const val SGF_MARKUP_LABEL = "LB"
+        internal const val SGF_MARKUP_LETTER = "L" // Old, TODO: support it?
+        internal const val SGF_MARKUP_DIM = "DD"
+        internal const val SGF_MARKUP_ARROW = "AR"
+        internal const val SGF_MARKUP_LINE = "LN"
+        internal const val SGF_MARKUP_SL = "SL" // Old, TODO: What's this?
+        internal const val SGF_COMMENT = "C"
     }
 
     private object SgfImporter {
@@ -649,7 +650,9 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         }
     }
 
-    private object SgfExporter {
+    internal object SgfExporter {
+
+        internal const val SGF_EXPORTED_FILE_FORMAT_VERSION = 4
 
         fun doExport(gameModel: GameModel, writer: BufferedWriter) {
             exportBranch(gameModel, gameModel.getRootNode(), writer)
@@ -685,7 +688,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 exportRootNodeData(gameModel, currentNode, writer)
             }
 
-            exportPlayedMoveData(currentNode, writer)
+            exportPlayedMoveData(gameModel, currentNode, writer)
             exportStoneEditData(currentNode, writer)
             exportAnnotationData(currentNode, writer)
             exportCommentData(currentNode, writer)
@@ -695,7 +698,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
         private fun exportRootNodeData(gameModel: GameModel, rootNode: GameNode, writer: BufferedWriter) {
             writeTag(SGF_GAME_TYPE, "1", writer)
-            writeTag(SGF_FILE_FORMAT, "4", writer)
+            writeTag(SGF_FILE_FORMAT, SGF_EXPORTED_FILE_FORMAT_VERSION.toString(), writer)
+
+            if (gameModel.applicationName.isNotBlank()) {
+                writeTag(SGF_APPLICATION, gameModel.applicationName, writer)
+            }
 
             val boardSizeValue: String = if (gameModel.boardWidth == gameModel.boardHeight) {
                 gameModel.boardWidth.toString()
@@ -704,8 +711,14 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
             writeTag(SGF_BOARD_SIZE, boardSizeValue, writer)
 
-            writeTag(SGF_KOMI, gameModel.rules.getDefaultKomi().toString(), writer)
+            writeTag(SGF_KOMI, gameModel.komi.toString(), writer)
             writeTag(SGF_RULESET, gameModel.rules.getInternalName(), writer)
+
+            if (gameModel.handicaps > 0) {
+                writeTag(SGF_HANDICAP_COUNT, gameModel.handicaps.toString(), writer)
+            }
+
+            // TODO: Export other metadata on the root node not covered here?
         }
 
         private fun exportAnnotationData(currentNode: GameNode, writer: BufferedWriter) {
@@ -732,7 +745,13 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         val x = annotation.x
                         val y = annotation.y
                         val coordinate = getSgfCoordinates(x, y)
-                        annotationData[key]!!.add(coordinate)
+                        var data = coordinate
+
+                        if (annotation is Annotation.Label) {
+                            data += DELIM_TAG_VALUE_SPLIT + annotation.text
+                        }
+
+                        annotationData[key]!!.add(data)
                     }
                     is Annotation.DirectionalAnnotation -> {
                         val xStart = annotation.x
@@ -778,28 +797,33 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writeTags(stoneEditData, writer)
         }
 
-        private fun exportPlayedMoveData(currentNode: GameNode, writer: BufferedWriter) {
+        private fun exportPlayedMoveData(gameModel: GameModel, currentNode: GameNode, writer: BufferedWriter) {
             val moveType = currentNode.getType()
-            var primaryMove: Stone? = null
 
-            if (moveType == GameNodeType.MOVE_PLAYED
-                    || moveType == GameNodeType.PASS
-                    || moveType == GameNodeType.RESIGN) {
-                primaryMove = currentNode.getPrimaryMove()!!
-            }
+            if (moveType == GameNodeType.MOVE_PLAYED) {
+                currentNode.getPrimaryMove()!!.let {
+                    val coordinates = if (moveType == GameNodeType.MOVE_PLAYED) getSgfCoordinates(it) else ""
+                    val color = it.color
+                    val key: String
 
-            primaryMove?.let {
-                val coordinates = if (moveType == GameNodeType.MOVE_PLAYED) getSgfCoordinates(it) else ""
-                val color = it.color
-                val key: String
+                    key = when (color) {
+                        StoneColor.BLACK -> SGF_BLACK_MOVE
+                        StoneColor.WHITE -> SGF_WHITE_MOVE
+                        else -> throw NotImplementedError("Unsupported stone color: $color")
+                    }
 
-                key = when (color) {
+                    writeTag(key, coordinates, writer)
+                }
+            } else if (moveType == GameNodeType.PASS || moveType == GameNodeType.RESIGN) {
+                val ruleset = gameModel.rules
+                val key = when (val expectedColor =
+                        ruleset.getStoneColorForTurn(currentNode.moveNumber-1, gameModel.handicaps > 0)) {
                     StoneColor.BLACK -> SGF_BLACK_MOVE
                     StoneColor.WHITE -> SGF_WHITE_MOVE
-                    else -> throw NotImplementedError("Unsupported stone color: $color")
+                    else -> throw NotImplementedError("Unsupported stone color: $expectedColor")
                 }
 
-                writeTag(key, coordinates, writer)
+                writeTag(key, "", writer)
             }
         }
 
