@@ -42,21 +42,23 @@ public class EditorToolBar extends ToolBar {
 
         toolButtonGroup = new ToggleGroup();
 
-        toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", "Play Move");
-        toolAddBlackStone = addEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32_white.png", "Add Black Stone");
-        toolAddWhiteStone = addEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32_white.png", "Add White Stone");
+        toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOLBAR_TOOL_PLAY_MOVE);
+        toolAddBlackStone = addEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32_white.png", TOOLBAR_TOOL_ADD_BLACK);
+        toolAddWhiteStone = addEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32_white.png", TOOLBAR_TOOL_ADD_WHITE);
 
-        toolAnnotateTriangle = addEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32_white.png", "Add Triangle");
-        toolAnnotateCircle = addEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32_white.png", "Add Circle");
-        toolAnnotateSquare = addEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32_white.png", "Add Square");
-        toolAnnotateCross = addEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32_white.png", "Add Cross");
-        toolAnnotateText = addEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32_white.png", "Add Letter");
-        toolAnnotateNumber = addEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32_white.png", "Add Number");
-        toolAnnotateLine = addEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32_white.png", "Add Line");
-        toolAnnotateArrow = addEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32_white.png", "Add Arrow");
-        toolAnnotateDim = addEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32_white.png", "Add Shade");
+        toolAnnotateTriangle = addEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32_white.png", TOOLBAR_TOOL_TRIANGLE);
+        toolAnnotateCircle = addEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32_white.png", TOOLBAR_TOOL_CIRCLE);
+        toolAnnotateSquare = addEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32_white.png", TOOLBAR_TOOL_SQUARE);
+        toolAnnotateCross = addEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32_white.png", TOOLBAR_TOOL_CROSS);
+        toolAnnotateText = addEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32_white.png", TOOLBAR_TOOL_LABEL_LETTER);
+        toolAnnotateNumber = addEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32_white.png", TOOLBAR_TOOL_LABEL_NUMBER);
+        toolAnnotateLine = addEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32_white.png", TOOLBAR_TOOL_LINE);
+        toolAnnotateArrow = addEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32_white.png", TOOLBAR_TOOL_ARROW);
+        toolAnnotateDim = addEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32_white.png", TOOLBAR_TOOL_DIM);
 
-        getStyleClass().add("bg-black-50");
+        toolPlayMove.setSelected(true);
+
+        getStyleClass().add("bg-black-60");
     }
 
     public void setButtonsForContentLayout(ContentLayout layout) {
