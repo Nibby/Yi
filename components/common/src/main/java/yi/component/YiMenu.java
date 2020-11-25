@@ -38,4 +38,5 @@ public class YiMenu extends Menu implements YiComponent {
     public void setText(@Nullable TextResource key) {
         setText(key == null ? "" : key.getLocalisedText());
     }
+
 }
