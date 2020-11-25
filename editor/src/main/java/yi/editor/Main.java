@@ -6,9 +6,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import yi.component.FontManager;
 import yi.component.SkinManager;
-import yi.core.go.GameModel;
-import yi.core.go.GameRules;
 import yi.editor.settings.Settings;
+import yi.editor.utilities.GameModelUtilities;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,7 +28,7 @@ public class Main extends Application {
         SkinManager.useDefaultSkin();
         Settings.load();
 
-        var gameModel = new GameModel(19, 19, GameRules.CHINESE);
+        var gameModel = GameModelUtilities.createGameModel();
         var editorFrame = new EditorFrame(gameModel);
         editorFrame.show();
     }
