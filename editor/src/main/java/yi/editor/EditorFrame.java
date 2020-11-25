@@ -16,6 +16,7 @@ import yi.core.go.GameParseException;
 import yi.editor.components.ContentLayout;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorToolBar;
+import yi.editor.components.GameBoardViewerComposite;
 import yi.editor.settings.Settings;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class EditorFrame extends Stage {
     private final EditorToolBar editorToolBar;
 
     private final GameBoardViewer boardViewer;
+    private final GameBoardViewerComposite compositeViewer;
     private final GameTreeViewer treeViewer;
     private final GameTreeViewerSettings treeViewerSettings;
     private GameModel gameModel;
@@ -62,6 +64,8 @@ public class EditorFrame extends Stage {
 
         editorToolBar = new EditorToolBar();
         editorToolBar.addToolSelectionListener(this::setTool);
+
+        compositeViewer = new GameBoardViewerComposite(boardViewer, editorToolBar);
 
         setLayout(layout);
         setGameModel(gameModel);
@@ -111,7 +115,7 @@ public class EditorFrame extends Stage {
 
         var controlPane = new BorderPane();
         controlPane.setTop(menuBar);
-        controlPane.setBottom(editorToolBar);
+//        controlPane.setBottom(editorToolBar);
 
         var container = new BorderPane();
         container.setTop(controlPane);
@@ -156,11 +160,11 @@ public class EditorFrame extends Stage {
     }
 
     public Parent getBoardComponent() {
-        return (Parent) boardViewer.getComponent();
+        return compositeViewer;
     }
 
     public Parent getTreeComponent() {
-        return (Parent) treeViewer.getComponent();
+        return treeViewer.getComponent();
     }
 
     class DefaultUndoSystemHandler implements GlobalAccelerators.UndoSystemHandler {

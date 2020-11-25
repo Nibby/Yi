@@ -5,6 +5,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import yi.component.CanvasContainer;
 import yi.component.YiComponent;
 import yi.component.board.editmodes.AbstractEditMode;
@@ -162,11 +163,11 @@ public final class GameBoardViewer implements YiComponent {
         settings.getBackgroundImage().ifPresent(this::setBackgroundImage);
     }
 
-    public void setBoardImage(Image image) {
+    public void setBoardImage(@Nullable Image image) {
         manager.view.boardImage = image;
     }
 
-    public void setBackgroundImage(Image image) {
+    public void setBackgroundImage(@Nullable Image image) {
         manager.view.backgroundImage = image;
     }
 

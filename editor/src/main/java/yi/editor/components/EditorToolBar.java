@@ -10,6 +10,7 @@ import yi.editor.utilities.IconUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -38,21 +39,24 @@ public class EditorToolBar extends ToolBar {
     private final List<ToggleButton> editToolToggleButtons = new ArrayList<>();
 
     public EditorToolBar() {
+
         toolButtonGroup = new ToggleGroup();
 
-        toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32.png", "Play Move");
-        toolAddBlackStone = addEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32.png", "Add Black Stone");
-        toolAddWhiteStone = addEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32.png", "Add White Stone");
+        toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", "Play Move");
+        toolAddBlackStone = addEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32_white.png", "Add Black Stone");
+        toolAddWhiteStone = addEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32_white.png", "Add White Stone");
 
-        toolAnnotateTriangle = addEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32.png", "Add Triangle");
-        toolAnnotateCircle = addEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32.png", "Add Circle");
-        toolAnnotateSquare = addEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32.png", "Add Square");
-        toolAnnotateCross = addEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32.png", "Add Cross");
-        toolAnnotateText = addEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32.png", "Add Letter");
-        toolAnnotateNumber = addEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32.png", "Add Number");
-        toolAnnotateLine = addEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32.png", "Add Line");
-        toolAnnotateArrow = addEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32.png", "Add Arrow");
-        toolAnnotateDim = addEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32.png", "Add Shade");
+        toolAnnotateTriangle = addEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32_white.png", "Add Triangle");
+        toolAnnotateCircle = addEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32_white.png", "Add Circle");
+        toolAnnotateSquare = addEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32_white.png", "Add Square");
+        toolAnnotateCross = addEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32_white.png", "Add Cross");
+        toolAnnotateText = addEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32_white.png", "Add Letter");
+        toolAnnotateNumber = addEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32_white.png", "Add Number");
+        toolAnnotateLine = addEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32_white.png", "Add Line");
+        toolAnnotateArrow = addEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32_white.png", "Add Arrow");
+        toolAnnotateDim = addEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32_white.png", "Add Shade");
+
+        getStyleClass().add("bg-black-50");
     }
 
     public void setButtonsForContentLayout(ContentLayout layout) {
@@ -61,6 +65,7 @@ public class EditorToolBar extends ToolBar {
         // TODO: This is definitely not a good design. Rethink UI.
         final int gap = 6;
 
+        getItems().add(dynamicSpacer());
         getItems().add(toolPlayMove);
         getItems().add(staticSpacer(gap));
         getItems().add(toolAddBlackStone);
@@ -76,6 +81,7 @@ public class EditorToolBar extends ToolBar {
         getItems().add(staticSpacer(gap));
         getItems().add(toolAnnotateLine);
         getItems().add(toolAnnotateArrow);
+        getItems().add(dynamicSpacer());
     }
 
     private Pane dynamicSpacer() {
@@ -103,15 +109,34 @@ public class EditorToolBar extends ToolBar {
     private ToggleButton addEditToolButton(EditorTool editorTool, String iconResource, String tooltip) {
         var toggle = new ToggleButton();
         toggle.setFocusTraversable(false);
+        toggle.getStyleClass().add("button-style2");
         setUp(toggle, iconResource, tooltip);
 
+        // TODO: I am way too tired to work out why clicking on the already-selected
+        //       toggle button causes the icon to go back to the unselected version,
+        //       so I put this flag here to ignore every second update to the icon.
+        //       I suspect toggle.setSelected(true) has something to do with it...
+        //
+        //       Nonetheless right now the code around this area is a very dirty trick.
+        AtomicBoolean ignoreIconUpdate = new AtomicBoolean(false);
         toggle.selectedProperty().addListener((observable, wasSelected, isSelected) -> {
             if (isSelected) {
                 toolSelectionListeners.fireValueChangeEvent(editorTool);
             } else {
                 if (toolButtonGroup.getSelectedToggle() == null && wasSelected) {
                     toggle.setSelected(true);
+                    ignoreIconUpdate.set(true);
                 }
+            }
+
+            if (!ignoreIconUpdate.get()) {
+                if (isSelected) {
+                    setIcon(iconResource.replace("_white", ""), toggle);
+                } else {
+                    setIcon(iconResource, toggle);
+                }
+            } else {
+                ignoreIconUpdate.set(false);
             }
         });
 
@@ -130,6 +155,10 @@ public class EditorToolBar extends ToolBar {
 
     private void setUp(ButtonBase buttonBase, String iconResource, String tooltip) {
         buttonBase.setTooltip(new Tooltip(tooltip));
+        setIcon(iconResource, buttonBase);
+    }
+
+    private void setIcon(String iconResource, ButtonBase buttonBase) {
         IconUtilities.getIcon(iconResource).ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
     }
 
