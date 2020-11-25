@@ -1,12 +1,15 @@
 package yi.editor.components;
 
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
 import yi.component.YiMenu;
 import yi.component.YiMenuItem;
 import yi.component.i18n.I18n;
 import yi.component.i18n.Language;
+import yi.component.utilities.GuiUtilities;
+import yi.component.utilities.KeyModifier;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.EditorFrame;
@@ -55,6 +58,7 @@ public class EditorMenuBar extends MenuBar {
         var fileMenu = new YiMenu(MENU_FILE);
 
         var newGame = new YiMenuItem(ITEM_NEW_GAME);
+        newGame.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.N, KeyModifier.SHORTCUT));
         newGame.setOnAction(event -> {
             // TODO: Show a new dialog prompting for new game document information.
             //       The values below are hard-coded, and are temporary.
@@ -86,6 +90,7 @@ public class EditorMenuBar extends MenuBar {
         });
 
         var open = new YiMenuItem(ITEM_OPEN_GAME);
+        open.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.O, KeyModifier.SHORTCUT));
         open.setOnAction(event -> {
             var fileChooser = new FileChooser();
             fileChooser.setTitle(ITEM_OPEN_GAME.getLocalisedText());
@@ -102,6 +107,7 @@ public class EditorMenuBar extends MenuBar {
         });
 
         var save = new YiMenuItem(ITEM_SAVE_GAME);
+        save.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.S, KeyModifier.SHORTCUT));
         save.setOnAction(event -> {
             var existingModel = frame.getGameModel();
             Path saveFilePath = existingModel.getLastSavePath();
@@ -116,6 +122,7 @@ public class EditorMenuBar extends MenuBar {
         });
 
         var saveAs = new YiMenuItem(ITEM_SAVE_AS_GAME);
+        saveAs.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.S, KeyModifier.SHORTCUT, KeyModifier.SHIFT));
         saveAs.setOnAction(event -> {
             var existingModel = frame.getGameModel();
             Path saveFilePath = promptAndStoreSaveFile(existingModel, frame);

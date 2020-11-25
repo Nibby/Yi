@@ -1,7 +1,14 @@
 package yi.component.utilities;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class GuiUtilities {
 
@@ -63,4 +70,36 @@ public final class GuiUtilities {
 
         return new Color(r, g, b, alpha1);
     }
+
+    /**
+     * Helper method to create Fx {@link KeyCombination} in a readable way.
+     *
+     * @param keyCode Main key combination keycode
+     * @param modifiers Modifier states, the presence of which indicates the modifier key
+     *                  must be held down. Otherwise the key must be up.
+     * @return The requested key combination.
+     *
+     * @see KeyModifier Available modifier keys
+     */
+    public static KeyCombination getKeyCombination(KeyCode keyCode, KeyModifier ... modifiers) {
+        Set<KeyModifier> modifierSet = Arrays.stream(modifiers).collect(Collectors.toSet());
+        boolean shortcutDown = modifierSet.contains(KeyModifier.SHORTCUT);
+        boolean ctrlDown = modifierSet.contains(KeyModifier.CTRL);
+        boolean altDown = modifierSet.contains(KeyModifier.ALT);
+        boolean shiftDown = modifierSet.contains(KeyModifier.SHIFT);
+        boolean metaDown = modifierSet.contains(KeyModifier.META);
+
+        return new KeyCodeCombination(keyCode,
+                getModifierValue(shiftDown),
+                getModifierValue(ctrlDown),
+                getModifierValue(altDown),
+                getModifierValue(metaDown),
+                getModifierValue(shortcutDown));
+    }
+
+    private static KeyCombination.ModifierValue getModifierValue(boolean modifierDown) {
+        return modifierDown ? KeyCombination.ModifierValue.DOWN : KeyCombination.ModifierValue.UP;
+    }
+
+
 }
