@@ -4,6 +4,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+/**
+ * Wrapper for {@link Scene} with additional stylesheets applied.
+ */
 public class YiScene extends Scene {
 
     private static final String CSS_FONT = "/font.css";

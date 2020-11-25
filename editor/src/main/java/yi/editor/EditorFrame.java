@@ -156,11 +156,11 @@ public class EditorFrame extends Stage {
     }
 
     public Parent getBoardComponent() {
-        return boardViewer.getComponent();
+        return (Parent) boardViewer.getComponent();
     }
 
     public Parent getTreeComponent() {
-        return treeViewer.getComponent();
+        return (Parent) treeViewer.getComponent();
     }
 
     class DefaultUndoSystemHandler implements GlobalAccelerators.UndoSystemHandler {

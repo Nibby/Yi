@@ -25,6 +25,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         loadBundledFonts();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
+        Translations.installSupportedLanguages();
         SkinManager.useDefaultSkin();
         Settings.load();
 

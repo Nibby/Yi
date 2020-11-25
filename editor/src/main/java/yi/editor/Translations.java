@@ -1,8 +1,9 @@
 package yi.editor;
 
-import yi.component.i18n.I18n;
+import yi.component.i18n.Language;
+import yi.component.i18n.TextResource;
 
-import java.util.ResourceBundle;
+import java.util.Locale;
 
 /**
  * Stores all the translation keys used by the Yi editor module. In other words, all
@@ -12,41 +13,25 @@ public final class Translations {
 
     private static final String I18N_PACKAGE = "i18n.";
 
-    public static final class Menu {
-
-        public static ResourceBundle getResourceBundle() {
-            return I18n.getResourceBundle(I18N_PACKAGE + "menus");
-        }
-
-        public static final Translation MENU_FILE = new Translation("menu.file");
-        public static final Translation MENU_EDIT = new Translation("menu.edit");
-        public static final Translation MENU_TOOLS = new Translation("menu.tools");
-        public static final Translation MENU_VIEW = new Translation("menu.view");
-        public static final Translation MENU_WINDOW = new Translation("menu.window");
-        public static final Translation MENU_HELP = new Translation("menu.help");
-
-        public static final Translation ITEM_NEW_GAME = new Translation("item.newGame");
-        public static final Translation ITEM_OPEN_GAME = new Translation("item.openGame");
-        public static final Translation ITEM_SAVE_GAME = new Translation("item.saveGame");
-        public static final Translation ITEM_SAVE_AS_GAME = new Translation("item.saveAsGame");
+    public static void installSupportedLanguages() {
+        Language.add(new Language("简体中文",Locale.SIMPLIFIED_CHINESE));
     }
 
-    public static final class Translation {
-        private final String resourceKey;
+    public static final class Menu {
 
-        private Translation(String resourceKey) {
-            this.resourceKey = resourceKey;
-        }
+        private static final String BUNDLE = I18N_PACKAGE + "menus";
 
-        /**
-         * The localised text uses {@link I18n#getCurrentLanguage()} for the default
-         * translation.
-         *
-         * @return The localised text for this translation item.
-         */
-        public String getLocalised() {
-            return Menu.getResourceBundle().getString(resourceKey);
-        }
+        public static final TextResource MENU_FILE = new TextResource("menu.file", BUNDLE);
+        public static final TextResource MENU_EDIT = new TextResource("menu.edit", BUNDLE);
+        public static final TextResource MENU_TOOLS = new TextResource("menu.tools", BUNDLE);
+        public static final TextResource MENU_VIEW = new TextResource("menu.view", BUNDLE);
+        public static final TextResource MENU_WINDOW = new TextResource("menu.window", BUNDLE);
+        public static final TextResource MENU_HELP = new TextResource("menu.help", BUNDLE);
+
+        public static final TextResource ITEM_NEW_GAME = new TextResource("item.newGame", BUNDLE);
+        public static final TextResource ITEM_OPEN_GAME = new TextResource("item.openGame", BUNDLE);
+        public static final TextResource ITEM_SAVE_GAME = new TextResource("item.saveGame", BUNDLE);
+        public static final TextResource ITEM_SAVE_AS_GAME = new TextResource("item.saveAsGame", BUNDLE);
     }
 
 }

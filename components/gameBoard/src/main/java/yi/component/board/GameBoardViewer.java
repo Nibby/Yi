@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
-import yi.component.Component;
+import yi.component.YiComponent;
 import yi.component.board.editmodes.AbstractEditMode;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
@@ -22,7 +22,7 @@ import java.util.function.Function;
  * The core interface component that handles the display of the game board, as well as user
  * input to browse and edit {@link GameModel} data.
  */
-public final class GameBoardViewer implements Component {
+public final class GameBoardViewer implements YiComponent {
 
     private final CanvasContainer container;
     private final GameBoardMainCanvas mainCanvas;

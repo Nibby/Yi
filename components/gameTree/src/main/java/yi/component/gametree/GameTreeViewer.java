@@ -7,7 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import org.jetbrains.annotations.NotNull;
 import yi.component.CanvasContainer;
-import yi.component.Component;
+import yi.component.YiComponent;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * A component which displays the game model and its nodes as a tree graph.
  */
-public final class GameTreeViewer implements Component {
+public final class GameTreeViewer implements YiComponent {
 
     private final CanvasContainer component;
     private GameTreeViewerSettings settings = GameTreeViewerSettings.getDefault();

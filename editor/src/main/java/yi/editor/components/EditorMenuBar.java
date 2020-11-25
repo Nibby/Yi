@@ -3,6 +3,10 @@ package yi.editor.components;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
+import yi.component.YiMenu;
+import yi.component.YiMenuItem;
+import yi.component.i18n.I18n;
+import yi.component.i18n.Language;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.EditorFrame;
@@ -23,20 +27,29 @@ public class EditorMenuBar extends MenuBar {
 
     public EditorMenuBar(EditorFrame frame) {
         var fileMenu = createFileMenu(frame);
-        var editMenu = new Menu(MENU_EDIT.getLocalised());
-        var toolsMenu = new Menu(MENU_TOOLS.getLocalised());
-        var viewMenu = new Menu(MENU_VIEW.getLocalised());
-        var windowMenu = new Menu(MENU_WINDOW.getLocalised());
-        var helpMenu = new Menu(MENU_HELP.getLocalised());
+        var editMenu = new YiMenu(MENU_EDIT);
+        var toolsMenu = new YiMenu(MENU_TOOLS);
+        var viewMenu = new YiMenu(MENU_VIEW);
+        var windowMenu = new YiMenu(MENU_WINDOW);
+        var helpMenu = new YiMenu(MENU_HELP);
 
-        getMenus().addAll(fileMenu, editMenu, toolsMenu, viewMenu, windowMenu, helpMenu);
-        setUseSystemMenuBar(false);
+        var debugMenu = new Menu("Debug");
+        {
+            for (Language l : Language.getSupportedLanguages()) {
+                var languageItem = new MenuItem(l.getName());
+                languageItem.setOnAction(e -> I18n.setCurrentLanguage(l));
+                debugMenu.getItems().add(languageItem);
+            }
+        }
+
+        getMenus().addAll(fileMenu, editMenu, toolsMenu, viewMenu, windowMenu, helpMenu, debugMenu);
+        setUseSystemMenuBar(true);
     }
 
     private Menu createFileMenu(EditorFrame frame) {
-        var fileMenu = new Menu(MENU_FILE.getLocalised());
+        var fileMenu = new YiMenu(MENU_FILE);
 
-        var newGame = new MenuItem(ITEM_NEW_GAME.getLocalised());
+        var newGame = new YiMenuItem(ITEM_NEW_GAME);
         newGame.setOnAction(event -> {
             // TODO: Show a new dialog prompting for new game document information.
             //       The values below are hard-coded, and are temporary.
@@ -67,10 +80,10 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var open = new MenuItem(ITEM_OPEN_GAME.getLocalised());
+        var open = new YiMenuItem(ITEM_OPEN_GAME);
         open.setOnAction(event -> {
             var fileChooser = new FileChooser();
-            fileChooser.setTitle(ITEM_OPEN_GAME.getLocalised());
+            fileChooser.setTitle(ITEM_OPEN_GAME.getLocalisedText());
             File selectedFile = fileChooser.showOpenDialog(frame);
             if (selectedFile != null) {
                 try {
@@ -83,7 +96,7 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var save = new MenuItem(ITEM_SAVE_GAME.getLocalised());
+        var save = new YiMenuItem(ITEM_SAVE_GAME);
         save.setOnAction(event -> {
             var existingModel = frame.getGameModel();
             Path saveFilePath = existingModel.getLastSavePath();
@@ -97,7 +110,7 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var saveAs = new MenuItem(ITEM_SAVE_AS_GAME.getLocalised());
+        var saveAs = new YiMenuItem(ITEM_SAVE_AS_GAME);
         saveAs.setOnAction(event -> {
             var existingModel = frame.getGameModel();
             Path saveFilePath = promptAndStoreSaveFile(existingModel, frame);
