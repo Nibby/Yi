@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import yi.core.go.*
 import yi.core.go.Annotation
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 
 class SgfFileFormatHandlerTest {
@@ -305,40 +306,309 @@ class SgfFileFormatHandlerTest {
             "Next move color incorrect")
     }
 
-//  TODO: in a new commit
-//
-//    @Test
-//    fun `export empty model works`() {
-//
-//    }
-//
-//    @Test
-//    fun `export linear model works`() {
-//
-//    }
-//
-//    @Test
-//    fun `export branched model works`() {
-//
-//    }
-//
-//    @Test
-//    fun `export multi-value tag works`() {
-//
-//    }
-//
-//    @Test
-//    fun `export directional annotation works`() {
-//
-//    }
-//
-//    @Test
-//    fun `export non-square board size works`() {
-//
-//    }
-//
-//    @Test
-//    fun `export handicapped game works`() {
-//
-//    }
+    @Test
+    fun `export empty model works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.komi = 5.5f
+
+        val output = ByteArrayOutputStream()
+        GameModelExporter.toOutputStream(model, output, FileFormat.SGF)
+        val data = output.toString(Charsets.UTF_8)
+
+        Assertions.assertTrue(data.contains("GM[1]"), "Game mode not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("FF[" + SgfFileFormatHandler.SgfExporter.SGF_EXPORTED_FILE_FORMAT_VERSION + "]"), "File format version mismatch. Exported: $data")
+        Assertions.assertTrue(data.contains("SZ[19]"), "Board size not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("KM[5.5]"), "Komi value not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("RU[" + GameRules.CHINESE.getRulesHandler().getInternalName() + "]"), "Ruleset name mismatch. Exported: $data")
+
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export linear model works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(1, 0)
+                .playMove(2, 0)
+                .playMove(3, 0)
+
+        val data = exportModel(model)
+        
+        Assertions.assertEquals(5, getNodeStartCount(data), "Node start count incorrect. Exported: $data") // 4 move nodes + 1 root node
+
+        val segments = data.split(SgfFileFormatHandler.DELIM_NODE_START)
+        // Expect 6 because of leading '('
+        // This method of segmenting node data is a little dirty, but it's the quickest method.
+        Assertions.assertEquals(6, segments.size, "Data segment size incorrect. Exported: $data")
+
+        val move1 = segments[2]
+        val move2 = segments[3]
+        val move3 = segments[4]
+        val move4 = segments[5]
+
+        Assertions.assertTrue(move1 == "B[aa]", "Move 1 data incorrect. Exported: $data")
+        Assertions.assertTrue(move2 == "W[ba]", "Move 2 data incorrect. Exported: $data")
+        Assertions.assertTrue(move3 == "B[ca]", "Move 3 data incorrect. Exported: $data")
+        Assertions.assertTrue(move4 == "W[da])", "Move 4 data incorrect. Exported: $data")
+
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export branched model works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.beginMoveSequence()
+                .playMove(0, 0)
+                .playMove(1, 1)
+                .pass()
+
+        model.setCurrentNode(model.getRootNode())
+        model.beginMoveSequence()
+                .pass()
+
+        model.setCurrentNode(model.getRootNode())
+        model.beginMoveSequence()
+                .playMove(1, 1)
+                .pass()
+
+        val move1 = model.getRootNode().getNextNodeInMainBranch()!!
+        model.setCurrentNode(move1)
+        model.beginMoveSequence()
+                .pass()
+
+        /*
+            At this point we should have a tree that looks like this:
+            [Root] ------- | --- |
+              |            |     |
+             [1] --- |   [PASS] [1]
+              |      |           |
+             [2]   [PASS]      [PASS]
+              |
+            [PASS]
+         */
+
+        val data = exportModel(model).replace(" ", "").replace("\n", "")
+        // Regardless of what the root data may contain, this part should be identical
+        Assertions.assertTrue(data.endsWith("(;B[aa](;W[bb];B[])(;W[]))(;B[])(;B[bb];W[]))"),
+                "Node data incorrect after root node (that is not to say root is correct, it is untested). " +
+                        "Exported: $data")
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export multi-value tag works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        val root = model.getRootNode()
+        model.addStoneEdit(root, Stone(0, 0, StoneColor.BLACK))
+        model.addStoneEdit(root, Stone(1, 0, StoneColor.BLACK))
+
+        model.addStoneEdit(root, Stone(2, 0, StoneColor.WHITE))
+        model.addStoneEdit(root, Stone(3, 0, StoneColor.WHITE))
+
+        model.addAnnotations(root, setOf(Annotation.Triangle(0, 0), Annotation.Triangle(1, 0)))
+
+        val data = exportModel(model)
+
+        assertContainsVariant(setOf("AB[aa][ba]", "AB[ba][aa]"), data, "Black stone edits exported incorrectly. Exported=$data")
+        assertContainsVariant(setOf("AW[ca][da]", "AW[da][ca]"), data, "White stone edits exported incorrectly. Exported=$data")
+        assertContainsVariant(setOf("TR[aa][ba]", "TR[ba][aa]"), data, "Annotations exported incorrectly. Exported=$data")
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export directional annotation works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        val root = model.getRootNode()
+        model.addAnnotations(root, listOf(Annotation.Arrow(0, 0, 2, 2), Annotation.Arrow(1, 1, 3, 3)))
+        model.addAnnotations(root, listOf(Annotation.Line(1, 1, 4, 4), Annotation.Line(3, 3, 5, 5)))
+
+        val data = exportModel(model)
+        assertContainsVariant(setOf("AR[aa:cc][bb:dd]", "AR[bb:dd][aa:cc]"), data, "Arrow annotations not exported correctly. Exported=$data")
+        assertContainsVariant(setOf("LN[bb:ee][dd:ff]", "LN[dd:ff][bb:ee]"), data, "Line annotations not exported correctly. Exported=$data")
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export non-square board size works`() {
+        val model = GameModel(19, 8, GameRules.CHINESE)
+        val data = exportModel(model)
+
+        Assertions.assertTrue(data.contains("SZ[19:8]"), "Board size value not correct. Exported=$data")
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export handicapped game works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.handicaps = 2
+        model.addStoneEdit(model.getRootNode(), Stone(3, 3, StoneColor.BLACK))
+        model.addStoneEdit(model.getRootNode(), Stone(15, 15, StoneColor.BLACK))
+
+        val data = exportModel(model)
+
+        Assertions.assertTrue(data.contains("HA[2]"), "Handicap counter not correct. Exported=$data")
+        assertContainsVariant(setOf("AB[dd][pp]", "AB[pp][dd]"), data, "Handicap stone position not correct. Exported=$data")
+
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export passes works`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.beginMoveSequence()
+                .playMove(1, 1)
+                .pass()
+                .pass()
+
+        val data = exportModel(model)
+        Assertions.assertEquals(4, getNodeStartCount(data), "Node start count incorrect. Exported: $data")
+
+        val segments = data.split(SgfFileFormatHandler.DELIM_NODE_START)
+        val move1 = segments[2]
+        val move2 = segments[3]
+        val move3 = segments[4]
+
+        Assertions.assertTrue(move1 == "B[bb]", "Move 1 data incorrect. Exported: $data")
+        Assertions.assertTrue(move2 == "W[]", "Move 2 data incorrect. Exported: $data")
+        Assertions.assertTrue(move3 == "B[])", "Move 3 data incorrect. Exported: $data")
+
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export all annotations correctly`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
+        model.addAnnotationToCurrentNode(Annotation.Square(1, 0))
+        model.addAnnotationToCurrentNode(Annotation.Circle(2, 0))
+        model.addAnnotationToCurrentNode(Annotation.Cross(3, 0))
+        model.addAnnotationToCurrentNode(Annotation.Fade(4, 0))
+        model.addAnnotationToCurrentNode(Annotation.Label(5, 0, "a"))
+        model.addAnnotationToCurrentNode(Annotation.Label(6, 0, "1"))
+        model.addAnnotationToCurrentNode(Annotation.Line(1, 1, 2, 2))
+        model.addAnnotationToCurrentNode(Annotation.Arrow(3, 3, 4, 4))
+
+        val data = exportModel(model)
+
+        Assertions.assertTrue(data.contains("TR[aa]"), "Triangle annotation not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("SQ[ba]"), "Square annotation not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("CR[ca]"), "Circle annotation not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("MA[da]"), "Cross annotation not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("DD[ea]"), "Fade annotation not correct. Exported: $data")
+        assertContainsVariant(setOf("LB[fa:a][ga:1]", "LB[ga:1][fa:a]"), data, "Label annotations not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("LN[bb:cc]"), "Line annotation not correct. Exported: $data")
+        Assertions.assertTrue(data.contains("AR[dd:ee]"), "Arrow annotation not correct. Exported: $data")
+
+        testExportedFormatCorrectness(data, model)
+    }
+
+    @Test
+    fun `export all stone edits correctly`() {
+        val model = GameModel(19, 19, GameRules.CHINESE)
+        model.beginMoveSequence().playMove(9, 9)
+        val move1 = model.getRootNode().getNextNodeInMainBranch()!!
+        model.addStoneEdit(move1, Stone(0, 0, StoneColor.BLACK))
+        model.addStoneEdit(move1, Stone(1, 0, StoneColor.WHITE))
+        model.addStoneEdit(move1, Stone(9, 9, StoneColor.NONE))
+
+        val data = exportModel(model)
+        val segments = data.split(SgfFileFormatHandler.DELIM_NODE_START)
+        val move1Data = segments[2]
+
+        Assertions.assertTrue(move1Data.contains("AE[jj]"), "Stone erasure not correct. Exported: $data")
+        Assertions.assertTrue(move1Data.contains("AB[aa]"), "Added black stone not correct. Exported: $data")
+        Assertions.assertTrue(move1Data.contains("AW[ba]"), "Added white stone not correct. Exported: $data")
+
+        testExportedFormatCorrectness(data, model)
+    }
+
+    private fun exportModel(gameModel: GameModel): String {
+        val output = ByteArrayOutputStream()
+        GameModelExporter.toOutputStream(gameModel, output, FileFormat.SGF)
+        return output.toString(Charsets.UTF_8)
+    }
+
+    /*
+     * Asserts the value to be tested contains at least one of the strings in the variant set.
+     * Fails the test case if this is not true.
+     *
+     * Note: This method is introduced because the annotation and stone edit order is
+     * non-deterministic due to the use of Set rather than List. We want to retain the
+     * unique-value property of Sets in annotation/stone edits.
+     */
+    private fun assertContainsVariant(variants: Set<String>, toTest: String, failureMessage: String) {
+        var hasVariant = false
+        for (variant in variants) {
+            if (toTest.contains(variant)) {
+                hasVariant = true
+                break
+            }
+        }
+
+        Assertions.assertTrue(hasVariant, failureMessage)
+    }
+
+    private fun getNodeStartCount(data: String): Int {
+        var nodeStartCount = 0
+        for (charCode in data.chars()) {
+            if (charCode.toChar() == SgfFileFormatHandler.DELIM_NODE_START) {
+                ++nodeStartCount
+            }
+        }
+        return nodeStartCount
+    }
+
+    /*
+        Checks that the exported data is well formed -- that is, every opening delimiter
+        has a matching closing one.
+     */
+    private fun testExportedFormatCorrectness(data: String, gameModel: GameModel) {
+        var branchStarts = 0
+        var branchEnds = 0
+        var nodeCounts = 0
+        var valueStarts = 0
+        var valueEnds = 0
+        var prevChar: Char? = null
+
+        for (charCode in data.chars()) {
+            val char = charCode.toChar()
+
+            when (char) {
+                SgfFileFormatHandler.DELIM_NODE_START -> ++nodeCounts
+                SgfFileFormatHandler.DELIM_BRANCH_START -> ++branchStarts
+                SgfFileFormatHandler.DELIM_BRANCH_END -> ++branchEnds
+                SgfFileFormatHandler.DELIM_TAG_VALUE_START -> ++valueStarts
+                SgfFileFormatHandler.DELIM_TAG_VALUE_END -> {
+                    if (prevChar != '\\') {
+                        ++valueEnds
+                    }
+                }
+            }
+
+            prevChar = char
+        }
+
+        Assertions.assertEquals(branchStarts, branchEnds, "Start/end delimiter count mismatch for branches. Exported: $data")
+        Assertions.assertEquals(valueStarts, valueEnds, "Start/end delimiter count mismatch for tag values. Exported: $data")
+        Assertions.assertEquals(countNodes(gameModel.getRootNode()), nodeCounts, "Node count incorrect after export. Exported: $data")
+    }
+
+    private fun countNodes(node: GameNode): Int {
+        var nodeCount = 0
+        var current = node
+        do {
+            ++nodeCount
+            for (branchNode in current.getNextNodesExcludingMainBranch()) {
+                nodeCount += countNodes(branchNode)
+            }
+            if (current.isLastMoveInThisVariation()) {
+                break
+            } else {
+                current = current.getNextNodeInMainBranch()!!
+            }
+        } while (true)
+
+        return nodeCount
+    }
 }

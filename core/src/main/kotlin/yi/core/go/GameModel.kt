@@ -44,6 +44,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
     // Metadata
     var komi: Float = rules.getDefaultKomi()
     var handicaps: Int = 0
+    var applicationName = ""
 
     init {
         if (boardWidth < 1 || boardHeight < 1) {
