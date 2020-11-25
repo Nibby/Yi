@@ -57,6 +57,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private const val DELIM_TAG_VALUE_SPLIT = ':'
 
         private const val SGF_GAME_PLACE = "PC" // Place where the game was played
+        private const val SGF_HANDICAP_COUNT = "HA"
         private const val SGF_BOARD_SIZE = "SZ"
         private const val SGF_RULESET = "RU"
         private const val SGF_KOMI = "KM"
@@ -178,9 +179,12 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 val rootNode = parseNode(rootNodeData, null, gameModel)
                 gameModel._setRootNode(rootNode)
 
-                val pcValue = rootNodeData.getOrDefault(SGF_GAME_PLACE, listOf(""));
+                val pcValue = rootNodeData.getOrDefault(SGF_GAME_PLACE, listOf(""))
                 if (pcValue[0].contains("OGS: https://online-go.com/game/")) {
                     processOgsModel(gameModel, rootNode)
+                } else {
+                    val haValue = rootNodeData.getOrDefault(SGF_HANDICAP_COUNT, listOf("0"))
+                    gameModel.handicaps = haValue[0].toInt()
                 }
 
                 // TODO: Enumerate other node data here

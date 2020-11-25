@@ -275,4 +275,70 @@ class SgfFileFormatHandlerTest {
         val move5 = move4.getNextNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.PASS, move5.delta.type, "Move 5 node type incorrect")
     }
+
+    @Test
+    fun `import handicapped game has correct next move state`() {
+        val model = GameModelImporter.fromInternalResources("/sgf/handicap.sgf", FileFormat.SGF, this.javaClass)
+        Assertions.assertEquals(2, model.handicaps, "Incorrect handicap counter")
+
+        val root = model.getRootNode()
+        val handicaps = root.getStoneEdits()
+        Assertions.assertTrue(handicaps.contains(Stone(15, 3, StoneColor.BLACK)), "Missing handicap stone at (15,3)")
+        Assertions.assertTrue(handicaps.contains(Stone(3, 15, StoneColor.BLACK)), "Missing handicap stone at (3, 15)")
+
+        val playedMove = model.submitMove(0, 0)
+        Assertions.assertEquals(StoneColor.WHITE, playedMove.moveNode!!.getPrimaryMove()!!.color,
+                "Next move color incorrect")
+    }
+
+    @Test
+    fun `import handicapped game from OGS has correct next move state`() {
+        val model = GameModelImporter.fromInternalResources("/sgf/ogsHandicap.sgf", FileFormat.SGF, this.javaClass)
+        Assertions.assertEquals(1, model.handicaps, "Incorrect handicap counter")
+
+        val root = model.getRootNode()
+        val handicaps = root.getStoneEdits()
+        Assertions.assertTrue(handicaps.contains(Stone(3, 15, StoneColor.BLACK)), "Missing handicap stone at (3, 15)")
+
+        val playedMove = model.submitMove(0, 0)
+        Assertions.assertEquals(StoneColor.WHITE, playedMove.moveNode!!.getPrimaryMove()!!.color,
+            "Next move color incorrect")
+    }
+
+//  TODO: in a new commit
+//
+//    @Test
+//    fun `export empty model works`() {
+//
+//    }
+//
+//    @Test
+//    fun `export linear model works`() {
+//
+//    }
+//
+//    @Test
+//    fun `export branched model works`() {
+//
+//    }
+//
+//    @Test
+//    fun `export multi-value tag works`() {
+//
+//    }
+//
+//    @Test
+//    fun `export directional annotation works`() {
+//
+//    }
+//
+//    @Test
+//    fun `export non-square board size works`() {
+//
+//    }
+//
+//    @Test
+//    fun `export handicapped game works`() {
+//
+//    }
 }
