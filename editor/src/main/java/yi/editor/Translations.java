@@ -34,4 +34,22 @@ public final class Translations {
         public static final TextResource ITEM_SAVE_AS_GAME = new TextResource("item.saveAsGame", BUNDLE);
     }
 
+    public static final class Editor {
+        private static final String BUNDLE = I18N_PACKAGE + "editor";
+
+        public static final TextResource TOOLBAR_TOOL_PLAY_MOVE = new TextResource("toolbar.tool.playMove", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_ADD_BLACK = new TextResource("toolbar.tool.addBlack", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_ADD_WHITE = new TextResource("toolbar.tool.addWhite", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_TRIANGLE = new TextResource("toolbar.tool.triangle", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_CIRCLE = new TextResource("toolbar.tool.circle", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_SQUARE = new TextResource("toolbar.tool.square", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_CROSS = new TextResource("toolbar.tool.cross", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_LABEL_LETTER = new TextResource("toolbar.tool.labelLetter", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_LABEL_NUMBER = new TextResource("toolbar.tool.labelNumber", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_LINE = new TextResource("toolbar.tool.line", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_ARROW = new TextResource("toolbar.tool.arrow", BUNDLE);
+        public static final TextResource TOOLBAR_TOOL_DIM = new TextResource("toolbar.tool.dim", BUNDLE);
+
+    }
+
 }

@@ -1,17 +1,21 @@
 package yi.editor.components;
 
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import yi.component.SimpleListenerManager;
+import yi.component.YiToggleButton;
+import yi.component.i18n.TextResource;
 import yi.editor.EditorTool;
 import yi.editor.utilities.IconUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+
+import static yi.editor.Translations.Editor.*;
 
 /**
  * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
@@ -23,23 +27,20 @@ public class EditorToolBar extends ToolBar {
 
     private final ToggleGroup toolButtonGroup;
 
-    private final ToggleButton toolPlayMove;
-    private final ToggleButton toolAddBlackStone;
-    private final ToggleButton toolAddWhiteStone;
-    private final ToggleButton toolAnnotateTriangle;
-    private final ToggleButton toolAnnotateCircle;
-    private final ToggleButton toolAnnotateSquare;
-    private final ToggleButton toolAnnotateCross;
-    private final ToggleButton toolAnnotateText;
-    private final ToggleButton toolAnnotateNumber;
-    private final ToggleButton toolAnnotateLine;
-    private final ToggleButton toolAnnotateArrow;
-    private final ToggleButton toolAnnotateDim;
-
-    private final List<ToggleButton> editToolToggleButtons = new ArrayList<>();
+    private final YiToggleButton toolPlayMove;
+    private final YiToggleButton toolAddBlackStone;
+    private final YiToggleButton toolAddWhiteStone;
+    private final YiToggleButton toolAnnotateTriangle;
+    private final YiToggleButton toolAnnotateCircle;
+    private final YiToggleButton toolAnnotateSquare;
+    private final YiToggleButton toolAnnotateCross;
+    private final YiToggleButton toolAnnotateText;
+    private final YiToggleButton toolAnnotateNumber;
+    private final YiToggleButton toolAnnotateLine;
+    private final YiToggleButton toolAnnotateArrow;
+    private final YiToggleButton toolAnnotateDim;
 
     public EditorToolBar() {
-
         toolButtonGroup = new ToggleGroup();
 
         toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOLBAR_TOOL_PLAY_MOVE);
@@ -69,10 +70,10 @@ public class EditorToolBar extends ToolBar {
 
         getItems().add(dynamicSpacer());
         getItems().add(toolPlayMove);
-        getItems().add(staticSpacer(gap));
+        getItems().add(staticSpacer());
         getItems().add(toolAddBlackStone);
         getItems().add(toolAddWhiteStone);
-        getItems().add(staticSpacer(gap));
+        getItems().add(staticSpacer());
         getItems().add(toolAnnotateTriangle);
         getItems().add(toolAnnotateCircle);
         getItems().add(toolAnnotateSquare);
@@ -80,7 +81,6 @@ public class EditorToolBar extends ToolBar {
         getItems().add(toolAnnotateText);
         getItems().add(toolAnnotateNumber);
         getItems().add(toolAnnotateDim);
-        getItems().add(staticSpacer(gap));
         getItems().add(toolAnnotateLine);
         getItems().add(toolAnnotateArrow);
         getItems().add(dynamicSpacer());
@@ -93,9 +93,9 @@ public class EditorToolBar extends ToolBar {
         return dynamicSpacer;
     }
 
-    private Pane staticSpacer(int width) {
+    private Pane staticSpacer() {
         var spacer = new Pane();
-        spacer.setPrefWidth(width);
+        spacer.setPrefWidth(10);
 
         return spacer;
     }
@@ -108,11 +108,12 @@ public class EditorToolBar extends ToolBar {
         toolSelectionListeners.removeListener(listener);
     }
 
-    private ToggleButton addEditToolButton(EditorTool editorTool, String iconResource, String tooltip) {
-        var toggle = new ToggleButton();
+    private YiToggleButton addEditToolButton(EditorTool editorTool, String iconResource, TextResource tooltip) {
+        var toggle = new YiToggleButton();
         toggle.setFocusTraversable(false);
         toggle.getStyleClass().add("button-style2");
-        setUp(toggle, iconResource, tooltip);
+        toggle.setTooltip(tooltip);
+        setIcon(iconResource, toggle);
 
         // TODO: I am way too tired to work out why clicking on the already-selected
         //       toggle button causes the icon to go back to the unselected version,
@@ -143,25 +144,11 @@ public class EditorToolBar extends ToolBar {
         });
 
         toolButtonGroup.getToggles().add(toggle);
-        editToolToggleButtons.add(toggle);
 
         return toggle;
-    }
-
-    private Button createButton(String iconResource, String toolTip) {
-        var button = new Button();
-        setUp(button, iconResource, toolTip);
-
-        return button;
-    }
-
-    private void setUp(ButtonBase buttonBase, String iconResource, String tooltip) {
-        buttonBase.setTooltip(new Tooltip(tooltip));
-        setIcon(iconResource, buttonBase);
     }
 
     private void setIcon(String iconResource, ButtonBase buttonBase) {
         IconUtilities.getIcon(iconResource).ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
     }
-
 }
