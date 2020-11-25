@@ -4,12 +4,18 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Global internationalization handler for Yi application suite.
+ * Global internationalization handler for Yi application suite. Applications only work
+ * with one current language, which can be adjusted using {@link #setCurrentLanguage(Language)}.
+ * <p/>
+ * A language resource bundle can be loaded using {@link #getResourceBundle(String)} or
+ * its overloaded variants.
+ *
+ * @see TextResource Using localised text in components
+ * @see Language Managing supported languages
  */
 public class I18n {
 
-    private static final AtomicReference<Language> currentLanguage
-            = new AtomicReference<>(getDefaultLanguage());
+    private static final AtomicReference<Language> currentLanguage = new AtomicReference<>(getDefaultLanguage());
 
     public static Language getDefaultLanguage() {
         return Language.ENGLISH;
