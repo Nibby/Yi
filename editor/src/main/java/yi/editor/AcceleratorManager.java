@@ -35,26 +35,26 @@ public final class AcceleratorManager {
         if (!INITIALIZED.get()) {
             createUndoRedo();
             createPerspectiveAccelerators();
-            register(new Accelerator(AcceleratorId.NEW_GAME, Text.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
-            register(new Accelerator(AcceleratorId.OPEN_GAME, Text.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
-            register(new Accelerator(AcceleratorId.SAVE_GAME, Text.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
-            register(new Accelerator(AcceleratorId.SAVE_AS_GAME, Text.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
+            register(new Accelerator(AcceleratorId.NEW_GAME, TextKeys.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(AcceleratorId.OPEN_GAME, TextKeys.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(AcceleratorId.SAVE_GAME, TextKeys.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(AcceleratorId.SAVE_AS_GAME, TextKeys.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
 
             INITIALIZED.set(true);
         }
     }
 
     private static void createPerspectiveAccelerators() {
-        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, Text.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }));
-        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, Text.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, TextKeys.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, TextKeys.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT }));
     }
 
     private static void createUndoRedo() {
-        register(new Accelerator(AcceleratorId.UNDO, Text.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT}));
+        register(new Accelerator(AcceleratorId.UNDO, TextKeys.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT}));
         if (SystemUtilities.isMac()) {
-            register(new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT}));
+            register(new Accelerator(AcceleratorId.REDO, TextKeys.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT}));
         } else {
-            register(new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT}));
+            register(new Accelerator(AcceleratorId.REDO, TextKeys.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT}));
         }
     }
 

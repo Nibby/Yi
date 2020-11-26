@@ -8,7 +8,7 @@ import java.util.Locale;
 /**
  * Stores all the i18n translation keys used by the Yi editor module.
  */
-public final class Text {
+public final class TextKeys {
 
     private static final String I18N_PACKAGE = "i18n.";
 

@@ -2,15 +2,13 @@ package yi.editor.components;
 
 import javafx.geometry.Dimension2D;
 import javafx.scene.Parent;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
 import yi.component.i18n.TextResource;
 import yi.editor.AcceleratorId;
-import yi.editor.AcceleratorManager;
 import yi.editor.EditorFrame;
-import yi.editor.Text;
+import yi.editor.TextKeys;
 
 /**
  * A series of window component layout strategies depending on the editor use case.
@@ -23,7 +21,7 @@ public enum ContentLayout {
     /**
      * A minimal layout that focuses on the game board.
      */
-    COMPACT(Text.MENUITEM_PERSPECTIVE_COMPACT, AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
+    COMPACT(TextKeys.MENUITEM_PERSPECTIVE_COMPACT, AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
         @Override
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
@@ -45,7 +43,7 @@ public enum ContentLayout {
     /**
      * An expansive layout that with in-depth editing tools.
      */
-    REVIEW(Text.MENUITEM_PERSPECTIVE_REVIEW, AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
+    REVIEW(TextKeys.MENUITEM_PERSPECTIVE_REVIEW, AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
         @Override
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();

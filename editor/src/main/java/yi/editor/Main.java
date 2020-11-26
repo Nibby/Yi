@@ -6,8 +6,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import yi.component.FontManager;
 import yi.component.SkinManager;
-import yi.component.i18n.I18n;
-import yi.component.i18n.Language;
 import yi.editor.settings.Settings;
 import yi.editor.utilities.GameModelUtilities;
 
@@ -27,7 +25,7 @@ public class Main extends Application {
         loadBundledFonts();
         AcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
-        Text.installSupportedLanguages();
+        TextKeys.installSupportedLanguages();
         SkinManager.useDefaultSkin();
         Settings.load();
 
