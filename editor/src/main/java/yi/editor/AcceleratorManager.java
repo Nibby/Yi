@@ -1,10 +1,10 @@
 package yi.editor;
 
 import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import org.jetbrains.annotations.NotNull;
-import yi.component.YiScene;
 import yi.component.i18n.TextResource;
 import yi.component.utilities.GuiUtilities;
 import yi.component.utilities.KeyModifier;
@@ -14,80 +14,53 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Manages a list of shortcut-keys that can be triggered across the application,
- * regardless of the currently focused component. These actions should be reserved
- * for the most common operations only, such as save, new document etc.
+ * Manages all the shortcut-keys that can be triggered in the application. Each shortcut
+ * is mapped to an {@link Accelerator} instance which is created within the implementation
+ * of this class.
  * <p/>
- * These accelerators must be installed once for each new {@link Scene} through
- * {@link #installGlobalAccelerators(YiScene)}, ideally prior to setting the scene visible.
+ * To assign a shortcut key to supported Fx components, retrieve the accelerator instance
+ * using {@link #getAccelerator(AcceleratorId)} with the desired id, then invoke
+ * {@link Accelerator#install(MenuItem)} or one of its overloaded variants.
  */
 public final class AcceleratorManager {
 
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
     private static final Map<String, Accelerator> ALL_ACCELERATORS = new HashMap<>();
 
-    private UndoSystemHandler undoSystem;
+    private AcceleratorManager() {
+        // Utility class, not to be instantiated
+    }
 
     public static void initializeAll() {
         if (!INITIALIZED.get()) {
-            Global.initialize();
+            createUndoRedo();
+            createPerspectiveAccelerators();
+            register(new Accelerator(AcceleratorId.NEW_GAME, Text.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(AcceleratorId.OPEN_GAME, Text.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(AcceleratorId.SAVE_GAME, Text.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(AcceleratorId.SAVE_AS_GAME, Text.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
+
             INITIALIZED.set(true);
         }
     }
 
-    private static final class Global {
+    private static void createPerspectiveAccelerators() {
+        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, Text.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, Text.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT }));
+    }
 
-        private Global() {
-            // Constant class, no instantiation
-        }
-
-        public static void initialize() {
-            createUndo();
-            createRedo();
-            createPerspectiveAccelerators();
-        }
-
-        private static void createPerspectiveAccelerators() {
-            new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, Text.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT });
-            new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, Text.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT });
-        }
-
-        private static void createUndo() {
-            new Accelerator(AcceleratorId.UNDO, Text.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT});
-        }
-
-        private static void createRedo() {
-            if (SystemUtilities.isMac()) {
-                new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT});
-            } else {
-                new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT});
-            }
+    private static void createUndoRedo() {
+        register(new Accelerator(AcceleratorId.UNDO, Text.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT}));
+        if (SystemUtilities.isMac()) {
+            register(new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT}));
+        } else {
+            register(new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT}));
         }
     }
 
-    /**
-     * Installs all global accelerator hotkeys for the scene.
-     *
-     * @param scene Scene to have global accelerators applied.
-     */
-    void installGlobalAccelerators(@NotNull YiScene scene) {
-        installUndoSystemAccelerators(scene);
-    }
-
-    private void installUndoSystemAccelerators(@NotNull YiScene scene) {
-        Runnable undoAction = () -> { if (undoSystem != null) undoSystem.requestUndo(); };
-        Runnable redoAction = () -> { if (undoSystem != null) undoSystem.requestRedo(); };
-
-        install(scene, AcceleratorId.UNDO, undoAction);
-        install(scene, AcceleratorId.REDO, redoAction);
-    }
-
-    void setUndoSystemHandler(@NotNull UndoSystemHandler undoSystem) {
-        this.undoSystem = Objects.requireNonNull(undoSystem);
-    }
-
-    private void install(@NotNull Scene scene, AcceleratorId acceleratorId, Runnable action) {
-        scene.getAccelerators().put(getAccelerator(acceleratorId).getKeyCombination(), action);
+    private static void register(@NotNull Accelerator accelerator) {
+        Objects.requireNonNull(accelerator);
+        ALL_ACCELERATORS.put(accelerator.getId(), accelerator);
     }
 
     public static Map<String, Accelerator> getAllAccelerators() {
@@ -112,14 +85,11 @@ public final class AcceleratorManager {
     }
 
     /**
-     * Responds to the undo and redo action requests triggered by the global accelerator
-     * hotkey.
+     * Represents a {@link KeyCombination} for a particular feature or action.
+     * <p/>
+     * To set the accelerator for a supported Fx component, use {@link #install(MenuItem)}
+     * or one of its overloaded variants.
      */
-    interface UndoSystemHandler {
-        void requestUndo();
-        void requestRedo();
-    }
-
     public static final class Accelerator {
 
         private final AcceleratorId id;
@@ -137,18 +107,26 @@ public final class AcceleratorManager {
             this.name = Objects.requireNonNull(name, "Name must not be null");
             this.modifiers = Objects.requireNonNull(modifiers, "Modifiers must not be null");
             this.keyCode = Objects.requireNonNull(keyCode, "Key code must not be null");
-
-            ALL_ACCELERATORS.put(getId(), this);
         }
 
+        /**
+         * @return Internal unique identifier for the accelerator. Should be one of the
+         * values in {@link AcceleratorId}.
+         */
         public String getId() {
             return id.getId();
         }
 
+        /**
+         * @return User-friendly description of the purpose of this accelerator.
+         */
         public String getName() {
             return name.getLocalisedText();
         }
 
+        /**
+         * @return The Fx key combination represented by this accelerator.
+         */
         public KeyCombination getKeyCombination() {
             if (keyCombination != null) {
                 return keyCombination;
@@ -156,6 +134,27 @@ public final class AcceleratorManager {
 
             keyCombination = GuiUtilities.getKeyCombination(keyCode, modifiers);
             return keyCombination;
+        }
+
+        /**
+         * Installs the shortcut key represented by this accelerator to the menu item.
+         *
+         * @param menuItem Item to have the shortcut key applied.
+         */
+        public void install(@NotNull MenuItem menuItem) {
+            menuItem.acceleratorProperty().setValue(getKeyCombination());
+        }
+
+        /**
+         * Adds a global shortcut key to the scene. This means the action will be executed
+         * as long as the key combination is active, regardless of the currently focused
+         * component within the scene.
+         *
+         * @param scene Scene to install shortcut key.
+         * @param action Action to perform once the key combination is active.
+         */
+        public void install(@NotNull Scene scene, Runnable action) {
+            scene.getAccelerators().put(getKeyCombination(), action);
         }
 
         void setKeyCombination(@NotNull KeyCombination newCombination) {

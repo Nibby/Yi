@@ -101,6 +101,14 @@ public enum ContentLayout {
     }
 
     /**
+     *
+     * @return The unique identifier for the accelerator for this layout.
+     */
+    public AcceleratorId getAcceleratorId() {
+        return acceleratorId;
+    }
+
+    /**
      * Creates a container that has the frame components arranged by this perspective.
      * The client can set the output container as its primary content.
      *
@@ -132,12 +140,6 @@ public enum ContentLayout {
     @Override
     public String toString() {
         return getFriendlyName().getLocalisedText();
-    }
-
-    public static void installAccelerator(ContentLayout layoutValue, MenuItem menuItem) {
-        var acceleratorId = layoutValue.acceleratorId;
-        var accelerator = AcceleratorManager.getAccelerator(acceleratorId);
-        menuItem.acceleratorProperty().setValue(accelerator.getKeyCombination());
     }
 
     /**

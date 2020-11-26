@@ -11,13 +11,11 @@ import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
 import yi.component.gametree.GameTreeViewerSettings;
 import yi.component.utilities.GuiUtilities;
+import yi.component.utilities.SystemUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
-import yi.editor.components.ContentLayout;
-import yi.editor.components.EditorMenuBar;
-import yi.editor.components.GameBoardToolBar;
-import yi.editor.components.GameBoardViewerComposite;
+import yi.editor.components.*;
 import yi.editor.settings.Settings;
 import yi.editor.utilities.ValueListener;
 import yi.editor.utilities.ValueListenerManager;
@@ -30,14 +28,14 @@ import java.util.Objects;
  */
 public class EditorFrame extends Stage {
 
-    private final AcceleratorManager acceleratorManager;
     private ContentLayout contentLayout;
     private final EditorMenuBar menuBar;
-    private final GameBoardToolBar gameBoardToolBar;
+    private final EditorToolBar toolBar;
 
     private final ValueListenerManager<ContentLayout> contentLayoutValueListeners = new ValueListenerManager<>();
 
     private final GameBoardViewer boardViewer;
+    private final GameBoardToolBar gameBoardToolBar;
     private final GameBoardViewerComposite compositeViewer;
     private final GameTreeViewer treeViewer;
     private GameModel gameModel;
@@ -48,8 +46,6 @@ public class EditorFrame extends Stage {
 
     public EditorFrame(GameModel gameModel, ContentLayout layout) {
         this.gameModel = gameModel;
-        acceleratorManager = new AcceleratorManager();
-        acceleratorManager.setUndoSystemHandler(new DefaultUndoSystemHandler());
 
         var treeViewerSettings = new GameTreeViewerSettings();
         treeViewerSettings.setBackgroundColor(GuiUtilities.getColor(43, 43, 43));
@@ -66,6 +62,7 @@ public class EditorFrame extends Stage {
         treeViewer.setSettings(treeViewerSettings);
 
         menuBar = new EditorMenuBar(this);
+        toolBar = new EditorToolBar();
 
         gameBoardToolBar = new GameBoardToolBar();
         gameBoardToolBar.addToolSelectionListener(this::setTool);
@@ -127,13 +124,14 @@ public class EditorFrame extends Stage {
         // Work around bug on macOS where setting the menu bar again causes the
         // menu bar to disappear. Possibly related to native code for system-style
         // menu bars...
-        var addMenuBar = !menuBar.isUseSystemMenuBar() || !addedMenuBarOnce;
+        var addMenuBar = SystemUtilities.isMac() && !addedMenuBarOnce || !menuBar.isUseSystemMenuBar();
         if (addMenuBar) {
             controlPane.setTop(menuBar);
         }
         if (!addedMenuBarOnce) {
             addedMenuBarOnce = true;
         }
+        controlPane.setCenter(toolBar);
 
         var container = new BorderPane();
         container.setTop(controlPane);
@@ -176,8 +174,13 @@ public class EditorFrame extends Stage {
      * @param newScene Scene to set.
      */
     private void setYiScene(@NotNull YiScene newScene) {
-        acceleratorManager.installGlobalAccelerators(newScene);
+        installUndoRedoAccelerators(newScene);
         setScene(newScene);
+    }
+
+    private void installUndoRedoAccelerators(YiScene newScene) {
+        AcceleratorManager.getAccelerator(AcceleratorId.UNDO).install(newScene, boardViewer::requestUndo);
+        AcceleratorManager.getAccelerator(AcceleratorId.REDO).install(newScene, boardViewer::requestRedo);
     }
 
     public Parent getBoardComponent() {
@@ -194,18 +197,5 @@ public class EditorFrame extends Stage {
 
     public void addContentLayoutChangeListener(ValueListener<ContentLayout> listener) {
         contentLayoutValueListeners.addListener(listener);
-    }
-
-    final class DefaultUndoSystemHandler implements AcceleratorManager.UndoSystemHandler {
-
-        @Override
-        public void requestUndo() {
-            boardViewer.requestUndo();
-        }
-
-        @Override
-        public void requestRedo() {
-            boardViewer.requestRedo();
-        }
     }
 }
