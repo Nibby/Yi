@@ -26,7 +26,6 @@ import static yi.editor.Text.*;
 /**
  * Primary menu bar for {@link yi.editor.EditorFrame}.
  */
-// TODO: Extract labels into resource keys for internationalization
 // TODO: This class is one big work in progress
 public class EditorMenuBar extends MenuBar {
 

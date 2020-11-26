@@ -280,7 +280,7 @@ class SgfFileFormatHandlerTest {
     @Test
     fun `import handicapped game has correct next move state`() {
         val model = GameModelImporter.fromInternalResources("/sgf/handicap.sgf", FileFormat.SGF, this.javaClass)
-        Assertions.assertEquals(2, model.handicaps, "Incorrect handicap counter")
+        Assertions.assertEquals(2, model.info.getHandicapCount(), "Incorrect handicap counter")
 
         val root = model.getRootNode()
         val handicaps = root.getStoneEdits()
@@ -295,7 +295,7 @@ class SgfFileFormatHandlerTest {
     @Test
     fun `import handicapped game from OGS has correct next move state`() {
         val model = GameModelImporter.fromInternalResources("/sgf/ogsHandicap.sgf", FileFormat.SGF, this.javaClass)
-        Assertions.assertEquals(1, model.handicaps, "Incorrect handicap counter")
+        Assertions.assertEquals(1, model.info.getHandicapCount(), "Incorrect handicap counter")
 
         val root = model.getRootNode()
         val handicaps = root.getStoneEdits()
@@ -309,7 +309,7 @@ class SgfFileFormatHandlerTest {
     @Test
     fun `export empty model works`() {
         val model = GameModel(19, 19, GameRules.CHINESE)
-        model.komi = 5.5f
+        model.info.setKomi(5.5f)
 
         val output = ByteArrayOutputStream()
         GameModelExporter.toOutputStream(model, output, FileFormat.SGF)
@@ -441,7 +441,7 @@ class SgfFileFormatHandlerTest {
     @Test
     fun `export handicapped game works`() {
         val model = GameModel(19, 19, GameRules.CHINESE)
-        model.handicaps = 2
+        model.info.setHandicapCount(2)
         model.addStoneEdit(model.getRootNode(), Stone(3, 3, StoneColor.BLACK))
         model.addStoneEdit(model.getRootNode(), Stone(15, 15, StoneColor.BLACK))
 

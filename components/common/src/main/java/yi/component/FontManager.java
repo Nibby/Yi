@@ -1,6 +1,8 @@
 package yi.component;
 
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -53,7 +55,7 @@ public class FontManager {
      * @throws IOException When an input stream cannot be created on the given path.
      */
     public static void loadFont(Path fontFile) throws IOException {
-        Font.loadFont(Files.newInputStream(fontFile), -1);
+        Font.loadFont(Files.newInputStream(fontFile), 12);
     }
 
     /**
@@ -76,6 +78,29 @@ public class FontManager {
     public static @NotNull Font getFont(String familyName, double fontSize) {
         var result = new Font(familyName, fontSize);
         return Objects.requireNonNull(result);
+    }
+
+    /**
+     * Creates a font of the default font family at a custom size.
+     *
+     * @param size Font size.
+     * @return Requested font.
+     */
+    public static Font getDefaultFont(double size) {
+        return Font.font(DEFAULT_FONT.getName(), size);
+    }
+
+    /**
+     * Creates a font of the default font family at a custom size, weight and italics
+     * setting.
+     *
+     * @param size Font size.
+     * @param weight Font boldness.
+     * @param italics Italics or not.
+     * @return Requested font.
+     */
+    public static Font getDefaultFont(double size, FontWeight weight, FontPosture italics) {
+        return Font.font(DEFAULT_FONT.getName(), weight, italics, size);
     }
 
     private static boolean isFontFile(Path file) {

@@ -58,6 +58,10 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
         internal const val SGF_APPLICATION = "AP" // Program that saved this document
         internal const val SGF_GAME_PLACE = "PC" // Place where the game was played
+        internal const val SGF_BLACK_NAME = "PB"
+        internal const val SGF_BLACK_RANK = "BR"
+        internal const val SGF_WHITE_NAME = "PW"
+        internal const val SGF_WHITE_RANK = "WR"
         internal const val SGF_HANDICAP_COUNT = "HA"
         internal const val SGF_BOARD_SIZE = "SZ"
         internal const val SGF_RULESET = "RU"
@@ -185,8 +189,13 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     processOgsModel(gameModel, rootNode)
                 } else {
                     val haValue = rootNodeData.getOrDefault(SGF_HANDICAP_COUNT, listOf("0"))
-                    gameModel.handicaps = haValue[0].toInt()
+                    gameModel.info.setHandicapCount(haValue[0].toInt())
                 }
+
+                gameModel.info.setPlayerBlackName(rootNodeData.getOrDefault(SGF_BLACK_NAME, listOf(""))[0])
+                gameModel.info.setPlayerBlackRank(rootNodeData.getOrDefault(SGF_BLACK_RANK, listOf(""))[0])
+                gameModel.info.setPlayerWhiteName(rootNodeData.getOrDefault(SGF_WHITE_NAME, listOf(""))[0])
+                gameModel.info.setPlayerWhiteRank(rootNodeData.getOrDefault(SGF_WHITE_RANK, listOf(""))[0])
 
                 // TODO: Enumerate other node data here
 
@@ -199,7 +208,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private fun processOgsModel(gameModel: GameModel, rootNode: GameNode) {
             // OGS is missing a HA[] value representing handicap stone count. So we have
             // to manually count them through the number of AB[] tags on root.
-            gameModel.handicaps = rootNode.getMetadataMultiValue(SGF_ADD_BLACK).size
+            gameModel.info.setHandicapCount(rootNode.getMetadataMultiValue(SGF_ADD_BLACK).size)
         }
 
         private fun parseNode(nodeData: SgfNodeData, parentNode: GameNode?, gameModel: GameModel): GameNode {
@@ -700,8 +709,9 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writeTag(SGF_GAME_TYPE, "1", writer)
             writeTag(SGF_FILE_FORMAT, SGF_EXPORTED_FILE_FORMAT_VERSION.toString(), writer)
 
-            if (gameModel.applicationName.isNotBlank()) {
-                writeTag(SGF_APPLICATION, gameModel.applicationName, writer)
+            val appName = gameModel.info.getApplicationName()
+            if (appName.isNotBlank()) {
+                writeTag(SGF_APPLICATION, appName, writer)
             }
 
             val boardSizeValue: String = if (gameModel.boardWidth == gameModel.boardHeight) {
@@ -711,11 +721,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
             writeTag(SGF_BOARD_SIZE, boardSizeValue, writer)
 
-            writeTag(SGF_KOMI, gameModel.komi.toString(), writer)
+            writeTag(SGF_KOMI, gameModel.info.getKomi().toString(), writer)
             writeTag(SGF_RULESET, gameModel.rules.getInternalName(), writer)
 
-            if (gameModel.handicaps > 0) {
-                writeTag(SGF_HANDICAP_COUNT, gameModel.handicaps.toString(), writer)
+            if (gameModel.info.getHandicapCount() > 0) {
+                writeTag(SGF_HANDICAP_COUNT, gameModel.info.getHandicapCount().toString(), writer)
             }
 
             // TODO: Export other metadata on the root node not covered here?
@@ -817,7 +827,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             } else if (moveType == GameNodeType.PASS || moveType == GameNodeType.RESIGN) {
                 val ruleset = gameModel.rules
                 val key = when (val expectedColor =
-                        ruleset.getStoneColorForTurn(currentNode.moveNumber-1, gameModel.handicaps > 0)) {
+                        ruleset.getStoneColorForTurn(currentNode.moveNumber-1, gameModel.info.getHandicapCount() > 0)) {
                     StoneColor.BLACK -> SGF_BLACK_MOVE
                     StoneColor.WHITE -> SGF_WHITE_MOVE
                     else -> throw NotImplementedError("Unsupported stone color: $expectedColor")

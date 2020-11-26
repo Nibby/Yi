@@ -33,6 +33,7 @@ public class EditorFrame extends Stage {
     private final EditorToolBar toolBar;
 
     private final ValueListenerManager<ContentLayout> contentLayoutValueListeners = new ValueListenerManager<>();
+    private final ValueListenerManager<GameModel> gameModelValueListeners = new ValueListenerManager<>();
 
     private final GameBoardViewer boardViewer;
     private final GameBoardToolBar gameBoardToolBar;
@@ -48,6 +49,7 @@ public class EditorFrame extends Stage {
         this.gameModel = gameModel;
 
         var treeViewerSettings = new GameTreeViewerSettings();
+        // TODO: Extract these out to settings.json
         treeViewerSettings.setBackgroundColor(GuiUtilities.getColor(43, 43, 43));
         treeViewerSettings.setNodeColor(GuiUtilities.getColor(90, 90, 90));
         treeViewerSettings.setNodeHoverColor(GuiUtilities.getColor(170, 170, 170));
@@ -93,10 +95,18 @@ public class EditorFrame extends Stage {
         });
     }
 
-    public void setGameModel(@NotNull GameModel gameModel) {
-        this.gameModel = gameModel;
-        boardViewer.setGameModel(gameModel);
-        treeViewer.setGameModel(gameModel);
+    public void setGameModel(@NotNull GameModel newModel) {
+        if (this.gameModel != null) {
+            this.gameModel.dispose();
+        }
+        this.gameModel = newModel;
+        this.gameModel.getInfo().addChangeListener(gameBoardToolBar::onGameInfoUpdate);
+
+        boardViewer.setGameModel(newModel);
+        treeViewer.setGameModel(newModel);
+        gameBoardToolBar.onGameModelChange(newModel);
+
+        gameModelValueListeners.fireValueChanged(newModel);
     }
 
     public @NotNull GameModel getGameModel() {
@@ -115,7 +125,7 @@ public class EditorFrame extends Stage {
         if (this.contentLayout == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        gameBoardToolBar.setContentForLayout(newLayout);
+        gameBoardToolBar.setContentForLayout(newLayout, gameModel);
 
         var content = newLayout.getContent(this);
 
@@ -197,5 +207,9 @@ public class EditorFrame extends Stage {
 
     public void addContentLayoutChangeListener(ValueListener<ContentLayout> listener) {
         contentLayoutValueListeners.addListener(listener);
+    }
+
+    public void addGameModelChangeListener(ValueListener<GameModel> listener) {
+        gameModelValueListeners.addListener(listener);
     }
 }

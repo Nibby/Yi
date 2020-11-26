@@ -25,4 +25,12 @@ public class TextResource {
         return I18n.getResourceBundle(bundleName).getString(resourceKey);
     }
 
+    public String getLocalisedText(Object ... parameters) {
+        String rawString = I18n.getResourceBundle(bundleName).getString(resourceKey);
+        for (Object parameter : parameters) {
+            rawString = rawString.replaceFirst("\\$\\{}", String.valueOf(parameter));
+        }
+        return rawString;
+    }
+
 }
