@@ -25,7 +25,7 @@ public class Main extends Application {
         loadBundledFonts();
         AcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
-        Translations.installSupportedLanguages();
+        Text.installSupportedLanguages();
         SkinManager.useDefaultSkin();
         Settings.load();
 

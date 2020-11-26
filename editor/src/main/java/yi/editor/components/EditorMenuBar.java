@@ -6,6 +6,7 @@ import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
 import yi.component.YiMenu;
 import yi.component.YiMenuItem;
+import yi.component.YiRadioMenuItem;
 import yi.component.i18n.I18n;
 import yi.component.i18n.Language;
 import yi.component.utilities.GuiUtilities;
@@ -18,9 +19,10 @@ import yi.editor.Yi;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static yi.editor.Translations.Menu.*;
+import static yi.editor.Text.*;
 
 /**
  * Primary menu bar for {@link yi.editor.EditorFrame}.
@@ -31,9 +33,9 @@ public class EditorMenuBar extends MenuBar {
 
     public EditorMenuBar(EditorFrame frame) {
         var fileMenu = createFileMenu(frame);
-        var editMenu = new YiMenu(MENU_EDIT);
+        var editMenu = createEditMenu(frame);
         var toolsMenu = new YiMenu(MENU_TOOLS);
-        var viewMenu = new YiMenu(MENU_VIEW);
+        var viewMenu = createViewMenu(frame);
         var windowMenu = new YiMenu(MENU_WINDOW);
         var helpMenu = new YiMenu(MENU_HELP);
 
@@ -54,10 +56,50 @@ public class EditorMenuBar extends MenuBar {
         setUseSystemMenuBar(true);
     }
 
+    private YiMenu createViewMenu(EditorFrame frame) {
+        var viewMenu = new YiMenu(MENU_VIEW);
+        {
+            var currentLayout = frame.getContentLayout();
+            var radioGroup = new ToggleGroup();
+            var perspectiveMenu = new YiMenu(MENU_PERSPECTIVE);
+            var layoutToItemMap = new HashMap<ContentLayout, YiRadioMenuItem>();
+
+            for (ContentLayout layout : ContentLayout.values()) {
+                var menuItem = new YiRadioMenuItem(layout.getFriendlyName());
+                menuItem.setOnAction(e -> frame.setLayout(layout));
+                menuItem.setSelected(layout == currentLayout);
+                ContentLayout.installAccelerator(layout, menuItem);
+
+                radioGroup.getToggles().add(menuItem);
+                perspectiveMenu.getItems().add(menuItem);
+                layoutToItemMap.put(layout, menuItem);
+            }
+
+            frame.addContentLayoutChangeListener(newLayout -> {
+                var menuItemToSelect = layoutToItemMap.get(newLayout);
+                if (menuItemToSelect == null) {
+                    // Only reason I can think of for this to happen is when Java GC'd
+                    // the HashMap storing this. I think the solution to that might be
+                    // to elevate the map to a private field variable...
+                    throw new IllegalStateException("Cannot find matching menu item to " +
+                            "select for layout: " + newLayout.name());
+                }
+                menuItemToSelect.setSelected(true);
+            });
+
+            viewMenu.getItems().add(perspectiveMenu);
+        }
+        return viewMenu;
+    }
+
+    private YiMenu createEditMenu(EditorFrame frame) {
+        return new YiMenu(MENU_EDIT);
+    }
+
     private Menu createFileMenu(EditorFrame frame) {
         var fileMenu = new YiMenu(MENU_FILE);
 
-        var newGame = new YiMenuItem(ITEM_NEW_GAME);
+        var newGame = new YiMenuItem(MENUITEM_NEW_GAME);
         newGame.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.N, KeyModifier.SHORTCUT));
         newGame.setOnAction(event -> {
             // TODO: Show a new dialog prompting for new game document information.
@@ -89,11 +131,11 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var open = new YiMenuItem(ITEM_OPEN_GAME);
+        var open = new YiMenuItem(MENUITEM_OPEN_GAME);
         open.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.O, KeyModifier.SHORTCUT));
         open.setOnAction(event -> {
             var fileChooser = new FileChooser();
-            fileChooser.setTitle(ITEM_OPEN_GAME.getLocalisedText());
+            fileChooser.setTitle(MENUITEM_OPEN_GAME.getLocalisedText());
             File selectedFile = fileChooser.showOpenDialog(frame);
             if (selectedFile != null) {
                 try {
@@ -106,7 +148,7 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var save = new YiMenuItem(ITEM_SAVE_GAME);
+        var save = new YiMenuItem(MENUITEM_SAVE_GAME);
         save.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.S, KeyModifier.SHORTCUT));
         save.setOnAction(event -> {
             var existingModel = frame.getGameModel();
@@ -121,7 +163,7 @@ public class EditorMenuBar extends MenuBar {
             }
         });
 
-        var saveAs = new YiMenuItem(ITEM_SAVE_AS_GAME);
+        var saveAs = new YiMenuItem(MENUITEM_SAVE_AS_GAME);
         saveAs.setAccelerator(GuiUtilities.getKeyCombination(KeyCode.S, KeyModifier.SHORTCUT, KeyModifier.SHIFT));
         saveAs.setOnAction(event -> {
             var existingModel = frame.getGameModel();
