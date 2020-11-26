@@ -15,13 +15,13 @@ import yi.component.i18n.TextResource;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
 import yi.editor.EditorTool;
-import yi.editor.Text;
+import yi.editor.TextKeys;
 import yi.editor.utilities.IconUtilities;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static yi.editor.Text.*;
+import static yi.editor.TextKeys.*;
 
 /**
  * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
@@ -130,7 +130,7 @@ public class GameBoardToolBar extends ToolBar {
     private void updateGameModelInfo(GameModel gameModel) {
         var blackName = gameModel.getInfo().getPlayerBlackName();
         playerBlackName.setText(blackName.isBlank()
-                ? Text.DEFAULT_BLACK_NAME.getLocalisedText() : blackName);
+                ? TextKeys.DEFAULT_BLACK_NAME.getLocalisedText() : blackName);
 
         var blackRank = gameModel.getInfo().getPlayerBlackRank();
         playerBlackRank.setVisible(!blackRank.isBlank());
@@ -139,7 +139,7 @@ public class GameBoardToolBar extends ToolBar {
 
         var whiteName = gameModel.getInfo().getPlayerWhiteName();
         playerWhiteName.setText(whiteName.isBlank()
-                ? Text.DEFAULT_WHITE_NAME.getLocalisedText() : whiteName);
+                ? TextKeys.DEFAULT_WHITE_NAME.getLocalisedText() : whiteName);
 
         var whiteRank = gameModel.getInfo().getPlayerWhiteRank();
         playerWhiteRank.setVisible(!whiteRank.isBlank());

@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static yi.editor.Text.*;
+import static yi.editor.TextKeys.*;
 
 /**
  * Primary menu bar for {@link yi.editor.EditorFrame}.
