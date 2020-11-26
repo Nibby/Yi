@@ -694,7 +694,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             writer.write(DELIM_NODE_START.toString())
 
             if (currentNode.isRoot()) {
-                exportRootNodeData(gameModel, currentNode, writer)
+                exportRootNodeData(gameModel, writer)
             }
 
             exportPlayedMoveData(gameModel, currentNode, writer)
@@ -705,7 +705,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             // TODO: Export other metadata?
         }
 
-        private fun exportRootNodeData(gameModel: GameModel, rootNode: GameNode, writer: BufferedWriter) {
+        private fun exportRootNodeData(gameModel: GameModel, writer: BufferedWriter) {
             writeTag(SGF_GAME_TYPE, "1", writer)
             writeTag(SGF_FILE_FORMAT, SGF_EXPORTED_FILE_FORMAT_VERSION.toString(), writer)
 
