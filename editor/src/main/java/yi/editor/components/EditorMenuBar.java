@@ -53,7 +53,7 @@ public class EditorMenuBar extends MenuBar {
             getMenus().add(debugMenu);
         }
 
-        setUseSystemMenuBar(true);
+        setUseSystemMenuBar(false);
     }
 
     private YiMenu createViewMenu(EditorFrame frame) {
