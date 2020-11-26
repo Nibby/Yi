@@ -13,7 +13,7 @@ public final class TextKeys {
     private static final String I18N_PACKAGE = "i18n.";
 
     public static void installSupportedLanguages() {
-        Language.add(new Language("简体中文", Locale.SIMPLIFIED_CHINESE));
+        Language.add(new Language("\u7b80\u4f53\u4e2d\u6587", Locale.SIMPLIFIED_CHINESE));
     }
 
     private static final String BUNDLE = I18N_PACKAGE + "editor";
