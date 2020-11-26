@@ -172,6 +172,13 @@ public class EditorFrame extends Stage {
         setMinWidth(minSize.getWidth());
         setMinHeight(minSize.getHeight());
 
+        if (getWidth() < minSize.getWidth()) {
+            setWidth(minSize.getWidth());
+        }
+        if (getHeight() < minSize.getHeight()) {
+            setHeight(minSize.getHeight());
+        }
+
         this.contentLayout = newLayout;
         this.contentLayoutValueListeners.fireValueChanged(this.contentLayout);
     }
