@@ -16,7 +16,7 @@ import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
 import yi.editor.components.ContentLayout;
 import yi.editor.components.EditorMenuBar;
-import yi.editor.components.EditorToolBar;
+import yi.editor.components.GameBoardToolBar;
 import yi.editor.components.GameBoardViewerComposite;
 import yi.editor.settings.Settings;
 import yi.editor.utilities.ValueListener;
@@ -33,7 +33,7 @@ public class EditorFrame extends Stage {
     private final AcceleratorManager acceleratorManager;
     private ContentLayout contentLayout;
     private final EditorMenuBar menuBar;
-    private final EditorToolBar editorToolBar;
+    private final GameBoardToolBar gameBoardToolBar;
 
     private final ValueListenerManager<ContentLayout> contentLayoutValueListeners = new ValueListenerManager<>();
 
@@ -67,10 +67,10 @@ public class EditorFrame extends Stage {
 
         menuBar = new EditorMenuBar(this);
 
-        editorToolBar = new EditorToolBar();
-        editorToolBar.addToolSelectionListener(this::setTool);
+        gameBoardToolBar = new GameBoardToolBar();
+        gameBoardToolBar.addToolSelectionListener(this::setTool);
 
-        compositeViewer = new GameBoardViewerComposite(boardViewer, editorToolBar);
+        compositeViewer = new GameBoardViewerComposite(boardViewer, gameBoardToolBar);
 
         setLayout(layout);
         setGameModel(gameModel);
@@ -118,7 +118,7 @@ public class EditorFrame extends Stage {
         if (this.contentLayout == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        editorToolBar.setContentForLayout(newLayout);
+        gameBoardToolBar.setContentForLayout(newLayout);
 
         var content = newLayout.getContent(this);
 

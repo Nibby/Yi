@@ -21,7 +21,7 @@ import static yi.editor.Text.*;
  * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
  * and other options.
  */
-public class EditorToolBar extends ToolBar {
+public class GameBoardToolBar extends ToolBar {
 
     private final SimpleListenerManager<EditorTool> toolSelectionListeners = new SimpleListenerManager<>();
 
@@ -40,7 +40,7 @@ public class EditorToolBar extends ToolBar {
     private final YiToggleButton toolAnnotateArrow;
     private final YiToggleButton toolAnnotateDim;
 
-    public EditorToolBar() {
+    public GameBoardToolBar() {
         toolButtonGroup = new ToggleGroup();
 
         toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOL_PLAY_MOVE);

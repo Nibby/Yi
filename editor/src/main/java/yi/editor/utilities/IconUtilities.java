@@ -2,7 +2,7 @@ package yi.editor.utilities;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import yi.editor.components.EditorToolBar;
+import yi.editor.components.GameBoardToolBar;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ public final class IconUtilities {
 
     public static Optional<ImageView> getIcon(String resourceFile) {
         try {
-            var resourceStream = EditorToolBar.class.getResourceAsStream(resourceFile);
+            var resourceStream = GameBoardToolBar.class.getResourceAsStream(resourceFile);
             var iconImage = new Image(resourceStream);
             var icon = new ImageView(iconImage);
 
