@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * for the most common operations only, such as save, new document etc.
  * <p/>
  * These accelerators must be installed once for each new {@link Scene} through
- * {@link #install(YiScene)}, ideally prior to setting the scene visible.
+ * {@link #installGlobalAccelerators(YiScene)}, ideally prior to setting the scene visible.
  */
 public final class AcceleratorManager {
 
@@ -35,23 +35,6 @@ public final class AcceleratorManager {
         }
     }
 
-    // Every defined accelerator in this class must have a unique identifier string value
-    private enum Identifier {
-        UNDO("undo"),
-        REDO("redo")
-        ;
-
-        private final String id;
-
-        Identifier(String id) {
-            this.id = id;
-        }
-
-        public String getId() {
-            return id;
-        }
-    }
-
     private static final class Global {
 
         private Global() {
@@ -61,17 +44,23 @@ public final class AcceleratorManager {
         public static void initialize() {
             createUndo();
             createRedo();
+            createPerspectiveAccelerators();
+        }
+
+        private static void createPerspectiveAccelerators() {
+            new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, Text.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT });
+            new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, Text.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT });
         }
 
         private static void createUndo() {
-            new Accelerator(Identifier.UNDO, Translations.Editor.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT});
+            new Accelerator(AcceleratorId.UNDO, Text.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT});
         }
 
         private static void createRedo() {
             if (SystemUtilities.isMac()) {
-                new Accelerator(Identifier.REDO, Translations.Editor.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT});
+                new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT});
             } else {
-                new Accelerator(Identifier.REDO, Translations.Editor.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT});
+                new Accelerator(AcceleratorId.REDO, Text.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT});
             }
         }
     }
@@ -81,7 +70,7 @@ public final class AcceleratorManager {
      *
      * @param scene Scene to have global accelerators applied.
      */
-    void install(@NotNull YiScene scene) {
+    void installGlobalAccelerators(@NotNull YiScene scene) {
         installUndoSystemAccelerators(scene);
     }
 
@@ -89,12 +78,16 @@ public final class AcceleratorManager {
         Runnable undoAction = () -> { if (undoSystem != null) undoSystem.requestUndo(); };
         Runnable redoAction = () -> { if (undoSystem != null) undoSystem.requestRedo(); };
 
-        scene.getAccelerators().put(getAccelerator(Identifier.UNDO).getKeyCombination(), undoAction);
-        scene.getAccelerators().put(getAccelerator(Identifier.REDO).getKeyCombination(), redoAction);
+        install(scene, AcceleratorId.UNDO, undoAction);
+        install(scene, AcceleratorId.REDO, redoAction);
     }
 
-    public void setUndoSystemHandler(@NotNull UndoSystemHandler undoSystem) {
+    void setUndoSystemHandler(@NotNull UndoSystemHandler undoSystem) {
         this.undoSystem = Objects.requireNonNull(undoSystem);
+    }
+
+    private void install(@NotNull Scene scene, AcceleratorId acceleratorId, Runnable action) {
+        scene.getAccelerators().put(getAccelerator(acceleratorId).getKeyCombination(), action);
     }
 
     public static Map<String, Accelerator> getAllAccelerators() {
@@ -105,15 +98,15 @@ public final class AcceleratorManager {
         getAccelerator(acceleratorId).ifPresent(accelerator -> accelerator.setKeyCombination(keyCombination));
     }
 
-    private static Optional<Accelerator> getAccelerator(String id) {
+    public static Optional<Accelerator> getAccelerator(String id) {
         return Optional.ofNullable(ALL_ACCELERATORS.get(id));
     }
 
-    private static Accelerator getAccelerator(Identifier id) {
+    public static Accelerator getAccelerator(AcceleratorId id) {
         var accelerator = getAccelerator(id.getId());
         if (accelerator.isEmpty()) {
             throw new IllegalStateException("No accelerator mapped to id '" +
-                    id + "' despite there being an Identifier entry for it.");
+                    id + "' despite there being an AcceleratorId entry for it.");
         }
         return accelerator.get();
     }
@@ -129,15 +122,15 @@ public final class AcceleratorManager {
 
     public static final class Accelerator {
 
-        private final Identifier id;
+        private final AcceleratorId id;
         private final TextResource name;
         private final KeyModifier[] modifiers;
         private final KeyCode keyCode;
         private KeyCombination keyCombination = null;
 
-        Accelerator(Identifier id, TextResource name, KeyCode keyCode, KeyModifier[] modifiers) {
+        Accelerator(AcceleratorId id, TextResource name, KeyCode keyCode, KeyModifier[] modifiers) {
             if (ALL_ACCELERATORS.containsKey(id.getId())) {
-                throw new IllegalStateException("Duplicated shortcut key identifier: " + id.getId());
+                throw new IllegalStateException("Duplicated shortcut key AcceleratorId: " + id.getId());
             }
 
             this.id = id;

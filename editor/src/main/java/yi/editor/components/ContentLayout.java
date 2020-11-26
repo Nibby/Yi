@@ -2,10 +2,15 @@ package yi.editor.components;
 
 import javafx.geometry.Dimension2D;
 import javafx.scene.Parent;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
+import yi.component.i18n.TextResource;
+import yi.editor.AcceleratorId;
+import yi.editor.AcceleratorManager;
 import yi.editor.EditorFrame;
+import yi.editor.Text;
 
 /**
  * A series of window component layout strategies depending on the editor use case.
@@ -18,7 +23,7 @@ public enum ContentLayout {
     /**
      * A minimal layout that focuses on the game board.
      */
-    COMPACT("Compact") {
+    COMPACT(Text.MENUITEM_PERSPECTIVE_COMPACT, AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
         @Override
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
@@ -40,7 +45,7 @@ public enum ContentLayout {
     /**
      * An expansive layout that with in-depth editing tools.
      */
-    REVIEW("Review") {
+    REVIEW(Text.MENUITEM_PERSPECTIVE_REVIEW, AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
         @Override
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
@@ -74,22 +79,24 @@ public enum ContentLayout {
         }
     };
 
-    private final String friendlyName;
+    private final TextResource friendlyName;
+    private final AcceleratorId acceleratorId;
 
     /**
      * Creates a new type of supported layout for {@link EditorFrame}.
      *
      * @param friendlyName User friendly name of this layout
      */
-    ContentLayout(String friendlyName) {
+    ContentLayout(TextResource friendlyName, AcceleratorId acceleratorId) {
         this.friendlyName = friendlyName;
+        this.acceleratorId = acceleratorId;
     }
 
     /**
      *
      * @return User-friendly name for this layout.
      */
-    public String getFriendlyName() {
+    public TextResource getFriendlyName() {
         return friendlyName;
     }
 
@@ -122,10 +129,15 @@ public enum ContentLayout {
         return startupSize.getWidth() / startupSize.getHeight();
     }
 
-
     @Override
     public String toString() {
-        return getFriendlyName();
+        return getFriendlyName().getLocalisedText();
+    }
+
+    public static void installAccelerator(ContentLayout layoutValue, MenuItem menuItem) {
+        var acceleratorId = layoutValue.acceleratorId;
+        var accelerator = AcceleratorManager.getAccelerator(acceleratorId);
+        menuItem.acceleratorProperty().setValue(accelerator.getKeyCombination());
     }
 
     /**

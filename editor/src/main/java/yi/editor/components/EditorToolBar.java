@@ -15,7 +15,7 @@ import yi.editor.utilities.IconUtilities;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static yi.editor.Translations.Editor.*;
+import static yi.editor.Text.*;
 
 /**
  * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
@@ -43,30 +43,27 @@ public class EditorToolBar extends ToolBar {
     public EditorToolBar() {
         toolButtonGroup = new ToggleGroup();
 
-        toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOLBAR_TOOL_PLAY_MOVE);
-        toolAddBlackStone = addEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32_white.png", TOOLBAR_TOOL_ADD_BLACK);
-        toolAddWhiteStone = addEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32_white.png", TOOLBAR_TOOL_ADD_WHITE);
+        toolPlayMove = addEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOL_PLAY_MOVE);
+        toolAddBlackStone = addEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32_white.png", TOOL_ADD_BLACK);
+        toolAddWhiteStone = addEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32_white.png", TOOL_ADD_WHITE);
 
-        toolAnnotateTriangle = addEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32_white.png", TOOLBAR_TOOL_TRIANGLE);
-        toolAnnotateCircle = addEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32_white.png", TOOLBAR_TOOL_CIRCLE);
-        toolAnnotateSquare = addEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32_white.png", TOOLBAR_TOOL_SQUARE);
-        toolAnnotateCross = addEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32_white.png", TOOLBAR_TOOL_CROSS);
-        toolAnnotateText = addEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32_white.png", TOOLBAR_TOOL_LABEL_LETTER);
-        toolAnnotateNumber = addEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32_white.png", TOOLBAR_TOOL_LABEL_NUMBER);
-        toolAnnotateLine = addEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32_white.png", TOOLBAR_TOOL_LINE);
-        toolAnnotateArrow = addEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32_white.png", TOOLBAR_TOOL_ARROW);
-        toolAnnotateDim = addEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32_white.png", TOOLBAR_TOOL_DIM);
+        toolAnnotateTriangle = addEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32_white.png", TOOL_TRIANGLE);
+        toolAnnotateCircle = addEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32_white.png", TOOL_CIRCLE);
+        toolAnnotateSquare = addEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32_white.png", TOOL_SQUARE);
+        toolAnnotateCross = addEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32_white.png", TOOL_CROSS);
+        toolAnnotateText = addEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32_white.png", TOOL_LABEL_LETTER);
+        toolAnnotateNumber = addEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32_white.png", TOOL_LABEL_NUMBER);
+        toolAnnotateLine = addEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32_white.png", TOOL_LINE);
+        toolAnnotateArrow = addEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32_white.png", TOOL_ARROW);
+        toolAnnotateDim = addEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32_white.png", TOOL_DIM);
 
         toolPlayMove.setSelected(true);
 
         getStyleClass().add("bg-black-60");
     }
 
-    public void setButtonsForContentLayout(ContentLayout layout) {
+    public void setContentForLayout(ContentLayout layout) {
         getItems().clear();
-
-        // TODO: This is definitely not a good design. Rethink UI.
-        final int gap = 6;
 
         getItems().add(dynamicSpacer());
         getItems().add(toolPlayMove);

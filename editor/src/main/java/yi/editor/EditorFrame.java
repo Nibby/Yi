@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
@@ -18,6 +19,8 @@ import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorToolBar;
 import yi.editor.components.GameBoardViewerComposite;
 import yi.editor.settings.Settings;
+import yi.editor.utilities.ValueListener;
+import yi.editor.utilities.ValueListenerManager;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -28,8 +31,11 @@ import java.util.Objects;
 public class EditorFrame extends Stage {
 
     private final AcceleratorManager acceleratorManager;
+    private ContentLayout contentLayout;
     private final EditorMenuBar menuBar;
     private final EditorToolBar editorToolBar;
+
+    private final ValueListenerManager<ContentLayout> contentLayoutValueListeners = new ValueListenerManager<>();
 
     private final GameBoardViewer boardViewer;
     private final GameBoardViewerComposite compositeViewer;
@@ -98,7 +104,7 @@ public class EditorFrame extends Stage {
 
     public @NotNull GameModel getGameModel() {
         Objects.requireNonNull(gameModel, "No game model is set. " +
-                "setGameModel() must be called once before caling getGameModel().");
+                "setGameModel() must be called once before calling getGameModel().");
 
         return gameModel;
     }
@@ -107,14 +113,27 @@ public class EditorFrame extends Stage {
         tool.apply(boardViewer);
     }
 
-    private void setLayout(ContentLayout newLayout) {
-        editorToolBar.setButtonsForContentLayout(newLayout);
+    private boolean addedMenuBarOnce = false;
+    public void setLayout(@NotNull ContentLayout newLayout) {
+        if (this.contentLayout == newLayout) {
+            return; // Avoid flickering when setting the same layout
+        }
+        editorToolBar.setContentForLayout(newLayout);
 
         var content = newLayout.getContent(this);
 
         var controlPane = new BorderPane();
-        controlPane.setTop(menuBar);
-//        controlPane.setBottom(editorToolBar);
+
+        // Work around bug on macOS where setting the menu bar again causes the
+        // menu bar to disappear. Possibly related to native code for system-style
+        // menu bars...
+        var addMenuBar = !menuBar.isUseSystemMenuBar() || !addedMenuBarOnce;
+        if (addMenuBar) {
+            controlPane.setTop(menuBar);
+        }
+        if (!addedMenuBarOnce) {
+            addedMenuBarOnce = true;
+        }
 
         var container = new BorderPane();
         container.setTop(controlPane);
@@ -144,6 +163,9 @@ public class EditorFrame extends Stage {
         var minSize = newLayout.getMinimumWindowSize();
         setMinWidth(minSize.getWidth());
         setMinHeight(minSize.getHeight());
+
+        this.contentLayout = newLayout;
+        this.contentLayoutValueListeners.fireValueChanged(this.contentLayout);
     }
 
     /**
@@ -154,7 +176,7 @@ public class EditorFrame extends Stage {
      * @param newScene Scene to set.
      */
     private void setYiScene(@NotNull YiScene newScene) {
-        acceleratorManager.install(newScene);
+        acceleratorManager.installGlobalAccelerators(newScene);
         setScene(newScene);
     }
 
@@ -166,7 +188,15 @@ public class EditorFrame extends Stage {
         return treeViewer.getComponent();
     }
 
-    class DefaultUndoSystemHandler implements AcceleratorManager.UndoSystemHandler {
+    public @Nullable ContentLayout getContentLayout() {
+        return contentLayout;
+    }
+
+    public void addContentLayoutChangeListener(ValueListener<ContentLayout> listener) {
+        contentLayoutValueListeners.addListener(listener);
+    }
+
+    final class DefaultUndoSystemHandler implements AcceleratorManager.UndoSystemHandler {
 
         @Override
         public void requestUndo() {
