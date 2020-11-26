@@ -2,6 +2,8 @@ package yi.component.utilities;
 
 import javafx.scene.input.KeyCode;
 
+import java.util.Optional;
+
 /**
  * List of available key combination modifiers for {@link GuiUtilities#getKeyCombination(KeyCode, KeyModifier...)}.
  * <p/>
@@ -10,9 +12,28 @@ import javafx.scene.input.KeyCode;
  * {@link #SHORTCUT} value instead.
  */
 public enum KeyModifier {
-    SHORTCUT,
-    CTRL,
-    META,
-    SHIFT,
-    ALT
+    SHORTCUT("shortcut"),
+    CTRL("ctrl"),
+    META("meta"),
+    SHIFT("shift"),
+    ALT("alt");
+
+    private final String serializedValue;
+
+    KeyModifier(String value) {
+        this.serializedValue = value;
+    }
+
+    public String getSerializedValue() {
+        return serializedValue;
+    }
+
+    public static Optional<KeyModifier> fromSerializedValue(String serializedValue) {
+        for (KeyModifier value : KeyModifier.values()) {
+            if (value.getSerializedValue().equals(serializedValue)) {
+                return Optional.of(value);
+            }
+        }
+        return Optional.empty();
+    }
 }

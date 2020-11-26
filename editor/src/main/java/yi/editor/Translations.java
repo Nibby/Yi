@@ -37,6 +37,9 @@ public final class Translations {
     public static final class Editor {
         private static final String BUNDLE = I18N_PACKAGE + "editor";
 
+        public static final TextResource UNDO = new TextResource("undo", BUNDLE);
+        public static final TextResource REDO = new TextResource("redo", BUNDLE);
+
         public static final TextResource TOOLBAR_TOOL_PLAY_MOVE = new TextResource("toolbar.tool.playMove", BUNDLE);
         public static final TextResource TOOLBAR_TOOL_ADD_BLACK = new TextResource("toolbar.tool.addBlack", BUNDLE);
         public static final TextResource TOOLBAR_TOOL_ADD_WHITE = new TextResource("toolbar.tool.addWhite", BUNDLE);
