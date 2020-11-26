@@ -1,4 +1,10 @@
 {
     "undo": "Shortcut+Z",
-    "redo": "Shift+Shortcut+Z"
+    "togglePerspectiveCompact": "Shortcut+W",
+    "newGame": "Shortcut+N",
+    "openGame": "Shortcut+O",
+    "redo": "Shift+Shortcut+Z",
+    "togglePerspectiveReview": "Shortcut+E",
+    "saveAsGame": "Shift+Shortcut+S",
+    "saveGame": "Shortcut+S"
 }
