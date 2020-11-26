@@ -57,8 +57,8 @@ class GameModelInfo {
         put(KEY_APPLICATION_NAME, value)
     }
 
-    fun getKomi(): Int {
-        return get<Int>(KEY_KOMI).orElse(0)
+    fun getKomi(): Float {
+        return get<Float>(KEY_KOMI).orElse(0f)
     }
 
     fun setKomi(value: Float) {
