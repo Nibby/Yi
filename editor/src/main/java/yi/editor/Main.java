@@ -23,6 +23,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         loadBundledFonts();
+        AcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
         Translations.installSupportedLanguages();
         SkinManager.useDefaultSkin();

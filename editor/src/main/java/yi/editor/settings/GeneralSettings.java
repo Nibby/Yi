@@ -1,5 +1,6 @@
 package yi.editor.settings;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import yi.editor.components.ContentLayout;
 import yi.editor.utilities.JSON;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -83,5 +85,9 @@ public final class GeneralSettings extends SettingsModule {
 
     public void setCurrentLayout(ContentLayout currentLayout) {
         this.currentLayout = currentLayout;
+    }
+
+    @NotNull String getSettingsFileName() {
+        return Objects.requireNonNull(settingsFile);
     }
 }

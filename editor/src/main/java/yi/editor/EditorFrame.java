@@ -27,14 +27,13 @@ import java.util.Objects;
  */
 public class EditorFrame extends Stage {
 
-    private final GlobalAccelerators globalAccelerators;
+    private final AcceleratorManager acceleratorManager;
     private final EditorMenuBar menuBar;
     private final EditorToolBar editorToolBar;
 
     private final GameBoardViewer boardViewer;
     private final GameBoardViewerComposite compositeViewer;
     private final GameTreeViewer treeViewer;
-    private final GameTreeViewerSettings treeViewerSettings;
     private GameModel gameModel;
 
     public EditorFrame(GameModel gameModel) {
@@ -43,10 +42,10 @@ public class EditorFrame extends Stage {
 
     public EditorFrame(GameModel gameModel, ContentLayout layout) {
         this.gameModel = gameModel;
-        this.globalAccelerators = new GlobalAccelerators();
-        this.globalAccelerators.setUndoSystemHandler(new DefaultUndoSystemHandler());
+        acceleratorManager = new AcceleratorManager();
+        acceleratorManager.setUndoSystemHandler(new DefaultUndoSystemHandler());
 
-        treeViewerSettings = new GameTreeViewerSettings();
+        var treeViewerSettings = new GameTreeViewerSettings();
         treeViewerSettings.setBackgroundColor(GuiUtilities.getColor(43, 43, 43));
         treeViewerSettings.setNodeColor(GuiUtilities.getColor(90, 90, 90));
         treeViewerSettings.setNodeHoverColor(GuiUtilities.getColor(170, 170, 170));
@@ -155,7 +154,7 @@ public class EditorFrame extends Stage {
      * @param newScene Scene to set.
      */
     private void setYiScene(@NotNull YiScene newScene) {
-        globalAccelerators.installFor(newScene);
+        acceleratorManager.install(newScene);
         setScene(newScene);
     }
 
@@ -167,7 +166,7 @@ public class EditorFrame extends Stage {
         return treeViewer.getComponent();
     }
 
-    class DefaultUndoSystemHandler implements GlobalAccelerators.UndoSystemHandler {
+    class DefaultUndoSystemHandler implements AcceleratorManager.UndoSystemHandler {
 
         @Override
         public void requestUndo() {

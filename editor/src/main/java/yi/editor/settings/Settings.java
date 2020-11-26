@@ -24,6 +24,7 @@ public final class Settings {
     private static final Set<SettingsModule> modules = new LinkedHashSet<>();
 
     public static final GeneralSettings general = new GeneralSettings("settings.json");
+    public static final AcceleratorSettings accelerator = new AcceleratorSettings("shortcutKeys.json");
     public static final GameBoardThemeSettings boardTheme = new GameBoardThemeSettings();
 
     static {
@@ -31,6 +32,7 @@ public final class Settings {
             rootPath = resolveRootPath();
 
             addModule(general);
+            addModule(accelerator);
             addModule(boardTheme);
         } catch (IOException e) {
             e.printStackTrace();
