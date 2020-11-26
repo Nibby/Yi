@@ -8,6 +8,7 @@ import yi.component.YiMenuItem;
 import yi.component.YiRadioMenuItem;
 import yi.component.i18n.I18n;
 import yi.component.i18n.Language;
+import yi.component.utilities.SystemUtilities;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.AcceleratorId;
@@ -51,7 +52,9 @@ public class EditorMenuBar extends MenuBar {
             getMenus().add(debugMenu);
         }
 
-        setUseSystemMenuBar(true);
+        if (SystemUtilities.isMac()) {
+            setUseSystemMenuBar(true);
+        }
     }
 
     private YiMenu createViewMenu(EditorFrame frame) {
