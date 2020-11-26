@@ -100,7 +100,7 @@ internal object GameMoveSubmitter {
 
         if (!ignoreRules) {
             val nextMoveNumber = gameModel.playedMoveHistory.size
-            val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber, gameModel.handicaps > 0)
+            val expectedStoneColorThisTurn = gameModel.rules.getStoneColorForTurn(nextMoveNumber, gameModel.info.getHandicapCount() > 0)
 
             if (expectedStoneColorThisTurn != proposedMove.color) {
                 return Pair(MoveValidationResult.ERROR_WRONG_STONE_COLOR_THIS_TURN, null)

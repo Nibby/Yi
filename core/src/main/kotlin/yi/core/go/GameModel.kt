@@ -40,16 +40,14 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
     var lastSavePath: Path? = null
     var lastSaveFormat: FileFormat? = null
     var isModified = false
-
-    // Metadata
-    var komi: Float = rules.getDefaultKomi()
-    var handicaps: Int = 0
-    var applicationName = ""
+    val info = GameModelInfo()
 
     init {
         if (boardWidth < 1 || boardHeight < 1) {
             throw IllegalArgumentException("Invalid board dimensions: $boardWidth x $boardHeight")
         }
+
+        info.setKomi(rules.getDefaultKomi())
     }
 
     constructor(boardWidth: Int, boardHeight: Int, rulesHandler: GoGameRulesHandler)
@@ -477,7 +475,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
      * @return The [StoneColor] for the stone that will be played on the next turn.
      */
     fun getNextTurnStoneColor(): StoneColor {
-        return rules.getStoneColorForTurn(playedMoveHistory.size, handicaps > 0)
+        return rules.getStoneColorForTurn(playedMoveHistory.size, info.getHandicapCount() > 0)
     }
 
     /**
@@ -761,6 +759,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
         onNodeDataUpdate().removeAllListeners()
 
         removeNodeSubtree(getRootNode())
+        info.dispose()
     }
 
     // This init block has to be done last because the fields are initialized in order.

@@ -21,8 +21,8 @@ public final class GameModelUtilities {
     private static GameModel createGameModel(int width, int height, GameRules ruleset,
                                              float customKomi) {
         var model = new GameModel(width, height, ruleset);
-        model.setKomi(customKomi);
-        model.setApplicationName(Yi.getProgramName() + " " + Yi.getVersion());
+        model.getInfo().setKomi(customKomi);
+        model.getInfo().setApplicationName(Yi.getProgramName() + " " + Yi.getVersion());
 
         return model;
     }

@@ -53,4 +53,9 @@ public final class Text {
 
     public static final TextResource TOGGLE_PERSPECTIVE_REVIEW = new TextResource("shortcut.togglePerspectiveReview", BUNDLE);
     public static final TextResource TOGGLE_PERSPECTIVE_COMPACT = new TextResource("shortcut.togglePerspectiveCompact", BUNDLE);
+
+    public static final TextResource DEFAULT_BLACK_NAME = new TextResource("default.blackName", BUNDLE);
+    public static final TextResource DEFAULT_WHITE_NAME = new TextResource("default.whiteName", BUNDLE);
+
+    public static final TextResource MOVE_COUNT = new TextResource("moveCount", BUNDLE);
 }

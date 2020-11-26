@@ -87,6 +87,23 @@
   -fx-background-color: rgba(0, 0, 0, 0.6);
 }
 
+.editor-player-name-hud-label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 16px;
+  -fx-pref-height: 28px;
+}
+
+.editor-player-rank-hud-label {
+  -fx-text-fill: #c8c8c8;
+  -fx-font-weight: normal;
+  -fx-font-size: 14px;
+}
+
+.editor-move-number-hud-label {
+  -fx-text-fill: white;
+}
+
 * {
   -fx-font-smoothing-type: gray;
 }

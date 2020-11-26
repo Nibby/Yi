@@ -10,4 +10,15 @@
   -fx-background-color: rgba(0, 0, 0, 0.6);
 }
 
+.padding-4 {
+  -fx-padding: 4px;
+}
+
+.editor-player-name-hud-label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 16px;
+  -fx-pref-height: 28px;
+}
+
 /*# sourceMappingURL=styles.css.map */
