@@ -34,6 +34,7 @@ public final class TextKeys {
     public static final TextResource MENUITEM_OPEN_GAME = new TextResource("menuItem.openGame", BUNDLE);
     public static final TextResource MENUITEM_SAVE_GAME = new TextResource("menuItem.saveGame", BUNDLE);
     public static final TextResource MENUITEM_SAVE_AS_GAME = new TextResource("menuItem.saveAsGame", BUNDLE);
+    public static final TextResource MENUITEM_TOGGLE_COORDINATES = new TextResource("menuItem.toggleCoordinates", BUNDLE);
 
     public static final TextResource UNDO = new TextResource("undo", BUNDLE);
     public static final TextResource REDO = new TextResource("redo", BUNDLE);

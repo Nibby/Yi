@@ -211,6 +211,10 @@ public class EditorFrame extends Stage {
         return contentLayout;
     }
 
+    public GameBoardViewer getBoardViewer() {
+        return boardViewer;
+    }
+
     public void addContentLayoutChangeListener(ValueListener<ContentLayout> listener) {
         contentLayoutValueListeners.addListener(listener);
     }

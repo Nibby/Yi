@@ -1,10 +1,15 @@
 package yi.component.board;
 
+import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import yi.component.FontManager;
+import yi.component.utilities.ComparisonUtilities;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
 import yi.core.go.StoneColor;
@@ -106,8 +111,114 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
         }
 
+        private static final String COORDINATE_X_AXIS_TEXT = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+
         private static void renderCoordinateLabels(GraphicsContext g, GameBoardManager manager) {
-            // TODO: Implement later
+            var boardWidth = manager.getGameModel().getBoardWidth();
+            var boardHeight = manager.getGameModel().getBoardHeight();
+
+            var pos = manager.view.coordinateLabelPosition;
+            var drawTop = pos == CoordinateLabelPosition.ALL_SIDES || pos == CoordinateLabelPosition.TOP_AND_LEFT;
+            var drawLeft = pos == CoordinateLabelPosition.ALL_SIDES || pos == CoordinateLabelPosition.TOP_AND_LEFT;
+            var drawRight = pos == CoordinateLabelPosition.ALL_SIDES || pos == CoordinateLabelPosition.BOTTOM_AND_RIGHT;
+            var drawBottom = pos == CoordinateLabelPosition.ALL_SIDES || pos == CoordinateLabelPosition.BOTTOM_AND_RIGHT;
+
+            var coordBounds = manager.size.getCoordinateLabelBounds();
+            var gridBounds = manager.size.getGridBounds();
+
+            var maxHeightForLabels = (coordBounds.getHeight() - gridBounds.getHeight()) / 2;
+            var maxWidthForLabels = (coordBounds.getWidth() - gridBounds.getWidth()) / 2;
+
+            var heightFontSize = maxHeightForLabels / 5 * 2;
+            var widthFontSize = maxWidthForLabels / 5 * 2;
+            var fontSize = Math.min(heightFontSize, widthFontSize);
+            if (fontSize < 1d) {
+                fontSize = 1d;
+            }
+
+            var font = FontManager.getCachedFont(BoardRenderer.class)
+                    .orElse(createAndCacheCoordinateLabelFont(fontSize));
+
+            if (!ComparisonUtilities.doubleEquals(font.getSize(), fontSize)) {
+                font = createAndCacheCoordinateLabelFont(fontSize);
+            }
+
+            g.setFont(font);
+            g.setFill(manager.view.boardGridColor.darker());
+
+            var textBounds = getTextBounds("A", font);
+            if (drawTop) {
+                var y = coordBounds.getY()
+                        + fontSize
+                        + maxHeightForLabels / 5 * 2
+                        - textBounds.getHeight() / 2;
+
+                renderHorizontalAxisLabels(g, manager.size, boardWidth, y, font);
+            }
+            if (drawBottom) {
+                var y = coordBounds.getY()
+                        + coordBounds.getHeight()
+                        + heightFontSize
+                        - maxHeightForLabels / 5 * 2
+                        - textBounds.getHeight() / 2;
+
+                renderHorizontalAxisLabels(g, manager.size, boardWidth, y, font);
+            }
+
+            if (drawLeft) {
+                var x = coordBounds.getX()
+                        + maxWidthForLabels / 3
+                        - textBounds.getWidth() / 2;
+
+                renderVerticalAxisLabels(g, manager.size, boardHeight, x, font);
+            }
+
+            if (drawRight) {
+                var x = coordBounds.getX()
+                        + coordBounds.getWidth()
+                        - maxWidthForLabels / 3
+                        - textBounds.getWidth() / 2;
+
+                renderVerticalAxisLabels(g, manager.size, boardHeight, x, font);
+            }
+        }
+
+        private static void renderVerticalAxisLabels(GraphicsContext g, GameBoardSize size, int boardHeight, double x, Font font) {
+            for (int row = 0; row < boardHeight; ++row) {
+                var gridPos = size.getGridRenderPosition(0, row, 0);
+                var text = String.valueOf(boardHeight - row);
+                var textBounds = getTextBounds(text, font);
+                var adjustedX = x;
+                if (text.length() > 1) {
+                    adjustedX -= textBounds.getWidth() / 4;
+                }
+                var y = gridPos[1] - textBounds.getHeight() / 2 + font.getSize();
+
+                g.fillText(text, adjustedX, y);
+            }
+        }
+
+        private static void renderHorizontalAxisLabels(GraphicsContext g, GameBoardSize size, int boardWidth, double y, Font font) {
+            for (int col = 0; col < boardWidth; ++col) {
+                var gridPos = size.getGridRenderPosition(col, 0, 0);
+                var text = String.valueOf(COORDINATE_X_AXIS_TEXT.charAt(col));
+                var textBounds = getTextBounds(text, font);
+                var x = gridPos[0] - textBounds.getWidth() / 2;
+
+                g.fillText(text, x, y);
+            }
+        }
+
+        private static Font createAndCacheCoordinateLabelFont(double fontSize) {
+            var newFont = FontManager.getDefaultFont(fontSize);
+            FontManager.putCachedFont(BoardRenderer.class, newFont);
+            return newFont;
+        }
+
+        private static Bounds getTextBounds(String text, Font font) {
+            var boundsTest = new Text(text);
+            boundsTest.setFont(font);
+            return boundsTest.getBoundsInLocal();
         }
 
         private static void renderGrid(GraphicsContext g, GameBoardManager manager) {

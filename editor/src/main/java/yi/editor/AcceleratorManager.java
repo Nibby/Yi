@@ -40,6 +40,8 @@ public final class AcceleratorManager {
             register(new Accelerator(AcceleratorId.SAVE_GAME, TextKeys.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(AcceleratorId.SAVE_AS_GAME, TextKeys.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
 
+            register(new Accelerator(AcceleratorId.TOGGLE_BOARD_COORDINATES, TextKeys.MENUITEM_TOGGLE_COORDINATES, KeyCode.C, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
+
             INITIALIZED.set(true);
         }
     }

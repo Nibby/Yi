@@ -3,6 +3,7 @@ package yi.editor.components;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
+import yi.component.YiCheckMenuItem;
 import yi.component.YiMenu;
 import yi.component.YiMenuItem;
 import yi.component.YiRadioMenuItem;
@@ -11,10 +12,7 @@ import yi.component.i18n.Language;
 import yi.component.utilities.SystemUtilities;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
-import yi.editor.AcceleratorId;
-import yi.editor.AcceleratorManager;
-import yi.editor.EditorFrame;
-import yi.editor.Yi;
+import yi.editor.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,6 +90,17 @@ public class EditorMenuBar extends MenuBar {
 
             viewMenu.getItems().add(perspectiveMenu);
         }
+
+        { // Toggle coordinates
+            var toggleCoordinates = new YiCheckMenuItem(TextKeys.MENUITEM_TOGGLE_COORDINATES);
+            toggleCoordinates.setOnAction(e -> {
+                var showIt = toggleCoordinates.isSelected();
+                frame.getBoardViewer().setShowCoordinates(showIt);
+            });
+            AcceleratorManager.getAccelerator(AcceleratorId.TOGGLE_BOARD_COORDINATES).install(toggleCoordinates);
+            viewMenu.getItems().add(toggleCoordinates);
+        }
+
         return viewMenu;
     }
 

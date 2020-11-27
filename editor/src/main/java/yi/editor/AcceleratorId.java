@@ -15,6 +15,8 @@ public enum AcceleratorId {
     TOGGLE_PERSPECTIVE_COMPACT("togglePerspectiveCompact"),
     TOGGLE_PERSPECTIVE_REVIEW("togglePerspectiveReview"),
 
+    TOGGLE_BOARD_COORDINATES("toggleBoardCoordinates"),
+
     NEW_GAME("newGame"),
     OPEN_GAME("openGame"),
     SAVE_GAME("saveGame"),
