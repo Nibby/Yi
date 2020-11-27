@@ -52,6 +52,7 @@ public class EditorFrame extends Stage {
         treeViewerSettings.setNodeColor(GuiUtilities.getColor(90, 90, 90));
         treeViewerSettings.setNodeHoverColor(GuiUtilities.getColor(170, 170, 170));
         treeViewerSettings.setNodeInCurrentVariationColor(GuiUtilities.getColor(203, 203, 203));
+        treeViewerSettings.setNodeWithCommentaryColor(GuiUtilities.getColor(87, 125, 186));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
 
         var boardSettings = Settings.getCurrentGameBoardSettings();

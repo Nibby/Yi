@@ -6,7 +6,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.shape.Rectangle;
+import yi.component.utilities.GuiUtilities;
 import yi.core.go.GameNode;
+import yi.core.go.GameNodeType;
 
 import java.util.List;
 
@@ -60,39 +62,57 @@ final class GameTreeCanvas extends Canvas {
     private void renderNodes(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements,
                              GameNode currentNode, List<GameNode> currentVariationHistory,
                              double gridWidth, double gridHeight, double offsetX, double offsetY) {
+
         for (var nodeElement : nodeElements) {
             double x = nodeElement.getGridX() * gridWidth + offsetX;
             double y = nodeElement.getGridY() * gridHeight + offsetY;
 
             var nodeColor = settings.getNodeColor();
 
-            if (nodeElement.isHighlighted()) {
-                nodeColor = settings.getNodeHoverColor();
+            var node = nodeElement.getNode();
+            var isCurrentNode = node.equals(currentNode);
+            var isPartOfCurrentHistory = currentVariationHistory.contains(node);
+            var isCommented = !node.getComments().isBlank();
+            var isPass = node.getType() == GameNodeType.PASS || node.getType() == GameNodeType.RESIGN;
+            var strokeOutlineForCurrentNode = false;
+
+            if (isCurrentNode) {
+                nodeColor = settings.getCurrentNodeColor();
+            } else if (isPartOfCurrentHistory) {
+                nodeColor = settings.getNodeInCurrentVariationColor();
+            } else if (isPass) {
+                nodeColor = settings.getNodePassColor();
             }
 
-            var node = nodeElement.getNode();
+            if (isCommented) {
+                nodeColor = settings.getNodeWithCommentaryColor();
+                if (isPartOfCurrentHistory) {
+                    nodeColor = nodeColor.brighter();
+                }
+                strokeOutlineForCurrentNode = true;
+            }
 
-            if (node.equals(currentNode)) {
-                nodeColor = settings.getCurrentNodeColor();
-            } else if (currentVariationHistory.contains(node)) {
-                nodeColor = settings.getNodeInCurrentVariationColor();
+            if (nodeElement.isHighlighted()) {
+                nodeColor = nodeColor.brighter();
             }
 
             graphics.setFill(nodeColor);
             graphics.setStroke(nodeColor);
 
-            var bounds = new Rectangle(x + 3, y + 3, gridWidth - 6, gridHeight - 6);
+            var insets = isCurrentNode ? 3 : 5;
+            if (node.getType() == GameNodeType.STONE_EDIT) {
+                insets -= 1; // Optical illusion, diamond appears slightly smaller at same insets
+            }
+
+            var bounds = new Rectangle(x + insets, y + insets, gridWidth - insets * 2, gridHeight - insets * 2);
+            settings.setNodeWithCommentaryColor(GuiUtilities.getColor(74, 110, 145));
 
             if (node.isRoot()) {
-                // Triangle
-                double[] xPoints = {
-                        bounds.getX(), bounds.getX() + bounds.getWidth() / 2, bounds.getX() + bounds.getWidth()
-                };
-                double[] yPoints = {
-                        bounds.getY() + bounds.getHeight(), bounds.getY(), bounds.getY() + bounds.getHeight(),
-                };
-
-                graphics.fillPolygon(xPoints, yPoints, 3);
+                graphics.fillRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                if (isCurrentNode && strokeOutlineForCurrentNode) {
+                    graphics.setStroke(settings.getCurrentNodeColor());
+                    graphics.strokeRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                }
             } else {
                 switch (node.getType()) {
                     case PASS:
@@ -102,10 +122,29 @@ final class GameTreeCanvas extends Canvas {
                         graphics.strokeOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
                         break;
                     case STONE_EDIT:
-                        graphics.fillRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                        // Diamond
+                        var xMid = bounds.getX() + bounds.getWidth() / 2;
+                        var yMid = bounds.getY() + bounds.getHeight() / 2;
+                        double[] xPoints = {
+                                bounds.getX(), xMid, bounds.getX() + bounds.getWidth(), xMid
+                        };
+                        double[] yPoints = {
+                                yMid, bounds.getY(), yMid, bounds.getY() + bounds.getHeight()
+                        };
+
+                        graphics.fillPolygon(xPoints, yPoints, xPoints.length);
+                        if (isCurrentNode && strokeOutlineForCurrentNode) {
+                            graphics.setStroke(settings.getCurrentNodeColor());
+                            graphics.strokePolygon(xPoints, yPoints, xPoints.length);
+                        }
                         break;
                     default:
                         graphics.fillOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+
+                        if (isCurrentNode && strokeOutlineForCurrentNode) {
+                            graphics.setStroke(settings.getCurrentNodeColor());
+                            graphics.strokeOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                        }
                         break;
                 }
 
