@@ -156,7 +156,6 @@ public class EditorFrame extends Stage {
             var newScene = new YiScene(container, newWidth, currentHeight);
             setYiScene(newScene);
             setWidth(newWidth);
-            setHeight(currentHeight);
         } else {
             var startupSize = newLayout.getMinimumWindowSize();
 
