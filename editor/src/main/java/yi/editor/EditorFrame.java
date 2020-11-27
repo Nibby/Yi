@@ -17,8 +17,8 @@ import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
 import yi.editor.components.*;
 import yi.editor.settings.Settings;
-import yi.editor.utilities.ValueListener;
-import yi.editor.utilities.ValueListenerManager;
+import yi.component.ValueListener;
+import yi.component.ValueListenerManager;
 
 import java.io.IOException;
 import java.util.Objects;

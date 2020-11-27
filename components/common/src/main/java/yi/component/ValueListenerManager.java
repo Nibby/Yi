@@ -1,4 +1,4 @@
-package yi.editor.utilities;
+package yi.component;
 
 import java.util.ArrayList;
 import java.util.List;

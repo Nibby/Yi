@@ -1,4 +1,4 @@
-package yi.editor.utilities;
+package yi.component;
 
 @FunctionalInterface
 public interface ValueListener<T> {
