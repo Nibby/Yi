@@ -9,7 +9,7 @@ import yi.component.board.GameBoardViewer;
  */
 public class GameBoardViewerComposite extends BorderPane {
 
-    public GameBoardViewerComposite(GameBoardViewer viewer, GameBoardToolBar toolBar) {
+    public GameBoardViewerComposite(GameBoardViewer viewer, EditorActionToolBar toolBar) {
         var image = viewer.getBackgroundImage();
         setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(1.0d, 1.0d, true, true, false, true))));
         viewer.setBackgroundImage(null);

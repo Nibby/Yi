@@ -21,7 +21,7 @@ public final class ControlToolBar extends ToolBar {
     public ControlToolBar() {
         layoutOptions: {
             toggleReviewMode = new ToggleButton();
-            IconUtilities.getIcon("/icons/editMode32.png").ifPresent(toggleReviewMode::setGraphic);
+            IconUtilities.getIcon("/icons/editMode32.png", getClass()).ifPresent(toggleReviewMode::setGraphic);
 
             var currentValue = Settings.general.getCurrentLayout() == ContentLayout.REVIEW;
             toggleReviewMode.setSelected(currentValue);

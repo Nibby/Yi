@@ -27,7 +27,7 @@ import static yi.editor.TextKeys.*;
  * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
  * and other options.
  */
-public class GameBoardToolBar extends ToolBar {
+public class EditorActionToolBar extends ToolBar {
 
     private final SimpleListenerManager<EditorTool> toolSelectionListeners = new SimpleListenerManager<>();
 
@@ -46,14 +46,14 @@ public class GameBoardToolBar extends ToolBar {
     private final YiToggleButton toolAnnotateArrow;
     private final YiToggleButton toolAnnotateDim;
 
-    private final Label playerBlackName = new Label("", IconUtilities.getIcon("/icons/blackStone32_white.png").orElse(null));
+    private final Label playerBlackName = new Label("", IconUtilities.getIcon("/icons/blackStone32_white.png", getClass()).orElse(null));
     private final Label playerBlackRank = new Label("");
-    private final Label playerWhiteName = new Label("", IconUtilities.getIcon("/icons/whiteStone32_white.png").orElse(null));
+    private final Label playerWhiteName = new Label("", IconUtilities.getIcon("/icons/whiteStone32_white.png", getClass()).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
     private final Label moveLabel = new Label("");
 
-    public GameBoardToolBar() {
+    public EditorActionToolBar() {
         toolButtonGroup = new ToggleGroup();
 
         toolPlayMove = createEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOL_PLAY_MOVE);
@@ -263,6 +263,6 @@ public class GameBoardToolBar extends ToolBar {
     }
 
     private void setIcon(String iconResource, ButtonBase buttonBase) {
-        IconUtilities.getIcon(iconResource).ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
+        IconUtilities.getIcon(iconResource, getClass()).ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
     }
 }
