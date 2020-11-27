@@ -1,5 +1,6 @@
 package yi.component.board;
 
+import javafx.beans.Observable;
 import javafx.scene.image.Image;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -186,5 +187,17 @@ public final class GameBoardViewer implements YiComponent {
     @Override
     public Pane getComponent() {
         return container;
+    }
+
+    public void setShowCoordinates(boolean doShow) {
+        manager.view.coordinateLabelPosition = doShow ? CoordinateLabelPosition.ALL_SIDES : CoordinateLabelPosition.NONE;
+        manager.size.compute(container.getWidth(), container.getHeight(),
+                manager.getGameModel().getBoardWidth(), manager.getGameModel().getBoardHeight(),
+                manager.view.coordinateLabelPosition);
+        renderAll();
+    }
+
+    public boolean isShowingBoardCoordinates() {
+        return manager.view.coordinateLabelPosition != CoordinateLabelPosition.NONE;
     }
 }

@@ -1,23 +1,23 @@
 package yi.component;
 
 import javafx.scene.Node;
-import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.CheckMenuItem;
 import org.jetbrains.annotations.Nullable;
 import yi.component.i18n.I18n;
 import yi.component.i18n.TextResource;
 
-public class YiRadioMenuItem extends RadioMenuItem implements YiComponent {
+public class YiCheckMenuItem extends CheckMenuItem implements YiComponent {
 
-    public YiRadioMenuItem() {
+    public YiCheckMenuItem() {
         super();
     }
 
-    public YiRadioMenuItem(TextResource key) {
+    public YiCheckMenuItem(TextResource key) {
         super(key == null ? "" : key.getLocalisedText());
         setText(key);
     }
 
-    public YiRadioMenuItem(TextResource key, Node graphic) {
+    public YiCheckMenuItem(TextResource key, Node graphic) {
         super(key == null ? "" : key.getLocalisedText(), graphic);
         setText(key);
     }
@@ -32,4 +32,5 @@ public class YiRadioMenuItem extends RadioMenuItem implements YiComponent {
     public void setText(@Nullable TextResource key) {
         setText(key == null ? "" : key.getLocalisedText());
     }
+
 }
