@@ -36,7 +36,7 @@ public class EditorFrame extends Stage {
     private final ValueListenerManager<GameModel> gameModelValueListeners = new ValueListenerManager<>();
 
     private final GameBoardViewer boardViewer;
-    private final GameBoardToolBar gameBoardToolBar;
+    private final EditorActionToolBar editorActionToolBar;
     private final GameBoardViewerComposite compositeViewer;
     private final GameTreeViewer treeViewer;
     private GameModel gameModel;
@@ -65,10 +65,10 @@ public class EditorFrame extends Stage {
         menuBar = new EditorMenuBar(this);
         toolBar = new EditorToolBar();
 
-        gameBoardToolBar = new GameBoardToolBar();
-        gameBoardToolBar.addToolSelectionListener(this::setTool);
+        editorActionToolBar = new EditorActionToolBar();
+        editorActionToolBar.addToolSelectionListener(this::setTool);
 
-        compositeViewer = new GameBoardViewerComposite(boardViewer, gameBoardToolBar);
+        compositeViewer = new GameBoardViewerComposite(boardViewer, editorActionToolBar);
 
         setLayout(layout);
         setGameModel(gameModel);
@@ -99,11 +99,11 @@ public class EditorFrame extends Stage {
             this.gameModel.dispose();
         }
         this.gameModel = newModel;
-        this.gameModel.getInfo().addChangeListener(gameBoardToolBar::onGameInfoUpdate);
+        this.gameModel.getInfo().addChangeListener(editorActionToolBar::onGameInfoUpdate);
 
         boardViewer.setGameModel(newModel);
         treeViewer.setGameModel(newModel);
-        gameBoardToolBar.onGameModelChange(newModel);
+        editorActionToolBar.onGameModelChange(newModel);
 
         gameModelValueListeners.fireValueChanged(newModel);
     }
@@ -124,7 +124,7 @@ public class EditorFrame extends Stage {
         if (this.contentLayout == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        gameBoardToolBar.setContentForLayout(newLayout, gameModel);
+        editorActionToolBar.setContentForLayout(newLayout, gameModel);
 
         var content = newLayout.getContent(this);
 
