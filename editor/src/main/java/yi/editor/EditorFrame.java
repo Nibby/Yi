@@ -46,8 +46,6 @@ public class EditorFrame extends Stage {
     }
 
     public EditorFrame(GameModel gameModel, ContentLayout layout) {
-        this.gameModel = gameModel;
-
         var treeViewerSettings = new GameTreeViewerSettings();
         // TODO: Extract these out to settings.json
         treeViewerSettings.setBackgroundColor(GuiUtilities.getColor(43, 43, 43));
