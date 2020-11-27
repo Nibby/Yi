@@ -76,8 +76,10 @@ object GameModelImporter {
         return if (formats.size == 1) {
             val format = formats.iterator().next()
             _fromFile(filePath, format.getHandler())
+        } else if (formats.size > 1) {
+            throw GameParseException("File conforms to more than 1 format: $formats")
         } else {
-            throw UnsupportedOperationException("File conforms to more than 1 format: $formats")
+            throw GameParseException("No known format handler for file extension: " + filePath.fileName)
         }
     }
 
