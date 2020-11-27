@@ -61,4 +61,12 @@ public class JSON {
             return defaultValue;
         }
     }
+
+    public static boolean getBoolean(@NotNull JSONObject json, @NotNull String key, boolean defaultValue) {
+        try {
+            return json.getBoolean(key);
+        } catch (JSONException e) {
+            return defaultValue;
+        }
+    }
 }

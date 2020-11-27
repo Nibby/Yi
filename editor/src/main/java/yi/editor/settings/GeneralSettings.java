@@ -22,10 +22,12 @@ public final class GeneralSettings extends SettingsModule {
 
     private static final String KEY_BOARD_THEME_DIRECTORY = "boardTheme";
     private static final String KEY_CONTENT_LAYOUT = "contentLayout";
+    private static final String KEY_SHOW_BOARD_COORDINATES = "showCoordinates";
 
     // The theme directory to be loaded
     private ContentLayout currentLayout = ContentLayout.getDefaultValue();
     private String selectedBoardThemeDirectory;
+    private boolean showBoardCoordinates;
 
     GeneralSettings(String settingsFilePath) {
         this.settingsFile = settingsFilePath;
@@ -48,6 +50,7 @@ public final class GeneralSettings extends SettingsModule {
     private void loadFromJson(JSONObject settings) {
         JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> selectedBoardThemeDirectory = value);
         JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> currentLayout = ContentLayout.getValue(value));
+        setShowBoardCoordinates(JSON.getBoolean(settings, KEY_SHOW_BOARD_COORDINATES, true));
     }
 
     @Override
@@ -55,6 +58,7 @@ public final class GeneralSettings extends SettingsModule {
         JSONObject settings = new JSONObject();
         settings.put(KEY_BOARD_THEME_DIRECTORY, GameBoardThemeSettings.getDefaultThemeDirectory());
         settings.put(KEY_CONTENT_LAYOUT, currentLayout.name());
+        settings.put(KEY_SHOW_BOARD_COORDINATES, showBoardCoordinates);
 
         Path file = Paths.get(settingsFile);
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
@@ -89,5 +93,13 @@ public final class GeneralSettings extends SettingsModule {
 
     @NotNull String getSettingsFileName() {
         return Objects.requireNonNull(settingsFile);
+    }
+
+    public void setShowBoardCoordinates(boolean show) {
+        this.showBoardCoordinates = show;
+    }
+
+    public boolean isShowingBoardCoordinates() {
+        return showBoardCoordinates;
     }
 }

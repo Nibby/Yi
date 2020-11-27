@@ -1,7 +1,7 @@
 package yi.editor.settings;
 
 import org.json.JSONObject;
-import yi.component.board.GameBoardSettings;
+import yi.component.board.GameBoardViewer;
 import yi.editor.Main;
 import yi.editor.utilities.JSON;
 
@@ -63,6 +63,12 @@ public final class Settings {
         loadedOnce = true;
     }
 
+    public static void save() {
+        for (SettingsModule module : modules) {
+            module.save();
+        }
+    }
+
     private static void addModule(SettingsModule module) {
         if (modules.contains(module))
             throw new IllegalArgumentException("Duplicated module: " + module.getClass().toString());
@@ -120,18 +126,14 @@ public final class Settings {
         return Optional.of(JSON.read(settingsFile));
     }
 
-    /**
-     * This is a property-getter, not a settings module.
-     *
-     * @return The current settings to configure each new instance of {@link yi.component.board.GameBoardViewer}.
-     */
-    public static GameBoardSettings getCurrentGameBoardSettings() {
-        var settings = new GameBoardSettings();
+    public static void applySavedBoardSettings(GameBoardViewer board) {
+        if (!loadedOnce) {
+            throw new IllegalStateException("Settings has not loaded for the first time");
+        }
+        board.setBackgroundImage(boardTheme.getBackgroundImage());
+        board.setBoardImage(boardTheme.getBoardImage());
+        board.setGridColor(boardTheme.getBoardGridColor());
 
-        settings.setBackgroundImage(boardTheme.getBackgroundImage());
-        settings.setBoardImage(boardTheme.getBoardImage());
-        settings.setGridColor(boardTheme.getBoardGridColor());
-
-        return settings;
+        board.setShowCoordinates(general.isShowingBoardCoordinates());
     }
 }

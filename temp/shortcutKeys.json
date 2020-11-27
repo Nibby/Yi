@@ -6,5 +6,6 @@
     "redo": "Shift+Shortcut+Z",
     "togglePerspectiveReview": "Shortcut+E",
     "saveAsGame": "Shift+Shortcut+S",
+    "toggleBoardCoordinates": "Shift+Shortcut+C",
     "saveGame": "Shortcut+S"
 }

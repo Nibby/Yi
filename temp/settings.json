@@ -1,4 +1,5 @@
 {
     "contentLayout": "COMPACT",
-    "boardTheme": "megumi"
+    "boardTheme": "megumi",
+    "showCoordinates": true
 }
