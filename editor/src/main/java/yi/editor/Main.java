@@ -30,8 +30,13 @@ public class Main extends Application {
         Settings.load();
 
         var gameModel = GameModelUtilities.createGameModel();
-        var editorFrame = new EditorFrame(gameModel);
+        var editorFrame = new EditorFrame(gameModel, Settings.general.getCurrentLayout());
         editorFrame.show();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Settings.general.save();
+            Settings.accelerator.save();
+        }));
     }
 
     private void loadBundledFonts() {

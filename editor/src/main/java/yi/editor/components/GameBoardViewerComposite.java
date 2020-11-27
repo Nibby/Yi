@@ -11,8 +11,12 @@ public class GameBoardViewerComposite extends BorderPane {
 
     public GameBoardViewerComposite(GameBoardViewer viewer, EditorActionToolBar toolBar) {
         var image = viewer.getBackgroundImage();
-        setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(1.0d, 1.0d, true, true, false, true))));
-        viewer.setBackgroundImage(null);
+        if (image != null) {
+            setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+                    new BackgroundSize(1.0d, 1.0d, true, true, false, true))));
+            viewer.setBackgroundImage(null);
+        }
 
         setTop(toolBar);
         setCenter(viewer.getComponent());

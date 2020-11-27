@@ -13,6 +13,7 @@ import yi.component.utilities.SystemUtilities;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.*;
+import yi.editor.settings.Settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,9 +94,11 @@ public class EditorMenuBar extends MenuBar {
 
         { // Toggle coordinates
             var toggleCoordinates = new YiCheckMenuItem(TextKeys.MENUITEM_TOGGLE_COORDINATES);
+            toggleCoordinates.setSelected(Settings.general.isShowingBoardCoordinates());
             toggleCoordinates.setOnAction(e -> {
                 var showIt = toggleCoordinates.isSelected();
                 frame.getBoardViewer().setShowCoordinates(showIt);
+                Settings.general.setShowBoardCoordinates(showIt);
             });
             AcceleratorManager.getAccelerator(AcceleratorId.TOGGLE_BOARD_COORDINATES).install(toggleCoordinates);
             viewMenu.getItems().add(toggleCoordinates);

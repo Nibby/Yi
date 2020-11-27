@@ -34,10 +34,6 @@ public final class GameBoardViewer implements YiComponent {
     private final GameBoardManager manager = new GameBoardManager();
 
     public GameBoardViewer() {
-        this(new GameBoardSettings());
-    }
-
-    public GameBoardViewer(GameBoardSettings settings) {
         mainCanvas = new GameBoardMainCanvas(manager);
         inputCanvas = new GameBoardInputCanvas(manager);
         content.push(mainCanvas);
@@ -45,14 +41,11 @@ public final class GameBoardViewer implements YiComponent {
 
         container = new CanvasContainer(content);
         container.addSizeUpdateListener(newSize -> {
-            if (manager.getGameModel() != null) {
-                manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), manager.getGameModel());
-                renderAll();
-            }
+            manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), manager.getGameModel());
+            renderAll();
         });
 
         setEditable(true);
-        applySettings(settings);
     }
 
     public void setDragAndDropBehaviour(Function<List<File>, Boolean> dragEventConsumer) {
@@ -158,12 +151,6 @@ public final class GameBoardViewer implements YiComponent {
         this.manager.setDebugMode(debugMode);
     }
 
-    public void applySettings(GameBoardSettings settings) {
-        settings.getBoardImage().ifPresent(this::setBoardImage);
-        settings.getGridColor().ifPresent(this::setGridColor);
-        settings.getBackgroundImage().ifPresent(this::setBackgroundImage);
-    }
-
     public void setBoardImage(@Nullable Image image) {
         manager.view.boardImage = image;
     }
@@ -172,11 +159,12 @@ public final class GameBoardViewer implements YiComponent {
         manager.view.backgroundImage = image;
     }
 
-    public Image getBackgroundImage() {
+    public @Nullable Image getBackgroundImage() {
         return manager.view.backgroundImage;
     }
 
     public void setGridColor(Color gridColor) {
+        Objects.requireNonNull(gridColor, "gridColor must not be null");
         manager.view.boardGridColor = gridColor;
     }
 
@@ -191,10 +179,12 @@ public final class GameBoardViewer implements YiComponent {
 
     public void setShowCoordinates(boolean doShow) {
         manager.view.coordinateLabelPosition = doShow ? CoordinateLabelPosition.ALL_SIDES : CoordinateLabelPosition.NONE;
-        manager.size.compute(container.getWidth(), container.getHeight(),
-                manager.getGameModel().getBoardWidth(), manager.getGameModel().getBoardHeight(),
-                manager.view.coordinateLabelPosition);
-        renderAll();
+        if (manager.hasGameModel()) {
+            manager.size.compute(container.getWidth(), container.getHeight(),
+                    manager.getGameModel().getBoardWidth(), manager.getGameModel().getBoardHeight(),
+                    manager.view.coordinateLabelPosition);
+            renderAll();
+        }
     }
 
     public boolean isShowingBoardCoordinates() {

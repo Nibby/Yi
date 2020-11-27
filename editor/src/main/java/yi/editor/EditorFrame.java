@@ -55,8 +55,8 @@ public class EditorFrame extends Stage {
         treeViewerSettings.setNodeWithCommentaryColor(GuiUtilities.getColor(87, 125, 186));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
 
-        var boardSettings = Settings.getCurrentGameBoardSettings();
-        boardViewer = new GameBoardViewer(boardSettings);
+        boardViewer = new GameBoardViewer();
+        Settings.applySavedBoardSettings(boardViewer);
         enableDragAndDropToOpenFile(boardViewer);
 
         treeViewer = new GameTreeViewer();
@@ -179,6 +179,7 @@ public class EditorFrame extends Stage {
 
         this.contentLayout = newLayout;
         this.contentLayoutValueListeners.fireValueChanged(this.contentLayout);
+        Settings.general.setCurrentLayout(newLayout);
     }
 
     /**
