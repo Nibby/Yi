@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -272,7 +273,7 @@ public final class AnnotationRenderer {
         }
 
         var defaultFont = FontManager.getDefaultFont();
-        var newFont = new Font(defaultFont.getFamily(), size.getStoneSizeInPixels() / 2);
+        var newFont = Font.font(defaultFont.getFamily(), FontWeight.BOLD, size.getStoneSizeInPixels() / 2);
         FontManager.putCachedFont(callerClass, newFont);
         return newFont;
     }
