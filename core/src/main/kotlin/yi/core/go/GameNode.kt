@@ -163,12 +163,8 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.stateHash
     }
 
-    fun getStoneEditsCopy(): Collection<Stone> {
-        return HashSet<Stone>(getStoneEdits())
-    }
-
-    internal fun getStoneEdits(): Collection<Stone> {
-        return delta.stoneEdits
+    fun getStoneEdits(): Collection<Stone> {
+        return Collections.unmodifiableSet(delta.stoneEdits)
     }
 
     internal fun addStoneEdit(stoneState: Stone, stateHasher: GameStateHasher,

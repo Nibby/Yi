@@ -10,9 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import yi.component.FontManager;
 import yi.component.utilities.ComparisonUtilities;
-import yi.core.go.Annotation;
-import yi.core.go.GameModel;
-import yi.core.go.StoneColor;
+import yi.core.go.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -371,6 +369,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             }
 
             renderCurrentMoveMarker(g, manager);
+            renderNextMoveMarkers(g, manager);
         }
 
         private static void renderCurrentMoveMarker(GraphicsContext g, GameBoardManager manager) {
@@ -385,5 +384,57 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             }
         }
 
+        private static final Color NEXT_MOVE_BLACK_MARKER = new Color(0d, 0d, 0d, 0.6d);
+        private static final Color NEXT_MOVE_WHITE_MARKER = new Color(1d, 1d, 1d, 0.6d);
+
+        private static void renderNextMoveMarkers(GraphicsContext g, GameBoardManager manager) {
+            var model = manager.getGameModel();
+            var currentNode = model.getCurrentNode();
+            var children = currentNode.getNextNodes();
+            for (GameNode child : children) {
+                Stone primaryMove = child.getPrimaryMove();
+                boolean drawIt = false;
+                int x = -1;
+                int y = -1;
+
+                StoneColor color = null;
+
+                if (primaryMove != null) {
+                    color = primaryMove.getColor();
+                    x = primaryMove.getX();
+                    y = primaryMove.getY();
+                }
+                // I have considered this, because OGS adds AI-review moves as
+                // a stone edit rather than a primary move. But I think it is
+                // more confusing on the board if we add it.
+//                else {
+//                    var edits = child.getStoneEdits();
+//                    if (edits.size() == 1) {
+//                        Stone edit = edits.iterator().next();
+//                        color = edit.getColor();
+//                        x = edit.getX();
+//                        y = edit.getY();
+//                    }
+//                }
+
+                if (color == StoneColor.BLACK) {
+                    g.setFill(NEXT_MOVE_BLACK_MARKER);
+                    drawIt = true;
+                } else if (color == StoneColor.WHITE) {
+                    g.setFill(NEXT_MOVE_WHITE_MARKER);
+                    drawIt = true;
+                }
+
+                if (drawIt) {
+                    assert x != -1 && y != -1;
+
+                    var size = manager.size.getStoneSizeInPixels() / 2d;
+                    double[] pos = manager.size.getGridRenderPosition(x, y, size);
+                    var drawX = pos[0];
+                    var drawY = pos[1];
+                    g.fillOval(drawX, drawY, size, size);
+                }
+            }
+        }
     }
 }
