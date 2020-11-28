@@ -413,7 +413,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
         private static void renderAnnotationsOnCurrentMove(GraphicsContext g, GameBoardManager manager) {
             // Not using a copy because this is performance-sensitive code
-            Collection<Annotation> annotations = manager.getGameModel().getCurrentNode().getAnnotationsOriginal();
+            Collection<Annotation> annotations = manager.getGameModel().getCurrentNode().getAnnotations();
             var font = getLabelFont(manager);
 
             for (Annotation annotation : annotations) {

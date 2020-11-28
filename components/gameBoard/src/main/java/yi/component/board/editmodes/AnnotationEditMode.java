@@ -242,7 +242,7 @@ public final class AnnotationEditMode extends AbstractEditMode {
 
         if (labelType == LabelType.LETTER) {
             var annoTexts =
-                    manager.getGameModel().getCurrentNode().getAnnotationsOriginal()
+                    manager.getGameModel().getCurrentNode().getAnnotations()
                     .stream()
                     .filter(anno -> anno instanceof Annotation.Label)
                     .map(anno -> ((Annotation.Label) anno).getText())
@@ -268,7 +268,7 @@ public final class AnnotationEditMode extends AbstractEditMode {
         }
         else if (labelType == LabelType.NUMBER) {
             var maxNumber =
-                manager.getGameModel().getCurrentNode().getAnnotationsOriginal()
+                manager.getGameModel().getCurrentNode().getAnnotations()
                     .stream()
                     .filter(anno -> anno instanceof Annotation.Label)
                     .map(anno -> ((Annotation.Label) anno).getText())

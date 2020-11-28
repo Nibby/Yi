@@ -203,7 +203,7 @@ class SgfFileFormatHandlerTest {
 
         // Should expect no annotations because both annotation tags are conjoined, forming
         // one inconsistent value.
-        Assertions.assertEquals(0, firstMove.getAnnotationsOriginal().size)
+        Assertions.assertEquals(0, firstMove.getAnnotations().size)
     }
 
     @Test
@@ -217,7 +217,7 @@ class SgfFileFormatHandlerTest {
         Assertions.assertEquals("2020-08-23", root.getMetadataSingleValue("DT"), "Date value incorrect")
 
         val firstMove = root.getNextNodeInMainBranch()!!
-        val annotations = firstMove.getAnnotationsOriginal()
+        val annotations = firstMove.getAnnotations()
         Assertions.assertEquals(2, annotations.size)
         Assertions.assertTrue(annotations.contains(Annotation.Square(0, 0)))
         Assertions.assertTrue(annotations.contains(Annotation.Square(0, 1)))
@@ -231,7 +231,7 @@ class SgfFileFormatHandlerTest {
         val gameModel = GameModelImporter.fromInternalResources("/sgf/standard.sgf", FileFormat.SGF, this::class.java)
 
         val rootNode = gameModel.getRootNode()
-        val annotations = rootNode.getAnnotationsCopy()
+        val annotations = rootNode.getAnnotations()
 
         Assertions.assertEquals(GameNodeType.ROOT, rootNode.delta.type)
         Assertions.assertEquals(13, annotations.size)

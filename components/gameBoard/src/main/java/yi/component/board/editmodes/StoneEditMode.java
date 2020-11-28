@@ -51,7 +51,7 @@ public final class StoneEditMode extends AbstractEditMode {
         }
 
         var stoneHere = manager.getGameModel().getCurrentGameState().getBoardPosition().getStoneColorAt(x, y);
-        var stoneEditHere = currentNode.getStoneEditCopyAt(x, y);
+        var stoneEditHere = currentNode.getStoneEditAt(x, y);
         boolean stoneExistsHere = stoneHere != StoneColor.NONE;
         StoneEdit edit;
 

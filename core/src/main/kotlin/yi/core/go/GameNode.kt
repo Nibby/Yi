@@ -4,9 +4,13 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
+/*
+ * Each node stores a [StateDelta] which represents the changes since the last game node.
+ */
+
 /**
- * Represents a node on the [GameTree]. Each node stores a [StateDelta] which represents
- * the changes since the last game node.
+ * Represents a node on the [GameTree]. Data on the node can be manipulated using setter
+ * methods in [GameModel]. Getters in this class always return an immutable collection.
  */
 class GameNode constructor(val delta: StateDelta) {
 
@@ -151,12 +155,8 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.primaryMove
     }
 
-    fun getCapturesCopy(): Collection<Stone> {
-        return HashSet<Stone>(getCaptures())
-    }
-
-    internal fun getCaptures(): Collection<Stone> {
-        return delta.captures
+    fun getCaptures(): Collection<Stone> {
+        return Collections.unmodifiableSet(delta.captures)
     }
 
     fun getStateHash(): Long {
@@ -201,12 +201,8 @@ class GameNode constructor(val delta: StateDelta) {
         annotations.forEach { annotation -> removeAnnotation(annotation) }
     }
 
-    fun getAnnotationsCopy(): Collection<Annotation> {
-        return HashSet<Annotation>(getAnnotationsOriginal())
-    }
-
-    fun getAnnotationsOriginal(): Collection<Annotation> {
-        return delta.annotations
+    fun getAnnotations(): Collection<Annotation> {
+        return Collections.unmodifiableSet(delta.annotations)
     }
 
     override fun toString(): String {
@@ -214,37 +210,21 @@ class GameNode constructor(val delta: StateDelta) {
     }
 
     fun hasAnnotationAt(x: Int, y: Int): Boolean {
-        return getAnnotationAt(x, y) != null;
+        return getAnnotationAt(x, y) != null
     }
 
     fun getAnnotationAt(x: Int, y: Int): Annotation? {
-        return getAnnotationsOriginal().firstOrNull { it.isOccupyingPosition(x, y) }
+        return getAnnotations().firstOrNull { it.isOccupyingPosition(x, y) }
     }
 
     /**
-     *
-     * @return stone edit on this node at the given position that is not
-     * [StoneColor.NONE] if it exists.
-     */
-    fun getNonEmptyStoneEditCopyAt(x: Int, y: Int): Stone? {
-        val edit = getStoneEditCopyAt(x, y)
-
-        if (edit != null) {
-            return if (edit.color != StoneColor.NONE) edit else null
-        }
-
-        return null
-    }
-
-    /**
-     *
      * @return stone edit on this node at the given position if it exists.
      */
-    fun getStoneEditCopyAt(x: Int, y: Int): Stone? {
+    fun getStoneEditAt(x: Int, y: Int): Stone? {
         val edit = delta.stoneEdits.firstOrNull { it.x == x && it.y == y }
 
         if (edit != null) {
-            return Stone(edit.x, edit.y, StoneColor.valueOf(edit.color.name))
+            return edit
         }
 
         return null
