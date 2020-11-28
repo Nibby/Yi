@@ -161,7 +161,7 @@ public final class StoneEditModeMechanismTest {
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
 
         Assertions.assertEquals(model.getRootNode(), model.getCurrentNode());
-        Assertions.assertEquals(new Stone(0, 0, StoneColor.WHITE), model.getRootNode().getStoneEditCopyAt(0, 0));
+        Assertions.assertEquals(new Stone(0, 0, StoneColor.WHITE), model.getRootNode().getStoneEditAt(0, 0));
     }
 
 }

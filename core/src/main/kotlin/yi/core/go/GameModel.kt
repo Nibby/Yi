@@ -10,8 +10,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * Primary model object representing one game of Go. The model is designed to be state-based --
- * that there is always a current 'position' at any point in time.
+ * Representing one game of Go. The model tracks
  *
  * Unlike the [GameTree], methods in this model should be more domain-specific.
  *
@@ -323,7 +322,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
         val pathToRoot = gameNode.getMoveHistory()
 
         pathToRoot.forEach { node ->
-            val captures = node.getCapturesCopy()
+            val captures = node.getCaptures()
 
             positionState.apply(node.delta)
             prisonersWhite += captures.stream().filter { capture -> capture.color == StoneColor.BLACK }.count().toInt()
@@ -331,7 +330,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
             currentStateHash = node.getStateHash()
         }
 
-        annotations = pathToRoot[pathToRoot.lastIndex].getAnnotationsCopy()
+        annotations = pathToRoot[pathToRoot.lastIndex].getAnnotations()
 
         val gameState = GameState(this, positionState, gameNode, prisonersWhite,
                 prisonersBlack, annotations, currentStateHash)
@@ -401,7 +400,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
     fun removeAnnotation(nodeToEdit: GameNode, x: Int, y: Int) {
         val annotationsToRemove = HashSet<Annotation>()
 
-        val annotations = nodeToEdit.getAnnotationsCopy()
+        val annotations = nodeToEdit.getAnnotations()
         for (annotation in annotations) {
             val onThisPoint = annotation.isOccupyingPosition(x, y)
 
@@ -458,16 +457,16 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
      *
      * @return Set of all annotations on the current node.
      */
-    fun getAnnotationsCopyOnCurrentNode(): Collection<Annotation> {
-        return getAnnotationsCopy(getCurrentNode())
+    fun getAnnotationsOnCurrentNode(): Collection<Annotation> {
+        return getAnnotations(getCurrentNode())
     }
 
     /**
      *
      * @return Set of all annotations on the specified node.
      */
-    fun getAnnotationsCopy(node: GameNode): Collection<Annotation> {
-        return node.getAnnotationsCopy()
+    fun getAnnotations(node: GameNode): Collection<Annotation> {
+        return node.getAnnotations()
     }
 
     /**

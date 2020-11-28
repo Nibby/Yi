@@ -71,7 +71,7 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         var node = model.getCurrentNode();
-        var annotations = node.getAnnotationsOriginal();
+        var annotations = node.getAnnotations();
         Assertions.assertTrue(annotations.isEmpty(), "Unexpected annotations on root node before test.");
 
         var item1 = AnnotationEdit.forNew(manager.getGameModel().getCurrentNode(), new Annotation.Triangle(0, 0), 0);
@@ -113,7 +113,7 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.performUndo(manager);
 
         // Assert
-        Assertions.assertTrue(model.getAnnotationsCopyOnCurrentNode().isEmpty(), "Annotations are not cleared after performing undo.");
+        Assertions.assertTrue(model.getAnnotationsOnCurrentNode().isEmpty(), "Annotations are not cleared after performing undo.");
     }
 
     @Test
@@ -145,7 +145,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
         // Assert
         var node = model.getCurrentNode();
-        var nodeAnnotations = node.getAnnotationsOriginal();
+        var nodeAnnotations = node.getAnnotations();
 
         // Use the annotation equality properties to our advantage
         var expectedAnnotations = new HashSet<Annotation>();
@@ -172,7 +172,7 @@ public final class AnnotationEditModeUndoRedoTest {
         editor.setMaxHistorySize(3);
 
         Runnable assertThirdEditState = () -> {
-            var annotations = model.getAnnotationsCopyOnCurrentNode();
+            var annotations = model.getAnnotationsOnCurrentNode();
 
             Assertions.assertEquals(9, annotations.size());
 
@@ -184,7 +184,7 @@ public final class AnnotationEditModeUndoRedoTest {
         };
 
         Runnable assertSecondEditState = () -> {
-            var annotations = model.getAnnotationsCopyOnCurrentNode();
+            var annotations = model.getAnnotationsOnCurrentNode();
 
             Assertions.assertEquals(4, annotations.size());
             Assertions.assertTrue(annotations.contains(new Annotation.Triangle(0, 0)));
@@ -261,7 +261,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
         Assertions.assertTrue(editor.canUndo());
         editor.performUndo(manager);
-        Assertions.assertTrue(model.getAnnotationsCopyOnCurrentNode().isEmpty());
+        Assertions.assertTrue(model.getAnnotationsOnCurrentNode().isEmpty());
 
         Assertions.assertFalse(editor.canUndo());
 

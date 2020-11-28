@@ -734,7 +734,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private fun exportAnnotationData(currentNode: GameNode, writer: BufferedWriter) {
             val annotationData = HashMap<String, ArrayList<String>>()
 
-            for (annotation in currentNode.getAnnotationsOriginal()) {
+            for (annotation in currentNode.getAnnotations()) {
                 @Suppress("ThrowableNotThrown") // Anticipating future additions
                 val key = when (annotation.type) {
                     AnnotationType.CIRCLE -> SGF_MARKUP_CIRCLE

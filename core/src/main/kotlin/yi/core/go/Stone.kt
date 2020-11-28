@@ -2,6 +2,8 @@ package yi.core.go
 
 import java.util.*
 
+// Fields in this class must be immutable.
+
 /**
  * A tuple that describes the state of a position.
  */

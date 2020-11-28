@@ -97,7 +97,7 @@ public abstract class StoneEdit extends UndoableEdit {
         private void assertStateCorrectBeforePerformEdit(GameModel gameModel) {
             int x = stoneEditToAdd.getX();
             int y = stoneEditToAdd.getY();
-            var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
+            var editHere = gameModel.getCurrentNode().getStoneEditAt(x, y);
             if (editHere != null) {
                 throw new IllegalStateException("Attempting to perform stone edit but a " +
                         "stone already exists at (" + x + ", " + y + ")");
@@ -107,7 +107,7 @@ public abstract class StoneEdit extends UndoableEdit {
         private void assertStateCorrectBeforeRollbackEdit(GameModel gameModel) {
             int x = stoneEditToAdd.getX();
             int y = stoneEditToAdd.getY();
-            var editHere = gameModel.getCurrentNode().getStoneEditCopyAt(x, y);
+            var editHere = gameModel.getCurrentNode().getStoneEditAt(x, y);
             if (editHere == null) {
                 throw new IllegalStateException("Attempting to un-add stone edit but no " +
                         "stone exist at (" + x + ", " + y + ")");
@@ -156,7 +156,7 @@ public abstract class StoneEdit extends UndoableEdit {
         }
 
         private Optional<Stone> getStoneEditToRemove(GameModel gameModel) {
-            return Optional.ofNullable(gameModel.getCurrentNode().getStoneEditCopyAt(x, y));
+            return Optional.ofNullable(gameModel.getCurrentNode().getStoneEditAt(x, y));
         }
     }
 

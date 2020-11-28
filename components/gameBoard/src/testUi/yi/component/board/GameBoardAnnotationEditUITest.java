@@ -46,7 +46,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
         robot.moveTo(getBoard().getComponent(), Pos.TOP_LEFT, new Point2D(x, y), Motion.DEFAULT);
         robot.clickOn(MouseButton.PRIMARY);
 
-        assertTrue(getGameModel().getAnnotationsCopyOnCurrentNode().contains(new Annotation.Square(0, 0)),
+        assertTrue(getGameModel().getAnnotationsOnCurrentNode().contains(new Annotation.Square(0, 0)),
                 "No square annotation created after mouse click.");
     }
 
@@ -69,7 +69,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
         robot.release(MouseButton.PRIMARY);
 
         for (int i = 0; i < getBoardWidth(); ++i) {
-            assertTrue(getGameModel().getAnnotationsCopyOnCurrentNode().contains(new Annotation.Square(i, 0)),
+            assertTrue(getGameModel().getAnnotationsOnCurrentNode().contains(new Annotation.Square(i, 0)),
                     "No square annotation created at (" + i + ", 0) after mouse drag from (0, 0) to (" + (getBoardWidth()-1) + ", 0).");
         }
     }
@@ -96,7 +96,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
         robot.moveTo(getBoard().getComponent(), Pos.TOP_LEFT, new Point2D(xStart, yStart), Motion.DEFAULT);
         robot.release(MouseButton.PRIMARY);
 
-        assertEquals(0, getGameModel().getAnnotationsCopyOnCurrentNode().size(),
+        assertEquals(0, getGameModel().getAnnotationsOnCurrentNode().size(),
                 "Annotations are not fully cleared.");
     }
 
@@ -125,7 +125,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
         robot.release(MouseButton.PRIMARY);
 
         for (int i = 0; i < getBoardWidth(); ++i) {
-            assertTrue(getGameModel().getAnnotationsCopyOnCurrentNode().contains(new Annotation.Cross(i, 0)),
+            assertTrue(getGameModel().getAnnotationsOnCurrentNode().contains(new Annotation.Cross(i, 0)),
                     "No cross annotation at (" + i + ", 0) after mouse drag from (0, 0) to (" + (getBoardWidth()-1) + ", 0) to replace the row of squares.");
         }
     }
@@ -167,7 +167,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
         click(robot, 1, 0);
         click(robot, 2, 0);
 
-        var annotations = getGameModel().getAnnotationsCopyOnCurrentNode();
+        var annotations = getGameModel().getAnnotationsOnCurrentNode();
         var annotationText = new HashSet<String>();
 
         for (Annotation annotation : annotations) {
@@ -191,7 +191,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
 
         drag(robot, 0, 0, getBoardWidth(), 0);
 
-        var annotations = getGameModel().getAnnotationsCopyOnCurrentNode();
+        var annotations = getGameModel().getAnnotationsOnCurrentNode();
 
         String firstText = null;
         for (Annotation annotation : annotations) {
@@ -217,7 +217,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
 
         drag(robot, 0, 0, getBoardWidth(), 0);
 
-        var annotations = getGameModel().getAnnotationsCopyOnCurrentNode();
+        var annotations = getGameModel().getAnnotationsOnCurrentNode();
 
         String firstText = null;
         for (Annotation annotation : annotations) {
