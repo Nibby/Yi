@@ -5,9 +5,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import yi.component.ValueListener;
-import yi.component.ValueListenerManager;
+import yi.common.NullableProperty;
+import yi.common.NullablePropertyListener;
+import yi.common.Property;
+import yi.common.PropertyListener;
 import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
@@ -31,20 +32,13 @@ import java.util.Objects;
  */
 public class EditorFrame extends Stage {
 
-    private ContentLayout contentLayout;
+    private final Property<ContentLayout> contentLayout = new Property<>(ContentLayout.COMPACT);
     private final EditorMenuBar menuBar;
     private final EditorToolBar toolBar;
 
-    private final ValueListenerManager<ContentLayout> contentLayoutValueListeners = new ValueListenerManager<>();
-    private final ValueListenerManager<GameModel> gameModelValueListeners = new ValueListenerManager<>();
-
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
-    private GameModel gameModel;
-
-    public EditorFrame(GameModel gameModel) {
-        this(gameModel, ContentLayout.REVIEW);
-    }
+    private final NullableProperty<GameModel> gameModel = new NullableProperty<>(null);
 
     public EditorFrame(GameModel gameModel, ContentLayout layout) {
         var treeViewerSettings = new GameTreeViewerSettings();
@@ -71,9 +65,9 @@ public class EditorFrame extends Stage {
         });
 
         treeViewer.addHighlightedNodeChangeListener(boardArea::onHighlightedNodeChange);
-        boardArea.getGameBoardViewer().addPreviewNodeChangeListener(previewNode -> {
-            if (previewNode != treeViewer.getHighlightedNode()) {
-                treeViewer.setHighlightedNode(previewNode);
+        boardArea.getGameBoardViewer().addPreviewNodeChangeListener(newPreview -> {
+            if (newPreview != treeViewer.getHighlightedNode()) {
+                treeViewer.setHighlightedNode(newPreview);
             }
         });
 
@@ -103,26 +97,25 @@ public class EditorFrame extends Stage {
     }
 
     public void setGameModel(@NotNull GameModel newModel) {
-        if (this.gameModel != null) {
-            this.gameModel.dispose();
+        if (this.gameModel.get() != null) {
+            this.gameModel.get().dispose();
         }
-        this.gameModel = newModel;
-        this.gameModelValueListeners.fireValueChanged(newModel);
+        this.gameModel.set(newModel);
     }
 
     public @NotNull GameModel getGameModel() {
-        Objects.requireNonNull(gameModel, "No game model is set. " +
+        Objects.requireNonNull(gameModel.get(), "No game model is set. " +
                 "setGameModel() must be called once before calling getGameModel().");
 
-        return gameModel;
+        return gameModel.get();
     }
 
     private boolean addedMenuBarOnce = false;
     public void setLayout(@NotNull ContentLayout newLayout) {
-        if (this.contentLayout == newLayout) {
+        if (this.contentLayout.get() == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        boardArea.setContentForLayout(newLayout, gameModel);
+        boardArea.setContentForLayout(newLayout, gameModel.get());
 
         var content = newLayout.getContent(this);
 
@@ -175,8 +168,7 @@ public class EditorFrame extends Stage {
             setHeight(minSize.getHeight());
         }
 
-        this.contentLayout = newLayout;
-        this.contentLayoutValueListeners.fireValueChanged(this.contentLayout);
+        this.contentLayout.set(newLayout);
         Settings.general.setCurrentLayout(newLayout);
     }
 
@@ -205,19 +197,19 @@ public class EditorFrame extends Stage {
         return treeViewer.getComponent();
     }
 
-    public @Nullable ContentLayout getContentLayout() {
-        return contentLayout;
+    public @NotNull ContentLayout getContentLayout() {
+        return contentLayout.get();
     }
 
     public EditorBoardArea getBoardArea() {
         return boardArea;
     }
 
-    public void addContentLayoutChangeListener(ValueListener<ContentLayout> listener) {
-        contentLayoutValueListeners.addListener(listener);
+    public void addContentLayoutChangeListener(PropertyListener<ContentLayout> listener) {
+        contentLayout.addListener(listener);
     }
 
-    public void addGameModelChangeListener(ValueListener<GameModel> listener) {
-        gameModelValueListeners.addListener(listener);
+    public void addGameModelChangeListener(NullablePropertyListener<GameModel> listener) {
+        gameModel.addListener(listener);
     }
 }

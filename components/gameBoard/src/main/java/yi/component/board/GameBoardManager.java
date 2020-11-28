@@ -2,8 +2,8 @@ package yi.component.board;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import yi.component.ValueListener;
-import yi.component.ValueListenerManager;
+import yi.common.NullableProperty;
+import yi.common.NullablePropertyListener;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 
@@ -20,21 +20,15 @@ public final class GameBoardManager {
     public final GameBoardView view = new GameBoardView();
     public final GameModelEditor edit = new GameModelEditor();
 
-    private GameNode previewNode = null;
+    private final NullableProperty<GameNode> previewNode = new NullableProperty<>(null);
     private boolean debugMode = false;
     private GameModel model = null;
-
-    private final ValueListenerManager<GameNode> previewNodeChangeListener = new ValueListenerManager<>();
 
     GameBoardManager() { }
 
     public void setBoardCanvasSize(double componentWidth, double componentHeight, GameModel game) {
         size.compute(componentWidth, componentHeight, game.getBoardWidth(),
                 game.getBoardHeight(), view.coordinateLabelPosition);
-    }
-
-    public void onGameUpdate(GameModel game) {
-
     }
 
     boolean isDebugMode() {
@@ -70,8 +64,7 @@ public final class GameBoardManager {
      * @param node Node whose position to be rendered.
      */
     public void setPreviewNode(@Nullable GameNode node) {
-        this.previewNode = node;
-        previewNodeChangeListener.fireValueChanged(node);
+        this.previewNode.set(node);
     }
 
     /**
@@ -79,7 +72,7 @@ public final class GameBoardManager {
      * on the game board.
      */
     public Optional<GameNode> getPreviewNode() {
-        return Optional.ofNullable(previewNode);
+        return Optional.ofNullable(previewNode.get());
     }
 
     public GameNode getNodeToShow() {
@@ -90,7 +83,7 @@ public final class GameBoardManager {
         return getNodeToShow() == getGameModel().getCurrentNode();
     }
 
-    public void addPreviewNodeChangeListener(ValueListener<GameNode> listener) {
-        previewNodeChangeListener.addListener(listener);
+    public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
+        previewNode.addListener(listener);
     }
 }

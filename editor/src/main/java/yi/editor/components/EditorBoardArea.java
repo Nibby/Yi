@@ -21,7 +21,7 @@ public class EditorBoardArea extends BorderPane {
         Settings.applySavedBoardSettings(board);
 
         toolBar = new EditorActionToolBar();
-        toolBar.addToolSelectionListener(newTool -> newTool.apply(board));
+        toolBar.addSelectedToolChangeListener(newTool -> newTool.apply(board));
 
         setTop(toolBar);
         setCenter(board.getComponent());

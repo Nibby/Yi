@@ -6,8 +6,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.common.NullablePropertyListener;
 import yi.component.CanvasContainer;
-import yi.component.ValueListener;
 import yi.component.YiComponent;
 import yi.component.board.editmodes.AbstractEditMode;
 import yi.core.go.EventListener;
@@ -28,16 +28,14 @@ import java.util.function.Function;
 public final class GameBoardViewer implements YiComponent {
 
     private final CanvasContainer container;
-    private final GameBoardMainCanvas mainCanvas;
     private final GameBoardInputCanvas inputCanvas;
     private final Stack<GameBoardCanvas> content = new Stack<>();
 
     private final GameBoardManager manager = new GameBoardManager();
 
     public GameBoardViewer() {
-        mainCanvas = new GameBoardMainCanvas(manager);
         inputCanvas = new GameBoardInputCanvas(manager);
-        content.push(mainCanvas);
+        content.push(new GameBoardMainCanvas(manager));
         content.push(inputCanvas);
 
         container = new CanvasContainer(content);
@@ -46,7 +44,7 @@ public final class GameBoardViewer implements YiComponent {
             renderAll();
         });
 
-        manager.addPreviewNodeChangeListener(newPreviewNode -> renderAll());
+        manager.addPreviewNodeChangeListener(newPreview -> renderAll());
 
         setEditable(true);
     }
@@ -130,7 +128,6 @@ public final class GameBoardViewer implements YiComponent {
      *
      */
     void update() {
-        manager.onGameUpdate(manager.getGameModel());
         content.forEach(canvas -> canvas.onGameUpdate(manager.getGameModel(), this.manager));
     }
 
@@ -194,7 +191,7 @@ public final class GameBoardViewer implements YiComponent {
         return manager.view.coordinateLabelPosition != CoordinateLabelPosition.NONE;
     }
 
-    public void addPreviewNodeChangeListener(ValueListener<GameNode> listener) {
+    public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
         manager.addPreviewNodeChangeListener(listener);
     }
 
