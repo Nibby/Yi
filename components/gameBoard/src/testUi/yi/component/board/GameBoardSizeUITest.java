@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import yi.core.go.GameModel;
@@ -41,7 +40,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)
-    public void testSupportedSizes(FxRobot robot) {
+    public void testSupportedSizes() {
         int supportedSizes = 24; //  1x1 -> 25x25
         getBoardManager().setDebugMode(true);
 
@@ -56,6 +55,11 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
                         assertSizeCorrect();
                     }
                 });
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
