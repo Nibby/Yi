@@ -93,7 +93,26 @@ public enum EditorPerspective {
         protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
             EditorPerspective.createPerspectiveAction(manager, this, submenu, 0.002d);
         }
-    };
+    },
+
+    // Value created solely for the purpose of keeping the layout property non-null in EditorFrame.
+    NONE(EditorTextResources.EMPTY, null) {
+        @Override
+        public Parent getContent(EditorFrame frame) {
+            throw new UnsupportedOperationException("Should not be able to set perspective to NONE");
+        }
+
+        @Override
+        public Dimension2D getMinimumWindowSize() {
+            throw new UnsupportedOperationException("Should not be able to set perspective to NONE");
+        }
+
+        @Override
+        protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
+        }
+    }
+
+    ;
 
     private static final ToggleGroup MENU_ACTION_TOGGLE_GROUP = new ToggleGroup();
 

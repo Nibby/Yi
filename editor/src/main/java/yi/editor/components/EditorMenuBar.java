@@ -7,6 +7,7 @@ import yi.component.YiCheckMenuItem;
 import yi.component.YiMenu;
 import yi.component.YiRadioMenuItem;
 import yi.editor.EditorFrame;
+import yi.editor.EditorHelper;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
@@ -57,6 +58,7 @@ public class EditorMenuBar extends MenuBar {
 
         for (EditorMainMenuType menuType : mainMenuOrdered) {
             var menu = new YiMenu(menuType.getName());
+            menu.setUserData(menuType);
             menu.setVisible(menuType.isVisible());
             getMenus().add(menu);
 
@@ -69,7 +71,7 @@ public class EditorMenuBar extends MenuBar {
         }
 
         if (SystemUtilities.isMac()) {
-            setUseSystemMenuBar(false);
+            setUseSystemMenuBar(EditorHelper.isUsingSystemMenuBar());
         }
     }
 

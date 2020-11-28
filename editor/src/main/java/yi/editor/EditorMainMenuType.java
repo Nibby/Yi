@@ -13,7 +13,13 @@ public enum EditorMainMenuType {
     DEBUG(99, EditorTextResources.MENU_DEBUG) {
         @Override
         public boolean isVisible() {
-            return !EditorHelper.isDebugMode();
+            return EditorHelper.isDebugMode();
+        }
+    },
+    TESTING(100, EditorTextResources.MENU_TESTING) {
+        @Override
+        public boolean isVisible() {
+            return EditorHelper.isRunningAsTest();
         }
     }
     ;

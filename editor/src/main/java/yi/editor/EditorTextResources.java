@@ -29,6 +29,7 @@ public final class EditorTextResources {
     public static final TextResource MENU_WINDOW = new TextResource("menu.window", BUNDLE);
     public static final TextResource MENU_HELP = new TextResource("menu.help", BUNDLE);
     public static final TextResource MENU_DEBUG = new TextResource("menu.debug", BUNDLE);
+    public static final TextResource MENU_TESTING = new TextResource("menu.testing", BUNDLE);
 
     public static final TextResource MENUITEM_PERSPECTIVE_COMPACT = new TextResource("menuItem.perspective.compact", BUNDLE);
     public static final TextResource MENUITEM_PERSPECTIVE_REVIEW = new TextResource("menuItem.perspective.review", BUNDLE);

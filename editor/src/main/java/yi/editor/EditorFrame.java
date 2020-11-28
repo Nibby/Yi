@@ -36,7 +36,7 @@ public class EditorFrame extends Stage {
 
     private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
 
-    private final Property<EditorPerspective> contentLayout = new Property<>(EditorPerspective.COMPACT);
+    private final Property<EditorPerspective> contentLayout = new Property<>(EditorPerspective.NONE);
     private final EditorActionManager actionManager;
     private final EditorMenuBar menuBar;
     private final EditorToolBar toolBar;
@@ -224,5 +224,9 @@ public class EditorFrame extends Stage {
 
     public void addGameModelChangeListener(PropertyListener<GameModel> listener) {
         gameModel.addListener(listener);
+    }
+
+    public EditorMenuBar getMainMenuBar() {
+        return menuBar;
     }
 }

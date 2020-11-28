@@ -23,40 +23,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        loadBundledFonts();
-        EditorAcceleratorManager.initializeAll();
-        FontManager.setDefaultFont(new Font("Noto Sans", 12d));
-        EditorTextResources.installSupportedLanguages();
-        SkinManager.useDefaultSkin();
-        EditorSettings.load();
-        EditorStandardActions.initializeSharedActions();
+        EditorHelper.initializeContext();
 
         var gameModel = GameModelUtilities.createGameModel();
         var editorFrame = new EditorFrame(gameModel, EditorSettings.general.getCurrentLayout());
         editorFrame.show();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            EditorSettings.general.save();
-            EditorSettings.accelerator.save();
-        }));
-    }
-
-    private void loadBundledFonts() {
-        final String FONT_RESOURCE_DIR = "/fonts/";
-        URI fontDirectoryUri;
-
-        try {
-            fontDirectoryUri = Main.class.getResource(FONT_RESOURCE_DIR).toURI();
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Malformed font resource directory value: " +
-                    "\"" + FONT_RESOURCE_DIR + "\"");
-        }
-
-        var fontDirectoryAsPath = Paths.get(fontDirectoryUri);
-        try {
-            FontManager.loadFontsInDirectory(fontDirectoryAsPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

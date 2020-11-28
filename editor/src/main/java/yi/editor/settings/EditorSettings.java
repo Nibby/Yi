@@ -2,6 +2,7 @@ package yi.editor.settings;
 
 import org.json.JSONObject;
 import yi.component.board.GameBoardViewer;
+import yi.editor.EditorHelper;
 import yi.editor.Main;
 import yi.common.utilities.JSON;
 
@@ -91,8 +92,8 @@ public final class EditorSettings {
      * @return The directory path to use as top-level settings directory.
      */
     private static Path resolveRootPath() throws IOException {
-        // Use current working directory
-        return Paths.get(System.getProperty("user.dir")).toAbsolutePath();
+        return EditorHelper.getPreferredSettingsRootPath()
+                .orElse(Paths.get(System.getProperty("user.dir")).toAbsolutePath());
     }
 
     /**

@@ -7,7 +7,7 @@ import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorActionHelper;
-import yi.editor.framework.action.EditorAtomicAction;
+import yi.editor.framework.action.EditorBasicAction;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ final class EditorStandardActions {
                 frame.setGameModel(newModel);
             }
         };
-        new EditorAtomicAction(EditorTextResources.MENUITEM_NEW_GAME, action)
+        new EditorBasicAction(EditorTextResources.MENUITEM_NEW_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0d)
                 .setAccelerator(EditorAcceleratorId.NEW_GAME);
     }
@@ -79,7 +79,7 @@ final class EditorStandardActions {
                 }
             }
         };
-        new EditorAtomicAction(EditorTextResources.MENUITEM_OPEN_GAME, action)
+        new EditorBasicAction(EditorTextResources.MENUITEM_OPEN_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0.001d)
                 .setAccelerator(EditorAcceleratorId.OPEN_GAME);
     }
@@ -98,7 +98,7 @@ final class EditorStandardActions {
                 GameModelExporter.INSTANCE.toFile(existingModel, saveFilePath, existingModel.getLastSaveFormat());
             }
         };
-        new EditorAtomicAction(EditorTextResources.MENUITEM_SAVE_GAME, action)
+        new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0.002d)
                 .setAccelerator(EditorAcceleratorId.SAVE_GAME);
     }
@@ -114,7 +114,7 @@ final class EditorStandardActions {
                 GameModelExporter.INSTANCE.toFile(existingModel, saveFilePath, saveFileFormat);
             }
         };
-        new EditorAtomicAction(EditorTextResources.MENUITEM_SAVE_AS_GAME, action)
+        new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_AS_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0d)
                 .setAccelerator(EditorAcceleratorId.SAVE_AS_GAME);
     }
