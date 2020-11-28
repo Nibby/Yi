@@ -431,7 +431,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 int y = primaryMove.getY();
 
                 if (!manager.getGameModel().getCurrentNode().hasAnnotationAt(x, y)) {
-                    AnnotationRenderer.render(new Annotation._Dot(x, y), g, manager, null);
+                    AnnotationRenderer.render(new Annotation.Dot(x, y), g, manager, null);
                 }
             }
         }

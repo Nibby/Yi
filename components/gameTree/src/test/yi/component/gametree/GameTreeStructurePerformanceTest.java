@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.MoveValidationResult;
-import yi.core.go.rules.GoGameRulesHandler;
+import yi.core.go.rules.GameRulesHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -189,7 +189,7 @@ public class GameTreeStructurePerformanceTest {
         return model;
     }
 
-    private static final class TestingRules extends GoGameRulesHandler {
+    private static final class TestingRules extends GameRulesHandler {
 
         @Override
         public float getDefaultKomi() {

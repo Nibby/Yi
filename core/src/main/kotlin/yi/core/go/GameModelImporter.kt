@@ -14,7 +14,6 @@ import java.util.stream.Collectors
  * Provides the functionality to load a [GameModel] from an
  * external source such as files stored on local disk.
  *
- *
  * To export an existing model, use [GameModelExporter].
  */
 object GameModelImporter {
@@ -73,13 +72,17 @@ object GameModelImporter {
             val extension = name.substring(extensionDot + 1)
             getRecognizedFormats(Function { format: FileFormat -> format.isSupportedFormat(extension) })
         }
-        return if (formats.size == 1) {
-            val format = formats.iterator().next()
-            _fromFile(filePath, format.getHandler())
-        } else if (formats.size > 1) {
-            throw GameParseException("File conforms to more than 1 format: $formats")
-        } else {
-            throw GameParseException("No known format handler for file extension: " + filePath.fileName)
+        return when {
+            formats.size == 1 -> {
+                val format = formats.iterator().next()
+                fromFileImpl(filePath, format.getHandler())
+            }
+            formats.size > 1 -> {
+                throw GameParseException("File conforms to more than 1 format: $formats")
+            }
+            else -> {
+                throw GameParseException("No known format handler for file extension: " + filePath.fileName)
+            }
         }
     }
 
@@ -95,11 +98,11 @@ object GameModelImporter {
      */
     @Throws(GameParseException::class, IOException::class)
     fun fromFile(filePath: Path, format: FileFormat): GameModel {
-        return _fromFile(filePath, format.getHandler())
+        return fromFileImpl(filePath, format.getHandler())
     }
 
     @Throws(GameParseException::class, IOException::class)
-    private fun _fromFile(filePath: Path, handler: FileFormatHandler): GameModel {
+    private fun fromFileImpl(filePath: Path, handler: FileFormatHandler): GameModel {
         val inputStream = Files.newInputStream(filePath, StandardOpenOption.READ)
         return handler.doImport(inputStream.bufferedReader(Charsets.UTF_8))
     }

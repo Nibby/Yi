@@ -10,27 +10,26 @@ import kotlin.collections.HashSet
 internal object GameMoveSubmitter {
 
     /**
-     * Creates a new move node from the proposed move at a specified game position.
+     * Creates a new node from the proposed move at a specified game position.
      * If [ignoreRules] is true, this method will first check if the proposed move complies
      * with the game rules before creating the new node.
      *
      * @param gameModel The game to create the new move for.
-     * @param currentPosition The parent node of the newly created move node.
-     * In other words, the game state on which to play the new move.
+     * @param currentNode Parent node of the node to be created.
      * @param proposedMove Information pertaining to the proposed move, see [Stone]
      * @param ignoreRules Whether to ignore rule violation when evaluating this move.
      * If this is true, and the proposed move is not in compliance with game rules,
      * it will be played anyway. This is false by default.
      */
-    fun createMoveNodeForProposedMove(gameModel: GameModel, currentPosition: GameNode,
-                                      proposedMove: Stone, ignoreRules: Boolean = false)
+    fun createMoveNode(gameModel: GameModel, currentNode: GameNode,
+                       proposedMove: Stone, ignoreRules: Boolean = false)
             : Pair<MoveValidationResult, GameNode?> {
 
         val validationResult: MoveValidationResult
         val update: StateDelta?
 
-        val validationAndDelta = validateProposedMoveAndCreateStateUpdate(gameModel,
-                currentPosition, proposedMove, ignoreRules)
+        val validationAndDelta = validateAndCreateStateUpdate(gameModel,
+                currentNode, proposedMove, ignoreRules)
         validationResult = validationAndDelta.first
 
         if (validationResult != MoveValidationResult.OK) {
@@ -43,33 +42,36 @@ internal object GameMoveSubmitter {
     }
 
     /**
-     * TODO: document this
+     * Creates a node representing the player at this turn has passed.
+     *
+     * @param currentNode Parent node of the node to be created.
      */
-    fun createMoveNodeForPass(currentPosition: GameNode) : GameNode {
-        val passStateUpdate = StateDelta.forPassMove(currentPosition.getStateHash())
+    fun createPassNode(currentNode: GameNode) : GameNode {
+        val passStateUpdate = StateDelta.forPassMove(currentNode.getStateHash())
         return GameNode(passStateUpdate)
     }
 
     /**
-     * TODO: document this
+     * Creates a node representing some stones in the previous position has been
+     * edited outside of game rules. In most cases this means there is an absence
+     * of primary move data on this node. One known exception is game records
+     * produced by OGS (Online-Go Server), where all AI-review moves do not contain
+     * primary move data.
+     *
+     * @param currentNode Parent node of the node to be created.
      */
-    fun createMoveNodeForResignation(currentPosition: GameNode) : GameNode {
-        val resignStateUpdate = StateDelta.forResignationMove(currentPosition.getStateHash())
-        return GameNode(resignStateUpdate)
-    }
-
-    /**
-     * TODO: document this
-     */
-    fun createMoveNodeForStoneEdit(currentPosition: GameNode): GameNode {
-        val stoneEditUpdate = StateDelta.forStoneEdit(currentPosition.getStateHash())
+    fun createStoneEditNode(currentNode: GameNode): GameNode {
+        val stoneEditUpdate = StateDelta.forStoneEdit(currentNode.getStateHash())
         return GameNode(stoneEditUpdate)
     }
 
     /**
-     * TODO: document this
+     * Creates a node to represent the top level node in the game tree. There should
+     * only be one root node at any given time in one game tree.
+     *
+     * @param gameModel Game model to create the root node for.
      */
-    fun createMoveNodeForRoot(gameModel: GameModel): GameNode {
+    fun createRootNode(gameModel: GameModel): GameNode {
         val width = gameModel.boardWidth
         val height = gameModel.boardHeight
         val emptyPositionHash = gameModel.stateHasher.computeEmptyPositionHash(width, height)
@@ -87,8 +89,8 @@ internal object GameMoveSubmitter {
      * @param proposedMove Information pertaining to the proposed move, see [Stone].
      * @param ignoreRules Whether to ignore the game rules when validating this move.
      */
-    fun validateProposedMoveAndCreateStateUpdate(gameModel: GameModel, currentNode: GameNode,
-                                                 proposedMove: Stone, ignoreRules: Boolean = false)
+    private fun validateAndCreateStateUpdate(gameModel: GameModel, currentNode: GameNode,
+                                             proposedMove: Stone, ignoreRules: Boolean = false)
             : Pair<MoveValidationResult, StateDelta?> {
 
         val proposedMovePosition = proposedMove.getPosition(gameModel.boardWidth)

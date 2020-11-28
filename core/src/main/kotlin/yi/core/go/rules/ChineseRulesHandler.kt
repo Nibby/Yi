@@ -1,6 +1,6 @@
 package yi.core.go.rules
 
-class ChineseRulesHandler : GoGameRulesHandler() {
+class ChineseRulesHandler : GameRulesHandler() {
 
     override fun getDefaultKomi(): Float {
         return 7.5f

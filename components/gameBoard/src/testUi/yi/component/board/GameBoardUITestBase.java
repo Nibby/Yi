@@ -15,7 +15,7 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 import yi.core.go.StoneColor;
 
 import javax.imageio.ImageIO;
@@ -71,7 +71,7 @@ public abstract class GameBoardUITestBase {
 
     protected abstract int getBoardWidth();
     protected abstract int getBoardHeight();
-    protected abstract GameRules getGameRules();
+    protected abstract StandardGameRules getGameRules();
 
     protected boolean saveScreenshot(String folderName, String fileName) throws IOException {
         var image = new WritableImage((int) stage.getWidth(), (int) stage.getHeight());

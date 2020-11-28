@@ -95,7 +95,7 @@ class GameModelEventsTest {
 
         // Sanity check
         Assertions.assertTrue(thirdMove.validationResult == MoveValidationResult.OK)
-        Assertions.assertTrue(thirdMove.isPlayed())
+        Assertions.assertTrue(thirdMove.isPlayed)
 
         val nodeToEdit = thirdMove.moveNode!! // If the validation result is OK, then we should expect a non-null node here.
         model.setCurrentNode(model.getRootNode()) // Set current move somewhere that's not the last move

@@ -7,7 +7,7 @@ import yi.component.board.edits.PlayMoveEdit;
 import yi.component.board.edits.PlayMoveEditAccessor;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 import yi.core.go.StoneColor;
 
 import java.util.Stack;
@@ -17,7 +17,7 @@ public final class PlayMoveEditModeUndoRedoTest {
 
     @Test
     public void testPlayMoveCreatesHistoryItem() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -34,7 +34,7 @@ public final class PlayMoveEditModeUndoRedoTest {
 
     @Test
     public void testUndoAdjustsCurrentMove() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -53,7 +53,7 @@ public final class PlayMoveEditModeUndoRedoTest {
 
     @Test
     public void testUndoRevertsModelStateCorrectly() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
 
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
@@ -155,7 +155,7 @@ public final class PlayMoveEditModeUndoRedoTest {
     public void testUndoReceivesCurrentNodeChangeEvent() throws InterruptedException {
         var newNodeFromEvent = new AtomicReference<GameNode>(null);
 
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         model.onCurrentNodeChange().addListener((event) -> newNodeFromEvent.set(event.getNode()));
 
         var manager = GameBoardClassFactory.createGameBoardManager();
@@ -179,7 +179,7 @@ public final class PlayMoveEditModeUndoRedoTest {
 
     @Test
     public void testRedoAdjustsCurrentMove() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -200,7 +200,7 @@ public final class PlayMoveEditModeUndoRedoTest {
 
     @Test
     public void testUndoThenRedo_WithManyBranches_ReconstructsModelStateCorrectly() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 

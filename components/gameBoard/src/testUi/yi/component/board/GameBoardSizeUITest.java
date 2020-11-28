@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
                 int finalH = h;
                 Platform.runLater(() -> {
                     synchronized (GameBoardSizeUITest.class) {
-                        var newModel = new GameModel(finalW, finalH, GameRules.CHINESE);
+                        var newModel = new GameModel(finalW, finalH, StandardGameRules.CHINESE);
                         setGameModel(newModel);
                         assertSizeCorrect();
                     }
@@ -143,7 +143,7 @@ public class GameBoardSizeUITest extends GameBoardUITestBase {
 
     @NotNull
     @Override
-    protected GameRules getGameRules() {
-        return GameRules.CHINESE;
+    protected StandardGameRules getGameRules() {
+        return StandardGameRules.CHINESE;
     }
 }

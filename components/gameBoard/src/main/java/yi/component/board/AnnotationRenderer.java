@@ -101,7 +101,7 @@ public final class AnnotationRenderer {
                 double gridUnitSize = manager.size.getGridUnitSizeInPixels();
                 renderFade(g, x, y, gridUnitSize);
                 break;
-            case _DOT:
+            case DOT:
                 var bounds = ShapeUtilities.clip(annoBounds, annoBounds.getWidth() / 4d);
                 renderDot(g, bounds.getX(), bounds.getY(), bounds.getWidth());
                 break;

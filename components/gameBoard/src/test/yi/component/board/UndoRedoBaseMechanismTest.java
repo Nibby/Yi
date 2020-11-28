@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.edits.UndoableEdit;
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 
 /**
  * Tests the correctness of the undo/redo framework. This test suite does focus on
@@ -33,7 +33,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testActionRecordedToHistory() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -51,7 +51,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testHistoryPrunedToMaxSize() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -79,7 +79,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testHistoryPrunedAfterSettingNewMaxSize() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -108,7 +108,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testCanUndo_InEmptyHistory_IsFalse() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -120,7 +120,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testCanRedo_InEmptyHistory_IsFalse() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -132,7 +132,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testHasHistory_UndoConsecutively_StateCorrect() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -169,7 +169,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testHasHistory_UndoConsecutivelyThenPerformNewEdit_DiscardsOldEditsBeyondCurrentPosition() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -203,7 +203,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testHasHistory_UndoConsecutivelyThenPerformIdenticalEditAtThatPosition_DiscardsOldEditsAnyway() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 
@@ -237,7 +237,7 @@ public final class UndoRedoBaseMechanismTest {
 
     @Test
     public void testHasHistory_UndoConsecutivelyThenPerformRedo_StateCorrect() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
         manager.setGameModel(model);
 

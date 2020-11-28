@@ -11,7 +11,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_NonEditNode_CreatesOne() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -26,7 +26,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_MultipleEdits_UsesOneNode() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -44,7 +44,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_SameColorStone_RemovesIt() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -67,7 +67,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_DifferentColorStone_RemoveIt() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -90,7 +90,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_PlayedMoveColorStillCorrect() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -118,7 +118,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_SetupManualPosition_GameRulesUseTheseStones() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -152,7 +152,7 @@ public final class StoneEditModeMechanismTest {
 
     @Test
     public void testStoneEdit_onRootNode_doesNotCreateNewNode() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 

@@ -31,13 +31,6 @@ enum class GameNodeType {
     PASS,
 
     /**
-     * Represents that the player has resigned in this turn.
-     *
-     * Created using [StateDelta.forResignationMove]
-     */
-    RESIGN,
-
-    /**
      * Default type given to the root of the game tree. This should not be used anywhere
      * else.
      *
