@@ -7,9 +7,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.common.NullableProperty;
+import yi.common.NullablePropertyListener;
 import yi.component.CanvasContainer;
-import yi.component.ValueListener;
-import yi.component.ValueListenerManager;
 import yi.component.YiComponent;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
@@ -32,8 +32,7 @@ public final class GameTreeViewer implements YiComponent {
     private GameModel gameModel;
     private GameTreeStructure treeStructure;
     private final GameTreeElementSize elementSize;
-
-    private final ValueListenerManager<GameNode> highlightedNodeChangeListeners = new ValueListenerManager<>();
+    private final NullableProperty<GameNode> previewNode = new NullableProperty<>(null);
 
     public GameTreeViewer() {
         canvas = new GameTreeCanvas();
@@ -115,12 +114,12 @@ public final class GameTreeViewer implements YiComponent {
      *
      * @param listener New listener to add.
      */
-    public void addHighlightedNodeChangeListener(ValueListener<GameNode> listener) {
-        highlightedNodeChangeListeners.addListener(listener);
+    public void addHighlightedNodeChangeListener(NullablePropertyListener<GameNode> listener) {
+        previewNode.addListener(listener);
     }
 
-    public void removeHighlightedNodeChangeListener(ValueListener<GameNode> listener) {
-        highlightedNodeChangeListeners.removeListener(listener);
+    public void removeHighlightedNodeChangeListener(NullablePropertyListener<GameNode> listener) {
+        previewNode.removeListener(listener);
     }
 
     @Override
@@ -170,12 +169,12 @@ public final class GameTreeViewer implements YiComponent {
             GameNode newValue = treeStructure.getPreviewNode();
             if (hasItem) {
                 if (lastFiredHighlightedNodeValue != newValue) {
-                    highlightedNodeChangeListeners.fireValueChanged(newValue);
+                    previewNode.set(newValue);
                 }
                 lastFiredHighlightedNodeValue = newValue;
             } else if (lastFiredHighlightedNodeValue != null) {
                 lastFiredHighlightedNodeValue = null;
-                highlightedNodeChangeListeners.fireValueChanged(null);
+                previewNode.set(null);
             }
         }
 

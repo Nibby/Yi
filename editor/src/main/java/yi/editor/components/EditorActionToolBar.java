@@ -9,7 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import yi.component.SimpleListenerManager;
+import yi.common.Property;
+import yi.common.PropertyListener;
 import yi.component.YiToggleButton;
 import yi.component.i18n.TextResource;
 import yi.core.go.GameModel;
@@ -19,7 +20,6 @@ import yi.editor.TextKeys;
 import yi.editor.utilities.IconUtilities;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 import static yi.editor.TextKeys.*;
 
@@ -29,7 +29,7 @@ import static yi.editor.TextKeys.*;
  */
 public class EditorActionToolBar extends ToolBar {
 
-    private final SimpleListenerManager<EditorTool> toolSelectionListeners = new SimpleListenerManager<>();
+    private final Property<EditorTool> selectedTool = new Property<>(EditorTool.PLAY_MOVE);
 
     private final ToggleGroup toolButtonGroup;
 
@@ -98,9 +98,8 @@ public class EditorActionToolBar extends ToolBar {
         } else if (layout == ContentLayout.COMPACT) {
             toolPlayMove.setSelected(true); // This view is mainly for browsing
             addCompactGameInfo(gameModel);
-        } else {
-            // Unimplemented mode, show nothing.
         }
+
         this.currentLayout = layout;
     }
 
@@ -214,14 +213,6 @@ public class EditorActionToolBar extends ToolBar {
         }
     }
 
-    public void addToolSelectionListener(Consumer<EditorTool> listener) {
-        toolSelectionListeners.addListener(listener);
-    }
-
-    public void removeToolSelectionListener(Consumer<EditorTool> listener) {
-        toolSelectionListeners.removeListener(listener);
-    }
-
     private YiToggleButton createEditToolButton(EditorTool editorTool, String iconResource, TextResource tooltip) {
         var toggle = new YiToggleButton();
         toggle.setFocusTraversable(false);
@@ -238,7 +229,7 @@ public class EditorActionToolBar extends ToolBar {
         AtomicBoolean ignoreIconUpdate = new AtomicBoolean(false);
         toggle.selectedProperty().addListener((observable, wasSelected, isSelected) -> {
             if (isSelected) {
-                toolSelectionListeners.fireValueChangeEvent(editorTool);
+                selectedTool.set(editorTool);
             } else {
                 if (toolButtonGroup.getSelectedToggle() == null && wasSelected) {
                     toggle.setSelected(true);
@@ -264,5 +255,9 @@ public class EditorActionToolBar extends ToolBar {
 
     private void setIcon(String iconResource, ButtonBase buttonBase) {
         IconUtilities.getIcon(iconResource, getClass()).ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
+    }
+
+    public void addSelectedToolChangeListener(PropertyListener<EditorTool> listener) {
+        this.selectedTool.addListener(listener);
     }
 }
