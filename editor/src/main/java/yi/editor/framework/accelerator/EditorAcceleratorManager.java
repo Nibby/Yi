@@ -1,5 +1,6 @@
-package yi.editor;
+package yi.editor.framework.accelerator;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
@@ -9,6 +10,7 @@ import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.component.KeyModifier;
 import yi.common.utilities.SystemUtilities;
+import yi.editor.EditorTextResources;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,44 +21,45 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * of this class.
  * <p/>
  * To assign a shortcut key to supported Fx components, retrieve the accelerator instance
- * using {@link #getAccelerator(AcceleratorId)} with the desired id, then invoke
+ * using {@link #getAccelerator(EditorAcceleratorId)} with the desired id, then invoke
  * {@link Accelerator#install(MenuItem)} or one of its overloaded variants.
  */
-public final class AcceleratorManager {
+public final class EditorAcceleratorManager {
 
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
     private static final Map<String, Accelerator> ALL_ACCELERATORS = new HashMap<>();
 
-    private AcceleratorManager() {
+    private EditorAcceleratorManager() {
         // Utility class, not to be instantiated
     }
+
 
     public static void initializeAll() {
         if (!INITIALIZED.get()) {
             createUndoRedo();
             createPerspectiveAccelerators();
-            register(new Accelerator(AcceleratorId.NEW_GAME, TextKeys.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
-            register(new Accelerator(AcceleratorId.OPEN_GAME, TextKeys.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
-            register(new Accelerator(AcceleratorId.SAVE_GAME, TextKeys.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
-            register(new Accelerator(AcceleratorId.SAVE_AS_GAME, TextKeys.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
+            register(new Accelerator(EditorAcceleratorId.NEW_GAME, EditorTextResources.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(EditorAcceleratorId.OPEN_GAME, EditorTextResources.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(EditorAcceleratorId.SAVE_GAME, EditorTextResources.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(EditorAcceleratorId.SAVE_AS_GAME, EditorTextResources.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
 
-            register(new Accelerator(AcceleratorId.TOGGLE_BOARD_COORDINATES, TextKeys.MENUITEM_TOGGLE_COORDINATES, KeyCode.C, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
+            register(new Accelerator(EditorAcceleratorId.TOGGLE_BOARD_COORDINATES, EditorTextResources.MENUITEM_TOGGLE_COORDINATES, KeyCode.C, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
 
             INITIALIZED.set(true);
         }
     }
 
     private static void createPerspectiveAccelerators() {
-        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, TextKeys.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }));
-        register(new Accelerator(AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, TextKeys.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOGGLE_PERSPECTIVE_REVIEW, EditorTextResources.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOGGLE_PERSPECTIVE_COMPACT, EditorTextResources.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT }));
     }
 
     private static void createUndoRedo() {
-        register(new Accelerator(AcceleratorId.UNDO, TextKeys.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT}));
+        register(new Accelerator(EditorAcceleratorId.UNDO, EditorTextResources.UNDO, KeyCode.Z, new KeyModifier[] {KeyModifier.SHORTCUT}));
         if (SystemUtilities.isMac()) {
-            register(new Accelerator(AcceleratorId.REDO, TextKeys.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT}));
+            register(new Accelerator(EditorAcceleratorId.REDO, EditorTextResources.REDO, KeyCode.Z, new KeyModifier[]{KeyModifier.SHORTCUT, KeyModifier.SHIFT}));
         } else {
-            register(new Accelerator(AcceleratorId.REDO, TextKeys.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT}));
+            register(new Accelerator(EditorAcceleratorId.REDO, EditorTextResources.REDO, KeyCode.Y, new KeyModifier[]{KeyModifier.SHORTCUT}));
         }
     }
 
@@ -77,7 +80,7 @@ public final class AcceleratorManager {
         return Optional.ofNullable(ALL_ACCELERATORS.get(id));
     }
 
-    public static Accelerator getAccelerator(AcceleratorId id) {
+    public static Accelerator getAccelerator(EditorAcceleratorId id) {
         var accelerator = getAccelerator(id.getId());
         if (accelerator.isEmpty()) {
             throw new IllegalStateException("No accelerator mapped to id '" +
@@ -94,13 +97,13 @@ public final class AcceleratorManager {
      */
     public static final class Accelerator {
 
-        private final AcceleratorId id;
+        private final EditorAcceleratorId id;
         private final TextResource name;
         private final KeyModifier[] modifiers;
         private final KeyCode keyCode;
         private KeyCombination keyCombination = null;
 
-        Accelerator(AcceleratorId id, TextResource name, KeyCode keyCode, KeyModifier[] modifiers) {
+        Accelerator(EditorAcceleratorId id, TextResource name, KeyCode keyCode, KeyModifier[] modifiers) {
             if (ALL_ACCELERATORS.containsKey(id.getId())) {
                 throw new IllegalStateException("Duplicated shortcut key AcceleratorId: " + id.getId());
             }
@@ -113,7 +116,7 @@ public final class AcceleratorManager {
 
         /**
          * @return Internal unique identifier for the accelerator. Should be one of the
-         * values in {@link AcceleratorId}.
+         * values in {@link EditorAcceleratorId}.
          */
         public String getId() {
             return id.getId();
@@ -163,5 +166,4 @@ public final class AcceleratorManager {
             this.keyCombination = Objects.requireNonNull(newCombination);
         }
     }
-
 }

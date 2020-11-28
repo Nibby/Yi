@@ -72,7 +72,7 @@ public final class GameBoardManager {
      * on the game board.
      */
     public Optional<GameNode> getPreviewNode() {
-        return Optional.ofNullable(previewNode.get());
+        return previewNode.get();
     }
 
     public GameNode getNodeToShow() {

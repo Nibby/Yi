@@ -2,7 +2,7 @@ package yi.editor.settings;
 
 import javafx.scene.input.KeyCombination;
 import org.json.JSONObject;
-import yi.editor.AcceleratorManager;
+import yi.editor.framework.accelerator.EditorAcceleratorManager;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,18 +11,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-public final class AcceleratorSettings extends SettingsModule {
+public final class EditorAcceleratorSettings extends EditorSettingsModule {
 
     private final String settingsFile;
 
-    AcceleratorSettings(String settingsFile) {
+    EditorAcceleratorSettings(String settingsFile) {
         this.settingsFile = settingsFile;
     }
 
     @Override
     public void load() {
         try {
-            Optional<JSONObject> settingsWrapper = Settings.readJSON(settingsFile);
+            Optional<JSONObject> settingsWrapper = EditorSettings.readJSON(settingsFile);
             if (settingsWrapper.isEmpty()) {
                 save(); // Just create the file with default settings
             } else {
@@ -50,13 +50,13 @@ public final class AcceleratorSettings extends SettingsModule {
     private void loadAccelerator(JSONObject settings, String acceleratorId) {
         String acceleratorName = settings.getString(acceleratorId);
         var combination = KeyCombination.valueOf(acceleratorName);
-        AcceleratorManager.setAcceleratorKeyCombination(acceleratorId, combination);
+        EditorAcceleratorManager.setAcceleratorKeyCombination(acceleratorId, combination);
     }
 
     @Override
     public void save() {
         var settings = new JSONObject();
-        for (AcceleratorManager.Accelerator accelerator : AcceleratorManager.getAllAccelerators().values()) {
+        for (EditorAcceleratorManager.Accelerator accelerator : EditorAcceleratorManager.getAllAccelerators().values()) {
             settings.put(accelerator.getId(), accelerator.getKeyCombination().getName());
         }
 

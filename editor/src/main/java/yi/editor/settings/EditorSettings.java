@@ -3,7 +3,7 @@ package yi.editor.settings;
 import org.json.JSONObject;
 import yi.component.board.GameBoardViewer;
 import yi.editor.Main;
-import yi.editor.utilities.JSON;
+import yi.common.utilities.JSON;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,18 +14,18 @@ import java.util.*;
 /**
  * Main controller for all configurable settings in the program.
  */
-public final class Settings {
+public final class EditorSettings {
 
     static final String THEME_DIRECTORY_NAME = "themes";
 
     private static boolean loadedOnce = false;
     private static Path rootPath = null;
 
-    private static final Set<SettingsModule> modules = new LinkedHashSet<>();
+    private static final Set<EditorSettingsModule> modules = new LinkedHashSet<>();
 
-    public static final GeneralSettings general = new GeneralSettings("settings.json");
-    public static final AcceleratorSettings accelerator = new AcceleratorSettings("shortcutKeys.json");
-    public static final GameBoardThemeSettings boardTheme = new GameBoardThemeSettings();
+    public static final EditorGeneralSettings general = new EditorGeneralSettings("settings.json");
+    public static final EditorAcceleratorSettings accelerator = new EditorAcceleratorSettings("shortcutKeys.json");
+    public static final EditorBoardThemeSettings boardTheme = new EditorBoardThemeSettings();
 
     static {
         try {
@@ -39,12 +39,12 @@ public final class Settings {
         }
     }
 
-    private Settings() {
+    private EditorSettings() {
 
     }
 
     /**
-     * Called once upon startup, invokes {@link SettingsModule#load()} on all registered modules to fetch the settings from
+     * Called once upon startup, invokes {@link EditorSettingsModule#load()} on all registered modules to fetch the settings from
      * configuration files. In almost any circumstance, there is no need to use this method outside of {@link Main}.
      */
     public static void load() {
@@ -56,20 +56,20 @@ public final class Settings {
         // For other modules, there should be no dependencies.
         general.load();
 
-        Set<SettingsModule> modulesToLoadAfterGeneral = new HashSet<>(modules);
+        Set<EditorSettingsModule> modulesToLoadAfterGeneral = new HashSet<>(modules);
         modulesToLoadAfterGeneral.remove(general);
-        modulesToLoadAfterGeneral.forEach(SettingsModule::load);
+        modulesToLoadAfterGeneral.forEach(EditorSettingsModule::load);
 
         loadedOnce = true;
     }
 
     public static void save() {
-        for (SettingsModule module : modules) {
+        for (EditorSettingsModule module : modules) {
             module.save();
         }
     }
 
-    private static void addModule(SettingsModule module) {
+    private static void addModule(EditorSettingsModule module) {
         if (modules.contains(module))
             throw new IllegalArgumentException("Duplicated module: " + module.getClass().toString());
 

@@ -1,13 +1,15 @@
-package yi.editor;
+package yi.editor.framework.accelerator;
+
+import yi.editor.EditorFrame;
 
 /**
  * Unique identifier keys for all accelerators in {@link EditorFrame}. Each identifier
- * maps to an {@link yi.editor.AcceleratorManager.Accelerator}, which can be retrieved
- * using {@link AcceleratorManager#getAccelerator(AcceleratorId)}.
+ * maps to an {@link EditorAcceleratorManager.Accelerator}, which can be retrieved
+ * using {@link EditorAcceleratorManager#getAccelerator(EditorAcceleratorId)}.
  *
- * @see AcceleratorManager Accelerator management in the editor
+ * @see EditorAcceleratorManager Accelerator management in the editor
  */
-public enum AcceleratorId {
+public enum EditorAcceleratorId {
 
     UNDO("undo"),
     REDO("redo"),
@@ -26,7 +28,7 @@ public enum AcceleratorId {
 
     private final String id;
 
-    AcceleratorId(String id) {
+    EditorAcceleratorId(String id) {
         this.id = id;
     }
 

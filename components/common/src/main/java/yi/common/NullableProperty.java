@@ -3,6 +3,7 @@ package yi.common;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -73,8 +74,8 @@ public class NullableProperty<T> {
      *
      * @return Current value of the variable.
      */
-    public T get() {
-        return value;
+    public Optional<T> get() {
+        return Optional.ofNullable(value);
     }
 
 }

@@ -2,8 +2,8 @@ package yi.editor.settings;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-import yi.editor.components.ContentLayout;
-import yi.editor.utilities.JSON;
+import yi.editor.components.EditorPerspective;
+import yi.common.utilities.JSON;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Stores general preference values for {@link yi.editor.EditorFrame}.
  */
-public final class GeneralSettings extends SettingsModule {
+public final class EditorGeneralSettings extends EditorSettingsModule {
 
     private final String settingsFile;
 
@@ -25,18 +25,18 @@ public final class GeneralSettings extends SettingsModule {
     private static final String KEY_SHOW_BOARD_COORDINATES = "showCoordinates";
 
     // The theme directory to be loaded
-    private ContentLayout currentLayout = ContentLayout.getDefaultValue();
+    private EditorPerspective currentLayout = EditorPerspective.getDefaultValue();
     private String selectedBoardThemeDirectory;
     private boolean showBoardCoordinates;
 
-    GeneralSettings(String settingsFilePath) {
+    EditorGeneralSettings(String settingsFilePath) {
         this.settingsFile = settingsFilePath;
     }
 
     @Override
     public void load() {
         try {
-            Optional<JSONObject> settingsWrapper = Settings.readJSON(settingsFile);
+            Optional<JSONObject> settingsWrapper = EditorSettings.readJSON(settingsFile);
             if (settingsWrapper.isEmpty()) {
                 useAndSaveDefaults();
             } else {
@@ -49,14 +49,14 @@ public final class GeneralSettings extends SettingsModule {
 
     private void loadFromJson(JSONObject settings) {
         JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> selectedBoardThemeDirectory = value);
-        JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> currentLayout = ContentLayout.getValue(value));
+        JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> currentLayout = EditorPerspective.getValue(value));
         setShowBoardCoordinates(JSON.getBoolean(settings, KEY_SHOW_BOARD_COORDINATES, true));
     }
 
     @Override
     public void save() {
         JSONObject settings = new JSONObject();
-        settings.put(KEY_BOARD_THEME_DIRECTORY, GameBoardThemeSettings.getDefaultThemeDirectory());
+        settings.put(KEY_BOARD_THEME_DIRECTORY, EditorBoardThemeSettings.getDefaultThemeDirectory());
         settings.put(KEY_CONTENT_LAYOUT, currentLayout.name());
         settings.put(KEY_SHOW_BOARD_COORDINATES, showBoardCoordinates);
 
@@ -70,8 +70,8 @@ public final class GeneralSettings extends SettingsModule {
     }
 
     private void useAndSaveDefaults() {
-        setSelectedBoardThemeDirectory(GameBoardThemeSettings.getDefaultThemeDirectory());
-        setCurrentLayout(ContentLayout.getDefaultValue());
+        setSelectedBoardThemeDirectory(EditorBoardThemeSettings.getDefaultThemeDirectory());
+        setCurrentLayout(EditorPerspective.getDefaultValue());
         save();
     }
 
@@ -83,11 +83,11 @@ public final class GeneralSettings extends SettingsModule {
         this.selectedBoardThemeDirectory = selectedBoardThemeDirectory;
     }
 
-    public ContentLayout getCurrentLayout() {
+    public EditorPerspective getCurrentLayout() {
         return currentLayout;
     }
 
-    public void setCurrentLayout(ContentLayout currentLayout) {
+    public void setCurrentLayout(EditorPerspective currentLayout) {
         this.currentLayout = currentLayout;
     }
 
