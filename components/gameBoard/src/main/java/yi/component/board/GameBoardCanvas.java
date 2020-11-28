@@ -17,11 +17,11 @@ abstract class GameBoardCanvas extends Canvas {
         this.manager = manager;
     }
 
-    void render(GameBoardManager manager) {
-        _render(graphics, manager);
+    protected void render(GameBoardManager manager) {
+        renderImpl(graphics, manager);
     }
 
-    protected abstract void _render(GraphicsContext g, GameBoardManager manager);
+    protected abstract void renderImpl(GraphicsContext g, GameBoardManager manager);
 
     public abstract void onGameModelSet(GameModel newModel, GameBoardManager manager);
 

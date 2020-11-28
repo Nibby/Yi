@@ -1,8 +1,5 @@
 package yi.component;
 
-import javafx.scene.text.Font;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -19,12 +16,6 @@ public final class Skin {
     private static final String SETTINGS_FILE = "settings.json";
 
     private final String mainCssUrl;
-
-    // TODO: Load these.
-    private boolean darkMode;
-
-    @Nullable
-    private Font fontOverride = null;
 
     private Skin(URL directoryUrl) {
         this.mainCssUrl = directoryUrl.toString() + MAIN_CSS_FILE;
@@ -43,21 +34,12 @@ public final class Skin {
             URL pathUrl = pathUri.toURL();
             return pathUrl.toString();
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     private void loadData() {
 
-    }
-
-    /**
-     * Skins can supply a custom font in the settings file.
-     *
-     * @return The font, if it exists, that is used to override the default application font.
-     */
-    Optional<Font> getFontOverride() {
-        return Optional.ofNullable(fontOverride);
     }
 
     /**

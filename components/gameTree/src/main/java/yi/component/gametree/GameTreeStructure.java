@@ -304,23 +304,24 @@ final class GameTreeStructure {
          */
         private int[] prepareForNextNode(@Nullable TreeNodeElement parentElement,
                                          GameNode nodeToAdd, GameNode firstNodeInThisBranch) {
-            if (nodeToAdd.equals(firstNodeInThisBranch)) {
-                if (!branchHeadToColumn.containsKey(firstNodeInThisBranch)) {
-                    computeColumnForNewBranch(parentElement, firstNodeInThisBranch);
-                    int columnToUse = branchHeadToColumn.get(firstNodeInThisBranch);
 
-                    if (parentElement != null) {
-                        // All columns to the left of this one is unavailable, reserve track line space
-                        for (int column = parentElement.getGridX() + 1; column <= columnToUse; ++column) {
-                            var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getGridY());
-                            addElement(reservedGridForTrack);
+            if (nodeToAdd.equals(firstNodeInThisBranch)
+                    && !branchHeadToColumn.containsKey(firstNodeInThisBranch)) {
 
-                            // Block all internal space between the parent branch and this branch so that new branches
-                            // are created on the outside. This will avoid all sorts of internal collisions.
-                            if (column < columnToUse && getElement(column, parentElement.getGridY() + 1).isEmpty()) {
-                                var blockedGridForSubsequentBranches = new TreeSpacerElement(column, parentElement.getGridY() + 1);
-                                addElement(blockedGridForSubsequentBranches);
-                            }
+                computeColumnForNewBranch(parentElement, firstNodeInThisBranch);
+                int columnToUse = branchHeadToColumn.get(firstNodeInThisBranch);
+
+                if (parentElement != null) {
+                    // All columns to the left of this one is unavailable, reserve track line space
+                    for (int column = parentElement.getGridX() + 1; column <= columnToUse; ++column) {
+                        var reservedGridForTrack = new TreeSpacerElement(column, parentElement.getGridY());
+                        addElement(reservedGridForTrack);
+
+                        // Block all internal space between the parent branch and this branch so that new branches
+                        // are created on the outside. This will avoid all sorts of internal collisions.
+                        if (column < columnToUse && getElement(column, parentElement.getGridY() + 1).isEmpty()) {
+                            var blockedGridForSubsequentBranches = new TreeSpacerElement(column, parentElement.getGridY() + 1);
+                            addElement(blockedGridForSubsequentBranches);
                         }
                     }
                 }
@@ -361,7 +362,7 @@ final class GameTreeStructure {
         /**
          * Removes all cached element positions within the storage.
          */
-        void clear() {
+        protected final void clear() {
             elementPositions.keySet().forEach(xKey -> elementPositions.get(xKey).clear());
         }
 

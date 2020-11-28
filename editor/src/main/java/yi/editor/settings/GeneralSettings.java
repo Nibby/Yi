@@ -91,7 +91,7 @@ public final class GeneralSettings extends SettingsModule {
         this.currentLayout = currentLayout;
     }
 
-    @NotNull String getSettingsFileName() {
+    protected final @NotNull String getSettingsFileName() {
         return Objects.requireNonNull(settingsFile);
     }
 

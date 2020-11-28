@@ -28,7 +28,7 @@ public final class AnnotationEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _rollbackEdit(GameModel gameModel) {
+    protected boolean rollbackEditNow(GameModel gameModel) {
         // TODO: This will actually fire two node update events, which isn't ideal.
         //       Change the API so that multiple events can be done in one "transaction" and have one event firing...
         gameModel.removeAnnotations(getAffectedNode(), annotationsToAdd);
@@ -38,7 +38,7 @@ public final class AnnotationEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _performEdit(GameModel gameModel) {
+    protected boolean performEditNow(GameModel gameModel) {
         // TODO: As a defensive measure, we should probably validate the state is valid first before
         //       making any changes.
         gameModel.removeAnnotations(getAffectedNode(), annotationsToRemove);

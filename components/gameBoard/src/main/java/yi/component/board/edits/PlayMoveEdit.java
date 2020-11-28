@@ -9,8 +9,7 @@ public final class PlayMoveEdit extends UndoableEdit {
 
     private enum MoveType {
         PLAY_MOVE,
-        PASS,
-        RESIGN
+        PASS
     }
 
     private final MoveType moveType;
@@ -30,14 +29,14 @@ public final class PlayMoveEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _rollbackEdit(GameModel gameModel) {
+    protected boolean rollbackEditNow(GameModel gameModel) {
         gameModel.removeNodeSubtree(submittedNode);
         gameModel.setCurrentNode(parentOfSubmittedNode); // Assuming parent is still on the tree
         return true;
     }
 
     @Override
-    protected boolean _performEdit(GameModel gameModel) {
+    protected boolean performEditNow(GameModel gameModel) {
         if (submittedNode == null) {
             return submitMoveForFirstTimeEdit(gameModel);
         } else {
@@ -75,7 +74,7 @@ public final class PlayMoveEdit extends UndoableEdit {
         return submittedNode != null;
     }
 
-    GameNode getSubmittedNode() {
+    protected final GameNode getSubmittedNode() {
         return submittedNode;
     }
 
@@ -85,9 +84,5 @@ public final class PlayMoveEdit extends UndoableEdit {
 
     public static PlayMoveEdit forPass() {
         return new PlayMoveEdit(MoveType.PASS);
-    }
-
-    public static PlayMoveEdit forResignation() {
-        return new PlayMoveEdit(MoveType.RESIGN);
     }
 }

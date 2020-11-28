@@ -59,10 +59,11 @@ public abstract class AbstractEditMode {
             manager.getGameModel().toPreviousNode();
         } else if (e.getCode() == KeyCode.DOWN) {
             manager.getGameModel().toNextNode();
-        } else if (e.getCode() == KeyCode.LEFT) {
-            // TODO: Find the branching node and find a node of the same distance to root in its main branch.
-        } else if (e.getCode() == KeyCode.RIGHT) {
-            // TODO: Find the branching node and scan all children from left to right, selecting the first node of the same distance to root in its main branch.
         }
+//        else if (e.getCode() == KeyCode.LEFT) {
+//            // TODO: Find the branching node and find a node of the same distance to root in its main branch.
+//        } else if (e.getCode() == KeyCode.RIGHT) {
+//            // TODO: Find the branching node and scan all children from left to right, selecting the first node of the same distance to root in its main branch.
+//        }
     }
 }

@@ -1,7 +1,11 @@
 package yi.core.go.docformat
 
+import yi.core.go.GameModel
 import java.util.*
 
+/**
+ * List of supported importable and exportable data formats for [GameModel].
+ */
 enum class FileFormat {
 
     SGF {
@@ -44,7 +48,7 @@ enum class FileFormat {
      * @return Set of all supported file extensions.
      */
     fun getSupportedFileExtensions(): Set<String> {
-        TODO()
+        return getHandler().getSupportedFileNameExtensions()
     }
 
     private fun getRealExtension(fileExtension: String): String {

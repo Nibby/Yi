@@ -19,7 +19,8 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
     private Map<Integer, GameNode> intersectionsWithPreviewNode = new HashMap<>();
 
-    private int cursorX = 0, cursorY = 0;
+    private int cursorX = 0;
+    private int cursorY = 0;
     private boolean renderCursor = false;
 
     GameBoardInputCanvas(GameBoardManager manager) {
@@ -33,7 +34,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     @Override
-    protected void _render(GraphicsContext g, GameBoardManager manager) {
+    protected void renderImpl(GraphicsContext g, GameBoardManager manager) {
         g.clearRect(0, 0, getWidth(), getHeight());
         
         if (renderCursor) {
