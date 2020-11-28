@@ -90,6 +90,7 @@ public class EditorFrame extends Stage {
                 try {
                     var importedGameModel = GameModelImporter.INSTANCE.fromFile(file.toPath());
                     setGameModel(importedGameModel);
+                    success = true;
                 } catch (GameParseException | IOException e) {
                     // TODO: Handle this in an error dialog so that users know something
                     //       went wrong with their file rather than throwing a stack trace
