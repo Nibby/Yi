@@ -15,7 +15,7 @@ import yi.component.board.editmodes.AnnotationEditMode;
 import yi.component.board.editmodes.EditMode;
 import yi.core.go.Annotation;
 import yi.core.go.AnnotationType;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 
 import java.util.HashSet;
 
@@ -253,7 +253,7 @@ public final class GameBoardAnnotationEditUITest extends GameBoardUITestBase {
     }
 
     @Override
-    protected GameRules getGameRules() {
-        return GameRules.CHINESE;
+    protected StandardGameRules getGameRules() {
+        return StandardGameRules.CHINESE;
     }
 }

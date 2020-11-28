@@ -1,10 +1,15 @@
 package yi.core.go
 
 import yi.core.go.rules.ChineseRulesHandler
-import yi.core.go.rules.GoGameRulesHandler
+import yi.core.go.rules.GameRulesHandler
 import java.util.*
 
-enum class GameRules {
+/**
+ * A list of supported conventional rules in the game model. Each rule value has a
+ * corresponding [GameRulesHandler] that contains all the relevant logic specific to that
+ * ruleset.
+ */
+enum class StandardGameRules {
 
     CHINESE {
         override fun getRulesHandler() = ChineseRulesHandler()
@@ -12,7 +17,11 @@ enum class GameRules {
         override fun isRuleset(rulesetName: String): Boolean = rulesetName.equals("chinese", ignoreCase = true)
     };
 
-    abstract fun getRulesHandler(): GoGameRulesHandler
+    /**
+     * @return The rules handler that contains all the relevant logic specific to that
+     * ruleset.
+     */
+    abstract fun getRulesHandler(): GameRulesHandler
 
     /**
      * This method is often used to parse ruleset definition in text-form.
@@ -22,7 +31,7 @@ enum class GameRules {
     abstract fun isRuleset(rulesetName: String): Boolean
 
     companion object {
-        fun parse(rulesetName: String): Optional<GameRules> {
+        fun parse(rulesetName: String): Optional<StandardGameRules> {
             return Arrays.stream(values())
                     .filter { ruleset -> ruleset.isRuleset(rulesetName) }
                     .findAny()

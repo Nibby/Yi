@@ -66,7 +66,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         internal const val SGF_BOARD_SIZE = "SZ"
         internal const val SGF_RULESET = "RU"
         internal const val SGF_KOMI = "KM"
-        internal const val SGF_CHARSET = "CA"
+//        internal const val SGF_CHARSET = "CA"
         internal const val SGF_GAME_TYPE = "GM"
         internal const val SGF_FILE_FORMAT = "FF"
         internal const val SGF_BLACK_MOVE = "B"
@@ -79,11 +79,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         internal const val SGF_MARKUP_CIRCLE = "CR"
         internal const val SGF_MARKUP_SQUARE = "SQ"
         internal const val SGF_MARKUP_LABEL = "LB"
-        internal const val SGF_MARKUP_LETTER = "L" // Old, TODO: support it?
+//        internal const val SGF_MARKUP_LETTER = "L" // Old, TODO: support it?
         internal const val SGF_MARKUP_DIM = "DD"
         internal const val SGF_MARKUP_ARROW = "AR"
         internal const val SGF_MARKUP_LINE = "LN"
-        internal const val SGF_MARKUP_SL = "SL" // Old, TODO: What's this?
+//        internal const val SGF_MARKUP_SL = "SL" // Old, TODO: What's this?
         internal const val SGF_COMMENT = "C"
     }
 
@@ -121,7 +121,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     char = readResult.second
 
                     val organizedNodeData = asKeyValuePairs(nodeData)
-                    removeMalformedData(organizedNodeData);
+                    removeMalformedData(organizedNodeData)
 
                     // We're already at the next token, so we want the next loop to evaluate this.
                     readCharNextLoop = false
@@ -179,7 +179,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     }
                 }
 
-                val gameRules = GameRules.parse(ruleset[0]).orElse(GameRules.CHINESE)
+                val gameRules = StandardGameRules.parse(ruleset[0]).orElse(StandardGameRules.CHINESE)
                 val gameModel = GameModel(width, height, gameRules)
                 val rootNode = parseNode(rootNodeData, null, gameModel)
                 gameModel._setRootNode(rootNode)
@@ -346,25 +346,26 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 gameNodeType = GameNodeType.STONE_EDIT
             }
 
-            if (gameNodeType == GameNodeType.MOVE_PLAYED) {
-                val results = GameMoveSubmitter.createMoveNodeForProposedMove(gameModel, parentNode!!, gamePrimaryMove!!, true)
-                val validationResult = results.first
-                assert(validationResult == MoveValidationResult.OK)
-                gameNode = results.second!!
-            } else if (gameNodeType == GameNodeType.STONE_EDIT) {
-                gameNode = GameMoveSubmitter.createMoveNodeForStoneEdit(parentNode!!)
-            } else if (gameNodeType == GameNodeType.PASS) {
-                gameNode = GameMoveSubmitter.createMoveNodeForPass(parentNode!!)
-                // TODO: There's actually no differentiation between passing and resigning. The resignation node is
-                //       handled as a pass, except that the root node game result is set to W+R or B+R.
-            } else if (gameNodeType == GameNodeType.ROOT) {
-                gameNode = GameMoveSubmitter.createMoveNodeForRoot(gameModel)
-            }
-
-            if (gameNode == null) {
-                // TODO: Probably unlikely given that we have a good coverage. But if we do get here then maybe just
-                //      insert a generic node?
-                gameNode = GameMoveSubmitter.createMoveNodeForStoneEdit(parentNode!!)
+            // TODO: Probably unlikely given that we have a good coverage. But if we do get here then maybe just
+            //      insert a generic node?
+            when (gameNodeType) {
+                GameNodeType.MOVE_PLAYED -> {
+                    val results = GameMoveSubmitter.createMoveNode(gameModel, parentNode!!, gamePrimaryMove!!, true)
+                    val validationResult = results.first
+                    assert(validationResult == MoveValidationResult.OK)
+                    gameNode = results.second!!
+                }
+                GameNodeType.STONE_EDIT -> {
+                    gameNode = GameMoveSubmitter.createStoneEditNode(parentNode!!)
+                }
+                GameNodeType.PASS -> {
+                    gameNode = GameMoveSubmitter.createPassNode(parentNode!!)
+                    // TODO: There's actually no differentiation between passing and resigning. The resignation node is
+                    //       handled as a pass, except that the root node game result is set to W+R or B+R.
+                }
+                GameNodeType.ROOT -> {
+                    gameNode = GameMoveSubmitter.createRootNode(gameModel)
+                }
             }
 
             return gameNode
@@ -419,7 +420,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         // start-to-end coordinates for the two-point annotation. In this case
                         // we will store the values together as one entry.
                         val key = tagKey.toString().trim()
-                        var value = tagValue.toString()
+                        val value = tagValue.toString()
 
                         result.putIfAbsent(key, ArrayList())
                         result[key]!!.add(value)
@@ -580,9 +581,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             AR("AR", SgfTagValueConstraint.TwoPointLocation),
             LN("LN", SgfTagValueConstraint.TwoPointLocation),
 
-            KM("KM", SgfTagValueConstraint.Numerical)
-
-            ;
+            KM("KM", SgfTagValueConstraint.Numerical);
 
             fun isValueValid(valueToTest: String): Boolean {
                 for (format in acceptableValueFormats) {
@@ -643,13 +642,12 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         false
                     }
                 }
-            }
+            };
 
             /*
                 Fields like "Comment" are purely textual, and have no format constraints,
                 so we don't list them here.
              */
-            ;
 
             abstract fun isValueValid(valueToTest: String): Boolean
 
@@ -678,7 +676,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     for (branchingChild in currentNode.getNextNodes()) {
                         exportBranch(gameModel, branchingChild, writer)
                     }
-                    done = true;
+                    done = true
                 } else {
                     if (!currentNode.isLastMoveInThisVariation()) {
                         currentNode = currentNode.getNextNodeInMainBranch()!!
@@ -824,7 +822,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
                     writeTag(key, coordinates, writer)
                 }
-            } else if (moveType == GameNodeType.PASS || moveType == GameNodeType.RESIGN) {
+            } else if (moveType == GameNodeType.PASS) {
                 val ruleset = gameModel.rules
                 val key = when (val expectedColor =
                         ruleset.getStoneColorForTurn(currentNode.moveNumber-1, gameModel.info.getHandicapCount() > 0)) {
@@ -845,7 +843,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
 
         private fun writeTags(data: Map<String, List<String>>, writer: BufferedWriter) {
             for (key in data.keys) {
-                writeTag(key, data[key]!!, writer)
+                val value = data[key] ?: error("No value exists for key: $key")
+                writeTag(key, value, writer)
             }
         }
 

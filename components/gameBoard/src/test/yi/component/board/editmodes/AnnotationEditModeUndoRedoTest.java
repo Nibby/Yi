@@ -6,7 +6,7 @@ import yi.component.board.GameBoardClassFactory;
 import yi.component.board.edits.AnnotationEdit;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 
 import java.util.HashSet;
 import java.util.Stack;
@@ -15,7 +15,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
     @Test
     public void testAddAnnotationCreatesHistoryItem() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -39,7 +39,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
     @Test
     public void testRemoveAnnotationCreatesHistoryItem() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -63,7 +63,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
     @Test
     public void testUndo_OneAnnotation_RestoresStateProperly() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -89,7 +89,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
     @Test
     public void testUndo_MultipleAnnotations_RestoresStateProperly() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -118,7 +118,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
     @Test
     public void testConsecutiveUndo_OneAnnotationAddition_RestoresStateProperly() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -164,7 +164,7 @@ public final class AnnotationEditModeUndoRedoTest {
 
     @Test
     public void testConsecutiveUndoRedo_MultipleAnnotationAdditionAndDeletion_RestoresStateProperly() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 

@@ -79,7 +79,7 @@ final class GameTreeCanvas extends Canvas {
             var isCurrentNode = node.equals(currentNode);
             var isPartOfCurrentHistory = currentVariationHistory.contains(node);
             var isCommented = !node.getComments().isBlank();
-            var isPass = node.getType() == GameNodeType.PASS || node.getType() == GameNodeType.RESIGN;
+            var isPass = node.getType() == GameNodeType.PASS;
             var strokeOutlineForCurrentNode = false;
 
             if (isCurrentNode) {
@@ -130,7 +130,6 @@ final class GameTreeCanvas extends Canvas {
             } else {
                 switch (node.getType()) {
                     case PASS:
-                    case RESIGN:
                         graphics.setFill(settings.getBackgroundColor());
                         graphics.fillOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
                         graphics.strokeOval(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());

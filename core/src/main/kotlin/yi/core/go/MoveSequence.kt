@@ -21,32 +21,12 @@ class MoveSequence constructor(private val game: GameModel) {
     }
 
     /**
-     * Synonymous to [GameModel.addAnnotationToCurrentNode]
-     *
-     * @see [GameModel.addAnnotationToCurrentNode]
-     */
-    fun annotate(annotation: Annotation): MoveSequence {
-        game.addAnnotationToCurrentNode(annotation)
-        return this
-    }
-
-    /**
      * Synonymous to [GameModel.submitPass].
      *
      * @see [GameModel.submitPass]
      */
     fun pass(): MoveSequence {
         game.submitPass()
-        return this
-    }
-
-    /**
-     * Synonymous to [GameModel.submitResign].
-     *
-     * @see [GameModel.submitResign]
-     */
-    fun resign(): MoveSequence {
-        game.submitResign()
         return this
     }
 }

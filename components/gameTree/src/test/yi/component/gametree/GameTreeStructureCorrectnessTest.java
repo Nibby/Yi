@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
-import yi.core.go.rules.GoGameRulesHandler;
+import yi.core.go.rules.GameRulesHandler;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 //       to understand at a glance the difference between the actual structure produced and the expected structure.
 public class GameTreeStructureCorrectnessTest {
 
-    private static final class TestingRules extends GoGameRulesHandler {
+    private static final class TestingRules extends GameRulesHandler {
 
         @Override
         public float getDefaultKomi() {

@@ -308,7 +308,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export empty model works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.info.setKomi(5.5f)
 
         val output = ByteArrayOutputStream()
@@ -319,14 +319,14 @@ class SgfFileFormatHandlerTest {
         Assertions.assertTrue(data.contains("FF[" + SgfFileFormatHandler.SgfExporter.SGF_EXPORTED_FILE_FORMAT_VERSION + "]"), "File format version mismatch. Exported: $data")
         Assertions.assertTrue(data.contains("SZ[19]"), "Board size not correct. Exported: $data")
         Assertions.assertTrue(data.contains("KM[5.5]"), "Komi value not correct. Exported: $data")
-        Assertions.assertTrue(data.contains("RU[" + GameRules.CHINESE.getRulesHandler().getInternalName() + "]"), "Ruleset name mismatch. Exported: $data")
+        Assertions.assertTrue(data.contains("RU[" + StandardGameRules.CHINESE.getRulesHandler().getInternalName() + "]"), "Ruleset name mismatch. Exported: $data")
 
         testExportedFormatCorrectness(data, model)
     }
 
     @Test
     fun `export linear model works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.beginMoveSequence()
                 .playMove(0, 0)
                 .playMove(1, 0)
@@ -357,7 +357,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export branched model works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.beginMoveSequence()
                 .playMove(0, 0)
                 .playMove(1, 1)
@@ -398,7 +398,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export multi-value tag works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         val root = model.getRootNode()
         model.addStoneEdit(root, Stone(0, 0, StoneColor.BLACK))
         model.addStoneEdit(root, Stone(1, 0, StoneColor.BLACK))
@@ -418,7 +418,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export directional annotation works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         val root = model.getRootNode()
         model.addAnnotations(root, listOf(Annotation.Arrow(0, 0, 2, 2), Annotation.Arrow(1, 1, 3, 3)))
         model.addAnnotations(root, listOf(Annotation.Line(1, 1, 4, 4), Annotation.Line(3, 3, 5, 5)))
@@ -431,7 +431,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export non-square board size works`() {
-        val model = GameModel(19, 8, GameRules.CHINESE)
+        val model = GameModel(19, 8, StandardGameRules.CHINESE)
         val data = exportModel(model)
 
         Assertions.assertTrue(data.contains("SZ[19:8]"), "Board size value not correct. Exported=$data")
@@ -440,7 +440,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export handicapped game works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.info.setHandicapCount(2)
         model.addStoneEdit(model.getRootNode(), Stone(3, 3, StoneColor.BLACK))
         model.addStoneEdit(model.getRootNode(), Stone(15, 15, StoneColor.BLACK))
@@ -455,7 +455,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export passes works`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.beginMoveSequence()
                 .playMove(1, 1)
                 .pass()
@@ -478,7 +478,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export all annotations correctly`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
         model.addAnnotationToCurrentNode(Annotation.Square(1, 0))
         model.addAnnotationToCurrentNode(Annotation.Circle(2, 0))
@@ -505,7 +505,7 @@ class SgfFileFormatHandlerTest {
 
     @Test
     fun `export all stone edits correctly`() {
-        val model = GameModel(19, 19, GameRules.CHINESE)
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.beginMoveSequence().playMove(9, 9)
         val move1 = model.getRootNode().getNextNodeInMainBranch()!!
         model.addStoneEdit(move1, Stone(0, 0, StoneColor.BLACK))

@@ -24,7 +24,7 @@ class PlayMoveTest {
 
         Assertions.assertEquals(MoveValidationResult.OK, moveSubmitResult.validationResult)
         Assertions.assertNotNull(moveSubmitResult.moveNode)
-        Assertions.assertTrue(moveSubmitResult.played)
+        Assertions.assertTrue(moveSubmitResult.isPlayed)
     }
 
     @Test
@@ -117,20 +117,6 @@ class PlayMoveTest {
         model.beginMoveSequence()
                 .playMove(0, 0)
                 .pass()
-
-        val stateHashHistory = model.getStateHashHistory()
-
-        Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.getCurrentNode().parent!!.getStateHash()) // 0100b (4)
-    }
-
-    @Test
-    fun `game model state hash ignores resignation moves`() {
-        val model = GameModel(2, 2, TestingGameRulesNoSuicide(), TestingFourIntersectionXORHasher())
-
-        model.beginMoveSequence()
-                .playMove(0, 0)
-                .resign()
 
         val stateHashHistory = model.getStateHashHistory()
 
@@ -296,28 +282,6 @@ class PlayMoveTest {
 
         Assertions.assertEquals(2, branchNode.children.size, "Child size changed after passing the second time.")
         Assertions.assertEquals(firstPassNode, model.getCurrentNode(), "Current node is not at the original pass node.")
-    }
-
-    @Test
-    fun `resign at a position where the next move is also resign will set current move to that node instead`() {
-        val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
-
-        val branchNode = model.submitMove(0, 0).moveNode!!
-
-        model.submitMove(1, 0)
-        model.toPreviousNode()
-        val firstResignNode = model.submitResign().moveNode!!
-        model.toPreviousNode()
-
-        // Check setup is correct
-        Assertions.assertEquals(2, model.getCurrentNode().children.size)
-
-        // Resign again. This should set the current move to firstResignNode.
-        // No new branch will be created.
-        model.submitResign()
-
-        Assertions.assertEquals(2, branchNode.children.size, "Child size changed after resign for the second time.")
-        Assertions.assertEquals(firstResignNode, model.getCurrentNode(), "Current node is not at the original resign node.")
     }
 
     @Test

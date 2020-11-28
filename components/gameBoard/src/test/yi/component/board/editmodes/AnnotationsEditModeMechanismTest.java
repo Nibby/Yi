@@ -6,13 +6,13 @@ import yi.component.board.GameBoardClassFactory;
 import yi.component.board.edits.AnnotationEdit;
 import yi.core.go.Annotation;
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 
 public final class AnnotationsEditModeMechanismTest {
 
     @Test
     public void testManyAdditions_InOneSession_MergedIntoMostRecentEdit() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -35,7 +35,7 @@ public final class AnnotationsEditModeMechanismTest {
 
     @Test
     public void testManyDeletions_InOneSession_MergedIntoMostRecentEdit() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 

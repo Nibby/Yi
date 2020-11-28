@@ -72,7 +72,7 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
      * This is not part of the SGF-4 standard. Rather, it is an internal annotation
      * used by the program only. This annotation will not be saved to file.
      */
-    class _Dot(x: Int, y: Int) : PointAnnotation(AnnotationType._DOT, x, y)
+    class Dot(x: Int, y: Int) : PointAnnotation(AnnotationType.DOT, x, y)
 
 
     /**
@@ -122,20 +122,18 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
          */
         fun createFromType(type: AnnotationType, x1: Int, y1: Int, x2: Int, y2: Int,
                            text: String): Annotation {
-            when (type) {
-                AnnotationType._DOT -> return _Dot(x1, y1)
+            return when (type) {
+                AnnotationType.DOT -> Dot(x1, y1)
 
-                AnnotationType.TRIANGLE -> return Triangle(x1, y1)
-                AnnotationType.CIRCLE -> return Circle(x1, y1)
-                AnnotationType.SQUARE -> return Square(x1, y1)
-                AnnotationType.CROSS -> return Cross(x1, y1)
-                AnnotationType.FADE -> return Fade(x1, y1)
-                AnnotationType.LABEL -> return Label(x1, y1, text)
+                AnnotationType.TRIANGLE -> Triangle(x1, y1)
+                AnnotationType.CIRCLE -> Circle(x1, y1)
+                AnnotationType.SQUARE -> Square(x1, y1)
+                AnnotationType.CROSS -> Cross(x1, y1)
+                AnnotationType.FADE -> Fade(x1, y1)
+                AnnotationType.LABEL -> Label(x1, y1, text)
 
-                AnnotationType.LINE -> return Line(x1, y1, x2, y2)
-                AnnotationType.ARROW -> return Arrow(x1, y1, x2, y2)
-
-                else -> throw IllegalArgumentException("Unsupported AnnotationType: $type")
+                AnnotationType.LINE -> Line(x1, y1, x2, y2)
+                AnnotationType.ARROW -> Arrow(x1, y1, x2, y2)
             }
         }
     }

@@ -1,7 +1,7 @@
 package yi.editor.utilities;
 
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 import yi.editor.Yi;
 
 public final class GameModelUtilities {
@@ -11,14 +11,14 @@ public final class GameModelUtilities {
     }
 
     public static GameModel createGameModel() {
-        return createGameModel(19, 19, GameRules.CHINESE);
+        return createGameModel(19, 19, StandardGameRules.CHINESE);
     }
 
-    public static GameModel createGameModel(int width, int height, GameRules ruleset) {
+    public static GameModel createGameModel(int width, int height, StandardGameRules ruleset) {
         return createGameModel(width, height, ruleset, ruleset.getRulesHandler().getDefaultKomi());
     }
 
-    private static GameModel createGameModel(int width, int height, GameRules ruleset,
+    private static GameModel createGameModel(int width, int height, StandardGameRules ruleset,
                                              float customKomi) {
         var model = new GameModel(width, height, ruleset);
         model.getInfo().setKomi(customKomi);

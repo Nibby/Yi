@@ -11,7 +11,7 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
 import yi.component.board.editmodes.EditMode;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 import yi.core.go.StoneColor;
 
 @ExtendWith(ApplicationExtension.class)
@@ -78,7 +78,7 @@ public class GameBoardStoneEditUITest extends GameBoardUITestBase {
     }
 
     @Override
-    protected GameRules getGameRules() {
-        return GameRules.CHINESE;
+    protected StandardGameRules getGameRules() {
+        return StandardGameRules.CHINESE;
     }
 }

@@ -9,7 +9,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import yi.component.board.editmodes.EditMode;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 
 import java.util.ArrayList;
 
@@ -88,7 +88,7 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
     }
 
     @Override
-    protected GameRules getGameRules() {
-        return GameRules.CHINESE;
+    protected StandardGameRules getGameRules() {
+        return StandardGameRules.CHINESE;
     }
 }

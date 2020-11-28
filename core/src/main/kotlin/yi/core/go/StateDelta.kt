@@ -69,12 +69,6 @@ class StateDelta {
                 = StateDelta(GameNodeType.PASS, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
 
         /**
-         * Instantiates a [StateDelta] to represent a resignation.
-         */
-        fun forResignationMove(currentPositionStateHash: Long): StateDelta
-                = StateDelta(GameNodeType.RESIGN, null, HashSet(), currentPositionStateHash, HashSet(), HashSet())
-
-        /**
          * Instantiates an empty [StateDelta] to store updates to the game position through
          * manual stone edits.
          */

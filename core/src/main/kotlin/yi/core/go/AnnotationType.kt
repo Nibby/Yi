@@ -15,7 +15,7 @@ enum class AnnotationType {
     ARROW,
 
     // Non-standard
-    _DOT;
+    DOT;
 
     companion object {
         /**
@@ -35,7 +35,7 @@ enum class AnnotationType {
          */
         fun isPointAnnotation(type: AnnotationType): Boolean {
             return when (type) {
-                _DOT, CIRCLE, TRIANGLE, SQUARE, CROSS, FADE, LABEL -> true
+                DOT, CIRCLE, TRIANGLE, SQUARE, CROSS, FADE, LABEL -> true
                 else -> false
             }
         }

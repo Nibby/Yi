@@ -141,7 +141,7 @@ public class EditorMenuBar extends MenuBar {
             }
 
             if (doIt.get()) {
-                var newModel = new GameModel(19, 19, GameRules.CHINESE);
+                var newModel = new GameModel(19, 19, StandardGameRules.CHINESE);
                 frame.setGameModel(newModel);
             }
         });

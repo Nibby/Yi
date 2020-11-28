@@ -21,5 +21,4 @@ class GameState(private val gameModel: GameModel,
                 val representedNode: GameNode,
                 val prisonersWhite: Int,
                 val prisonersBlack: Int,
-                val annotations: Collection<Annotation>,
-                val stateHash: Long)
+                val annotations: Collection<Annotation>)

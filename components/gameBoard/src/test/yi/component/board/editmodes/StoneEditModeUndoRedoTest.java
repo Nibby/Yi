@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.GameBoardClassFactory;
 import yi.core.go.GameModel;
-import yi.core.go.GameRules;
+import yi.core.go.StandardGameRules;
 import yi.core.go.StoneColor;
 
 public final class StoneEditModeUndoRedoTest {
 
     @Test
     public void testAddRemoveStone_UndoRedoWorks() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 
@@ -66,7 +66,7 @@ public final class StoneEditModeUndoRedoTest {
 
     @Test
     public void testSubmitEditNode_UndoRedoWorks() {
-        var model = new GameModel(3, 3, GameRules.CHINESE);
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         manager.setGameModel(model);
 

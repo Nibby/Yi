@@ -1,9 +1,9 @@
 package yi.core.go.rules
 
-class NewZealandRulesHandler : GoGameRulesHandler() {
+class NewZealandRulesHandler : GameRulesHandler() {
 
     override fun getDefaultKomi(): Float {
-        return 7F
+        return 7f
     }
 
     override fun allowSuicideMoves(): Boolean {

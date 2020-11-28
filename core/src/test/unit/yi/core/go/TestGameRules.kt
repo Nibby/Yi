@@ -1,9 +1,9 @@
 package yi.core.go
 
-import yi.core.go.rules.GoGameRulesHandler
+import yi.core.go.rules.GameRulesHandler
 
 class TestGameRules {
-    class TestingGameRulesNoSuicide : GoGameRulesHandler() {
+    class TestingGameRulesNoSuicide : GameRulesHandler() {
         override fun getDefaultKomi(): Float = 6.5F
         override fun allowSuicideMoves(): Boolean = false
         override fun getInternalName(): String {
@@ -11,7 +11,7 @@ class TestGameRules {
         }
     }
 
-    class TestingGameRulesSuicideAllowed : GoGameRulesHandler() {
+    class TestingGameRulesSuicideAllowed : GameRulesHandler() {
         override fun getDefaultKomi(): Float = 6.5F
         override fun allowSuicideMoves(): Boolean = true
         override fun getInternalName(): String {

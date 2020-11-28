@@ -2,7 +2,6 @@ package yi.core.go
 
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 /*
  * Each node stores a [StateDelta] which represents the changes since the last game node.
@@ -120,26 +119,13 @@ class GameNode constructor(val delta: StateDelta) {
         return result
     }
 
-    fun isLastChild(node: GameNode): Boolean {
-        return children[children.lastIndex] == node
-    }
-
-    fun isFirstChild(node: GameNode): Boolean {
-        return children.isNotEmpty() && children[0] == node
-    }
-
     fun getChildOrder(node: GameNode): Int {
         return children.indexOf(node)
-    }
-
-    fun hasChild(childNode: GameNode): Boolean {
-        return children.contains(childNode)
     }
 
     private fun getVariationsCount(): Int = children.size
 
     /**
-     *
      * @return The next move in the main branch if it exists, otherwise null.
      */
     fun getNextNodeInMainBranch(): GameNode? {

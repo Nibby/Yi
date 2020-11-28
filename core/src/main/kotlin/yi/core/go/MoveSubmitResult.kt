@@ -7,16 +7,13 @@ package yi.core.go
  * move, notably [MoveValidationResult.OK] meaning a legal move.
  * @param moveNode The move node that is created from the request, may be null if the
  * request is in violation of game rules.
- * @param played true if [moveNode] has already been appended to the game tree.
+ * @param isPlayed true if [moveNode] has already been appended to the game tree.
  */
-class MoveSubmitResult constructor(val validationResult: MoveValidationResult, val moveNode: GameNode?, internal val played: Boolean) {
+class MoveSubmitResult constructor(val validationResult: MoveValidationResult,
+                                   val moveNode: GameNode?,
+                                   val isPlayed: Boolean) {
 
     override fun toString(): String {
-        return "status: ${validationResult.name} played: $played node: ${moveNode.toString()}"
-    }
-
-    // Because the default getter name 'getPlayed()' sounds atrocious.
-    fun isPlayed(): Boolean {
-        return played
+        return "status: ${validationResult.name} played: $isPlayed node: ${moveNode.toString()}"
     }
 }
