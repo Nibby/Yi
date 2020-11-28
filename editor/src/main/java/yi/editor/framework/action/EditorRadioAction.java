@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * as component, or {@link YiRadioMenuItem} as menu item. This action can be assigned a
  * {@link ToggleGroup} to enforce selection constraints.
  *
- * @see EditorAtomicAction
+ * @see EditorBasicAction
  */
 public class EditorRadioAction extends EditorAbstractAction {
 

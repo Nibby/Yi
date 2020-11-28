@@ -1,0 +1,237 @@
+package yi.editor.framework.action;
+
+import javafx.scene.Node;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.testfx.framework.junit5.Start;
+import yi.common.i18n.TextResource;
+import yi.common.utilities.GuiUtilities;
+import yi.component.YiButton;
+import yi.component.YiMenuItem;
+import yi.editor.EditorMainMenuType;
+import yi.editor.EditorTextResources;
+import yi.editor.EditorUITestBase;
+import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.accelerator.EditorAcceleratorManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * The goal of this test class is to check the menu items are exported correctly and
+ * responding correctly to changes to the action state.
+ */
+public class EditorAbstractActionTest extends EditorUITestBase {
+
+    @Start
+    @Override
+    public void startFx(Stage stage) {
+        super.startFx(stage);
+    }
+
+    private EditorAction action1;
+    private EditorAction action2;
+    private EditorAction action3;
+
+    @Override
+    protected void performTasksBeforeCreatingFrame() {
+        action1 = createAbstractActionImplementation();
+        action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
+
+        action2 = createAbstractActionImplementation();
+        action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
+
+        action3 = createAbstractActionImplementation();
+        action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
+    }
+
+    @Test
+    public void testBaseImplementationCorrect() {
+        var menuItemMap = new HashMap<EditorAction, MenuItem>();
+        var nodeMap = new HashMap<EditorAction, Node>();
+
+        menuItemMap.put(action1, action1.getAsMenuItem());
+        menuItemMap.put(action2, action2.getAsMenuItem());
+        menuItemMap.put(action3, action3.getAsMenuItem());
+
+        nodeMap.put(action1, action1.getAsComponent());
+        nodeMap.put(action2, action2.getAsComponent());
+        nodeMap.put(action3, action3.getAsComponent());
+
+        testPositionCorrect();
+        testSetVisibility(menuItemMap, nodeMap);
+        testSetEnabled(menuItemMap, nodeMap);
+        testSetName(menuItemMap, nodeMap);
+        testSetIcon(menuItemMap, nodeMap);
+        testSetAccelerator(menuItemMap);
+    }
+
+    private void testSetAccelerator(HashMap<EditorAction, MenuItem> menuItemMap) {
+
+        Assertions.assertNull(menuItemMap.get(action1).getAccelerator(),
+                "Initial accelerator state not correct");
+
+        var newAcceleratorId = EditorAcceleratorId.NEW_GAME;
+        action1.setAccelerator(newAcceleratorId);
+
+        Assertions.assertEquals(EditorAcceleratorManager.getAccelerator(newAcceleratorId).getKeyCombination(),
+                menuItemMap.get(action1).getAccelerator(),
+                "Accelerator not updated after setAccelerator() call");
+    }
+
+    private void testSetIcon(HashMap<EditorAction, MenuItem> menuItemMap,
+                             HashMap<EditorAction, Node> nodeMap) {
+
+        action1.setIcon(null);
+
+        Assertions.assertNull(menuItemMap.get(action1).getGraphic(),
+                "Initial graphic should be empty on menu item");
+        Assertions.assertNull(((Labeled) nodeMap.get(action1)).getGraphic(),
+                "Initial graphic should be empty on node");
+
+        ImageView icon = GuiUtilities.getIcon("/testIcon.png", getClass()).orElseThrow();
+        action1.setIcon(icon);
+
+        Assertions.assertEquals(menuItemMap.get(action1).getGraphic(), icon,
+                "New graphic not updated on menu item");
+        Assertions.assertEquals(((Labeled) nodeMap.get(action1)).getGraphic(), icon,
+                "New graphic not updated on node");
+    }
+
+    private void testSetName(HashMap<EditorAction, MenuItem> menuItemMap,
+                             HashMap<EditorAction, Node> nodeMap) {
+
+        Assertions.assertEquals(menuItemMap.get(action1).getText(),
+                EditorTextResources.EMPTY.getLocalisedText(),
+                "Initial name not correct on menu item");
+
+        Assertions.assertEquals(((Labeled) nodeMap.get(action1)).getText(),
+                EditorTextResources.EMPTY.getLocalisedText(),
+                "Initial name not correct on node");
+
+        action1.setName(EditorTextResources.MENUITEM_SAVE_GAME);
+
+        Assertions.assertEquals(menuItemMap.get(action1).getText(),
+                EditorTextResources.MENUITEM_SAVE_GAME.getLocalisedText(),
+                "Adjusted name not reflected on menu item");
+
+        Assertions.assertEquals(((Labeled) nodeMap.get(action1)).getText(),
+                EditorTextResources.MENUITEM_SAVE_GAME.getLocalisedText(),
+                "Adjusted name not reflected on node");
+    }
+
+    private void testSetEnabled(HashMap<EditorAction, MenuItem> menuItemMap,
+                                HashMap<EditorAction, Node> nodeMap) {
+        Assertions.assertFalse(menuItemMap.get(action1).isDisable(),
+                "Initial enabled state not correct on menu item");
+
+        Assertions.assertFalse(nodeMap.get(action1).isDisable(),
+                "Initial enabled state not correct on node");
+
+        action1.setEnabled(false);
+
+        Assertions.assertTrue(menuItemMap.get(action1).isDisable(),
+                "Enabled state not updated on menu item");
+        Assertions.assertTrue(nodeMap.get(action1).isDisable(),
+                "Enabled state not updated on node");
+
+        action1.setEnabled(true);
+
+        Assertions.assertFalse(menuItemMap.get(action1).isDisable(),
+                "Enabled state not updated on menu item 2nd time");
+        Assertions.assertFalse(nodeMap.get(action1).isDisable(),
+                "Enabled state not updated on node 2nd time");
+    }
+
+    private void testSetVisibility(HashMap<EditorAction, MenuItem> menuItemMap,
+                                   HashMap<EditorAction, Node> nodeMap) {
+
+        Assertions.assertTrue(menuItemMap.get(action1).isVisible(),
+                "Initial visibility state not correct on menu item");
+        Assertions.assertTrue(nodeMap.get(action1).isVisible(),
+                "Initial visibility state not correct on node");
+
+        action1.setVisible(false);
+
+        Assertions.assertFalse(menuItemMap.get(action1).isVisible(),
+                "Visibility state not updated on menu item");
+        Assertions.assertFalse(nodeMap.get(action1).isVisible(),
+                "Visibility state not updated on node");
+
+        action1.setVisible(true);
+
+        Assertions.assertTrue(menuItemMap.get(action1).isVisible(),
+                "Visibility state not updated on menu item 2nd time");
+        Assertions.assertTrue(nodeMap.get(action1).isVisible(),
+                "Visibility state not updated on node 2nd time");
+    }
+
+
+    private void testPositionCorrect() {
+        var mainMenuBar = frame.getMainMenuBar();
+        Menu testingMenu = mainMenuBar.getMenus().stream()
+                .filter(menu -> menu.getUserData() == EditorMainMenuType.TESTING)
+                .findFirst()
+                .orElseThrow();
+
+        List<EditorAction> discoveredItems = new ArrayList<>();
+
+        for (MenuItem menuItem : testingMenu.getItems()) {
+            var data = menuItem.getUserData();
+            if (data instanceof EditorAction) {
+                discoveredItems.add((EditorAction) data);
+            }
+        }
+
+        Assertions.assertEquals(3, discoveredItems.size(),
+                "Not all action items are added to menu");
+        Assertions.assertEquals(action1, discoveredItems.get(0),
+                "First action is not action1, which should be placed on top of the menu");
+        Assertions.assertEquals(action3, discoveredItems.get(1),
+                "Second action is not action3, which should be placed in the middle of the menu");
+        Assertions.assertEquals(action2, discoveredItems.get(2),
+                "Third action is not action2, which should be placed on the bottom of the menu");
+    }
+
+    private EditorAction createAbstractActionImplementation() {
+        return new EditorAbstractAction(null, EditorTextResources.EMPTY, null) {
+            @Override
+            protected @NotNull MenuItem getAsMenuItemImpl() {
+                return new YiMenuItem(getName());
+            }
+
+            @Override
+            protected @NotNull Node getAsComponentImpl() {
+                return new YiButton(getName());
+            }
+
+            @Override
+            protected void onIconUpdate(ImageView newIcon) {
+
+            }
+
+            @Override
+            protected void onNameUpdate(TextResource newName) {
+
+            }
+
+            @Override
+            protected void onEnabledStateUpdate(boolean isEnabledNow) {
+
+            }
+
+            @Override
+            protected void onVisibilityUpdate(boolean isVisibleNow) {
+
+            }
+        };
+    }
+
+}

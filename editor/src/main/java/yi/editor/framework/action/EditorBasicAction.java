@@ -17,14 +17,14 @@ import java.util.function.Consumer;
  *
  * @see EditorRadioAction Radio-option actions
  */
-public class EditorAtomicAction extends EditorAbstractAction {
+public class EditorBasicAction extends EditorAbstractAction {
 
-    public EditorAtomicAction(TextResource name, @Nullable Consumer<EditorActionHelper> action) {
+    public EditorBasicAction(TextResource name, @Nullable Consumer<EditorActionHelper> action) {
         this(null, name, action);
     }
 
-    public EditorAtomicAction(@Nullable EditorActionManager manager, TextResource name,
-                              @Nullable Consumer<EditorActionHelper> action) {
+    public EditorBasicAction(@Nullable EditorActionManager manager, TextResource name,
+                             @Nullable Consumer<EditorActionHelper> action) {
         super(manager, name, action);
     }
 

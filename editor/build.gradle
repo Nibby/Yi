@@ -90,5 +90,6 @@ task testUi(type: Test) {
 }
 
 dependencies {
+    testUiCompile sourceSets.main.output
     testUiImplementation rootProject.ext.javaFxDependencies.testUiImplementation
 }
