@@ -5,10 +5,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import org.jetbrains.annotations.NotNull;
-import yi.component.i18n.TextResource;
-import yi.component.utilities.GuiUtilities;
-import yi.component.utilities.KeyModifier;
-import yi.component.utilities.SystemUtilities;
+import yi.common.i18n.TextResource;
+import yi.common.utilities.GuiUtilities;
+import yi.component.KeyModifier;
+import yi.common.utilities.SystemUtilities;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;

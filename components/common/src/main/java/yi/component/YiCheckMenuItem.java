@@ -3,8 +3,8 @@ package yi.component;
 import javafx.scene.Node;
 import javafx.scene.control.CheckMenuItem;
 import org.jetbrains.annotations.Nullable;
-import yi.component.i18n.I18n;
-import yi.component.i18n.TextResource;
+import yi.common.i18n.I18n;
+import yi.common.i18n.TextResource;
 
 public class YiCheckMenuItem extends CheckMenuItem implements YiComponent {
 

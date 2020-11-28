@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import yi.component.FontManager;
-import yi.component.utilities.ComparisonUtilities;
+import yi.common.utilities.ComparisonUtilities;
 import yi.core.go.*;
 
 import java.util.*;

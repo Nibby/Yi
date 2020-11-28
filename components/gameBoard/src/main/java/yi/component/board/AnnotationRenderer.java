@@ -11,8 +11,8 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import org.jetbrains.annotations.Nullable;
 import yi.component.FontManager;
-import yi.component.utilities.ComparisonUtilities;
-import yi.component.utilities.ShapeUtilities;
+import yi.common.utilities.ComparisonUtilities;
+import yi.common.utilities.ShapeUtilities;
 import yi.core.go.Annotation;
 import yi.core.go.StoneColor;
 

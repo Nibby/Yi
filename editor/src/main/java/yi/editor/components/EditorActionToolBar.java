@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.component.YiToggleButton;
-import yi.component.i18n.TextResource;
+import yi.common.i18n.TextResource;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
 import yi.editor.EditorTool;
