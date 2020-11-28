@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
-import yi.component.i18n.TextResource;
+import yi.common.i18n.TextResource;
 import yi.editor.AcceleratorId;
 import yi.editor.EditorFrame;
 import yi.editor.TextKeys;

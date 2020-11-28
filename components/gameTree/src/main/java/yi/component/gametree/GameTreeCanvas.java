@@ -8,7 +8,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.jetbrains.annotations.Nullable;
-import yi.component.utilities.GuiUtilities;
+import yi.common.utilities.GuiUtilities;
 import yi.core.go.GameNode;
 import yi.core.go.GameNodeType;
 

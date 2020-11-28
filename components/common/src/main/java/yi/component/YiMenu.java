@@ -4,8 +4,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import org.jetbrains.annotations.Nullable;
-import yi.component.i18n.I18n;
-import yi.component.i18n.TextResource;
+import yi.common.i18n.I18n;
+import yi.common.i18n.TextResource;
 
 /**
  * Wrapper for {@link Menu} with localised text support.

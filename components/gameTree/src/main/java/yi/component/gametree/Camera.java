@@ -4,7 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Dimension2D;
 import javafx.util.Duration;
-import yi.component.utilities.ComparisonUtilities;
+import yi.common.utilities.ComparisonUtilities;
 
 import java.util.HashSet;
 import java.util.Set;

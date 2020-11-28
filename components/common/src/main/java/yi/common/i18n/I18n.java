@@ -1,4 +1,4 @@
-package yi.component.i18n;
+package yi.common.i18n;
 
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;

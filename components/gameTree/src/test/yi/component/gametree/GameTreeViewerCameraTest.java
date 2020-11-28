@@ -2,7 +2,7 @@ package yi.component.gametree;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import yi.component.utilities.ComparisonUtilities;
+import yi.common.utilities.ComparisonUtilities;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
