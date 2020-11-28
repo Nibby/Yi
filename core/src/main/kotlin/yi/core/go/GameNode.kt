@@ -69,9 +69,9 @@ class GameNode constructor(val delta: StateDelta) {
      *
      * @return A chain of nodes that led up to the current node, starting from the root node.
      */
-    fun getMoveHistory(): LinkedList<GameNode> {
+    fun getMoveHistory(): List<GameNode> {
         cachedMoveHistory?.let {
-            return it
+            return Collections.unmodifiableList(it)
         }
 
         val path = LinkedList<GameNode>()

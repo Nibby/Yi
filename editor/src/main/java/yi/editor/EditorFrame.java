@@ -6,6 +6,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.component.ValueListener;
+import yi.component.ValueListenerManager;
 import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
@@ -15,10 +17,11 @@ import yi.component.utilities.SystemUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
-import yi.editor.components.*;
+import yi.editor.components.ContentLayout;
+import yi.editor.components.EditorBoardArea;
+import yi.editor.components.EditorMenuBar;
+import yi.editor.components.EditorToolBar;
 import yi.editor.settings.Settings;
-import yi.component.ValueListener;
-import yi.component.ValueListenerManager;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -35,9 +38,7 @@ public class EditorFrame extends Stage {
     private final ValueListenerManager<ContentLayout> contentLayoutValueListeners = new ValueListenerManager<>();
     private final ValueListenerManager<GameModel> gameModelValueListeners = new ValueListenerManager<>();
 
-    private final GameBoardViewer boardViewer;
-    private final EditorActionToolBar editorActionToolBar;
-    private final GameBoardViewerComposite compositeViewer;
+    private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
     private GameModel gameModel;
 
@@ -55,20 +56,26 @@ public class EditorFrame extends Stage {
         treeViewerSettings.setNodeWithCommentaryColor(GuiUtilities.getColor(87, 125, 186));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
 
-        boardViewer = new GameBoardViewer();
-        Settings.applySavedBoardSettings(boardViewer);
-        enableDragAndDropToOpenFile(boardViewer);
+        menuBar = new EditorMenuBar(this);
+        toolBar = new EditorToolBar();
+
+        boardArea = new EditorBoardArea();
+        enableDragAndDropToOpenFile(boardArea.getGameBoardViewer());
 
         treeViewer = new GameTreeViewer();
         treeViewer.setSettings(treeViewerSettings);
 
-        menuBar = new EditorMenuBar(this);
-        toolBar = new EditorToolBar();
+        addGameModelChangeListener(newModel -> {
+            boardArea.setGameModel(newModel);
+            treeViewer.setGameModel(newModel);
+        });
 
-        editorActionToolBar = new EditorActionToolBar();
-        editorActionToolBar.addToolSelectionListener(this::setTool);
-
-        compositeViewer = new GameBoardViewerComposite(boardViewer, editorActionToolBar);
+        treeViewer.addHighlightedNodeChangeListener(boardArea::onHighlightedNodeChange);
+        boardArea.getGameBoardViewer().addPreviewNodeChangeListener(previewNode -> {
+            if (previewNode != treeViewer.getHighlightedNode()) {
+                treeViewer.setHighlightedNode(previewNode);
+            }
+        });
 
         setLayout(layout);
         setGameModel(gameModel);
@@ -99,13 +106,7 @@ public class EditorFrame extends Stage {
             this.gameModel.dispose();
         }
         this.gameModel = newModel;
-        this.gameModel.getInfo().addChangeListener(editorActionToolBar::onGameInfoUpdate);
-
-        boardViewer.setGameModel(newModel);
-        treeViewer.setGameModel(newModel);
-        editorActionToolBar.onGameModelChange(newModel);
-
-        gameModelValueListeners.fireValueChanged(newModel);
+        this.gameModelValueListeners.fireValueChanged(newModel);
     }
 
     public @NotNull GameModel getGameModel() {
@@ -115,16 +116,12 @@ public class EditorFrame extends Stage {
         return gameModel;
     }
 
-    private void setTool(EditorTool tool) {
-        tool.apply(boardViewer);
-    }
-
     private boolean addedMenuBarOnce = false;
     public void setLayout(@NotNull ContentLayout newLayout) {
         if (this.contentLayout == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        editorActionToolBar.setContentForLayout(newLayout, gameModel);
+        boardArea.setContentForLayout(newLayout, gameModel);
 
         var content = newLayout.getContent(this);
 
@@ -195,12 +192,12 @@ public class EditorFrame extends Stage {
     }
 
     private void installUndoRedoAccelerators(YiScene newScene) {
-        AcceleratorManager.getAccelerator(AcceleratorId.UNDO).install(newScene, boardViewer::requestUndo);
-        AcceleratorManager.getAccelerator(AcceleratorId.REDO).install(newScene, boardViewer::requestRedo);
+        AcceleratorManager.getAccelerator(AcceleratorId.UNDO).install(newScene, boardArea::requestUndo);
+        AcceleratorManager.getAccelerator(AcceleratorId.REDO).install(newScene, boardArea::requestRedo);
     }
 
     public Parent getBoardComponent() {
-        return compositeViewer;
+        return boardArea;
     }
 
     public Parent getTreeComponent() {
@@ -211,8 +208,8 @@ public class EditorFrame extends Stage {
         return contentLayout;
     }
 
-    public GameBoardViewer getBoardViewer() {
-        return boardViewer;
+    public EditorBoardArea getBoardArea() {
+        return boardArea;
     }
 
     public void addContentLayoutChangeListener(ValueListener<ContentLayout> listener) {

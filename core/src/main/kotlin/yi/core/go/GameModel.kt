@@ -331,7 +331,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
             currentStateHash = node.getStateHash()
         }
 
-        annotations = pathToRoot.last.getAnnotationsCopy()
+        annotations = pathToRoot[pathToRoot.lastIndex].getAnnotationsCopy()
 
         val gameState = GameState(this, positionState, gameNode, prisonersWhite,
                 prisonersBlack, annotations, currentStateHash)

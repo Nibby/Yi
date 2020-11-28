@@ -34,5 +34,4 @@ class GameModelTest {
 
         Assertions.assertEquals(whereCurrentNodeShouldBeAt, model.getCurrentNode())
     }
-
 }

@@ -187,7 +187,7 @@ public class EditorActionToolBar extends ToolBar {
         return spacer;
     }
 
-    public void onGameModelChange(@NotNull GameModel newModel) {
+    public void setGameModel(@NotNull GameModel newModel) {
         newModel.onCurrentNodeChange().addListener(newValue -> updateMoveInfo(newValue.getNode().getMoveNumber()));
 
         updateGameModelInfo(newModel);

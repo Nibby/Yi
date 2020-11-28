@@ -57,10 +57,10 @@ public final class AnnotationRenderer {
 
         // TODO: Work out how to color the annotation based on the underlying stone and board texture
         Color color;
-        var stone = manager.getGameModel()
-                           .getCurrentGameState()
-                           .getBoardPosition()
-                           .getStoneColorAt(annotation.getX(), annotation.getY());
+        var nodeToShow = manager.getNodeToShow();
+        var gameState = manager.getGameModel().getGameState(nodeToShow);
+        var gamePosition = gameState.getBoardPosition();
+        var stone = gamePosition.getStoneColorAt(annotation.getX(), annotation.getY());
 
         if (stone == StoneColor.BLACK) {
             color = Color.WHITE;
@@ -90,8 +90,10 @@ public final class AnnotationRenderer {
             case LABEL:
                 assert annotation instanceof Annotation.Label;
                 Objects.requireNonNull(font, "Annotation font cannot be null when drawing labels");
+                double[] centerPoint = manager.size.getGridRenderPosition(annotation.getX(), annotation.getY(), 0);
+                var labelSize = stoneSize / 3 * 2;
                 renderLabel(g, ((Annotation.Label) annotation).getText(), font,
-                        annoBounds.getX(), annoBounds.getY(), annoBounds.getWidth(), annoBounds.getHeight(),
+                        centerPoint[0], centerPoint[1], annoBounds.getWidth(), annoBounds.getHeight(),
                         stone == StoneColor.NONE);
                 break;
             case FADE:
@@ -146,13 +148,16 @@ public final class AnnotationRenderer {
     private static final Color ANNOTATION_BACKGROUND_COLOR = new Color(1d, 1d, 1d, 0.2d);
 
     private static void renderLabel(GraphicsContext g, String text, Font font,
-                                    double x, double y, double width, double height,
+                                    double centerX, double centerY, double width, double height,
                                     boolean drawBackground) {
         if (drawBackground) {
             var textFill = g.getFill();
-            var overflow = width / 4;
+            var overflow = width/2;
             g.setFill(ANNOTATION_BACKGROUND_COLOR);
-            g.fillOval(x-overflow, y-overflow, width+overflow*2, height+overflow*2);
+            g.fillOval(centerX - width/2 -overflow,
+                    centerY - width/2 - overflow,
+                    width + 2*overflow,
+                    height + 2*overflow);
             g.setFill(textFill);
         }
 
@@ -161,9 +166,9 @@ public final class AnnotationRenderer {
         metricsTest.setFont(font);
         Bounds bounds = metricsTest.getBoundsInLocal();
         g.fillText(text,
-                x + width / 2 - bounds.getWidth() / 2,
-                y + height / 2 - bounds.getHeight() / 2 + g.getFont().getSize(),
-                width);
+                centerX - bounds.getWidth() / 2,
+                centerY - bounds.getHeight() / 2 + g.getFont().getSize(),
+                bounds.getWidth());
     }
 
     private static void renderArrow(GraphicsContext g, double xStart, double yStart,
@@ -261,7 +266,7 @@ public final class AnnotationRenderer {
      * @return Font used to draw label annotations.
      */
     public static Font getAndCacheLabelFont(GameBoardSize size, Class<?> callerClass) {
-        double expectedLabelFontSize = size.getStoneSizeInPixels() / 2d;
+        double expectedLabelFontSize = size.getStoneSizeInPixels();
         Optional<Font> cachedFont = FontManager.getCachedFont(callerClass);
         if (cachedFont.isPresent()) {
             double cachedSize = cachedFont.get().getSize();
