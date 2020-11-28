@@ -5,7 +5,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -13,6 +16,8 @@ import java.util.Optional;
  * Performs rapid repaints of lightweight objects (such as the transparent intersection cursor).
  */
 final class GameBoardInputCanvas extends GameBoardCanvas {
+
+    private Map<Integer, GameNode> intersectionsWithPreviewNode = new HashMap<>();
 
     private int cursorX = 0, cursorY = 0;
     private boolean renderCursor = false;
@@ -40,7 +45,43 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
     @Override
     public void onGameModelSet(GameModel newModel, GameBoardManager manager) {
+        newModel.onCurrentNodeChange().addListener(event -> updateIntersectionsWithPreviewNode(event.getNode()));
+    }
 
+    private void updateIntersectionsWithPreviewNode(GameNode currentNode) {
+        // TODO: Extract this into a setting
+        final int MAX_NUMBER_OF_MOVES_IN_PREVIEW = 20;
+
+        intersectionsWithPreviewNode.clear();
+        if (currentNode.hasAlternativeNextMoves()) {
+            // TODO: Support OGS AI Reviews (1 stone edit rather than primary move)
+            var tempIntersectionMap = new HashMap<Integer, GameNode>(currentNode.getNextNodes().size());
+
+            for (GameNode nextNode : currentNode.getNextNodes()) {
+                var move = nextNode.getPrimaryMove();
+                if (move != null) {
+                    var nodeToStore = nextNode;
+
+                    for (int i = 0; i < MAX_NUMBER_OF_MOVES_IN_PREVIEW; ++i) {
+                        if (nodeToStore.isLastMoveInThisVariation()) {
+                            break;
+                        } else {
+                            var continuation = nodeToStore.getNextNodeInMainBranch();
+                            if (continuation != null) {
+                                nodeToStore = continuation;
+                            }
+                        }
+                    }
+
+                    var position = move.getY() * manager.getGameModel().getBoardHeight() + move.getX();
+                    tempIntersectionMap.put(position, nodeToStore);
+                }
+            }
+
+            if (tempIntersectionMap.size() > 1) {
+                intersectionsWithPreviewNode = tempIntersectionMap;
+            }
+        }
     }
 
     @Override
@@ -65,7 +106,23 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
             }
         }
 
+        if (e.getEventType() == MouseEvent.MOUSE_MOVED) {
+            maybeShowVariationPreview(e);
+        }
+
         render(manager);
+    }
+
+    private void maybeShowVariationPreview(MouseEvent e) {
+        var mouseOverPosition = cursorY * manager.getGameModel().getBoardHeight() + cursorX;
+        GameNode previewNode = intersectionsWithPreviewNode.get(mouseOverPosition);
+
+        if (manager.isShowingCurrentPosition()
+                || (previewNode != null && previewNode != manager.getNodeToShow())) {
+            manager.setPreviewNode(previewNode);
+        } else if (previewNode == null) {
+            manager.setPreviewNode(null);
+        }
     }
 
     private void onKeyEvent(KeyEvent e) {

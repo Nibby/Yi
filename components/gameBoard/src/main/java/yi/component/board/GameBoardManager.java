@@ -1,9 +1,14 @@
 package yi.component.board;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import yi.component.ValueListener;
+import yi.component.ValueListenerManager;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Main controller class for {@link GameBoardCanvas} state. Receives UI and game events and manages the interaction
@@ -15,8 +20,11 @@ public final class GameBoardManager {
     public final GameBoardView view = new GameBoardView();
     public final GameModelEditor edit = new GameModelEditor();
 
+    private GameNode previewNode = null;
     private boolean debugMode = false;
     private GameModel model = null;
+
+    private final ValueListenerManager<GameNode> previewNodeChangeListener = new ValueListenerManager<>();
 
     GameBoardManager() { }
 
@@ -51,5 +59,38 @@ public final class GameBoardManager {
 
     public boolean hasGameModel() {
         return model != null;
+    }
+
+    /**
+     * Sets a node whose position will be rendered on the board in lieu of the
+     * current node. The value may be {@code null}, in which case the current
+     * node position (as given by {@link GameModel#getCurrentNode()} will be
+     * drawn instead.
+     *
+     * @param node Node whose position to be rendered.
+     */
+    public void setPreviewNode(@Nullable GameNode node) {
+        this.previewNode = node;
+        previewNodeChangeListener.fireValueChanged(node);
+    }
+
+    /**
+     * @return Node whose position should be drawn over the current node position
+     * on the game board.
+     */
+    public Optional<GameNode> getPreviewNode() {
+        return Optional.ofNullable(previewNode);
+    }
+
+    public GameNode getNodeToShow() {
+        return getPreviewNode().orElse(getGameModel().getCurrentNode());
+    }
+
+    public boolean isShowingCurrentPosition() {
+        return getNodeToShow() == getGameModel().getCurrentNode();
+    }
+
+    public void addPreviewNodeChangeListener(ValueListener<GameNode> listener) {
+        previewNodeChangeListener.addListener(listener);
     }
 }

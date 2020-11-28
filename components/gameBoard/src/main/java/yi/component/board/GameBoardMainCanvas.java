@@ -12,10 +12,7 @@ import yi.component.FontManager;
 import yi.component.utilities.ComparisonUtilities;
 import yi.core.go.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -341,7 +338,10 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardStoneRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
-            var boardPosition = manager.getGameModel().getCurrentGameState().getBoardPosition();
+            var nodeToShow = manager.getNodeToShow();
+            var stateAtThatNode = manager.getGameModel().getGameState(nodeToShow);
+            var boardPosition = stateAtThatNode.getBoardPosition();
+
             StoneColor[] boardState = boardPosition.getIntersectionState();
             int boardWidth = manager.getGameModel().getBoardWidth();
 
@@ -360,9 +360,61 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     private static final class BoardAnnotationRenderer {
 
         public static void render(GraphicsContext g, GameBoardManager manager) {
+            if (manager.isShowingCurrentPosition()) {
+                renderAnnotationsOnCurrentMove(g, manager);
+            } else {
+                // Previewing
+                renderMoveNumbersFromCurrentToShownNode(g, manager);
+            }
+        }
+
+        private static void renderMoveNumbersFromCurrentToShownNode(GraphicsContext g, GameBoardManager manager) {
+            var current = manager.getGameModel().getCurrentNode();
+            var shown = manager.getNodeToShow();
+
+            assert current != shown;
+
+            if (shown.getMoveNumber() > current.getMoveNumber()) {
+                List<GameNode> historyToShownNode = new LinkedList<>(shown.getMoveHistory());
+                assert historyToShownNode.size() >= 1;
+                historyToShownNode.remove(0);
+                historyToShownNode.subList(0, current.getMoveNumber()).clear();
+
+                var font = getLabelFont(manager);
+                int step = 1;
+
+                // Only want the last annotation on that intersection to show up
+                // TODO: Find somewhere to represent the ko re-captures whose move number
+                //       did not show because a later move was played on the same spot.
+                var intersectionWithAnnotations = new HashMap<Integer, Annotation>();
+
+                for (GameNode node : historyToShownNode) {
+                    Stone move = node.getPrimaryMove();
+                    if (move != null) {
+                        var x = move.getX();
+                        var y = move.getY();
+                        intersectionWithAnnotations.put(y * manager.getGameModel().getBoardHeight() + x,
+                                new Annotation.Label(x, y, String.valueOf(step)));
+                    } else {
+                        break;
+                    }
+                    ++step;
+                }
+
+                for (Integer position : intersectionWithAnnotations.keySet()) {
+                    AnnotationRenderer.render(intersectionWithAnnotations.get(position), g, manager, font);
+                }
+            }
+        }
+
+        private static Font getLabelFont(GameBoardManager manager) {
+            return AnnotationRenderer.getAndCacheLabelFont(manager.size, BoardAnnotationRenderer.class);
+        }
+
+        private static void renderAnnotationsOnCurrentMove(GraphicsContext g, GameBoardManager manager) {
             // Not using a copy because this is performance-sensitive code
             Collection<Annotation> annotations = manager.getGameModel().getCurrentNode().getAnnotationsOriginal();
-            var font = AnnotationRenderer.getAndCacheLabelFont(manager.size, BoardAnnotationRenderer.class);
+            var font = getLabelFont(manager);
 
             for (Annotation annotation : annotations) {
                 AnnotationRenderer.render(annotation, g, manager, font);
@@ -391,48 +443,51 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             var model = manager.getGameModel();
             var currentNode = model.getCurrentNode();
             var children = currentNode.getNextNodes();
+
+            var primaryMoveVariations = 0;
             for (GameNode child : children) {
-                Stone primaryMove = child.getPrimaryMove();
-                boolean drawIt = false;
-                int x = -1;
-                int y = -1;
-
-                StoneColor color = null;
-
-                if (primaryMove != null) {
-                    color = primaryMove.getColor();
-                    x = primaryMove.getX();
-                    y = primaryMove.getY();
+                if (child.getPrimaryMove() != null) {
+                    ++primaryMoveVariations;
                 }
-                // I have considered this, because OGS adds AI-review moves as
-                // a stone edit rather than a primary move. But I think it is
-                // more confusing on the board if we add it.
-//                else {
-//                    var edits = child.getStoneEdits();
-//                    if (edits.size() == 1) {
-//                        Stone edit = edits.iterator().next();
-//                        color = edit.getColor();
-//                        x = edit.getX();
-//                        y = edit.getY();
-//                    }
-//                }
-
-                if (color == StoneColor.BLACK) {
-                    g.setFill(NEXT_MOVE_BLACK_MARKER);
-                    drawIt = true;
-                } else if (color == StoneColor.WHITE) {
-                    g.setFill(NEXT_MOVE_WHITE_MARKER);
-                    drawIt = true;
+                if (primaryMoveVariations > 1) {
+                    break;
                 }
+            }
 
-                if (drawIt) {
-                    assert x != -1 && y != -1;
+            // TODO: OGS-style AI-review branches are not supported in the next move marker
+            //       because it uses a stone-edit node for each AI move.
+            if (primaryMoveVariations > 1) {
+                for (GameNode child : children) {
+                    Stone primaryMove = child.getPrimaryMove();
+                    boolean drawIt = false;
+                    int x = -1;
+                    int y = -1;
 
-                    var size = manager.size.getStoneSizeInPixels() / 2d;
-                    double[] pos = manager.size.getGridRenderPosition(x, y, size);
-                    var drawX = pos[0];
-                    var drawY = pos[1];
-                    g.fillOval(drawX, drawY, size, size);
+                    StoneColor color = null;
+
+                    if (primaryMove != null) {
+                        color = primaryMove.getColor();
+                        x = primaryMove.getX();
+                        y = primaryMove.getY();
+                    }
+
+                    if (color == StoneColor.BLACK) {
+                        g.setFill(NEXT_MOVE_BLACK_MARKER);
+                        drawIt = true;
+                    } else if (color == StoneColor.WHITE) {
+                        g.setFill(NEXT_MOVE_WHITE_MARKER);
+                        drawIt = true;
+                    }
+
+                    if (drawIt) {
+                        assert x != -1 && y != -1;
+
+                        var size = manager.size.getStoneSizeInPixels() / 2d;
+                        double[] pos = manager.size.getGridRenderPosition(x, y, size);
+                        var drawX = pos[0];
+                        var drawY = pos[1];
+                        g.fillOval(drawX, drawY, size, size);
+                    }
                 }
             }
         }

@@ -97,7 +97,7 @@ public class EditorMenuBar extends MenuBar {
             toggleCoordinates.setSelected(Settings.general.isShowingBoardCoordinates());
             toggleCoordinates.setOnAction(e -> {
                 var showIt = toggleCoordinates.isSelected();
-                frame.getBoardViewer().setShowCoordinates(showIt);
+                frame.getBoardArea().getGameBoardViewer().setShowCoordinates(showIt);
                 Settings.general.setShowBoardCoordinates(showIt);
             });
             AcceleratorManager.getAccelerator(AcceleratorId.TOGGLE_BOARD_COORDINATES).install(toggleCoordinates);

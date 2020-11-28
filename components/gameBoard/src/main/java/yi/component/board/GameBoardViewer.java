@@ -1,6 +1,5 @@
 package yi.component.board;
 
-import javafx.beans.Observable;
 import javafx.scene.image.Image;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -8,10 +7,12 @@ import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.component.CanvasContainer;
+import yi.component.ValueListener;
 import yi.component.YiComponent;
 import yi.component.board.editmodes.AbstractEditMode;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 import yi.core.go.NodeEvent;
 
 import java.io.File;
@@ -44,6 +45,8 @@ public final class GameBoardViewer implements YiComponent {
             manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), manager.getGameModel());
             renderAll();
         });
+
+        manager.addPreviewNodeChangeListener(newPreviewNode -> renderAll());
 
         setEditable(true);
     }
@@ -189,5 +192,13 @@ public final class GameBoardViewer implements YiComponent {
 
     public boolean isShowingBoardCoordinates() {
         return manager.view.coordinateLabelPosition != CoordinateLabelPosition.NONE;
+    }
+
+    public void addPreviewNodeChangeListener(ValueListener<GameNode> listener) {
+        manager.addPreviewNodeChangeListener(listener);
+    }
+
+    public void setPreviewNode(@Nullable GameNode node) {
+        manager.setPreviewNode(node);
     }
 }

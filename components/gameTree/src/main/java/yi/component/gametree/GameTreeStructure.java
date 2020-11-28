@@ -144,6 +144,14 @@ final class GameTreeStructure {
         return treeElementManager.setHighlightedGrid(x, y);
     }
 
+    public void setHighlightedNode(@Nullable GameNode node) {
+        treeElementManager.setHighlightedNode(node);
+    }
+
+    public @Nullable GameNode getPreviewNode() {
+        return treeElementManager.getHighlightedNode();
+    }
+
     private static final class TreeElementManager {
 
         private List<TreeElement> allElements = new ArrayList<>();
@@ -206,6 +214,29 @@ final class GameTreeStructure {
             });
 
             return success.get();
+        }
+
+        /**
+         * @return Currently highlighted node if one exists.
+         */
+        public @Nullable GameNode getHighlightedNode() {
+            if(currentHighlight != null
+                    && currentHighlight.isHighlighted()
+                    && currentHighlight instanceof TreeNodeElement) {
+
+                return ((TreeNodeElement) currentHighlight).getNode();
+            } else {
+                return null;
+            }
+        }
+
+        public void setHighlightedNode(@Nullable GameNode node) {
+            if (node == null) {
+                setHighlightedGrid(-1, -1);
+            } else {
+                TreeNodeElement nodeElement = gameNodeToTreeElement.get(node);
+                setHighlightedGrid(nodeElement.getGridX(), nodeElement.getGridY());
+            }
         }
     }
 

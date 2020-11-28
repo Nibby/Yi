@@ -6,7 +6,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import yi.component.CanvasContainer;
+import yi.component.ValueListener;
+import yi.component.ValueListenerManager;
 import yi.component.YiComponent;
 import yi.core.go.EventListener;
 import yi.core.go.GameModel;
@@ -30,6 +33,8 @@ public final class GameTreeViewer implements YiComponent {
     private GameTreeStructure treeStructure;
     private final GameTreeElementSize elementSize;
 
+    private final ValueListenerManager<GameNode> highlightedNodeChangeListeners = new ValueListenerManager<>();
+
     public GameTreeViewer() {
         canvas = new GameTreeCanvas();
         canvas.addInputHandler(new CanvasInputHandler());
@@ -50,8 +55,8 @@ public final class GameTreeViewer implements YiComponent {
         this.settings = Objects.requireNonNull(settings);
     }
 
-    private void updateCameraAndRender(GameNode currentNode) {
-        treeStructure.getTreeNodeElementForNode(currentNode)
+    private void updateCameraAndRender(GameNode nodeToCenter) {
+        treeStructure.getTreeNodeElementForNode(nodeToCenter)
                 .ifPresent(treeElement -> camera.setCenterElementWithAnimation(treeElement, elementSize.getGridSize()));
 
         render();
@@ -60,8 +65,9 @@ public final class GameTreeViewer implements YiComponent {
     private void render() {
         var elements = getVisibleElementsInViewport();
         var currentNode = gameModel.getCurrentNode();
+        var previewNode = treeStructure.getPreviewNode();
 
-        canvas.render(settings, camera, elements, currentNode, elementSize);
+        canvas.render(settings, camera, elements, currentNode, previewNode, elementSize);
     }
 
     private List<TreeNodeElement> getVisibleElementsInViewport() {
@@ -74,9 +80,6 @@ public final class GameTreeViewer implements YiComponent {
         var startY = (int) Math.floor(offsetY / gridHeight) - 1;
         var endX = startX + (int) Math.ceil(canvas.getWidth() / gridWidth) + 2;
         var endY = startY + (int) Math.ceil(canvas.getHeight() / gridHeight) + 2;
-
-//        System.out.println(offsetX + " " + offsetY + " , " + canvas.getWidth() + " " + canvas.getHeight());
-//        System.out.println(startX + " " + startY + " " + endX + " " + endY);
 
         return treeStructure.getNodeElementsWithinVerticalRegion(startX, startY, endX, endY);
     }
@@ -106,11 +109,33 @@ public final class GameTreeViewer implements YiComponent {
         updateCameraAndRender(model.getCurrentNode());
     }
 
+    /**
+     * Subscribes to current highlighted node update events. Highlighted node may be
+     * {@code null} if none is highlighted.
+     *
+     * @param listener New listener to add.
+     */
+    public void addHighlightedNodeChangeListener(ValueListener<GameNode> listener) {
+        highlightedNodeChangeListeners.addListener(listener);
+    }
+
+    public void removeHighlightedNodeChangeListener(ValueListener<GameNode> listener) {
+        highlightedNodeChangeListeners.removeListener(listener);
+    }
+
     @Override
     public Parent getComponent() {
         return component;
     }
 
+    public @Nullable GameNode getHighlightedNode() {
+        return treeStructure.getPreviewNode();
+    }
+
+    public void setHighlightedNode(@Nullable GameNode node) {
+        treeStructure.setHighlightedNode(node);
+        updateCameraAndRender(node != null ? node : this.gameModel.getCurrentNode());
+    }
 
     /*
         Put this here to access all the required fields without introducing excessive coupling to the
@@ -121,6 +146,8 @@ public final class GameTreeViewer implements YiComponent {
         private double dragStartX = 0;
         private double dragStartY = 0;
         private boolean isDragging = false;
+
+        private GameNode lastFiredHighlightedNodeValue = null;
 
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -135,7 +162,21 @@ public final class GameTreeViewer implements YiComponent {
                 canvas.setCursor(Cursor.HAND);
             }
 
+            maybeFireHighlightedNodeChangeEvent(hasItem);
             render();
+        }
+
+        private void maybeFireHighlightedNodeChangeEvent(boolean hasItem) {
+            GameNode newValue = treeStructure.getPreviewNode();
+            if (hasItem) {
+                if (lastFiredHighlightedNodeValue != newValue) {
+                    highlightedNodeChangeListeners.fireValueChanged(newValue);
+                }
+                lastFiredHighlightedNodeValue = newValue;
+            } else if (lastFiredHighlightedNodeValue != null) {
+                lastFiredHighlightedNodeValue = null;
+                highlightedNodeChangeListeners.fireValueChanged(null);
+            }
         }
 
         @Override
