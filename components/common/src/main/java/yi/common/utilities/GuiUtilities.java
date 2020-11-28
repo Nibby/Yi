@@ -1,5 +1,7 @@
 package yi.common.utilities;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -8,6 +10,7 @@ import javafx.scene.paint.Color;
 import yi.component.KeyModifier;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -93,5 +96,19 @@ public final class GuiUtilities {
         return modifierDown ? KeyCombination.ModifierValue.DOWN : KeyCombination.ModifierValue.UP;
     }
 
+    public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass) {
+        try {
+            var resourceStream = aClass.getResourceAsStream(resourceFile);
+            var iconImage = new Image(resourceStream);
+            var icon = new ImageView(iconImage);
 
+            int ICON_SIZE = 16;
+            icon.setFitWidth(ICON_SIZE);
+            icon.setFitHeight(ICON_SIZE);
+
+            return Optional.of(icon);
+        } catch (NullPointerException e) {
+            return Optional.empty();
+        }
+    }
 }

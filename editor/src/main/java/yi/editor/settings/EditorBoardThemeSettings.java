@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * Configurable options related to the aesthetics of the game board.
  */
-public final class GameBoardThemeSettings extends SettingsModule {
+public final class EditorBoardThemeSettings extends EditorSettingsModule {
 
     private static final String THEME_SETTINGS_FILE = "theme.json";
 
@@ -42,8 +42,8 @@ public final class GameBoardThemeSettings extends SettingsModule {
 
     @Override
     public void load() {
-        Path themeDirectory = Settings.getRootPath()
-                                      .resolve(Settings.THEME_DIRECTORY_NAME)
+        Path themeDirectory = EditorSettings.getRootPath()
+                                      .resolve(EditorSettings.THEME_DIRECTORY_NAME)
                                       .resolve("board");
         if (!Files.exists(themeDirectory)) {
             try {
@@ -60,7 +60,7 @@ public final class GameBoardThemeSettings extends SettingsModule {
         }
 
         try {
-            Settings.readJSON(selectedThemeDirectory.resolve(THEME_SETTINGS_FILE))
+            EditorSettings.readJSON(selectedThemeDirectory.resolve(THEME_SETTINGS_FILE))
                     .ifPresent(settingsJson -> this.loadFromJson(selectedThemeDirectory, settingsJson));
         } catch (IOException e) {
             e.printStackTrace();
@@ -147,7 +147,7 @@ public final class GameBoardThemeSettings extends SettingsModule {
 
     // For convenience, since it's intuitive to assume the theme directory information is stored here.
     public String getSelectedThemeDirectory() {
-        return Settings.general.getSelectedBoardTheme();
+        return EditorSettings.general.getSelectedBoardTheme();
     }
 
     public static String getDefaultThemeDirectory() {

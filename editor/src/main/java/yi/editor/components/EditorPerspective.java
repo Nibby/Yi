@@ -3,17 +3,25 @@ package yi.editor.components;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Parent;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
-import yi.editor.AcceleratorId;
 import yi.editor.EditorFrame;
-import yi.editor.TextKeys;
+import yi.editor.EditorMainMenuType;
+import yi.editor.EditorTextResources;
+import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.action.EditorActionHelper;
+import yi.editor.framework.action.EditorActionManager;
+import yi.editor.framework.action.EditorRadioAction;
+import yi.editor.framework.action.EditorSubMenuAction;
+
+import java.util.function.Consumer;
 
 /**
  * A series of window component layout strategies depending on the editor use case.
  */
-public enum ContentLayout {
+public enum EditorPerspective {
 
     // Note: The enum name itself is stored and loaded from general preference files, changing its value
     //       will break backwards compatibility.
@@ -21,7 +29,7 @@ public enum ContentLayout {
     /**
      * A minimal layout that focuses on the game board.
      */
-    COMPACT(TextKeys.MENUITEM_PERSPECTIVE_COMPACT, AcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
+    COMPACT(EditorTextResources.MENUITEM_PERSPECTIVE_COMPACT, EditorAcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
         @Override
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
@@ -38,12 +46,17 @@ public enum ContentLayout {
         public Dimension2D getMinimumWindowSize() {
             return new Dimension2D(540, 600);
         }
+
+        @Override
+        protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
+            EditorPerspective.createPerspectiveAction(manager, this, submenu, 0.001d);
+        }
     },
 
     /**
      * An expansive layout that with in-depth editing tools.
      */
-    REVIEW(TextKeys.MENUITEM_PERSPECTIVE_REVIEW, AcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
+    REVIEW(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
         @Override
         public Parent getContent(EditorFrame frame) {
             var content = new BorderPane();
@@ -75,17 +88,24 @@ public enum ContentLayout {
         public Dimension2D getMinimumWindowSize() {
             return new Dimension2D(800, 600);
         }
+
+        @Override
+        protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
+            EditorPerspective.createPerspectiveAction(manager, this, submenu, 0.002d);
+        }
     };
 
+    private static final ToggleGroup MENU_ACTION_TOGGLE_GROUP = new ToggleGroup();
+
     private final TextResource friendlyName;
-    private final AcceleratorId acceleratorId;
+    private final EditorAcceleratorId acceleratorId;
 
     /**
      * Creates a new type of supported layout for {@link EditorFrame}.
      *
      * @param friendlyName User friendly name of this layout
      */
-    ContentLayout(TextResource friendlyName, AcceleratorId acceleratorId) {
+    EditorPerspective(TextResource friendlyName, EditorAcceleratorId acceleratorId) {
         this.friendlyName = friendlyName;
         this.acceleratorId = acceleratorId;
     }
@@ -102,7 +122,7 @@ public enum ContentLayout {
      *
      * @return The unique identifier for the accelerator for this layout.
      */
-    public AcceleratorId getAcceleratorId() {
+    public EditorAcceleratorId getAcceleratorId() {
         return acceleratorId;
     }
 
@@ -122,6 +142,7 @@ public enum ContentLayout {
      */
     public abstract Dimension2D getMinimumWindowSize();
 
+    protected abstract void createAction(EditorActionManager manager, EditorSubMenuAction submenu);
 
     /**
      * Each layout may display extra (or fewer) components which require a custom adequate
@@ -144,7 +165,7 @@ public enum ContentLayout {
      *
      * @return The default content layout.
      */
-    public static ContentLayout getDefaultValue() {
+    public static EditorPerspective getDefaultValue() {
         return COMPACT;
     }
 
@@ -154,11 +175,45 @@ public enum ContentLayout {
      * @return The enum value equivalent of the serialized value, or {@link #getDefaultValue()}
      *         if the value is malformed or unsupported.
      */
-    public static ContentLayout getValue(@Nullable String serializedValue) {
+    public static EditorPerspective getValue(@Nullable String serializedValue) {
         try {
-            return ContentLayout.valueOf(serializedValue);
+            return EditorPerspective.valueOf(serializedValue);
         } catch (IllegalArgumentException e) {
             return getDefaultValue(); // Fail gracefully to default options.
+        }
+    }
+
+    public static void initializeActions(EditorActionManager manager) {
+        var perspectiveSubmenu = new EditorSubMenuAction(manager, EditorTextResources.MENU_PERSPECTIVE);
+        perspectiveSubmenu.setInMainMenu(EditorMainMenuType.VIEW, 0d);
+
+        for (EditorPerspective p : values()) {
+            p.createAction(manager, perspectiveSubmenu);
+        }
+    }
+
+    private static EditorPerspective getPerspective(EditorActionManager manager) {
+        return getPerspective(manager.getHelper());
+    }
+
+    private static EditorPerspective getPerspective(EditorActionHelper helper) {
+        return helper.getEditorFrame().getPerspective();
+    }
+
+    private static void createPerspectiveAction(EditorActionManager manager, 
+                                                EditorPerspective perspective,
+                                                EditorSubMenuAction submenu,
+                                                double position) {
+
+        Consumer<EditorActionHelper> action = helper -> helper.getEditorFrame().setPerspective(perspective);
+        var editorAction = new EditorRadioAction(manager, perspective.getFriendlyName(), action);
+        editorAction.setInMainMenu(EditorMainMenuType.VIEW, position);
+        editorAction.setSelected(EditorPerspective.getPerspective(manager) == perspective);
+        editorAction.setMenuToggleGroup(MENU_ACTION_TOGGLE_GROUP);
+        editorAction.setAccelerator(perspective.getAcceleratorId());
+
+        if (submenu != null) {
+            submenu.addChildAction(editorAction);
         }
     }
 }

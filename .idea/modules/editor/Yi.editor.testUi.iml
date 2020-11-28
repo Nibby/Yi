@@ -3,7 +3,9 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../../build/editor/classes/java/testUi" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../editor/src/testUi" />
+    <content url="file://$MODULE_DIR$/../../../editor/src/testUi">
+      <sourceFolder url="file://$MODULE_DIR$/../../../editor/src/testUi" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.gameBoard.main" />

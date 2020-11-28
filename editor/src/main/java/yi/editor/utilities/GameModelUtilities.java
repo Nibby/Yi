@@ -2,7 +2,7 @@ package yi.editor.utilities;
 
 import yi.core.go.GameModel;
 import yi.core.go.StandardGameRules;
-import yi.editor.Yi;
+import yi.editor.EditorHelper;
 
 public final class GameModelUtilities {
 
@@ -22,7 +22,7 @@ public final class GameModelUtilities {
                                              float customKomi) {
         var model = new GameModel(width, height, ruleset);
         model.getInfo().setKomi(customKomi);
-        model.getInfo().setApplicationName(Yi.getProgramName() + " " + Yi.getVersion());
+        model.getInfo().setApplicationName(EditorHelper.getProgramName() + " " + EditorHelper.getVersion());
 
         return model;
     }

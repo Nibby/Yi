@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.board.GameBoardViewer;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
-import yi.editor.settings.Settings;
+import yi.editor.settings.EditorSettings;
 
 /**
  * Combines {@link yi.component.board.GameBoardViewer} with additional components
@@ -18,7 +18,7 @@ public class EditorBoardArea extends BorderPane {
 
     public EditorBoardArea() {
         board = new GameBoardViewer();
-        Settings.applySavedBoardSettings(board);
+        EditorSettings.applySavedBoardSettings(board);
 
         toolBar = new EditorActionToolBar();
         toolBar.addSelectedToolChangeListener(newTool -> newTool.apply(board));
@@ -44,7 +44,7 @@ public class EditorBoardArea extends BorderPane {
         toolBar.setGameModel(newModel);
     }
 
-    public void setContentForLayout(ContentLayout newLayout, GameModel gameModel) {
+    public void setContentForLayout(EditorPerspective newLayout, GameModel gameModel) {
         toolBar.setContentForLayout(newLayout, gameModel);
     }
 

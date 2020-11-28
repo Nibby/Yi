@@ -11,17 +11,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
-import yi.component.YiToggleButton;
 import yi.common.i18n.TextResource;
+import yi.common.utilities.GuiUtilities;
+import yi.component.YiToggleButton;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
+import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
-import yi.editor.TextKeys;
-import yi.editor.utilities.IconUtilities;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static yi.editor.TextKeys.*;
+import static yi.editor.EditorTextResources.*;
 
 /**
  * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
@@ -46,9 +46,9 @@ public class EditorActionToolBar extends ToolBar {
     private final YiToggleButton toolAnnotateArrow;
     private final YiToggleButton toolAnnotateDim;
 
-    private final Label playerBlackName = new Label("", IconUtilities.getIcon("/icons/blackStone32_white.png", getClass()).orElse(null));
+    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/icons/blackStone32_white.png", getClass()).orElse(null));
     private final Label playerBlackRank = new Label("");
-    private final Label playerWhiteName = new Label("", IconUtilities.getIcon("/icons/whiteStone32_white.png", getClass()).orElse(null));
+    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/icons/whiteStone32_white.png", getClass()).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
     private final Label moveLabel = new Label("");
@@ -87,15 +87,15 @@ public class EditorActionToolBar extends ToolBar {
         getStyleClass().add("bg-black-60");
     }
 
-    private ContentLayout currentLayout = null;
-    public void setContentForLayout(ContentLayout layout, @Nullable GameModel gameModel) {
+    private EditorPerspective currentLayout = null;
+    public void setContentForLayout(EditorPerspective layout, @Nullable GameModel gameModel) {
         getItems().clear();
 
-        if (layout == ContentLayout.REVIEW) {
+        if (layout == EditorPerspective.REVIEW) {
             getItems().add(dynamicSpacer());
             addReviewTools();
             getItems().add(dynamicSpacer());
-        } else if (layout == ContentLayout.COMPACT) {
+        } else if (layout == EditorPerspective.COMPACT) {
             toolPlayMove.setSelected(true); // This view is mainly for browsing
             addCompactGameInfo(gameModel);
         }
@@ -129,7 +129,7 @@ public class EditorActionToolBar extends ToolBar {
     private void updateGameModelInfo(GameModel gameModel) {
         var blackName = gameModel.getInfo().getPlayerBlackName();
         playerBlackName.setText(blackName.isBlank()
-                ? TextKeys.DEFAULT_BLACK_NAME.getLocalisedText() : blackName);
+                ? EditorTextResources.DEFAULT_BLACK_NAME.getLocalisedText() : blackName);
 
         var blackRank = gameModel.getInfo().getPlayerBlackRank();
         playerBlackRank.setVisible(!blackRank.isBlank());
@@ -138,7 +138,7 @@ public class EditorActionToolBar extends ToolBar {
 
         var whiteName = gameModel.getInfo().getPlayerWhiteName();
         playerWhiteName.setText(whiteName.isBlank()
-                ? TextKeys.DEFAULT_WHITE_NAME.getLocalisedText() : whiteName);
+                ? EditorTextResources.DEFAULT_WHITE_NAME.getLocalisedText() : whiteName);
 
         var whiteRank = gameModel.getInfo().getPlayerWhiteRank();
         playerWhiteRank.setVisible(!whiteRank.isBlank());
@@ -191,8 +191,8 @@ public class EditorActionToolBar extends ToolBar {
 
         updateGameModelInfo(newModel);
 
-        if (currentLayout == ContentLayout.COMPACT) {
-            setContentForLayout(ContentLayout.COMPACT, newModel);
+        if (currentLayout == EditorPerspective.COMPACT) {
+            setContentForLayout(EditorPerspective.COMPACT, newModel);
         }
     }
 
@@ -254,7 +254,8 @@ public class EditorActionToolBar extends ToolBar {
     }
 
     private void setIcon(String iconResource, ButtonBase buttonBase) {
-        IconUtilities.getIcon(iconResource, getClass()).ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
+        GuiUtilities.getIcon(iconResource, getClass())
+                .ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
     }
 
     public void addSelectedToolChangeListener(PropertyListener<EditorTool> listener) {

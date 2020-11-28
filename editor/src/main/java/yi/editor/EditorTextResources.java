@@ -8,7 +8,7 @@ import java.util.Locale;
 /**
  * Stores all the i18n translation keys used by the Yi editor module.
  */
-public final class TextKeys {
+public final class EditorTextResources {
 
     private static final String I18N_PACKAGE = "i18n.";
 
@@ -18,17 +18,20 @@ public final class TextKeys {
 
     private static final String BUNDLE = I18N_PACKAGE + "editor";
 
-    public static final TextResource MENU_FILE = new TextResource("menu.file", BUNDLE);
+    public static final TextResource EMPTY = new TextResource("empty", BUNDLE);
 
+    public static final TextResource MENU_FILE = new TextResource("menu.file", BUNDLE);
     public static final TextResource MENU_EDIT = new TextResource("menu.edit", BUNDLE);
     public static final TextResource MENU_PERSPECTIVE = new TextResource("menu.perspective", BUNDLE);
-    public static final TextResource MENUITEM_PERSPECTIVE_COMPACT = new TextResource("menuItem.perspective.compact", BUNDLE);
-    public static final TextResource MENUITEM_PERSPECTIVE_REVIEW = new TextResource("menuItem.perspective.review", BUNDLE);
 
     public static final TextResource MENU_TOOLS = new TextResource("menu.tools", BUNDLE);
     public static final TextResource MENU_VIEW = new TextResource("menu.view", BUNDLE);
     public static final TextResource MENU_WINDOW = new TextResource("menu.window", BUNDLE);
     public static final TextResource MENU_HELP = new TextResource("menu.help", BUNDLE);
+    public static final TextResource MENU_DEBUG = new TextResource("menu.debug", BUNDLE);
+
+    public static final TextResource MENUITEM_PERSPECTIVE_COMPACT = new TextResource("menuItem.perspective.compact", BUNDLE);
+    public static final TextResource MENUITEM_PERSPECTIVE_REVIEW = new TextResource("menuItem.perspective.review", BUNDLE);
 
     public static final TextResource MENUITEM_NEW_GAME = new TextResource("menuItem.newGame", BUNDLE);
     public static final TextResource MENUITEM_OPEN_GAME = new TextResource("menuItem.openGame", BUNDLE);

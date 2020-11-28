@@ -1,6 +1,6 @@
 package yi.editor;
 
-public class Yi {
+public class EditorHelper {
 
     private static final Version VERSION = new Version(0, 0, 1, "alpha");
     private static final String PROGRAM_NAME = "Yi";
@@ -18,4 +18,7 @@ public class Yi {
                 .toLowerCase().equalsIgnoreCase("true");
     }
 
+    public static boolean isDebugMode() {
+        return !isRunningFromSource();
+    }
 }

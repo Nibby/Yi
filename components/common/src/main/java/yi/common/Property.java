@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @param <T> Type of value represented by this property.
  *
- * @see NullableProperty Nullabel Property
+ * @see NullableProperty Nullable Property
  */
 public class Property<T> {
 

@@ -6,7 +6,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import yi.component.FontManager;
 import yi.component.SkinManager;
-import yi.editor.settings.Settings;
+import yi.editor.framework.accelerator.EditorAcceleratorManager;
+import yi.editor.settings.EditorSettings;
 import yi.editor.utilities.GameModelUtilities;
 
 import java.io.IOException;
@@ -23,19 +24,20 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         loadBundledFonts();
-        AcceleratorManager.initializeAll();
+        EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
-        TextKeys.installSupportedLanguages();
+        EditorTextResources.installSupportedLanguages();
         SkinManager.useDefaultSkin();
-        Settings.load();
+        EditorSettings.load();
+        EditorStandardActions.initializeSharedActions();
 
         var gameModel = GameModelUtilities.createGameModel();
-        var editorFrame = new EditorFrame(gameModel, Settings.general.getCurrentLayout());
+        var editorFrame = new EditorFrame(gameModel, EditorSettings.general.getCurrentLayout());
         editorFrame.show();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Settings.general.save();
-            Settings.accelerator.save();
+            EditorSettings.general.save();
+            EditorSettings.accelerator.save();
         }));
     }
 

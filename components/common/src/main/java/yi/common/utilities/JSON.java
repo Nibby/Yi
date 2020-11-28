@@ -1,4 +1,4 @@
-package yi.editor.utilities;
+package yi.common.utilities;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -12,7 +12,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
-public class JSON {
+public final class JSON {
+
+    private JSON() {
+        // Utility class, no instantiation
+    }
 
     /**
      * Parses a file into {@link JSONObject}.

@@ -5,24 +5,26 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-import yi.common.NullableProperty;
-import yi.common.NullablePropertyListener;
 import yi.common.Property;
 import yi.common.PropertyListener;
+import yi.common.utilities.GuiUtilities;
+import yi.common.utilities.SystemUtilities;
 import yi.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
 import yi.component.gametree.GameTreeViewerSettings;
-import yi.common.utilities.GuiUtilities;
-import yi.common.utilities.SystemUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
-import yi.editor.components.ContentLayout;
+import yi.core.go.StandardGameRules;
 import yi.editor.components.EditorBoardArea;
 import yi.editor.components.EditorMenuBar;
+import yi.editor.components.EditorPerspective;
 import yi.editor.components.EditorToolBar;
-import yi.editor.settings.Settings;
+import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.accelerator.EditorAcceleratorManager;
+import yi.editor.framework.action.EditorActionManager;
+import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -32,15 +34,26 @@ import java.util.Objects;
  */
 public class EditorFrame extends Stage {
 
-    private final Property<ContentLayout> contentLayout = new Property<>(ContentLayout.COMPACT);
+    private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
+
+    private final Property<EditorPerspective> contentLayout = new Property<>(EditorPerspective.COMPACT);
+    private final EditorActionManager actionManager;
     private final EditorMenuBar menuBar;
     private final EditorToolBar toolBar;
 
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
-    private final NullableProperty<GameModel> gameModel = new NullableProperty<>(null);
+    private final Property<GameModel> gameModel = new Property<>(DEFAULT_MODEL);
 
-    public EditorFrame(GameModel gameModel, ContentLayout layout) {
+    private boolean addedMenuBarOnce = false;
+
+    public EditorFrame(GameModel gameModel, EditorPerspective layout) {
+        actionManager = new EditorActionManager(this);
+
+        toolBar = new EditorToolBar();
+        boardArea = new EditorBoardArea();
+        enableDragAndDropToOpenFile(boardArea.getGameBoardViewer());
+
         var treeViewerSettings = new GameTreeViewerSettings();
         // TODO: Extract these out to settings.json
         treeViewerSettings.setBackgroundColor(GuiUtilities.getColor(43, 43, 43));
@@ -49,12 +62,6 @@ public class EditorFrame extends Stage {
         treeViewerSettings.setNodeInCurrentVariationColor(GuiUtilities.getColor(203, 203, 203));
         treeViewerSettings.setNodeWithCommentaryColor(GuiUtilities.getColor(87, 125, 186));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
-
-        menuBar = new EditorMenuBar(this);
-        toolBar = new EditorToolBar();
-
-        boardArea = new EditorBoardArea();
-        enableDragAndDropToOpenFile(boardArea.getGameBoardViewer());
 
         treeViewer = new GameTreeViewer();
         treeViewer.setSettings(treeViewerSettings);
@@ -71,9 +78,15 @@ public class EditorFrame extends Stage {
             }
         });
 
-        setLayout(layout);
+        // Current action system implementation requires all actions (both shared and
+        // instance-based) to be created prior to creating the menu bar. After this point
+        // newly created actions will not be added to the menu bar.
+        // TODO: Consider supporting late-comers to remove this temporal coupling...
+        menuBar = new EditorMenuBar(actionManager);
+
+        setPerspective(layout);
         setGameModel(gameModel);
-        setTitle(Yi.getProgramName());
+        setTitle(EditorHelper.getProgramName());
     }
 
     private void enableDragAndDropToOpenFile(GameBoardViewer boardViewer) {
@@ -110,12 +123,12 @@ public class EditorFrame extends Stage {
         return gameModel.get();
     }
 
-    private boolean addedMenuBarOnce = false;
-    public void setLayout(@NotNull ContentLayout newLayout) {
+    public void setPerspective(@NotNull EditorPerspective newLayout) {
         if (this.contentLayout.get() == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        boardArea.setContentForLayout(newLayout, gameModel.get());
+        var model = gameModel.get();
+        boardArea.setContentForLayout(newLayout, model);
 
         var content = newLayout.getContent(this);
 
@@ -169,7 +182,7 @@ public class EditorFrame extends Stage {
         }
 
         this.contentLayout.set(newLayout);
-        Settings.general.setCurrentLayout(newLayout);
+        EditorSettings.general.setCurrentLayout(newLayout);
     }
 
     /**
@@ -185,8 +198,8 @@ public class EditorFrame extends Stage {
     }
 
     private void installUndoRedoAccelerators(YiScene newScene) {
-        AcceleratorManager.getAccelerator(AcceleratorId.UNDO).install(newScene, boardArea::requestUndo);
-        AcceleratorManager.getAccelerator(AcceleratorId.REDO).install(newScene, boardArea::requestRedo);
+        EditorAcceleratorManager.getAccelerator(EditorAcceleratorId.UNDO).install(newScene, boardArea::requestUndo);
+        EditorAcceleratorManager.getAccelerator(EditorAcceleratorId.REDO).install(newScene, boardArea::requestRedo);
     }
 
     public Parent getBoardComponent() {
@@ -197,7 +210,7 @@ public class EditorFrame extends Stage {
         return treeViewer.getComponent();
     }
 
-    public @NotNull ContentLayout getContentLayout() {
+    public @NotNull EditorPerspective getPerspective() {
         return contentLayout.get();
     }
 
@@ -205,11 +218,11 @@ public class EditorFrame extends Stage {
         return boardArea;
     }
 
-    public void addContentLayoutChangeListener(PropertyListener<ContentLayout> listener) {
+    public void addContentLayoutChangeListener(PropertyListener<EditorPerspective> listener) {
         contentLayout.addListener(listener);
     }
 
-    public void addGameModelChangeListener(NullablePropertyListener<GameModel> listener) {
+    public void addGameModelChangeListener(PropertyListener<GameModel> listener) {
         gameModel.addListener(listener);
     }
 }
