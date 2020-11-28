@@ -29,7 +29,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
     }
 
     @Override
-    protected void _render(GraphicsContext g, GameBoardManager manager) {
+    protected void renderImpl(GraphicsContext g, GameBoardManager manager) {
         g.clearRect(0, 0, getWidth(), getHeight());
 
         BoardRenderer.render(g, manager);

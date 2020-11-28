@@ -9,17 +9,17 @@ public abstract class UndoableEdit implements Undoable {
         if (!canRollback())
             throw new IllegalStateException();
 
-        return _rollbackEdit(gameModel);
+        return rollbackEditNow(gameModel);
     }
 
     @Override
     public boolean performEdit(GameModel gameModel) {
-        return _performEdit(gameModel);
+        return performEditNow(gameModel);
     }
 
-    protected abstract boolean _rollbackEdit(GameModel gameModel);
+    protected abstract boolean rollbackEditNow(GameModel gameModel);
 
-    protected abstract boolean _performEdit(GameModel gameModel);
+    protected abstract boolean performEditNow(GameModel gameModel);
 
     protected abstract boolean canRollback();
 }

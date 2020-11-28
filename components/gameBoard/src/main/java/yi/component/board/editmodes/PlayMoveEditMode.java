@@ -10,8 +10,6 @@ import java.util.Optional;
 
 final class PlayMoveEditMode extends AbstractEditMode {
 
-    PlayMoveEditMode() { }
-
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {
         // TODO: Temporary. Probably should be disabled by default as the indicators are quite distracting.

@@ -16,12 +16,12 @@ public final class UndoRedoBaseMechanismTest {
     private static final class TestEdit extends UndoableEdit {
 
         @Override
-        protected boolean _rollbackEdit(GameModel gameModel) {
+        protected boolean rollbackEditNow(GameModel gameModel) {
             return true; // Do nothing
         }
 
         @Override
-        protected boolean _performEdit(GameModel gameModel) {
+        protected boolean performEditNow(GameModel gameModel) {
             return true; // Do nothing
         }
 

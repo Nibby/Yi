@@ -20,7 +20,7 @@ public final class RemoveNodeEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _rollbackEdit(GameModel gameModel) {
+    protected boolean rollbackEditNow(GameModel gameModel) {
         if (!parentOfNodeToRemove.isContinuationOf(gameModel.getRootNode())) {
             throw new IllegalStateException("Attempting to re-do but parent node is no " +
                     "longer part of the game tree");
@@ -31,7 +31,7 @@ public final class RemoveNodeEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _performEdit(GameModel gameModel) {
+    protected boolean performEditNow(GameModel gameModel) {
         gameModel.removeNodeSubtree(nodeToRemove);
         return true;
     }

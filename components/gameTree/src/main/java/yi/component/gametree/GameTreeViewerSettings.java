@@ -11,8 +11,6 @@ import java.util.Objects;
  */
 public final class GameTreeViewerSettings {
 
-    public GameTreeViewerSettings() { }
-
     private Color background = Color.WHITE;
     private Color node = Color.BLACK;
     private Color nodeHover = Color.GRAY;

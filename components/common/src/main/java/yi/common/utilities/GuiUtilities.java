@@ -18,16 +18,6 @@ public final class GuiUtilities {
     }
 
     /**
-     * The main action key is {@code command} aka meta on macOS, otherwise {@code ctrl} on other
-     * operating systems.
-     *
-     * @return true if the native action key has been pressed.
-     */
-    public static boolean isActionKeyDown(KeyEvent e) {
-        return SystemUtilities.isMac() ? e.isMetaDown() : e.isControlDown();
-    }
-
-    /**
      * Instantiates a {@link Color} object using 0-255 for red, green and blue values rather than 0-1.0.
      * <p>
      * Values exceeding these boundaries will be clipped.
@@ -53,23 +43,24 @@ public final class GuiUtilities {
      * @return A color of the defined RGB value
      */
     public static Color getColor(int r255, int g255, int b255, double alpha1) {
-        double r = r255 / 255d;
-        double g = g255 / 255d;
-        double b = b255 / 255d;
-
-        if (r > 1.0d) r = 1.0d;
-        if (r < 0d) r = 0d;
-
-        if (g > 1.0d) g = 1.0d;
-        if (g < 0d) g = 0d;
-
-        if (b > 1.0d) b = 1.0d;
-        if (b < 0d) b = 0d;
-
-        if (alpha1 > 1.0d) alpha1 = 1.0d;
-        if (alpha1 < 0d) alpha1 = 0d;
+        double r = trimToRange(r255 / 255d);
+        double g = trimToRange(g255 / 255d);
+        double b = trimToRange(b255 / 255d);
+        alpha1 = trimToRange(alpha1);
 
         return new Color(r, g, b, alpha1);
+    }
+
+    private static double trimToRange(double value) {
+        if (value < 0.0) {
+            value = 0.0;
+        }
+
+        if (value > 1.0) {
+            value = 1.0;
+        }
+        
+        return value;
     }
 
     /**

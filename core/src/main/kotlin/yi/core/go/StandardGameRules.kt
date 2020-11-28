@@ -31,6 +31,10 @@ enum class StandardGameRules {
     abstract fun isRuleset(rulesetName: String): Boolean
 
     companion object {
+        /**
+         * Converts a ruleset represented by a string to an enum value in this class.
+         * Otherwise if no ruleset has this name, returns [Optional.empty].
+         */
         fun parse(rulesetName: String): Optional<StandardGameRules> {
             return Arrays.stream(values())
                     .filter { ruleset -> ruleset.isRuleset(rulesetName) }

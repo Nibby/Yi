@@ -28,7 +28,7 @@ public abstract class StoneEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _rollbackEdit(GameModel gameModel) {
+    protected boolean rollbackEditNow(GameModel gameModel) {
         if (nodeToEdit == null) {
             throw new IllegalStateException("Attempting to undo before the edit action " +
                     "has been performed once.");
@@ -48,7 +48,7 @@ public abstract class StoneEdit extends UndoableEdit {
     }
 
     @Override
-    protected boolean _performEdit(GameModel gameModel) {
+    protected boolean performEditNow(GameModel gameModel) {
         if (createNewNode) {
             if (nodeToEdit == null) {
                 // First time submitting node

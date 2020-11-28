@@ -14,7 +14,8 @@ public class Yi {
     }
 
     public static boolean isRunningFromSource() {
-        return System.getProperty("yi.fromSource", "false").toLowerCase().equals("true");
+        return System.getProperty("yi.fromSource", "false")
+                .toLowerCase().equalsIgnoreCase("true");
     }
 
 }
