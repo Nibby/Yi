@@ -74,7 +74,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
                         }
                     }
 
-                    var position = move.getY() * manager.getGameModel().getBoardHeight() + move.getX();
+                    var position = move.getY() * manager.getGameModel().getBoardWidth() + move.getX();
                     tempIntersectionMap.put(position, nodeToStore);
                 }
             }
@@ -115,7 +115,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     private void maybeShowVariationPreview(MouseEvent e) {
-        var mouseOverPosition = cursorY * manager.getGameModel().getBoardHeight() + cursorX;
+        var mouseOverPosition = cursorY * manager.getGameModel().getBoardWidth() + cursorX;
         GameNode previewNode = intersectionsWithPreviewNode.get(mouseOverPosition);
 
         if (manager.isShowingCurrentPosition()
