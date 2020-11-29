@@ -3,7 +3,6 @@ package yi.editor.framework.action;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.BooleanProperty;
@@ -23,11 +22,12 @@ public class EditorRadioAction extends EditorAbstractAction {
 
     private final BooleanProperty selectedProperty = new BooleanProperty(false);
 
-    public EditorRadioAction(TextResource name, @Nullable Consumer<EditorActionHelper> action) {
+    public EditorRadioAction(TextResource name, @Nullable Consumer<EditorActionContext> action) {
         this(null, name, action);
     }
 
-    public EditorRadioAction(@Nullable EditorActionManager managerInstance, TextResource name, Consumer<EditorActionHelper> action) {
+    public EditorRadioAction(@Nullable EditorActionManager managerInstance, TextResource name,
+                             Consumer<EditorActionContext> action) {
         super(managerInstance, name, action);
 
         selectedProperty.addListener(newValue -> {
@@ -48,26 +48,6 @@ public class EditorRadioAction extends EditorAbstractAction {
         return null; // TODO: Create a radio button
     }
 
-    @Override
-    protected void onIconUpdate(ImageView newIcon) {
-
-    }
-
-    @Override
-    protected void onNameUpdate(TextResource newName) {
-
-    }
-
-    @Override
-    protected void onEnabledStateUpdate(boolean isEnabledNow) {
-
-    }
-
-    @Override
-    protected void onVisibilityUpdate(boolean isVisibleNow) {
-
-    }
-
     public void setMenuToggleGroup(ToggleGroup group) {
         MenuItem menuItem = getAsMenuItem();
         group.getToggles().add((YiRadioMenuItem) menuItem);
@@ -75,5 +55,9 @@ public class EditorRadioAction extends EditorAbstractAction {
 
     public void setSelected(boolean isSelected) {
         selectedProperty.set(isSelected);
+    }
+
+    public boolean isSelected() {
+        return selectedProperty.get();
     }
 }

@@ -6,7 +6,7 @@ import javafx.stage.FileChooser;
 import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorActionHelper;
+import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorBasicAction;
 
 import java.io.File;
@@ -28,7 +28,7 @@ final class EditorStandardActions {
     }
 
     private static void createNewGameAction() {
-        Consumer<EditorActionHelper> action = helper -> {
+        Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             // TODO: Show a new dialog prompting for new game document information.
             //       The values below are hard-coded, and are temporary.
@@ -64,7 +64,7 @@ final class EditorStandardActions {
     }
 
     private static void createOpenGameAction() {
-        Consumer<EditorActionHelper> action = helper -> {
+        Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             var fileChooser = new FileChooser();
             fileChooser.setTitle(EditorTextResources.MENUITEM_OPEN_GAME.getLocalisedText());
@@ -85,7 +85,7 @@ final class EditorStandardActions {
     }
 
     private static void createSaveAction() {
-        Consumer<EditorActionHelper> action = helper -> {
+        Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             var existingModel = frame.getGameModel();
             Path saveFilePath = existingModel.getLastSavePath();
@@ -104,7 +104,7 @@ final class EditorStandardActions {
     }
 
     private static void createSaveAsAction() {
-        Consumer<EditorActionHelper> action = helper -> {
+        Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             var existingModel = frame.getGameModel();
             Path saveFilePath = promptAndStoreSaveFile(existingModel, frame);

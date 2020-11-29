@@ -24,11 +24,10 @@ import static yi.editor.EditorTextResources.MENU_VIEW;
 /**
  * Primary menu bar for {@link yi.editor.EditorFrame}.
  */
-// TODO: This class is one big work in progress
 public class EditorMenuBar extends MenuBar {
 
     public EditorMenuBar(EditorActionManager actionManager) {
-        var actionHelper = actionManager.getHelper();
+        var actionHelper = actionManager.getContext();
 
         Set<EditorAction> allActions = actionManager.getAllActions();
         var topLevelActionsByMenu = new HashMap<EditorMainMenuType, List<EditorAction>>();
@@ -88,8 +87,8 @@ public class EditorMenuBar extends MenuBar {
                 menuItem.setOnAction(e -> frame.setPerspective(layout));
                 menuItem.setSelected(layout == currentLayout);
 
-                var layoutAcceleratorId = layout.getAcceleratorId();
-                EditorAcceleratorManager.getAccelerator(layoutAcceleratorId).install(menuItem);
+                var acceleratorId = layout.getAcceleratorId();
+                EditorAcceleratorManager.install(acceleratorId, menuItem);
 
                 radioGroup.getToggles().add(menuItem);
                 perspectiveMenu.getItems().add(menuItem);

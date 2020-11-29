@@ -184,5 +184,5 @@ public interface EditorAction {
      * @param helper Helper class supplying the context in which this action is executed
      *               in, such as the {@link yi.editor.EditorFrame} that invoked it.
      */
-    void performAction(EditorActionHelper helper);
+    void performAction(EditorActionContext helper);
 }

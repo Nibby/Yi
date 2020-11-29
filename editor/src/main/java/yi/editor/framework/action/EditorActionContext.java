@@ -6,13 +6,14 @@ import yi.editor.EditorFrame;
 /**
  * Helper class to aid in the execution of an {@link EditorAction}. This class
  * mainly provides the context in which the action is run, such as the current
- * editor window.
+ * editor window that triggered the action.
  */
-public final class EditorActionHelper {
+public final class EditorActionContext {
 
     private final EditorFrame frame;
+    private EditorAction invokedAction;
 
-    public EditorActionHelper(@NotNull EditorFrame frame) {
+    public EditorActionContext(@NotNull EditorFrame frame) {
         this.frame = frame;
     }
 
@@ -21,5 +22,13 @@ public final class EditorActionHelper {
      */
     public @NotNull EditorFrame getEditorFrame() {
         return frame;
+    }
+
+    public EditorAction getInvokedAction() {
+        return invokedAction;
+    }
+
+    public void setInvokedAction(EditorAction invokedAction) {
+        this.invokedAction = invokedAction;
     }
 }

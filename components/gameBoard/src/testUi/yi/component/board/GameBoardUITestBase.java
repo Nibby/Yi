@@ -105,7 +105,7 @@ public abstract class GameBoardUITestBase {
     }
 
     protected Point2D getIntersection(int x, int y) {
-        var size = board._getManager().size;
+        var size = board.getManager().size;
         double[] intersectionOnScreen = size.getGridRenderPosition(x, y, 0);
         double xScreen = intersectionOnScreen[0];
         double yScreen = intersectionOnScreen[1];
@@ -132,7 +132,7 @@ public abstract class GameBoardUITestBase {
     }
 
     public GameBoardManager getBoardManager() {
-        return board._getManager();
+        return board.getManager();
     }
 
     public GameModel getGameModel() {
