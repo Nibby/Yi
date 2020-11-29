@@ -1,6 +1,5 @@
 package yi.editor.framework.accelerator;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
@@ -8,8 +7,9 @@ import javafx.scene.input.KeyCombination;
 import org.jetbrains.annotations.NotNull;
 import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
-import yi.component.KeyModifier;
 import yi.common.utilities.SystemUtilities;
+import yi.component.KeyModifier;
+import yi.component.YiScene;
 import yi.editor.EditorTextResources;
 
 import java.util.*;
@@ -20,9 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * is mapped to an {@link Accelerator} instance which is created within the implementation
  * of this class.
  * <p/>
- * To assign a shortcut key to supported Fx components, retrieve the accelerator instance
- * using {@link #getAccelerator(EditorAcceleratorId)} with the desired id, then invoke
- * {@link Accelerator#install(MenuItem)} or one of its overloaded variants.
+ * To assign a shortcut key to supported Fx components, use {@link #install(EditorAcceleratorId, MenuItem)}
+ * or one of its overloaded variants.
  */
 public final class EditorAcceleratorManager {
 
@@ -87,6 +86,28 @@ public final class EditorAcceleratorManager {
                     id + "' despite there being an AcceleratorId entry for it.");
         }
         return accelerator.get();
+    }
+
+    /**
+     * Sets the menu item with a shortcut key defined by an accelerator mapped to the
+     * given id. This will overwrite any existing shortcut keys set on the menu item.
+     *
+     * @param id Unique ID of the accelerator to be installed.
+     * @param menuItem Menu item component to have shortcut keys set.
+     */
+    public static void install(EditorAcceleratorId id, MenuItem menuItem) {
+        getAccelerator(id).install(menuItem);
+    }
+
+    /**
+     * Adds an additional shortcut key to trigger some action on the given scene.
+     *
+     * @param id Unique ID of the accelerator to be installed.
+     * @param scene Scene to have shortcut keys added.
+     * @param action Code to run when the shortcut key is active.
+     */
+    public static void install(EditorAcceleratorId id, YiScene scene, Runnable action) {
+        getAccelerator(id).install(scene, action);
     }
 
     /**
