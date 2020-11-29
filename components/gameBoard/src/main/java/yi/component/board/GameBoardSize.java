@@ -30,7 +30,24 @@ public final class GameBoardSize {
     private double stoneShadowRadius;
     private double stoneShadowOffset;
 
+    // Cached compute parameter values for recomputing
+    private boolean cachedOnce = false;
+    private double cachedComponentWidth;
+    private double cachedComponentHeight;
+    private int cachedBoardWidth;
+    private int cachedBoardHeight;
+
     GameBoardSize() { }
+
+    protected final void recompute(CoordinateLabelPosition newLabelPosition) {
+        if (!cachedOnce) {
+            throw new IllegalStateException("compute() must be invoked once first");
+        }
+
+        computeImpl(cachedComponentWidth, cachedComponentHeight,
+                cachedBoardWidth, cachedBoardHeight,
+                newLabelPosition, false);
+    }
 
     /**
      * Recalculates the board sizing using a custom margin. The margin is the space between
@@ -41,8 +58,17 @@ public final class GameBoardSize {
      * @param boardWidth Number of board intersections horizontally
      * @param boardHeight Number of board intersections vertically
      */
-    void compute(double componentWidth, double componentHeight, int boardWidth, int boardHeight,
-                 CoordinateLabelPosition coordinateLabelPosition) {
+    protected final void compute(double componentWidth, double componentHeight,
+                                 int boardWidth, int boardHeight,
+                                 CoordinateLabelPosition labelPos) {
+        computeImpl(componentWidth, componentHeight, boardWidth, boardHeight, labelPos, true);
+    }
+
+    private void computeImpl(double componentWidth, double componentHeight,
+                                     int boardWidth, int boardHeight,
+                                     CoordinateLabelPosition coordinateLabelPosition,
+                                     boolean cacheResult) {
+
         stageBounds = new Rectangle(0, 0, componentWidth, componentHeight);
 
         // Overview:
@@ -65,7 +91,8 @@ public final class GameBoardSize {
 
         // We need to calculate a scaled version of stone size at this point to maintain
         // the correct board ratio
-        Rectangle gridFitRatio = ShapeUtilities.centerFit(stageBounds, (double) boardWidth / (double) boardHeight, 0d);
+        var aspectRatio = (double) boardWidth / (double) boardHeight;
+        Rectangle gridFitRatio = ShapeUtilities.centerFit(stageBounds, aspectRatio, 0d);
 
         // Doesn't really matter the size of the grid bounds at this point, the proportion
         // is what matters. We will scale everything to the correct size later.
@@ -76,14 +103,17 @@ public final class GameBoardSize {
         coordinateLabelBounds = computeCoordinateLabelBounds(stoneArea, coordinateLabelPosition);
 
         double percentageMarginBetweenBoardEdgeAndLabels = 0.01d;
-        boardBounds = coordinateLabelBounds.createParentWithMargin(getPixelValue(percentageMarginBetweenBoardEdgeAndLabels, coordinateLabelBounds));
+        var edgeLabelMargins = getPixelValue(percentageMarginBetweenBoardEdgeAndLabels, coordinateLabelBounds);
+        boardBounds = coordinateLabelBounds.createParentWithMargin(edgeLabelMargins);
         // Expressed as a percentage of total canvas width/height
         // Rescale everything. All the objects are referenced internally by
         // LayoutRectangle, so the entire hierarchy will be updated. These are percentages
         // of the shorter side of board dimensions rather than total size
         double percentageMarginFromEdge = 0.02d;
-        double marginFromEdgeInPixels = percentageMarginFromEdge * Math.min(stageBounds.getWidth(), stageBounds.getHeight());
-        boardBounds.rescaleAndFinalize(stageBounds.getX(), stageBounds.getY(), stageBounds.getWidth(), stageBounds.getHeight(), marginFromEdgeInPixels, 1.0d, true);
+        double marginFromEdgeInPixels = percentageMarginFromEdge
+                * Math.min(stageBounds.getWidth(), stageBounds.getHeight());
+        boardBounds.rescaleAndFinalize(stageBounds.getX(), stageBounds.getY(),
+                stageBounds.getWidth(), stageBounds.getHeight(), marginFromEdgeInPixels, 1.0d, true);
 
         // Now we can finally calculate the correct stone size
         double stoneSizeFromWidth = scaledGridBounds.getWidth() / ((boardWidth == 1) ? 1 : (boardWidth - 1));
@@ -107,11 +137,27 @@ public final class GameBoardSize {
         double horizontalClip = excessGridWidth / 2;
         double verticalClip = excessGridHeight / 2;
 
-        gridBounds = ShapeUtilities.clip(scaledGridBounds.getX(), scaledGridBounds.getY(), scaledGridBounds.getWidth(), scaledGridBounds.getHeight(),
+        gridBounds = ShapeUtilities.clip(scaledGridBounds.getX(), scaledGridBounds.getY(),
+                scaledGridBounds.getWidth(), scaledGridBounds.getHeight(),
                 horizontalClip, verticalClip, horizontalClip, verticalClip);
 
         stoneShadowRadius = stoneSize / 8d;
         stoneShadowOffset = stoneSize / 16d;
+
+        if (cacheResult) {
+            cacheParameters(componentWidth, componentHeight, boardWidth, boardHeight);
+        }
+    }
+
+    private void cacheParameters(double componentWidth, double componentHeight,
+                                 int boardWidth, int boardHeight) {
+
+        this.cachedComponentWidth = componentWidth;
+        this.cachedComponentHeight = componentHeight;
+        this.cachedBoardWidth = boardWidth;
+        this.cachedBoardHeight = boardHeight;
+
+        this.cachedOnce = true;
     }
 
     /*
@@ -307,6 +353,10 @@ public final class GameBoardSize {
 
     private double getPixelValue(double percentage, Rectangle rectangle) {
         return percentage * Math.min(rectangle.getWidth(), rectangle.getHeight());
+    }
+
+    public boolean hasComputedOnce() {
+        return cachedOnce;
     }
 
     /**

@@ -19,12 +19,12 @@ import java.util.function.Consumer;
  */
 public class EditorBasicAction extends EditorAbstractAction {
 
-    public EditorBasicAction(TextResource name, @Nullable Consumer<EditorActionHelper> action) {
+    public EditorBasicAction(TextResource name, @Nullable Consumer<EditorActionContext> action) {
         this(null, name, action);
     }
 
     public EditorBasicAction(@Nullable EditorActionManager manager, TextResource name,
-                             @Nullable Consumer<EditorActionHelper> action) {
+                             @Nullable Consumer<EditorActionContext> action) {
         super(manager, name, action);
     }
 

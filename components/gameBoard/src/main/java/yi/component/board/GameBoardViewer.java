@@ -6,6 +6,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.common.BooleanProperty;
+import yi.common.BooleanPropertyListener;
 import yi.common.NullablePropertyListener;
 import yi.component.CanvasContainer;
 import yi.component.YiComponent;
@@ -44,9 +46,13 @@ public final class GameBoardViewer implements YiComponent {
             renderAll();
         });
 
-        manager.addPreviewNodeChangeListener(newPreview -> renderAll());
-
+        addRenderSignalHooks();
         setEditable(true);
+    }
+
+    private void addRenderSignalHooks() {
+        manager.addPreviewNodeChangeListener(newPreview -> renderAll());
+        manager.addShowCoordinateValueListener(newValue -> renderAll());
     }
 
     public void setDragAndDropBehaviour(Function<List<File>, Boolean> dragEventConsumer) {
@@ -72,7 +78,9 @@ public final class GameBoardViewer implements YiComponent {
     }
 
     private void renderAll() {
-        content.forEach(canvas -> canvas.render(manager));
+        if (manager.hasGameModel()) {
+            content.forEach(canvas -> canvas.render(manager));
+        }
     }
 
     private final EventListener<NodeEvent> updateAllCanvas = (newCurrentNode) -> update();
@@ -168,7 +176,7 @@ public final class GameBoardViewer implements YiComponent {
         manager.view.boardGridColor = gridColor;
     }
 
-    GameBoardManager _getManager() {
+    protected final GameBoardManager getManager() {
         return manager;
     }
 
@@ -177,18 +185,16 @@ public final class GameBoardViewer implements YiComponent {
         return container;
     }
 
+    public void addShowCoordinatesValueListener(BooleanPropertyListener listener) {
+        manager.addShowCoordinateValueListener(listener);
+    }
+
     public void setShowCoordinates(boolean doShow) {
-        manager.view.coordinateLabelPosition = doShow ? CoordinateLabelPosition.ALL_SIDES : CoordinateLabelPosition.NONE;
-        if (manager.hasGameModel()) {
-            manager.size.compute(container.getWidth(), container.getHeight(),
-                    manager.getGameModel().getBoardWidth(), manager.getGameModel().getBoardHeight(),
-                    manager.view.coordinateLabelPosition);
-            renderAll();
-        }
+        manager.setShowCoordinates(doShow);
     }
 
     public boolean isShowingBoardCoordinates() {
-        return manager.view.coordinateLabelPosition != CoordinateLabelPosition.NONE;
+        return manager.isShowingCoordinates();
     }
 
     public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {

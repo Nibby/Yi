@@ -22,10 +22,10 @@ public final class EditorActionManager {
     private static final Set<EditorAction> SHARED_ACTIONS = new HashSet<>();
     private final Set<EditorAction> instanceActions = new HashSet<>();
 
-    private final EditorActionHelper helper;
+    private final EditorActionContext context;
 
     public EditorActionManager(EditorFrame frame) {
-        this.helper = new EditorActionHelper(frame);
+        this.context = new EditorActionContext(frame);
 
         EditorPerspective.initializeActions(this);
     }
@@ -85,9 +85,9 @@ public final class EditorActionManager {
 
     /**
      * @return Helper class to aid the execution of actions for this editor instance.
-     * @see EditorActionHelper
+     * @see EditorActionContext
      */
-    public EditorActionHelper getHelper() {
-        return helper;
+    public EditorActionContext getContext() {
+        return context;
     }
 }

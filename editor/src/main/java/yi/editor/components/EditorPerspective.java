@@ -11,7 +11,7 @@ import yi.editor.EditorFrame;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorActionHelper;
+import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorRadioAction;
 import yi.editor.framework.action.EditorSubMenuAction;
@@ -204,7 +204,7 @@ public enum EditorPerspective {
 
     public static void initializeActions(EditorActionManager manager) {
         var perspectiveSubmenu = new EditorSubMenuAction(manager, EditorTextResources.MENU_PERSPECTIVE);
-        perspectiveSubmenu.setInMainMenu(EditorMainMenuType.VIEW, 0d);
+        perspectiveSubmenu.setInMainMenu(EditorMainMenuType.VIEW, 1.0d);
 
         for (EditorPerspective p : values()) {
             p.createAction(manager, perspectiveSubmenu);
@@ -212,10 +212,10 @@ public enum EditorPerspective {
     }
 
     private static EditorPerspective getPerspective(EditorActionManager manager) {
-        return getPerspective(manager.getHelper());
+        return getPerspective(manager.getContext());
     }
 
-    private static EditorPerspective getPerspective(EditorActionHelper helper) {
+    private static EditorPerspective getPerspective(EditorActionContext helper) {
         return helper.getEditorFrame().getPerspective();
     }
 
@@ -224,7 +224,7 @@ public enum EditorPerspective {
                                                 EditorSubMenuAction submenu,
                                                 double position) {
 
-        Consumer<EditorActionHelper> action = helper -> helper.getEditorFrame().setPerspective(perspective);
+        Consumer<EditorActionContext> action = helper -> helper.getEditorFrame().setPerspective(perspective);
         var editorAction = new EditorRadioAction(manager, perspective.getFriendlyName(), action);
         editorAction.setInMainMenu(EditorMainMenuType.VIEW, position);
         editorAction.setSelected(EditorPerspective.getPerspective(manager) == perspective);

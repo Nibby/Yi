@@ -74,6 +74,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
             if (backgroundImage != null) {
                 Rectangle stage = manager.size.getStageBounds();
+                assert stage != null : "stage == null, did size calculation not run?";
                 g.drawImage(backgroundImage, stage.getX(), stage.getY(), stage.getWidth(),
                         stage.getHeight());
             }

@@ -32,7 +32,7 @@ public abstract class EditorAbstractAction implements EditorAction {
     private final BooleanProperty visibleProperty = new BooleanProperty(true);
     private EditorAction parentAction = null;
 
-    private final Consumer<EditorActionHelper> action;
+    private final Consumer<EditorActionContext> action;
 
     private boolean addedToMenu = false;
     private EditorMainMenuType mainMenuType = null;
@@ -53,7 +53,7 @@ public abstract class EditorAbstractAction implements EditorAction {
      * @param action Task to perform when this action is executed.
      */
     public EditorAbstractAction(@Nullable EditorActionManager manager,
-                                TextResource name, @Nullable Consumer<EditorActionHelper> action) {
+                                TextResource name, @Nullable Consumer<EditorActionContext> action) {
         this.nameProperty.set(name);
         this.action = action;
 
@@ -252,8 +252,9 @@ public abstract class EditorAbstractAction implements EditorAction {
     }
 
     @Override
-    public void performAction(EditorActionHelper helper) {
+    public void performAction(EditorActionContext helper) {
         if (action != null) {
+            helper.setInvokedAction(this);
             action.accept(helper);
         }
     }

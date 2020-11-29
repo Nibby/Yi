@@ -2,6 +2,8 @@ package yi.component.board;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.common.BooleanProperty;
+import yi.common.BooleanPropertyListener;
 import yi.common.NullableProperty;
 import yi.common.NullablePropertyListener;
 import yi.core.go.GameModel;
@@ -21,6 +23,7 @@ public final class GameBoardManager {
     public final GameModelEditor edit = new GameModelEditor();
 
     private final NullableProperty<GameNode> previewNode = new NullableProperty<>(null);
+    private final BooleanProperty showCoordinates = new BooleanProperty(false);
     private boolean debugMode = false;
     private GameModel model = null;
 
@@ -85,5 +88,21 @@ public final class GameBoardManager {
 
     public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
         previewNode.addListener(listener);
+    }
+
+    public void addShowCoordinateValueListener(BooleanPropertyListener listener) {
+        showCoordinates.addListener(listener);
+    }
+
+    public void setShowCoordinates(boolean doShow) {
+        view.coordinateLabelPosition = doShow ? CoordinateLabelPosition.ALL_SIDES : CoordinateLabelPosition.NONE;
+        if (hasGameModel() && size.hasComputedOnce()) {
+            size.recompute(view.coordinateLabelPosition);
+        }
+        showCoordinates.set(doShow);
+    }
+
+    public boolean isShowingCoordinates() {
+        return showCoordinates.get();
     }
 }

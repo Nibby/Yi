@@ -2,7 +2,6 @@ package yi.editor.framework.action;
 
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
@@ -66,25 +65,5 @@ public class EditorSubMenuAction extends EditorAbstractAction {
     @Override
     protected Node getAsComponentImpl() {
         return null; // TODO: Work out what to do with sub-menu components, button with a context menu popup?
-    }
-
-    @Override
-    protected void onIconUpdate(ImageView newIcon) {
-
-    }
-
-    @Override
-    protected void onNameUpdate(TextResource newName) {
-
-    }
-
-    @Override
-    protected void onEnabledStateUpdate(boolean isEnabledNow) {
-
-    }
-
-    @Override
-    protected void onVisibilityUpdate(boolean isVisibleNow) {
-
     }
 }
