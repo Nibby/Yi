@@ -136,6 +136,13 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
                 currentNode = currentNode.getNextNodeInMainBranch();
             }
         } while (true);
+
+        Thread.sleep(75);
+        robot.moveTo(stage.getX(), stage.getY());
+        Thread.sleep(75);
+        Assertions.assertNull(highlightedNode,
+                "Highlighted node not set to null after mouse has moved outside of any" +
+                        " node element bounds");
     }
 
     private void moveToCenter(Rectangle2D bounds, FxRobot robot) {
