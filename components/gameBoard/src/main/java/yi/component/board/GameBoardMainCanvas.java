@@ -365,46 +365,54 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
                 renderAnnotationsOnCurrentMove(g, manager);
             } else {
                 // Previewing
-                renderMoveNumbersFromCurrentToShownNode(g, manager);
+                renderPreviewAnnotations(g, manager);
             }
         }
 
-        private static void renderMoveNumbersFromCurrentToShownNode(GraphicsContext g, GameBoardManager manager) {
+        private static void renderPreviewAnnotations(GraphicsContext g, GameBoardManager manager) {
             var current = manager.getGameModel().getCurrentNode();
             var shown = manager.getNodeToShow();
 
             assert current != shown;
 
             if (shown.getMoveNumber() > current.getMoveNumber()) {
-                List<GameNode> historyToShownNode = new LinkedList<>(shown.getMoveHistory());
-                assert historyToShownNode.size() >= 1;
-                historyToShownNode.remove(0);
-                historyToShownNode.subList(0, current.getMoveNumber()).clear();
+                renderMoveNumbersUpToPreviewNode(current, shown, g, manager);
+            } else {
+                renderMoveMarker(shown, g, manager);
+            }
+        }
 
-                var font = getLabelFont(manager);
-                int step = 1;
+        private static void renderMoveNumbersUpToPreviewNode(GameNode current, GameNode shown,
+                                                             GraphicsContext g,
+                                                             GameBoardManager manager) {
+            List<GameNode> historyToShownNode = new LinkedList<>(shown.getMoveHistory());
+            assert historyToShownNode.size() >= 1;
+            historyToShownNode.remove(0);
+            historyToShownNode.subList(0, current.getMoveNumber()).clear();
 
-                // Only want the last annotation on that intersection to show up
-                // TODO: Find somewhere to represent the ko re-captures whose move number
-                //       did not show because a later move was played on the same spot.
-                var intersectionWithAnnotations = new HashMap<Integer, Annotation>();
+            var font = getLabelFont(manager);
+            int step = 1;
 
-                for (GameNode node : historyToShownNode) {
-                    Stone move = node.getPrimaryMove();
-                    if (move != null) {
-                        var x = move.getX();
-                        var y = move.getY();
-                        intersectionWithAnnotations.put(y * manager.getGameModel().getBoardHeight() + x,
-                                new Annotation.Label(x, y, String.valueOf(step)));
-                    } else {
-                        break;
-                    }
-                    ++step;
+            // Only want the last annotation on that intersection to show up
+            // TODO: Find somewhere to represent the ko re-captures whose move number
+            //       did not show because a later move was played on the same spot.
+            var intersectionWithAnnotations = new HashMap<Integer, Annotation>();
+
+            for (GameNode node : historyToShownNode) {
+                Stone move = node.getPrimaryMove();
+                if (move != null) {
+                    var x = move.getX();
+                    var y = move.getY();
+                    intersectionWithAnnotations.put(y * manager.getGameModel().getBoardHeight() + x,
+                            new Annotation.Label(x, y, String.valueOf(step)));
+                } else {
+                    break;
                 }
+                ++step;
+            }
 
-                for (Integer position : intersectionWithAnnotations.keySet()) {
-                    AnnotationRenderer.render(intersectionWithAnnotations.get(position), g, manager, font);
-                }
+            for (Integer position : intersectionWithAnnotations.keySet()) {
+                AnnotationRenderer.render(intersectionWithAnnotations.get(position), g, manager, font);
             }
         }
 
@@ -426,7 +434,11 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         }
 
         private static void renderCurrentMoveMarker(GraphicsContext g, GameBoardManager manager) {
-            var primaryMove = manager.getGameModel().getCurrentNode().getPrimaryMove();
+            renderMoveMarker(manager.getGameModel().getCurrentNode(), g, manager);
+        }
+
+        private static void renderMoveMarker(GameNode nodeToMark, GraphicsContext g, GameBoardManager manager) {
+            var primaryMove = nodeToMark.getPrimaryMove();
             if (primaryMove != null) {
                 int x = primaryMove.getX();
                 int y = primaryMove.getY();
