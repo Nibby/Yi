@@ -21,8 +21,6 @@ import yi.editor.components.EditorBoardArea;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorPerspective;
 import yi.editor.components.EditorToolBar;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.settings.EditorSettings;
 
@@ -51,6 +49,7 @@ public class EditorFrame extends Stage {
     public EditorFrame(GameModel gameModel, EditorPerspective layout) {
         actionManager = new EditorActionManager(this);
         undoSystem = new EditorUndoSystem(actionManager);
+        EditorPerspective.initializeActions(actionManager);
 
         toolBar = new EditorToolBar();
         boardArea = new EditorBoardArea();

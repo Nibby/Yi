@@ -26,8 +26,6 @@ public final class EditorActionManager {
 
     public EditorActionManager(EditorFrame frame) {
         this.context = new EditorActionContext(frame);
-
-        EditorPerspective.initializeActions(this);
     }
 
     /**
