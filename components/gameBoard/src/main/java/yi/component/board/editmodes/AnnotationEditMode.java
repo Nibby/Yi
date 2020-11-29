@@ -17,6 +17,9 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+/**
+ * Edit mode that manipulates annotation data on a {@link yi.core.go.GameNode}.
+ */
 public final class AnnotationEditMode extends AbstractEditMode {
 
     /**
@@ -55,11 +58,30 @@ public final class AnnotationEditMode extends AbstractEditMode {
     private @Nullable LabelType labelType;
     private String nextLabelText;
 
+    /**
+     * Instantiates an annotation edit mode that works with one specific type of
+     * annotation. The type of annotation <b>must not</b> be a label. Use
+     * {@link #AnnotationEditMode(LabelType)} constructor for label annotations.
+     * <p/>
+     * It is recommended to use the factory class {@link EditMode} to instantiate
+     * edit modes rather than using this constructor.
+     *
+     * @param typeToApply Type of non-label annotation to work with.
+     */
     public AnnotationEditMode(AnnotationType typeToApply) {
         this.typeToApply = Objects.requireNonNull(typeToApply);
         this.labelType = null;
     }
 
+    /**
+     * Instantiates an annotation edit mode specific to working with labelled
+     * annotation type.
+     * <p/>
+     * It is recommended to use the factory class {@link EditMode} to instantiate
+     * edit modes rather than using this constructor.
+     *
+     * @param labelType Type of label to work with.
+     */
     public AnnotationEditMode(@NotNull LabelType labelType) {
         this(AnnotationType.LABEL);
 

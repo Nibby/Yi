@@ -10,10 +10,10 @@ import java.util.Objects;
 import java.util.Stack;
 
 /**
- * Manages all the edits made to the game model, providing support for undo and redo actions.
- * The editing model requires all changes to the game model to be submitted through this handler.
- *
- * Therefore, this class should be the only place that directly interacts with {@link GameModel} state.
+ * Manages all the edits made to the currently active {@link GameModel} while providing
+ * support for undo and redo actions. The editing model requires all changes to the game
+ * model to be submitted through this class. Therefore, this class is the only place that
+ * directly modifies {@link GameModel} state.
  */
 public final class GameModelEditor {
 
@@ -24,8 +24,15 @@ public final class GameModelEditor {
     private boolean editable = false;
     private AbstractEditMode editMode = EditMode.playMove();
 
-    GameModelEditor() { }
+    protected GameModelEditor() { }
 
+    /**
+     * Applies the edit to the game model and records it onto the change stack to support
+     * undo/redo operations.
+     *
+     * @param undoable Edit to be made to the game model.
+     * @param manager Game board manager.
+     */
     public void recordAndApply(Undoable undoable, GameBoardManager manager) {
         var gameModel = manager.getGameModel();
 
@@ -146,18 +153,36 @@ public final class GameModelEditor {
         positionInHistory = undoHistory.size();
     }
 
+    /**
+     * @return {code true} if edits can be made to the game board. Otherwise the model
+     * is considered read-only.
+     */
     public boolean isEditable() {
         return editable;
     }
 
+    /**
+     * Sets whether any edits can be made to the game baord. If {@code false}, the
+     * board is effectively in read-only mode.
+     *
+     * @param editable Whether edits can be applied to the game model.
+     */
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
 
+    /**
+     * @return Currently active edit mode.
+     */
     public AbstractEditMode getEditMode() {
         return editMode;
     }
 
+    /**
+     * Sets the active edit mode.
+     *
+     * @param editMode Edit mode.
+     */
     public void setEditMode(AbstractEditMode editMode) {
         this.editMode = Objects.requireNonNull(editMode, "Edit mode cannot be null. To disable editing, use setEditable(false)");
     }

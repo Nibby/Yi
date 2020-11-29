@@ -11,8 +11,17 @@ import yi.component.board.edits.RemoveNodeEdit;
 import java.util.Optional;
 
 /**
- *
+ * Edit modes represent some type of game model data manipulation. For example, one edit
+ * mode works specifically with annotations on a node, while another works with adding
+ * or removing stones from the game position.
+ * <p/>
+ * Input data is received from the canvas and interpreted to submit
+ * {@link yi.component.board.edits.Undoable edits} to {@link yi.component.board.GameModelEditor}.
+ * This process is the basis for the game model editing framework.
+ * <p/>
  * For a list of usable edit modes, see {@link EditMode}.
+ *
+ * @see yi.component.board.GameModelEditor GameModel editing
  */
 public abstract class AbstractEditMode {
 

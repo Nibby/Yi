@@ -8,7 +8,7 @@ import yi.core.go.GameNode;
 import yi.core.go.GameNodeType;
 import yi.core.go.StoneColor;
 
-public final class StoneEditMode extends AbstractEditMode {
+final class StoneEditMode extends AbstractEditMode {
 
     private final StoneColor colorToEdit;
 
