@@ -46,14 +46,15 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
     }
 
     @Override
-    protected void performTasksBeforeCreatingFrame() {
-        action1 = createAbstractActionImplementation(() -> action1ActionPerformed.set(true));
+    protected void initializeTestActions(EditorActionManager manager) {
+
+        action1 = createAction(manager, () -> action1ActionPerformed.set(true));
         action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
 
-        action2 = createAbstractActionImplementation(() -> action2ActionPerformed.set(true));
+        action2 = createAction(manager, () -> action2ActionPerformed.set(true));
         action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
 
-        action3 = createAbstractActionImplementation(() -> action3ActionPerformed.set(true));
+        action3 = createAction(manager, () -> action3ActionPerformed.set(true));
         action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
     }
 
@@ -230,8 +231,8 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
                 "Third action is not action2, which should be placed on the bottom of the menu");
     }
 
-    private EditorAction createAbstractActionImplementation(Runnable action) {
-        return new EditorAbstractAction(null, EditorTextResources.EMPTY, context -> action.run()) {
+    private EditorAction createAction(EditorActionManager manager, Runnable action) {
+        return new EditorAbstractAction(manager, EditorTextResources.EMPTY, context -> action.run()) {
             @Override
             protected @NotNull MenuItem getAsMenuItemImpl() {
                 return new YiMenuItem(getName());

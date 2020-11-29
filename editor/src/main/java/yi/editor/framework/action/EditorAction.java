@@ -13,20 +13,6 @@ import yi.editor.framework.accelerator.EditorAcceleratorId;
  * Defines one actionable task in the game editor. Each action must be atomic and
  * self-contained, in that it does not depend on another action to run.
  * <p/>
- * Two types of actions exist:
- * <ol>
- *     <li>
- *         <b>Shared Actions</b>: actions that are universally common across all editor
- *         dialogs. These actions are typically stateless and do not depend on instance-
- *         specific state to operate. Actions under this category include "New Game",
- *         "Open", "Save" etc.
- *     </li>
- *     <li>
- *         <b>Instance-specific Actions</b>: actions that operate based on the current
- *         state of the editor frame. These actions are updated on a frame-by-frame basis.
- *         An example is the perspective settings for each editor window.
- *     </li>
- * </ol>
  * Actions can be set to show in the menu bar through {@link #setInMainMenu(EditorMainMenuType, double)}.
  * Optionally, an action can be exported to a JavaFx {@link Node} via {@link #getAsComponent()}.
  *

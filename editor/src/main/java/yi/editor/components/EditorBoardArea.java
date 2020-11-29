@@ -8,10 +8,11 @@ import yi.core.go.GameNode;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorToggleAction;
 import yi.editor.settings.EditorSettings;
+
+import java.util.function.Consumer;
 
 /**
  * Combines {@link yi.component.board.GameBoardViewer} with additional components
@@ -22,9 +23,9 @@ public class EditorBoardArea extends BorderPane {
     private final GameBoardViewer board;
     private final EditorActionToolBar toolBar;
 
-    public EditorBoardArea() {
+    public EditorBoardArea(EditorActionManager actionManager) {
         board = new GameBoardViewer();
-        createBoardActions();
+        createBoardActions(actionManager);
         EditorSettings.applySavedBoardSettings(board);
 
         toolBar = new EditorActionToolBar();
@@ -45,11 +46,13 @@ public class EditorBoardArea extends BorderPane {
         }
     }
 
-    private void createBoardActions() {
-        var toggleCoordinates = new EditorToggleAction(EditorTextResources.MENUITEM_TOGGLE_COORDINATES, context -> {
-            boolean nextState = !board.isShowingBoardCoordinates();
-            board.setShowCoordinates(nextState);
-        });
+    private void createBoardActions(EditorActionManager actionManager) {
+        var toggleCoordinates = new EditorToggleAction(actionManager,
+                EditorTextResources.MENUITEM_TOGGLE_COORDINATES,
+                context -> {
+                    boolean nextState = !board.isShowingBoardCoordinates();
+                    board.setShowCoordinates(nextState);
+                });
         toggleCoordinates.setInMainMenu(EditorMainMenuType.VIEW, 0.000d);
         toggleCoordinates.setAccelerator(EditorAcceleratorId.TOGGLE_BOARD_COORDINATES);
         board.addShowCoordinatesValueListener(toggleCoordinates::setSelected);

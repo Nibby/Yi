@@ -28,16 +28,16 @@ public final class EditorRadioActionTest extends EditorUITestBase {
     }
 
     @Override
-    protected void performTasksBeforeCreatingFrame() {
-        action1 = createTestRadioAction();
+    protected void initializeTestActions(EditorActionManager manager) {
+        action1 = createTestRadioAction(manager);
         action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
         action1.setMenuToggleGroup(toggleGroup);
 
-        action2 = createTestRadioAction();
+        action2 = createTestRadioAction(manager);
         action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
         action2.setMenuToggleGroup(toggleGroup);
 
-        action3 = createTestRadioAction();
+        action3 = createTestRadioAction(manager);
         action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
         action3.setMenuToggleGroup(toggleGroup);
 
@@ -93,7 +93,7 @@ public final class EditorRadioActionTest extends EditorUITestBase {
         Assertions.assertEquals(action3Selected, action3.isSelected());
     }
 
-    private EditorRadioAction createTestRadioAction() {
-        return new EditorRadioAction(EditorTextResources.EMPTY, null);
+    private EditorRadioAction createTestRadioAction(EditorActionManager manager) {
+        return new EditorRadioAction(manager, EditorTextResources.EMPTY, null);
     }
 }

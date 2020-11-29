@@ -29,16 +29,16 @@ public class EditorSubMenuActionTest extends EditorUITestBase {
     private EditorAction itemInSubMenu2;
 
     @Override
-    protected void performTasksBeforeCreatingFrame() {
-        subMenu1 = new EditorSubMenuAction(EditorTextResources.MENUITEM_NEW_GAME)
+    protected void initializeTestActions(EditorActionManager manager) {
+        subMenu1 = new EditorSubMenuAction(manager, EditorTextResources.MENUITEM_NEW_GAME)
                         .setInMainMenu(EditorMainMenuType.TESTING, 0d);
-        itemInSubMenu1 = new EditorBasicAction(EditorTextResources.MENU_PERSPECTIVE, null)
+        itemInSubMenu1 = new EditorBasicAction(manager, EditorTextResources.MENU_PERSPECTIVE, null)
                         .setInMainMenu(EditorMainMenuType.TESTING, 0d);
         subMenu1.addChildAction(itemInSubMenu1);
 
-        subMenu2 = new EditorSubMenuAction(EditorTextResources.MENUITEM_SAVE_AS_GAME)
+        subMenu2 = new EditorSubMenuAction(manager, EditorTextResources.MENUITEM_SAVE_AS_GAME)
                 .setInMainMenu(EditorMainMenuType.TESTING, 1d);
-        itemInSubMenu2 = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME, null)
+        itemInSubMenu2 = new EditorBasicAction(manager, EditorTextResources.MENUITEM_SAVE_GAME, null)
                 .setInMainMenu(EditorMainMenuType.TESTING, 1d);
         subMenu2.addChildAction(itemInSubMenu2);
         subMenu1.addChildAction(subMenu2);

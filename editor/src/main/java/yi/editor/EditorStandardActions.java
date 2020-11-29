@@ -7,6 +7,7 @@ import yi.core.go.*;
 import yi.core.go.docformat.FileFormat;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorActionContext;
+import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorBasicAction;
 
 import java.io.File;
@@ -20,14 +21,14 @@ final class EditorStandardActions {
     private EditorStandardActions() {
     }
 
-    protected static void initializeSharedActions() {
-        createNewGameAction();
-        createOpenGameAction();
-        createSaveAction();
-        createSaveAsAction();
+    protected static void initialize(EditorActionManager manager) {
+        createNewGameAction(manager);
+        createOpenGameAction(manager);
+        createSaveAction(manager);
+        createSaveAsAction(manager);
     }
 
-    private static void createNewGameAction() {
+    private static void createNewGameAction(EditorActionManager manager) {
         Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             // TODO: Show a new dialog prompting for new game document information.
@@ -58,12 +59,12 @@ final class EditorStandardActions {
                 frame.setGameModel(newModel);
             }
         };
-        new EditorBasicAction(EditorTextResources.MENUITEM_NEW_GAME, action)
+        new EditorBasicAction(manager, EditorTextResources.MENUITEM_NEW_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0d)
                 .setAccelerator(EditorAcceleratorId.NEW_GAME);
     }
 
-    private static void createOpenGameAction() {
+    private static void createOpenGameAction(EditorActionManager manager) {
         Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             var fileChooser = new FileChooser();
@@ -79,12 +80,12 @@ final class EditorStandardActions {
                 }
             }
         };
-        new EditorBasicAction(EditorTextResources.MENUITEM_OPEN_GAME, action)
+        new EditorBasicAction(manager, EditorTextResources.MENUITEM_OPEN_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0.001d)
                 .setAccelerator(EditorAcceleratorId.OPEN_GAME);
     }
 
-    private static void createSaveAction() {
+    private static void createSaveAction(EditorActionManager manager) {
         Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             var existingModel = frame.getGameModel();
@@ -98,12 +99,12 @@ final class EditorStandardActions {
                 GameModelExporter.INSTANCE.toFile(existingModel, saveFilePath, existingModel.getLastSaveFormat());
             }
         };
-        new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME, action)
+        new EditorBasicAction(manager, EditorTextResources.MENUITEM_SAVE_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0.002d)
                 .setAccelerator(EditorAcceleratorId.SAVE_GAME);
     }
 
-    private static void createSaveAsAction() {
+    private static void createSaveAsAction(EditorActionManager manager) {
         Consumer<EditorActionContext> action = helper -> {
             var frame = helper.getEditorFrame();
             var existingModel = frame.getGameModel();
@@ -114,7 +115,7 @@ final class EditorStandardActions {
                 GameModelExporter.INSTANCE.toFile(existingModel, saveFilePath, saveFileFormat);
             }
         };
-        new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_AS_GAME, action)
+        new EditorBasicAction(manager, EditorTextResources.MENUITEM_SAVE_AS_GAME, action)
                 .setInMainMenu(EditorMainMenuType.FILE, 0.003d)
                 .setAccelerator(EditorAcceleratorId.SAVE_AS_GAME);
     }

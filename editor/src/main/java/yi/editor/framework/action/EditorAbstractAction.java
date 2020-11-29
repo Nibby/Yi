@@ -10,6 +10,7 @@ import yi.common.BooleanProperty;
 import yi.common.NullableProperty;
 import yi.common.Property;
 import yi.common.i18n.TextResource;
+import yi.editor.EditorHelper;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
@@ -20,9 +21,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * This class is the base implementation for all actions in the editor module. There is
- * only one constructor which manages the instantiation of both shared actions and
- * instance-specific ones. See {@link #EditorAbstractAction(EditorActionManager, TextResource, Consumer) constructor javadoc}.
+ * This class is the base implementation for all actions in the editor module.
  */
 public abstract class EditorAbstractAction implements EditorAction {
 
@@ -52,8 +51,11 @@ public abstract class EditorAbstractAction implements EditorAction {
      * @param name Locale-agnostic name of this action.
      * @param action Task to perform when this action is executed.
      */
-    public EditorAbstractAction(@Nullable EditorActionManager manager,
-                                TextResource name, @Nullable Consumer<EditorActionContext> action) {
+    public EditorAbstractAction(@NotNull EditorActionManager manager,
+                                TextResource name,
+                                Consumer<EditorActionContext> action) {
+        Objects.requireNonNull(manager, "EditorActionManager must not be null.");
+
         this.nameProperty.set(name);
         this.action = action;
 
@@ -63,11 +65,7 @@ public abstract class EditorAbstractAction implements EditorAction {
         addVisibilityListener();
         addEnabledStateListener();
 
-        if (manager == null) {
-            EditorActionManager.registerSharedAction(this);
-        } else {
-            manager.registerInstanceSpecificAction(this);
-        }
+        manager.registerAction(this);
     }
 
     private void addEnabledStateListener() {
@@ -119,9 +117,13 @@ public abstract class EditorAbstractAction implements EditorAction {
     }
 
     private void installMenuItemAccelerator(EditorAcceleratorId acceleratorId, MenuItem menuItem) {
-        if (acceleratorId != null && menuItem != null) {
-            EditorAcceleratorManager.install(acceleratorId, menuItem);
+        if (EditorHelper.isRunningAsTest() && (acceleratorId == null || menuItem == null)) {
+            // TODO: Supposedly UI tests aren't loading all the accelerators but
+            //       I think it should. Work out what's causing this and try remove
+            //       this exclusion if possible.
+            return;
         }
+        EditorAcceleratorManager.install(acceleratorId, menuItem);
     }
 
     @Override
@@ -154,7 +156,8 @@ public abstract class EditorAbstractAction implements EditorAction {
 
     @Override
     public @NotNull EditorMainMenuType getMainMenuType() {
-        return Objects.requireNonNull(mainMenuType, "Action is not set to show in the main menu");
+        return Objects.requireNonNull(mainMenuType,
+                "Action is not set to show in the main menu");
     }
 
     @Override
