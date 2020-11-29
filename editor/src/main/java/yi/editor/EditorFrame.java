@@ -40,6 +40,7 @@ public class EditorFrame extends Stage {
     private final EditorActionManager actionManager;
     private final EditorMenuBar menuBar;
     private final EditorToolBar toolBar;
+    private final EditorUndoSystem undoSystem;
 
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
@@ -49,6 +50,7 @@ public class EditorFrame extends Stage {
 
     public EditorFrame(GameModel gameModel, EditorPerspective layout) {
         actionManager = new EditorActionManager(this);
+        undoSystem = new EditorUndoSystem(actionManager);
 
         toolBar = new EditorToolBar();
         boardArea = new EditorBoardArea();
@@ -69,6 +71,7 @@ public class EditorFrame extends Stage {
         addGameModelChangeListener(newModel -> {
             boardArea.setGameModel(newModel);
             treeViewer.setGameModel(newModel);
+            undoSystem.setGameModel(newModel, boardArea);
         });
 
         treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
@@ -193,13 +196,7 @@ public class EditorFrame extends Stage {
      * @param newScene Scene to set.
      */
     private void setYiScene(@NotNull YiScene newScene) {
-        installUndoRedoAccelerators(newScene);
         setScene(newScene);
-    }
-
-    private void installUndoRedoAccelerators(YiScene newScene) {
-        EditorAcceleratorManager.install(EditorAcceleratorId.UNDO, newScene, boardArea::requestUndo);
-        EditorAcceleratorManager.install(EditorAcceleratorId.REDO, newScene, boardArea::requestRedo);
     }
 
     public Parent getBoardComponent() {

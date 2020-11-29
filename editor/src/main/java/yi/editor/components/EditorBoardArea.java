@@ -65,12 +65,12 @@ public class EditorBoardArea extends BorderPane {
         toolBar.setContentForLayout(newLayout, gameModel);
     }
 
-    public void requestUndo() {
-        board.requestUndo();
+    public boolean requestUndo() {
+        return board.requestUndo();
     }
 
-    public void requestRedo() {
-        board.requestRedo();
+    public boolean requestRedo() {
+        return board.requestRedo();
     }
 
     public void onHighlightedNodeChange(@Nullable GameNode node) {
@@ -79,5 +79,13 @@ public class EditorBoardArea extends BorderPane {
 
     public GameBoardViewer getGameBoardViewer() {
         return board;
+    }
+
+    public boolean canUndo() {
+        return board.canUndo();
+    }
+
+    public boolean canRedo() {
+        return board.canRedo();
     }
 }
