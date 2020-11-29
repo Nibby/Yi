@@ -65,6 +65,8 @@ public class EditorRadioAction extends EditorAbstractAction {
 
         MenuItem menuItem = getAsMenuItem();
         group.getToggles().add((YiRadioMenuItem) menuItem);
+        group.selectedToggleProperty().addListener(toggle ->
+                setSelected(group.getSelectedToggle().equals(menuItem)));
     }
 
     /**
