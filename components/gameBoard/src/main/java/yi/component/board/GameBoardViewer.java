@@ -6,7 +6,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import yi.common.BooleanProperty;
 import yi.common.BooleanPropertyListener;
 import yi.common.NullablePropertyListener;
 import yi.component.CanvasContainer;
@@ -139,16 +138,18 @@ public final class GameBoardViewer implements YiComponent {
         content.forEach(canvas -> canvas.onGameUpdate(manager.getGameModel(), this.manager));
     }
 
-    public void requestUndo() {
+    public boolean requestUndo() {
         if (manager.edit.canUndo()) {
             manager.edit.performUndo(manager);
         }
+        return manager.edit.canUndo();
     }
 
-    public void requestRedo() {
+    public boolean requestRedo() {
         if (manager.edit.canRedo()) {
             manager.edit.performRedo(manager);
         }
+        return manager.edit.canRedo();
     }
 
     public boolean isDebugMode() {
@@ -203,5 +204,19 @@ public final class GameBoardViewer implements YiComponent {
 
     public void setPreviewNode(@Nullable GameNode node) {
         manager.setPreviewNode(node);
+    }
+
+    /**
+     * @return {@code true} if there exists at least one more edit that can be undone.
+     */
+    public boolean canUndo() {
+        return manager.edit.canUndo();
+    }
+
+    /**
+     * @return {@code true} if there exists at least one more edit that can be undone.
+     */
+    public boolean canRedo() {
+        return manager.edit.canRedo();
     }
 }
