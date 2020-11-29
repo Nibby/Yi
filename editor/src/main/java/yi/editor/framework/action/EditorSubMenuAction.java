@@ -2,10 +2,13 @@ package yi.editor.framework.action;
 
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
 import yi.component.YiMenu;
+import yi.editor.EditorMainMenuType;
+import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,5 +68,42 @@ public class EditorSubMenuAction extends EditorAbstractAction {
     @Override
     protected Node getAsComponentImpl() {
         return null; // TODO: Work out what to do with sub-menu components, button with a context menu popup?
+    }
+
+    // Methods overridden to enable co-variant return types for smoother method chaining
+
+    @Override
+    public EditorAction setAccelerator(EditorAcceleratorId acceleratorId) {
+        throw new UnsupportedOperationException("EditorSubMenuAction does not support accelerators");
+    }
+
+    @Override
+    public EditorSubMenuAction setInMainMenu(@NotNull EditorMainMenuType menu, double position) {
+        super.setInMainMenu(menu, position);
+        return this;
+    }
+
+    @Override
+    public EditorSubMenuAction setName(@NotNull TextResource name) {
+        super.setName(name);
+        return this;
+    }
+
+    @Override
+    public EditorSubMenuAction setIcon(@Nullable ImageView icon) {
+        super.setIcon(icon);
+        return this;
+    }
+
+    @Override
+    public EditorSubMenuAction setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        return this;
+    }
+
+    @Override
+    public EditorSubMenuAction setVisible(boolean visible) {
+        super.setVisible(visible);
+        return this;
     }
 }
