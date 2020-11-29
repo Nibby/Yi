@@ -1,5 +1,6 @@
 package yi.component.gametree;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.input.KeyEvent;
@@ -18,6 +19,8 @@ import yi.core.go.NodeEvent;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A component which displays the game model and its nodes as a tree graph.
@@ -93,15 +96,25 @@ public final class GameTreeViewer implements YiComponent {
     private final EventListener<NodeEvent> currentMoveChangeListener = (event) -> updateCameraAndRender(event.getNode());
 
     public void setGameModel(@NotNull GameModel model) {
+        boolean panToNewNode = false;
+
         if (this.gameModel != null) {
             this.gameModel.onCurrentNodeChange().removeListener(currentMoveChangeListener);
             this.gameModel.onNodeAdd().removeListener(treeStructureChangeListener);
             this.gameModel.onNodeRemove().removeListener(treeStructureChangeListener);
+            panToNewNode = true;
         }
 
         this.gameModel = model;
         this.treeStructure = new GameTreeStructure(this.gameModel);
-        this.camera.reset();
+
+        var currentNode = this.gameModel.getCurrentNode();
+        TreeNodeElement currentNodeElement = this.treeStructure.getTreeNodeElementForNode(currentNode).orElseThrow();
+        if (panToNewNode) {
+            this.camera.setCenterElementWithAnimation(currentNodeElement, elementSize.getGridSize());
+        } else {
+            this.camera.setCenterElementImmediately(currentNodeElement, elementSize.getGridSize());
+        }
 
         this.gameModel.onCurrentNodeChange().addListener(currentMoveChangeListener);
         this.gameModel.onNodeAdd().addListener(treeStructureChangeListener);
@@ -136,6 +149,28 @@ public final class GameTreeViewer implements YiComponent {
     public void setPreviewNode(@Nullable GameNode node) {
         treeStructure.setPreviewNode(node);
         updateCameraAndRender(node != null ? node : this.gameModel.getCurrentNode());
+    }
+
+    /**
+     * Retrieves the render position of the {@link GameNode} on the game tree.
+     *
+     * @param node Node to retrieve bounds for.
+     * @return The bounds of the {@link TreeElement} as it is rendered on the tree canvas
+     * for the given node. Or {@link Optional#empty()} if the tree structure does not
+     * contain the requested node.
+     */
+    protected final Optional<Rectangle2D> getElementBoundsForNode(GameNode node) {
+        if (treeStructure == null) {
+            return Optional.empty();
+        }
+        var element = new AtomicReference<TreeNodeElement>(null);
+        treeStructure.getTreeNodeElementForNode(node).ifPresent(element::set);
+        var value = element.get();
+        if (value != null) {
+            var bounds = canvas.getElementBounds(value, elementSize, camera);
+            return Optional.of(bounds);
+        }
+        return Optional.empty();
     }
 
     /*
