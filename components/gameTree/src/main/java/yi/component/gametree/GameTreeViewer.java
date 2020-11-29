@@ -168,8 +168,8 @@ public final class GameTreeViewer implements YiComponent {
         private void maybeFireHighlightedNodeChangeEvent(boolean hasItem) {
             GameNode newValue = treeStructure.getPreviewNode();
             if (hasItem) {
-                if (lastFiredHighlightedNodeValue != null
-                        && !lastFiredHighlightedNodeValue.equals(newValue)) {
+                if (lastFiredHighlightedNodeValue == null
+                        || !lastFiredHighlightedNodeValue.equals(newValue)) {
                     previewNode.set(newValue);
                 }
                 lastFiredHighlightedNodeValue = newValue;
