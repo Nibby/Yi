@@ -32,4 +32,9 @@ public class YiMenuItem extends MenuItem implements YiComponent {
     public void setText(@Nullable TextResource key) {
         setText(key == null ? "" : key.getLocalisedText());
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [Text: '" + getText() + "']";
+    }
 }

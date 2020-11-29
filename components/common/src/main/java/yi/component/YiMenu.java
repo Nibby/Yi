@@ -39,4 +39,8 @@ public class YiMenu extends Menu implements YiComponent {
         setText(key == null ? "" : key.getLocalisedText());
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [Text: '" + getText() + "']";
+    }
 }

@@ -56,7 +56,7 @@ public class EditorSubMenuAction extends EditorAbstractAction {
         var sortedChildren = new ArrayList<>(children);
         sortedChildren.sort(Comparator.comparingDouble(EditorAction::getMenuPosition));
 
-        for (EditorAction child : children) {
+        for (EditorAction child : sortedChildren) {
             var childMenuItem = child.getAsMenuItem();
             menu.getItems().add(childMenuItem);
             child.markAsAddedToMenu();

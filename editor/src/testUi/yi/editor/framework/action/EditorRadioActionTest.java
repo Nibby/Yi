@@ -10,18 +10,22 @@ import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorUITestBase;
 
-public class EditorRadioActionTest extends EditorUITestBase {
+/**
+ * Tests the selection state of {@link EditorRadioAction} is behaving correctly
+ * on the action itself and its exported components.
+ */
+public final class EditorRadioActionTest extends EditorUITestBase {
+
+    private final ToggleGroup toggleGroup = new ToggleGroup();
+    private EditorRadioAction action1;
+    private EditorRadioAction action2;
+    private EditorRadioAction action3;
 
     @Start
     @Override
     public void startFx(Stage stage) {
         super.startFx(stage);
     }
-
-    private final ToggleGroup toggleGroup = new ToggleGroup();
-    private EditorRadioAction action1;
-    private EditorRadioAction action2;
-    private EditorRadioAction action3;
 
     @Override
     protected void performTasksBeforeCreatingFrame() {
@@ -41,21 +45,13 @@ public class EditorRadioActionTest extends EditorUITestBase {
     }
 
     @Test
-    public void testAction_SelectionStateCorrect() {
-        assertActionStateCorrect(true, false, false);
-
-        action2.setSelected(true);
-        assertActionStateCorrect(false, true, false);
-
-        action3.setSelected(true);
-        assertActionStateCorrect(false, false, true);
-
-        action1.setSelected(true);
-        assertActionStateCorrect(true, false, false);
+    public void testSelectionStateCorrect() {
+        testAction();
+        testMenuItem();
+//        testNode(); TODO: Implement later
     }
 
-    @Test
-    public void testMenuItem_SelectionStateCorrect() {
+    private void testAction() {
         assertMenuItemStateCorrect(true, false, false);
 
         action2.setSelected(true);
@@ -68,10 +64,18 @@ public class EditorRadioActionTest extends EditorUITestBase {
         assertMenuItemStateCorrect(true, false, false);
     }
 
-//    @Test
-//    public void testNode_SelectionStateCorrect() {
-//        // TODO: Implement this later when we need to export actions to nodes
-//    }
+    private void testMenuItem() {
+        assertActionStateCorrect(true, false, false);
+
+        action2.setSelected(true);
+        assertActionStateCorrect(false, true, false);
+
+        action3.setSelected(true);
+        assertActionStateCorrect(false, false, true);
+
+        action1.setSelected(true);
+        assertActionStateCorrect(true, false, false);
+    }
 
     private void assertMenuItemStateCorrect(boolean action1Selected,
                                             boolean action2Selected,
