@@ -115,7 +115,7 @@ final class EditorStandardActions {
             }
         };
         new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_AS_GAME, action)
-                .setInMainMenu(EditorMainMenuType.FILE, 0d)
+                .setInMainMenu(EditorMainMenuType.FILE, 0.003d)
                 .setAccelerator(EditorAcceleratorId.SAVE_AS_GAME);
     }
 
