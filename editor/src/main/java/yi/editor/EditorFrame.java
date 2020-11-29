@@ -71,10 +71,10 @@ public class EditorFrame extends Stage {
             treeViewer.setGameModel(newModel);
         });
 
-        treeViewer.addHighlightedNodeChangeListener(boardArea::onHighlightedNodeChange);
+        treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
         boardArea.getGameBoardViewer().addPreviewNodeChangeListener(newPreview -> {
-            if (newPreview != treeViewer.getHighlightedNode()) {
-                treeViewer.setHighlightedNode(newPreview);
+            if (newPreview != treeViewer.getPreviewNode()) {
+                treeViewer.setPreviewNode(newPreview);
             }
         });
 

@@ -144,7 +144,7 @@ final class GameTreeStructure {
         return treeElementManager.setHighlightedGrid(x, y);
     }
 
-    public void setHighlightedNode(@Nullable GameNode node) {
+    public void setPreviewNode(@Nullable GameNode node) {
         treeElementManager.setHighlightedNode(node);
     }
 

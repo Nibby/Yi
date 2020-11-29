@@ -114,11 +114,11 @@ public final class GameTreeViewer implements YiComponent {
      *
      * @param listener New listener to add.
      */
-    public void addHighlightedNodeChangeListener(NullablePropertyListener<GameNode> listener) {
+    public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
         previewNode.addListener(listener);
     }
 
-    public void removeHighlightedNodeChangeListener(NullablePropertyListener<GameNode> listener) {
+    public void removePreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
         previewNode.removeListener(listener);
     }
 
@@ -127,12 +127,12 @@ public final class GameTreeViewer implements YiComponent {
         return component;
     }
 
-    public @Nullable GameNode getHighlightedNode() {
+    public @Nullable GameNode getPreviewNode() {
         return treeStructure.getPreviewNode();
     }
 
-    public void setHighlightedNode(@Nullable GameNode node) {
-        treeStructure.setHighlightedNode(node);
+    public void setPreviewNode(@Nullable GameNode node) {
+        treeStructure.setPreviewNode(node);
         updateCameraAndRender(node != null ? node : this.gameModel.getCurrentNode());
     }
 
