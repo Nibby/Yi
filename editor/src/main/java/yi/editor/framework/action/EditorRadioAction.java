@@ -26,11 +26,8 @@ public class EditorRadioAction extends EditorAbstractAction {
 
     private final BooleanProperty selectedProperty = new BooleanProperty(false);
 
-    public EditorRadioAction(TextResource name, @Nullable Consumer<EditorActionContext> action) {
-        this(null, name, action);
-    }
-
-    public EditorRadioAction(@Nullable EditorActionManager managerInstance, TextResource name,
+    public EditorRadioAction(EditorActionManager managerInstance,
+                             TextResource name,
                              Consumer<EditorActionContext> action) {
         super(managerInstance, name, action);
 

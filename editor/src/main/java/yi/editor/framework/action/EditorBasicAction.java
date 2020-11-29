@@ -10,19 +10,16 @@ import yi.component.YiMenuItem;
 import java.util.function.Consumer;
 
 /**
- * Standard concrete implementation of {@link EditorAction} that represents one repeatable,
- * self-contained piece of functionality. This action is stateless, so will always perform
- * the same task when selected.
- *
- * @see EditorRadioAction Radio-option actions
+ * Standard concrete implementation of {@link EditorAction} that represents one
+ * repeatable, self-contained piece of functionality. This action is stateless.
+ * <p/>
+ * For stateful actions, see {@link EditorRadioAction} and
+ * {@link EditorToggleAction}.
  */
 public class EditorBasicAction extends EditorAbstractAction {
 
-    public EditorBasicAction(TextResource name, @Nullable Consumer<EditorActionContext> action) {
-        this(null, name, action);
-    }
-
-    public EditorBasicAction(@Nullable EditorActionManager manager, TextResource name,
+    public EditorBasicAction(@Nullable EditorActionManager manager,
+                             TextResource name,
                              @Nullable Consumer<EditorActionContext> action) {
         super(manager, name, action);
     }

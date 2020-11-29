@@ -10,6 +10,7 @@ import org.testfx.framework.junit5.Start;
 import yi.core.go.GameModel;
 import yi.core.go.StandardGameRules;
 import yi.editor.components.EditorPerspective;
+import yi.editor.framework.action.EditorActionManager;
 import yi.editor.utilities.GameModelUtilities;
 
 import java.nio.file.Files;
@@ -33,16 +34,14 @@ public abstract class EditorUITestBase {
 
     @Start
     public void startFx(Stage stage) {
-        performTasksBeforeCreatingFrame();
-        
         gameModel = GameModelUtilities.createGameModel(19, 19, StandardGameRules.CHINESE);
-        frame = new EditorFrame(gameModel, EditorPerspective.COMPACT);
+        frame = new EditorFrame(gameModel, EditorPerspective.COMPACT, this::initializeTestActions);
         stage = frame;
         stage.show();
         stage.requestFocus();
     }
 
-    protected abstract void performTasksBeforeCreatingFrame();
+    protected abstract void initializeTestActions(EditorActionManager manager);
 
     @AfterEach
     public void dispose() {

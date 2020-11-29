@@ -72,7 +72,6 @@ public final class EditorHelper {
         EditorTextResources.installSupportedLanguages();
         SkinManager.useDefaultSkin();
         EditorSettings.load();
-        EditorStandardActions.initializeSharedActions();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             EditorSettings.general.save();

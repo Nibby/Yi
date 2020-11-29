@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.common.utilities.GuiUtilities;
@@ -26,11 +27,12 @@ import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * The main frame for an editor session.
  */
-public class EditorFrame extends Stage {
+public final class EditorFrame extends Stage {
 
     private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
 
@@ -46,13 +48,36 @@ public class EditorFrame extends Stage {
 
     private boolean addedMenuBarOnce = false;
 
-    public EditorFrame(GameModel gameModel, EditorPerspective layout) {
+    public EditorFrame(GameModel gameModel) {
+        this(gameModel, EditorSettings.general.getCurrentLayout());
+    }
+
+    public EditorFrame(GameModel gameModel, EditorPerspective perspective) {
+        this(gameModel, perspective, null);
+    }
+
+    /**
+     * @implNote This constructor is a shortcut solution to the problem that
+     * actions initialised after the creation of {@link EditorMenuBar} will not
+     * have its menu component added to the main menu. This is a common issue
+     * in tests where test code needs to instantiate custom actions that also
+     * require {@link EditorActionManager} to be instantiated, but before
+     * main menu bar is created.
+     * <p/>
+     * For now, we sidestep this problem by providing this constructor. The
+     * clean solution would be to refactor the Action API to support unprocessed
+     * actions added to the frame.
+     */
+    protected EditorFrame(GameModel gameModel,
+                          EditorPerspective perspective,
+                          @Nullable Consumer<EditorActionManager> extraCodeBeforeCreatingMenuBar) {
         actionManager = new EditorActionManager(this);
-        undoSystem = new EditorUndoSystem(actionManager);
+        EditorStandardActions.initialize(actionManager);
         EditorPerspective.initializeActions(actionManager);
+        undoSystem = new EditorUndoSystem(actionManager);
 
         toolBar = new EditorToolBar();
-        boardArea = new EditorBoardArea();
+        boardArea = new EditorBoardArea(actionManager);
         enableDragAndDropToOpenFile(boardArea.getGameBoardViewer());
 
         var treeViewerSettings = new GameTreeViewerSettings();
@@ -80,13 +105,18 @@ public class EditorFrame extends Stage {
             }
         });
 
+        // TODO: Remove this workaround ASAP
+        if (extraCodeBeforeCreatingMenuBar != null) {
+            extraCodeBeforeCreatingMenuBar.accept(actionManager);
+        }
+
         // Current action system implementation requires all actions (both shared and
         // instance-based) to be created prior to creating the menu bar. After this point
         // newly created actions will not be added to the menu bar.
         // TODO: Consider supporting late-comers to remove this temporal coupling...
         menuBar = new EditorMenuBar(actionManager);
 
-        setPerspective(layout);
+        setPerspective(perspective);
         setGameModel(gameModel);
         setTitle(EditorHelper.getProgramName());
     }
