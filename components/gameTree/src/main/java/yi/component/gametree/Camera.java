@@ -3,6 +3,7 @@ package yi.component.gametree;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
 import javafx.util.Duration;
 import yi.common.utilities.ComparisonUtilities;
 
@@ -55,12 +56,20 @@ final class Camera {
      * {@link GameTreeElementSize#getGridSize()}
      */
     public void setCenterElementWithAnimation(TreeElement centeredItem, Dimension2D gridSize) {
-        int gridX = centeredItem.getGridX();
-        int gridY = centeredItem.getGridY();
+        var center = getCenterPoint(centeredItem, gridSize);
+        setCenterOnCoordinateWithAnimation(center.getX(), center.getY());
+    }
 
-        double centerX = gridX * gridSize.getWidth() + gridSize.getWidth() / 2;
-        double centerY = gridY * gridSize.getHeight() + gridSize.getHeight() / 2;
-        setCenterOnCoordinateWithAnimation(centerX, centerY);
+    /**
+     * Sets the target item to center on immediately without any animation.
+     *
+     * @param centeredItem Element to center on
+     * @param gridSize Size of each grid in the tree structure, can be obtained from
+     * {@link GameTreeElementSize#getGridSize()}
+     */
+    public void setCenterElementImmediately(TreeElement centeredItem, Dimension2D gridSize) {
+        var center = getCenterPoint(centeredItem, gridSize);
+        setCenterOnCoordinateImmediately(center.getX(), center.getY());
     }
 
     /**
@@ -154,11 +163,6 @@ final class Camera {
         return offsetY;
     }
 
-    public void reset() {
-        this.offsetX = 0;
-        this.offsetY = 0;
-    }
-
     public void addOffsetChangeListener(Runnable listener) {
         offsetChangeListener.add(listener);
     }
@@ -183,5 +187,14 @@ final class Camera {
 
     public double getCenterY() {
         return lastCenterY;
+    }
+
+    private Point2D getCenterPoint(TreeElement element, Dimension2D gridSize) {
+        int gridX = element.getGridX();
+        int gridY = element.getGridY();
+
+        double centerX = gridX * gridSize.getWidth() + gridSize.getWidth() / 2;
+        double centerY = gridY * gridSize.getHeight() + gridSize.getHeight() / 2;
+        return new Point2D(centerX, centerY);
     }
 }
