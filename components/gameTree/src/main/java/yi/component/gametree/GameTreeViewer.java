@@ -62,11 +62,13 @@ public final class GameTreeViewer implements YiComponent {
     }
 
     private void render() {
-        var elements = getVisibleElementsInViewport();
-        var currentNode = gameModel.getCurrentNode();
-        var previewNode = treeStructure.getPreviewNode();
+        if (gameModel != null && treeStructure != null) {
+            var elements = getVisibleElementsInViewport();
+            var currentNode = gameModel.getCurrentNode();
+            var previewNode = treeStructure.getPreviewNode();
 
-        canvas.render(settings, camera, elements, currentNode, previewNode, elementSize);
+            canvas.render(settings, camera, elements, currentNode, previewNode, elementSize);
+        }
     }
 
     private List<TreeNodeElement> getVisibleElementsInViewport() {
