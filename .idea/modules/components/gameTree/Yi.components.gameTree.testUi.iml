@@ -3,7 +3,9 @@
   <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../../../build/gameTree/classes/java/testUi" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../../components/gameTree/src/testUI" />
+    <content url="file://$MODULE_DIR$/../../../../components/gameTree/src/testUi">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../components/gameTree/src/testUi" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Yi.components.gameTree.main" />

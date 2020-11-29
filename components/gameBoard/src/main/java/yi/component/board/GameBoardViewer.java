@@ -269,13 +269,9 @@ public final class GameBoardViewer implements YiComponent {
      * Can be set to null to draw the current move instead.
      *
      * @param node Game node to set as preview, or {@code null} to draw the current node.
-     *             The preview node must not be the current node.
+     *             The preview node should not be the current node.
      */
     public void setPreviewNode(@Nullable GameNode node) {
-        if (manager.getGameModel().getCurrentNode().equals(node)) {
-            throw new IllegalArgumentException("Preview node cannot be the current node. " +
-                    "Set it to null instead.");
-        }
         manager.setPreviewNode(node);
     }
 

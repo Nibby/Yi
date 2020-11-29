@@ -50,6 +50,9 @@ public final class EditorSettings {
      */
     public static void load() {
         if (loadedOnce) {
+            if (EditorHelper.isRunningAsTest()) {
+                return;
+            }
             throw new IllegalStateException("This operation can only be called once upon startup!");
         }
 

@@ -1,5 +1,6 @@
 package yi.component.gametree;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
@@ -7,6 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.utilities.GuiUtilities;
 import yi.core.go.GameNode;
@@ -233,6 +235,19 @@ final class GameTreeCanvas extends Canvas {
                 graphics.strokeLine(centerX, pCenterY+BRANCH_LINE_WIDTH, centerX, centerY);
             });
         }
+    }
+
+    public Rectangle2D getElementBounds(@NotNull TreeNodeElement element,
+                                        GameTreeElementSize elementSize,
+                                        Camera camera) {
+        var gridSize = elementSize.getGridSize();
+
+        double width = gridSize.getWidth();
+        double height = gridSize.getHeight();
+        double x = element.getGridX() * width + camera.getOffsetX();
+        double y = element.getGridY() * height + camera.getOffsetY();
+
+        return new Rectangle2D(x, y, width, height);
     }
 
     /**
