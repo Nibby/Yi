@@ -56,17 +56,29 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
     private void testScrollWheelAdjustsViewport(FxRobot robot) {
         centerOnRootNode(robot);
 
+        // As much as I'd like to test the scroll direction is correct,
+        // some test agents on GitHub Actions have natural scrolling turned
+        // on, which makes it impossible to tell which direction we should be
+        // expecting.
+
         var offsetYBeforeScroll = offsetY;
         robot.scroll(20, VerticalDirection.DOWN);
         var offsetYAfterScroll = offsetY;
-        Assertions.assertTrue(offsetYAfterScroll > offsetYBeforeScroll,
-                "offsetYAfterScroll: " + offsetYAfterScroll + ", offsetYBeforeScroll: " + offsetYBeforeScroll);
+        boolean offsetYIncreased = offsetYAfterScroll > offsetYBeforeScroll;
+        Assertions.assertTrue(offsetYAfterScroll != offsetYBeforeScroll,
+                "Scrolling down on the game tree did nothing");
 
         offsetYBeforeScroll = offsetYAfterScroll;
         robot.scroll(20, VerticalDirection.UP);
         offsetYAfterScroll = offsetY;
-        Assertions.assertTrue(offsetYAfterScroll < offsetYBeforeScroll,
-                "offsetYAfterScroll: " + offsetYAfterScroll + ", offsetYBeforeScroll: " + offsetYBeforeScroll);
+        boolean offsetYIncreasedAgain = offsetYAfterScroll > offsetYBeforeScroll;
+        Assertions.assertTrue(offsetYAfterScroll != offsetYBeforeScroll,
+                "Scrolling up on the game tree did nothing");
+
+        if (offsetYIncreased && offsetYIncreasedAgain) {
+            Assertions.fail("Scrolling up and down both moved viewport in the " +
+                    "same direction");
+        }
     }
 
     private void testDragAdjustsViewport(FxRobot robot) throws InterruptedException {
