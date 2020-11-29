@@ -198,8 +198,8 @@ public class EditorFrame extends Stage {
     }
 
     private void installUndoRedoAccelerators(YiScene newScene) {
-        EditorAcceleratorManager.getAccelerator(EditorAcceleratorId.UNDO).install(newScene, boardArea::requestUndo);
-        EditorAcceleratorManager.getAccelerator(EditorAcceleratorId.REDO).install(newScene, boardArea::requestRedo);
+        EditorAcceleratorManager.install(EditorAcceleratorId.UNDO, newScene, boardArea::requestUndo);
+        EditorAcceleratorManager.install(EditorAcceleratorId.REDO, newScene, boardArea::requestRedo);
     }
 
     public Parent getBoardComponent() {

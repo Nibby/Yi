@@ -120,7 +120,7 @@ public abstract class EditorAbstractAction implements EditorAction {
 
     private void installMenuItemAccelerator(EditorAcceleratorId acceleratorId, MenuItem menuItem) {
         if (acceleratorId != null && menuItem != null) {
-            EditorAcceleratorManager.getAccelerator(acceleratorId).install(menuItem);
+            EditorAcceleratorManager.install(acceleratorId, menuItem);
         }
     }
 
@@ -207,7 +207,9 @@ public abstract class EditorAbstractAction implements EditorAction {
      * @implNote The default implementation automatically updates
      * the icon of components that are subclasses of {@link Labeled}.
      */
-    protected abstract void onIconUpdate(ImageView newIcon);
+    protected void onIconUpdate(ImageView newIcon) {
+
+    }
 
     /**
      * Notifies that the name for this action has changed.
@@ -217,7 +219,9 @@ public abstract class EditorAbstractAction implements EditorAction {
      * @implNote The default implementation automatically updates
      * the text of components that are subclasses of {@link Labeled}.
      */
-    protected abstract void onNameUpdate(TextResource newName);
+    protected void onNameUpdate(TextResource newName) {
+
+    }
 
     /**
      * Notifies that the enabled state for this action has changed.
@@ -228,7 +232,9 @@ public abstract class EditorAbstractAction implements EditorAction {
      * {@link Node#setDisable(boolean)} on the exported menu item
      * and component.
      */
-    protected abstract void onEnabledStateUpdate(boolean isEnabledNow);
+    protected void onEnabledStateUpdate(boolean isEnabledNow) {
+
+    }
 
     /**
      * Notifies that the visibility of components for this action has
@@ -241,7 +247,9 @@ public abstract class EditorAbstractAction implements EditorAction {
      * for exported components, and {@link MenuItem#setVisible(boolean)}
      * for menu items.
      */
-    protected abstract void onVisibilityUpdate(boolean isVisibleNow);
+    protected void onVisibilityUpdate(boolean isVisibleNow) {
+
+    }
 
     @Override
     public void performAction(EditorActionHelper helper) {
