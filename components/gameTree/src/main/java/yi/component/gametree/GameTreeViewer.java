@@ -173,6 +173,10 @@ public final class GameTreeViewer implements YiComponent {
         return Optional.empty();
     }
 
+    protected final Camera getCamera() {
+        return camera;
+    }
+
     /*
         Put this here to access all the required fields without introducing excessive coupling to the
         canvas component itself.
