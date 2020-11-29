@@ -33,4 +33,9 @@ public class TextResource {
         return rawString;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()
+                + " [localised: " + getLocalisedText() + ", bundle: " + bundleName + "]";
+    }
 }

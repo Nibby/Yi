@@ -1,5 +1,6 @@
 package yi.editor;
 
+import javafx.scene.control.Menu;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +15,7 @@ import yi.editor.utilities.GameModelUtilities;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 @ExtendWith(ApplicationExtension.class)
 public abstract class EditorUITestBase {
@@ -56,6 +58,23 @@ public abstract class EditorUITestBase {
         return gameModel;
     }
 
+    /**
+     * Gets the {@link Menu} component in the {@link yi.editor.components.EditorMenuBar}
+     * that corresponds to the given menu type. If it is not present, returns
+     * {@link Optional#empty()}.
+     *
+     * @param menuType Menu type to retrieve menu for.
+     * @return The corresponding menu, if it exists.
+     */
+    public Optional<Menu> getMenu(EditorMainMenuType menuType) {
+        if (frame != null) {
+            return frame.getMainMenuBar().getMenus().stream()
+                    .filter(menu -> menu.getUserData() == menuType)
+                    .findFirst();
+        }
+        return Optional.empty();
+    }
+
     private static Path getSettingsPathForTests() {
         Path currentDir = Paths.get(System.getProperty("user.dir"));
         if (currentDir.getFileName().endsWith("editor")) {
@@ -69,5 +88,4 @@ public abstract class EditorUITestBase {
 
         throw new IllegalStateException("Cannot set root path for tests. currentDir: " + currentDir);
     }
-
 }

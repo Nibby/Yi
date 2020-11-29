@@ -26,16 +26,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The goal of this test class is to check the menu items are exported correctly and
- * responding correctly to changes to the action state.
+ * Tests the menu items are exported correctly and responding correctly to changes to
+ * the action state.
  */
-public class EditorAbstractActionTest extends EditorUITestBase {
-
-    @Start
-    @Override
-    public void startFx(Stage stage) {
-        super.startFx(stage);
-    }
+public final class EditorAbstractActionTest extends EditorUITestBase {
 
     private EditorAction action1;
     private EditorAction action2;
@@ -44,6 +38,12 @@ public class EditorAbstractActionTest extends EditorUITestBase {
     private final AtomicBoolean action1ActionPerformed = new AtomicBoolean(false);
     private final AtomicBoolean action2ActionPerformed = new AtomicBoolean(false);
     private final AtomicBoolean action3ActionPerformed = new AtomicBoolean(false);
+
+    @Start
+    @Override
+    public void startFx(Stage stage) {
+        super.startFx(stage);
+    }
 
     @Override
     protected void performTasksBeforeCreatingFrame() {
