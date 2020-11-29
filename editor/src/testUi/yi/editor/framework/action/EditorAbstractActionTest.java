@@ -23,6 +23,7 @@ import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The goal of this test class is to check the menu items are exported correctly and
@@ -40,15 +41,19 @@ public class EditorAbstractActionTest extends EditorUITestBase {
     private EditorAction action2;
     private EditorAction action3;
 
+    private final AtomicBoolean action1ActionPerformed = new AtomicBoolean(false);
+    private final AtomicBoolean action2ActionPerformed = new AtomicBoolean(false);
+    private final AtomicBoolean action3ActionPerformed = new AtomicBoolean(false);
+
     @Override
     protected void performTasksBeforeCreatingFrame() {
-        action1 = createAbstractActionImplementation();
+        action1 = createAbstractActionImplementation(() -> action1ActionPerformed.set(true));
         action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
 
-        action2 = createAbstractActionImplementation();
+        action2 = createAbstractActionImplementation(() -> action2ActionPerformed.set(true));
         action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
 
-        action3 = createAbstractActionImplementation();
+        action3 = createAbstractActionImplementation(() -> action3ActionPerformed.set(true));
         action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
     }
 
@@ -71,6 +76,31 @@ public class EditorAbstractActionTest extends EditorUITestBase {
         testSetName(menuItemMap, nodeMap);
         testSetIcon(menuItemMap, nodeMap);
         testSetAccelerator(menuItemMap);
+        testActionPerformed();
+    }
+
+    private void testActionPerformed() {
+        var mainMenuBar = frame.getMainMenuBar();
+        Menu testingMenu = mainMenuBar.getMenus().stream()
+                .filter(menu -> menu.getUserData() == EditorMainMenuType.TESTING)
+                .findFirst()
+                .orElseThrow();
+
+        // Sanity check
+        Assertions.assertFalse(action1ActionPerformed.get());
+        Assertions.assertFalse(action2ActionPerformed.get());
+        Assertions.assertFalse(action3ActionPerformed.get());
+
+        for (MenuItem menuItem : testingMenu.getItems()) {
+            var data = menuItem.getUserData();
+            if (data instanceof EditorAction) {
+                menuItem.fire();
+            }
+        }
+
+        Assertions.assertTrue(action1ActionPerformed.get());
+        Assertions.assertTrue(action2ActionPerformed.get());
+        Assertions.assertTrue(action3ActionPerformed.get());
     }
 
     private void testSetAccelerator(HashMap<EditorAction, MenuItem> menuItemMap) {
@@ -200,8 +230,8 @@ public class EditorAbstractActionTest extends EditorUITestBase {
                 "Third action is not action2, which should be placed on the bottom of the menu");
     }
 
-    private EditorAction createAbstractActionImplementation() {
-        return new EditorAbstractAction(null, EditorTextResources.EMPTY, null) {
+    private EditorAction createAbstractActionImplementation(Runnable action) {
+        return new EditorAbstractAction(null, EditorTextResources.EMPTY, context -> action.run()) {
             @Override
             protected @NotNull MenuItem getAsMenuItemImpl() {
                 return new YiMenuItem(getName());
