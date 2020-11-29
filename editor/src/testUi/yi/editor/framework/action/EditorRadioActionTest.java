@@ -1,5 +1,6 @@
 package yi.editor.framework.action;
 
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
@@ -40,17 +41,49 @@ public class EditorRadioActionTest extends EditorUITestBase {
     }
 
     @Test
-    public void testMenuItem_SelectionStateCorrect() {
-        assertSelectionCorrect(true, false, false);
+    public void testAction_SelectionStateCorrect() {
+        assertActionStateCorrect(true, false, false);
+
         action2.setSelected(true);
-        assertSelectionCorrect(false, true, false);
+        assertActionStateCorrect(false, true, false);
+
         action3.setSelected(true);
-        assertSelectionCorrect(false, false, true);
+        assertActionStateCorrect(false, false, true);
+
+        action1.setSelected(true);
+        assertActionStateCorrect(true, false, false);
     }
 
-    private void assertSelectionCorrect(boolean action1Selected,
-                                        boolean action2Selected,
-                                        boolean action3Selected) {
+    @Test
+    public void testMenuItem_SelectionStateCorrect() {
+        assertMenuItemStateCorrect(true, false, false);
+
+        action2.setSelected(true);
+        assertMenuItemStateCorrect(false, true, false);
+
+        action3.setSelected(true);
+        assertMenuItemStateCorrect(false, false, true);
+
+        action1.setSelected(true);
+        assertMenuItemStateCorrect(true, false, false);
+    }
+
+//    @Test
+//    public void testNode_SelectionStateCorrect() {
+//        // TODO: Implement this later when we need to export actions to nodes
+//    }
+
+    private void assertMenuItemStateCorrect(boolean action1Selected,
+                                            boolean action2Selected,
+                                            boolean action3Selected) {
+        Assertions.assertEquals(action1Selected, ((RadioMenuItem) action1.getAsMenuItem()).isSelected());
+        Assertions.assertEquals(action2Selected, ((RadioMenuItem) action2.getAsMenuItem()).isSelected());
+        Assertions.assertEquals(action3Selected, ((RadioMenuItem) action3.getAsMenuItem()).isSelected());
+    }
+
+    private void assertActionStateCorrect(boolean action1Selected,
+                                          boolean action2Selected,
+                                          boolean action3Selected) {
         Assertions.assertEquals(action1Selected, action1.isSelected());
         Assertions.assertEquals(action2Selected, action2.isSelected());
         Assertions.assertEquals(action3Selected, action3.isSelected());
