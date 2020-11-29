@@ -54,6 +54,14 @@ public final class GameBoardViewer implements YiComponent {
         manager.addShowCoordinateValueListener(newValue -> renderAll());
     }
 
+    /**
+     * Sets the action to execute when a list of files has been dragged onto the board
+     * component.
+     *
+     * @param dragEventConsumer A function taking an input of list of files, and returns
+     *                          a boolean result indicating whether the intended drag
+     *                          action was successful or not.
+     */
     public void setDragAndDropBehaviour(Function<List<File>, Boolean> dragEventConsumer) {
         inputCanvas.setOnDragOver(event -> {
             if (event.getDragboard().hasFiles()) {
@@ -138,6 +146,12 @@ public final class GameBoardViewer implements YiComponent {
         content.forEach(canvas -> canvas.onGameUpdate(manager.getGameModel(), this.manager));
     }
 
+    /**
+     * Requests that the previous edit be undone. If the undo operation is not available,
+     * do nothing.
+     *
+     * @return Whether undo operation is available again after executing the undo request.
+     */
     public boolean requestUndo() {
         if (manager.edit.canUndo()) {
             manager.edit.performUndo(manager);
@@ -145,6 +159,12 @@ public final class GameBoardViewer implements YiComponent {
         return manager.edit.canUndo();
     }
 
+    /**
+     * Requests that the next edit be re-done. If the redo operation is not available,
+     * do nothing.
+     *
+     * @return Whether redo operation is available again after executing the redo request.
+     */
     public boolean requestRedo() {
         if (manager.edit.canRedo()) {
             manager.edit.performRedo(manager);
@@ -152,18 +172,39 @@ public final class GameBoardViewer implements YiComponent {
         return manager.edit.canRedo();
     }
 
+    /**
+     * @return {@code true} if the game board is rendering in debug mode.
+     */
     public boolean isDebugMode() {
         return manager.isDebugMode();
     }
 
+    /**
+     * Sets whether debug mode is active. In debug mode, additional items are
+     * rendered on the screen for development purposes.
+     *
+     * @param debugMode {@code true} if debug mode is active.
+     */
     public void setDebugMode(boolean debugMode) {
         this.manager.setDebugMode(debugMode);
     }
 
+    /**
+     * Sets the image to fill the entire region allocated for the game board.
+     * May be null, in which case no image will be drawn.
+     *
+     * @param image Board image to draw.
+     */
     public void setBoardImage(@Nullable Image image) {
         manager.view.boardImage = image;
     }
 
+    /**
+     * Sets the image to fill the entire canvas container with. May be null,
+     * in which case no image will be drawn.
+     *
+     * @param image Background image to draw.
+     */
     public void setBackgroundImage(@Nullable Image image) {
         manager.view.backgroundImage = image;
     }
@@ -186,23 +227,55 @@ public final class GameBoardViewer implements YiComponent {
         return container;
     }
 
+    /**
+     * Add a listener to respond to coordinate label shown status.
+     *
+     * @param listener Listener to add.
+     */
     public void addShowCoordinatesValueListener(BooleanPropertyListener listener) {
         manager.addShowCoordinateValueListener(listener);
     }
 
+    /**
+     * Sets whether or not to draw intersection co-ordinate labels on the game board.
+     *
+     * @param doShow {@code true} to draw coordinates.
+     */
     public void setShowCoordinates(boolean doShow) {
         manager.setShowCoordinates(doShow);
     }
 
+    /**
+     * @return {@code true} if the game board is currently drawing coordinates.
+     */
     public boolean isShowingBoardCoordinates() {
         return manager.isShowingCoordinates();
     }
 
+    /**
+     * Add a listener to respond to preview node value change.
+     *
+     * @param listener Listener to add.
+     */
     public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
         manager.addPreviewNodeChangeListener(listener);
     }
 
+    /**
+     * Set a {@link GameNode} as the preview node. If set, the game board will render the
+     * position at that node rather than the current node. In addition, extra move labels
+     * and markers will be rendered.
+     * <p/>
+     * Can be set to null to draw the current move instead.
+     *
+     * @param node Game node to set as preview, or {@code null} to draw the current node.
+     *             The preview node must not be the current node.
+     */
     public void setPreviewNode(@Nullable GameNode node) {
+        if (manager.getGameModel().getCurrentNode().equals(node)) {
+            throw new IllegalArgumentException("Preview node cannot be the current node. " +
+                    "Set it to null instead.");
+        }
         manager.setPreviewNode(node);
     }
 

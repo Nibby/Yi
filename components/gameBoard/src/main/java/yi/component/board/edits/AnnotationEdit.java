@@ -70,6 +70,9 @@ public final class AnnotationEdit extends UndoableEdit {
         });
     }
 
+    /**
+     * @return Node on which this edit takes place.
+     */
     public GameNode getAffectedNode() {
         return affectedNode;
     }

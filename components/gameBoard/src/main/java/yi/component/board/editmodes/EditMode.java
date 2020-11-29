@@ -3,12 +3,26 @@ package yi.component.board.editmodes;
 import yi.core.go.AnnotationType;
 import yi.core.go.StoneColor;
 
+/**
+ * Factory class that instantiates various {@link AbstractEditMode} types.
+ */
 public final class EditMode {
 
+    private EditMode() {
+        // Factory class, no instantiation
+    }
+
+    /**
+     * @return Edit mode type to submit game moves.
+     */
     public static PlayMoveEditMode playMove() {
         return new PlayMoveEditMode();
     }
 
+    /**
+     * @param type Type of annotation that is <b>not</b> a label.
+     * @return Edit mode type to manipulate non-labelled annotation data.
+     */
     public static AnnotationEditMode annotation(AnnotationType type) {
         if (type == AnnotationType.LABEL) {
             // Bad API design, sorry :(
@@ -19,10 +33,19 @@ public final class EditMode {
         return new AnnotationEditMode(type);
     }
 
+    /**
+     * @param labelType Type of label annotation.
+     * @return Edit mode type to manipulate label annotation data.
+     */
     public static AnnotationEditMode annotationLabel(AnnotationEditMode.LabelType labelType) {
         return new AnnotationEditMode(labelType);
     }
-    
+
+    /**
+     * @param stoneColor Stone color.
+     * @return Edit mode to add or remove stones in a board position outside of the
+     * game rules.
+     */
     public static StoneEditMode editStones(StoneColor stoneColor) {
         return new StoneEditMode(stoneColor);
     }

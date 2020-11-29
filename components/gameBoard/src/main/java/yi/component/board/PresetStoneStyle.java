@@ -9,6 +9,9 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import yi.core.go.StoneColor;
 
+/**
+ * List of predefined stone textures.
+ */
 public enum PresetStoneStyle {
 
     CERAMIC_BICONVEX {
@@ -76,6 +79,15 @@ public enum PresetStoneStyle {
     protected abstract void _render(GraphicsContext g, GameBoardManager manager,
                                     StoneColor color, double x, double y, double size);
 
+    /**
+     * Draws one stone of given color at a given board intersection position.
+     *
+     * @param g Graphics context.
+     * @param manager Game board manager.
+     * @param color Color of the stone.
+     * @param gridX Intersection x-position.
+     * @param gridY Intersection y-position.
+     */
     public void render(GraphicsContext g, GameBoardManager manager, StoneColor color,
                        int gridX, int gridY) {
         double stoneSize = manager.size.getStoneSizeInPixels();
