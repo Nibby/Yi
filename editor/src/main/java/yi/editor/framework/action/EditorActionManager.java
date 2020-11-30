@@ -1,6 +1,6 @@
 package yi.editor.framework.action;
 
-import yi.editor.EditorFrame;
+import yi.editor.EditorWindow;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Stores all actions created in the editor module.
  * <p/>
- * Each {@link EditorFrame} instantiates with an instance of this class, which will
+ * Each {@link EditorWindow} instantiates with an instance of this class, which will
  * manage all the actions that are specific to that frame.
  *
  * @see EditorAction Action system contract
@@ -21,7 +21,7 @@ public final class EditorActionManager {
 
     private final EditorActionContext context;
 
-    public EditorActionManager(EditorFrame frame) {
+    public EditorActionManager(EditorWindow frame) {
         this.context = new EditorActionContext(frame);
     }
 
@@ -37,7 +37,7 @@ public final class EditorActionManager {
 
     /**
      * Registers an action to this manager, which works specifically with
-     * the {@link EditorFrame} containing it.
+     * the {@link EditorWindow} containing it.
      *
      * @param action Action to be registered.
      */

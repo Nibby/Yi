@@ -29,13 +29,13 @@ public abstract class EditorUITestBase {
         EditorHelper.initializeContext();
     }
 
-    protected EditorFrame frame;
+    protected EditorWindow frame;
     protected GameModel gameModel;
 
     @Start
     public void startFx(Stage stage) {
         gameModel = GameModelUtilities.createGameModel(19, 19, StandardGameRules.CHINESE);
-        frame = new EditorFrame(gameModel, EditorPerspective.COMPACT, this::initializeTestActions);
+        frame = new EditorWindow(gameModel, EditorPerspective.COMPACT, this::initializeTestActions);
         stage = frame;
         stage.show();
         stage.requestFocus();
@@ -49,7 +49,7 @@ public abstract class EditorUITestBase {
         System.gc();
     }
 
-    public EditorFrame getFrame() {
+    public EditorWindow getFrame() {
         return frame;
     }
 

@@ -2,6 +2,7 @@ package yi.editor.settings;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import yi.editor.EditorWindow;
 import yi.editor.components.EditorPerspective;
 import yi.common.utilities.JSON;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Stores general preference values for {@link yi.editor.EditorFrame}.
+ * Stores general preference values for {@link EditorWindow}.
  */
 public final class EditorGeneralSettings extends EditorSettingsModule {
 

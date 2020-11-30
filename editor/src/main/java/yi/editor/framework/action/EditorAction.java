@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
 import yi.editor.EditorMainMenuType;
+import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 /**
@@ -168,7 +169,7 @@ public interface EditorAction {
      * Executes the action represented by this model.
      *
      * @param helper Helper class supplying the context in which this action is executed
-     *               in, such as the {@link yi.editor.EditorFrame} that invoked it.
+     *               in, such as the {@link EditorWindow} that invoked it.
      */
     void performAction(EditorActionContext helper);
 }

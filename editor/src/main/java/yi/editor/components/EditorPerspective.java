@@ -7,7 +7,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
-import yi.editor.EditorFrame;
+import yi.editor.EditorWindow;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
@@ -31,7 +31,7 @@ public enum EditorPerspective {
      */
     COMPACT(EditorTextResources.MENUITEM_PERSPECTIVE_COMPACT, EditorAcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
         @Override
-        public Parent getContent(EditorFrame frame) {
+        public Parent getContent(EditorWindow frame) {
             var content = new BorderPane();
 
             var board = frame.getBoardComponent();
@@ -58,7 +58,7 @@ public enum EditorPerspective {
      */
     REVIEW(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
         @Override
-        public Parent getContent(EditorFrame frame) {
+        public Parent getContent(EditorWindow frame) {
             var content = new BorderPane();
 
             var board = frame.getBoardComponent();
@@ -98,7 +98,7 @@ public enum EditorPerspective {
     // Value created solely for the purpose of keeping the layout property non-null in EditorFrame.
     NONE(EditorTextResources.EMPTY, null) {
         @Override
-        public Parent getContent(EditorFrame frame) {
+        public Parent getContent(EditorWindow frame) {
             throw new UnsupportedOperationException("Should not be able to set perspective to NONE");
         }
 
@@ -120,7 +120,7 @@ public enum EditorPerspective {
     private final EditorAcceleratorId acceleratorId;
 
     /**
-     * Creates a new type of supported layout for {@link EditorFrame}.
+     * Creates a new type of supported layout for {@link EditorWindow}.
      *
      * @param friendlyName User friendly name of this layout
      */
@@ -152,11 +152,11 @@ public enum EditorPerspective {
      * @param frame The frame to arrange.
      * @return The container with the layout defined by this perspective.
      */
-    public abstract Parent getContent(EditorFrame frame);
+    public abstract Parent getContent(EditorWindow frame);
 
     /**
      *
-     * @return The default window dimensions when {@link EditorFrame} is first launched
+     * @return The default window dimensions when {@link EditorWindow} is first launched
      *         with this layout selected.
      */
     public abstract Dimension2D getMinimumWindowSize();

@@ -1,9 +1,9 @@
 package yi.editor.framework.accelerator;
 
-import yi.editor.EditorFrame;
+import yi.editor.EditorWindow;
 
 /**
- * Unique identifier keys for all accelerators in {@link EditorFrame}. Each identifier
+ * Unique identifier keys for all accelerators in {@link EditorWindow}. Each identifier
  * maps to an {@link EditorAcceleratorManager.Accelerator}, which can be retrieved
  * using {@link EditorAcceleratorManager#getAccelerator(EditorAcceleratorId)}.
  *
