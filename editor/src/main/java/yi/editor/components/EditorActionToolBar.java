@@ -18,13 +18,14 @@ import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
+import yi.editor.EditorWindow;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static yi.editor.EditorTextResources.*;
 
 /**
- * Primary toolbar for {@link yi.editor.EditorFrame} that displays a set of supported editing tools
+ * Primary toolbar for {@link EditorWindow} that displays a set of supported editing tools
  * and other options.
  */
 public class EditorActionToolBar extends ToolBar {

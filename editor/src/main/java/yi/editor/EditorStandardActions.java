@@ -127,7 +127,7 @@ final class EditorStandardActions {
             2. For now we're assuming the format being saved is SGF, but we need to determine
                this from the selected extension filter.
      */
-    private static Path promptAndStoreSaveFile(GameModel gameModel, EditorFrame frame) {
+    private static Path promptAndStoreSaveFile(GameModel gameModel, EditorWindow frame) {
         var saveFileChooser = new FileChooser();
         saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Smart Game Format (*.sgf)", "sgf"));
         saveFileChooser.setTitle("Select Save Location");

@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 /**
  * The main frame for an editor session.
  */
-public final class EditorFrame extends Stage {
+public final class EditorWindow extends Stage {
 
     private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
 
@@ -48,11 +48,11 @@ public final class EditorFrame extends Stage {
 
     private boolean addedMenuBarOnce = false;
 
-    public EditorFrame(GameModel gameModel) {
+    public EditorWindow(GameModel gameModel) {
         this(gameModel, EditorSettings.general.getCurrentLayout());
     }
 
-    public EditorFrame(GameModel gameModel, EditorPerspective perspective) {
+    public EditorWindow(GameModel gameModel, EditorPerspective perspective) {
         this(gameModel, perspective, null);
     }
 
@@ -68,9 +68,9 @@ public final class EditorFrame extends Stage {
      * clean solution would be to refactor the Action API to support unprocessed
      * actions added to the frame.
      */
-    protected EditorFrame(GameModel gameModel,
-                          EditorPerspective perspective,
-                          @Nullable Consumer<EditorActionManager> extraCodeBeforeCreatingMenuBar) {
+    protected EditorWindow(GameModel gameModel,
+                           EditorPerspective perspective,
+                           @Nullable Consumer<EditorActionManager> extraCodeBeforeCreatingMenuBar) {
         actionManager = new EditorActionManager(this);
         EditorStandardActions.initialize(actionManager);
         EditorPerspective.initializeActions(actionManager);

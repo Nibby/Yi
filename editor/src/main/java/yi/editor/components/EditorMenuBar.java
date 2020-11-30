@@ -5,13 +5,14 @@ import yi.common.utilities.SystemUtilities;
 import yi.component.YiMenu;
 import yi.editor.EditorHelper;
 import yi.editor.EditorMainMenuType;
+import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 
 import java.util.*;
 
 /**
- * Primary menu bar for {@link yi.editor.EditorFrame}.
+ * Primary menu bar for {@link EditorWindow}.
  */
 public class EditorMenuBar extends MenuBar {
 
