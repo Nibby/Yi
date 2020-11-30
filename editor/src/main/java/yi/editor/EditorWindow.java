@@ -32,7 +32,7 @@ import java.util.Objects;
 /**
  * The main frame for an editor session.
  */
-public final class EditorWindow extends Stage {
+public class EditorWindow extends Stage {
 
     private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
 
