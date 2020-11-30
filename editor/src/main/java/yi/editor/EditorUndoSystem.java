@@ -2,24 +2,24 @@ package yi.editor;
 
 import yi.core.go.GameModel;
 import yi.editor.components.EditorBoardArea;
+import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorAction;
-import yi.editor.framework.action.EditorActionContext;
-import yi.editor.framework.action.EditorActionManager;
-import yi.editor.framework.action.EditorBasicAction;
+import yi.editor.framework.action.*;
 
-public class EditorUndoSystem {
+import java.util.Optional;
+
+public class EditorUndoSystem implements EditorComponent<Object> {
 
     private final EditorAction undo;
     private final EditorAction redo;
 
-    public EditorUndoSystem(EditorActionManager actionManager) {
-        undo = new EditorBasicAction(actionManager, EditorTextResources.UNDO, this::requestUndo)
+    public EditorUndoSystem() {
+        undo = new EditorBasicAction(EditorTextResources.UNDO, this::requestUndo)
                     .setInMainMenu(EditorMainMenuType.EDIT, 0d)
                     .setAccelerator(EditorAcceleratorId.UNDO)
                     .setEnabled(false);
 
-        redo = new EditorBasicAction(actionManager, EditorTextResources.REDO, this::requestRedo)
+        redo = new EditorBasicAction(EditorTextResources.REDO, this::requestRedo)
                 .setInMainMenu(EditorMainMenuType.EDIT, 0.001d)
                 .setAccelerator(EditorAcceleratorId.REDO)
                 .setEnabled(false);
@@ -53,5 +53,15 @@ public class EditorUndoSystem {
     private void refreshState(EditorBoardArea boardArea) {
         undo.setEnabled(boardArea.canUndo());
         redo.setEnabled(boardArea.canRedo());
+    }
+
+    @Override
+    public EditorAction[] getActions(EditorActionManager actionManager) {
+        return new EditorAction[] { undo, redo };
+    }
+
+    @Override
+    public Optional<Object> getComponent() {
+        return Optional.empty();
     }
 }

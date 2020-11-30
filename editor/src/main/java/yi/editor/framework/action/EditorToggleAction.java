@@ -17,22 +17,23 @@ public class EditorToggleAction extends EditorAbstractAction {
 
     private final BooleanProperty selectedProperty = new BooleanProperty(false);
 
-    public EditorToggleAction(EditorActionManager manager,
-                              TextResource name,
+    public EditorToggleAction(@NotNull TextResource name,
                               @Nullable Consumer<EditorActionContext> action) {
-        super(manager, name, action);
+        super(name, action);
 
-        selectedProperty.addListener(newValue -> {
+        selectedProperty.addListener(newValue ->
             getCachedMenuItem().ifPresent(item -> {
                 assert item instanceof YiCheckMenuItem;
                 ((YiCheckMenuItem) item).setSelected(newValue);
-            });
-        });
+            })
+        );
     }
 
     @Override
     protected @NotNull MenuItem getAsMenuItemImpl() {
-        return new YiCheckMenuItem(getName(), getIcon());
+        var item = new YiCheckMenuItem(getName(), getIcon());
+        item.setSelected(isSelected());
+        return item;
     }
 
     @Override

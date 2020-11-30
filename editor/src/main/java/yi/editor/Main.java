@@ -17,7 +17,7 @@ public class Main extends Application {
         EditorHelper.initializeContext();
 
         var gameModel = GameModelUtilities.createGameModel();
-        var editorFrame = new EditorWindow(gameModel, EditorSettings.general.getCurrentLayout());
+        var editorFrame = new EditorWindow(gameModel, EditorSettings.general.getPerspective());
         editorFrame.show();
     }
 }

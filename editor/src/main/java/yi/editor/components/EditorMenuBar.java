@@ -7,28 +7,30 @@ import yi.editor.EditorHelper;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
-import yi.editor.framework.action.EditorActionManager;
+import yi.editor.framework.action.EditorActionContext;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Primary menu bar for {@link EditorWindow}.
  */
 public class EditorMenuBar extends MenuBar {
 
-    public EditorMenuBar(EditorActionManager actionManager) {
-        var actionHelper = actionManager.getContext();
+    public EditorMenuBar(EditorActionContext context, Set<EditorAction> allActions) {
+        if (SystemUtilities.isMac()) {
+            setUseSystemMenuBar(EditorHelper.isUsingSystemMenuBar());
+        }
 
-        Set<EditorAction> allActions = actionManager.getAllActions();
         var topLevelActionsByMenu = new HashMap<EditorMainMenuType, List<EditorAction>>();
 
         for (EditorAction action : allActions) {
-            if (action.isInMainMenu()) {
+            if (action.isInMainMenu() && !action.isAddedToMenu()) {
                 var menuType = action.getMainMenuType();
                 topLevelActionsByMenu.putIfAbsent(menuType, new ArrayList<>());
 
                 var menuItem = action.getAsMenuItem();
-                menuItem.setOnAction(e -> action.performAction(actionHelper));
+                menuItem.setOnAction(e -> action.performAction(context));
 
                 if (action.isTopLevelMenuItem()) {
                     // Non top-level items will be added by
@@ -42,8 +44,9 @@ public class EditorMenuBar extends MenuBar {
             }
         }
 
-        var mainMenuOrdered = new ArrayList<>(topLevelActionsByMenu.keySet());
-        mainMenuOrdered.sort(Comparator.comparingInt(EditorMainMenuType::getOrder));
+        var mainMenuOrdered = Arrays.stream(EditorMainMenuType.values())
+                                    .sorted(Comparator.comparingInt(EditorMainMenuType::getOrder))
+                                    .collect(Collectors.toList());
 
         for (EditorMainMenuType menuType : mainMenuOrdered) {
             var menu = new YiMenu(menuType.getName());
@@ -51,16 +54,14 @@ public class EditorMenuBar extends MenuBar {
             menu.setVisible(menuType.isVisible());
             getMenus().add(menu);
 
-            topLevelActionsByMenu.get(menuType)
-                    .sort(Comparator.comparingDouble(EditorAction::getMenuPosition));
-
-            for (EditorAction action : topLevelActionsByMenu.get(menuType)) {
+            List<EditorAction> actionsInThisMenu = topLevelActionsByMenu.get(menuType);
+            if (actionsInThisMenu == null) {
+                continue;
+            }
+            actionsInThisMenu.sort(Comparator.comparingDouble(EditorAction::getMenuPosition));
+            for (EditorAction action : topLevelActionsByMenu.getOrDefault(menuType, new ArrayList<>())) {
                 menu.getItems().add(action.getAsMenuItem());
             }
-        }
-
-        if (SystemUtilities.isMac()) {
-            setUseSystemMenuBar(EditorHelper.isUsingSystemMenuBar());
         }
     }
 }

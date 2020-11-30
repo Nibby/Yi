@@ -42,19 +42,14 @@ public abstract class EditorAbstractAction implements EditorAction {
     private final NullableProperty<EditorAcceleratorId> acceleratorId = new NullableProperty<>(null);
 
     /**
-     * Instantiates an action and registers it to the action manager. If an action manager
-     * instance is provided, the action is considered instance-specific. Otherwise the
-     * action is added to the global shared action list.
+     * Instantiates an action.
      *
-     * @param manager Action manager instance, may be null to indicate a shared action.
-     *                Or if this is non-null, indicates an instance-specific action.
      * @param name Locale-agnostic name of this action.
-     * @param action Task to perform when this action is executed.
+     * @param action Task to perform when this action is executed. May be null, which
+     *               does nothing on interaction.
      */
-    public EditorAbstractAction(@NotNull EditorActionManager manager,
-                                TextResource name,
-                                Consumer<EditorActionContext> action) {
-        Objects.requireNonNull(manager, "EditorActionManager must not be null.");
+    public EditorAbstractAction(@NotNull TextResource name,
+                                @Nullable Consumer<EditorActionContext> action) {
 
         this.nameProperty.set(name);
         this.action = action;
@@ -64,8 +59,6 @@ public abstract class EditorAbstractAction implements EditorAction {
         addIconUpdateListener();
         addVisibilityListener();
         addEnabledStateListener();
-
-        manager.registerAction(this);
     }
 
     private void addEnabledStateListener() {
@@ -112,8 +105,8 @@ public abstract class EditorAbstractAction implements EditorAction {
     }
 
     private void addAcceleratorUpdateListener() {
-        acceleratorId.addListener(newAcceleratorId -> installMenuItemAccelerator(newAcceleratorId, createdMenuItem.get().orElse(null)));
-        createdMenuItem.addListener(newMenuItem -> installMenuItemAccelerator(acceleratorId.get().orElse(null), newMenuItem));
+        acceleratorId.addListener(newAcceleratorId -> createdMenuItem.get().ifPresent(menuItem -> installMenuItemAccelerator(newAcceleratorId, menuItem)));
+        createdMenuItem.addListener(newMenuItem -> acceleratorId.get().ifPresent(id -> installMenuItemAccelerator(id, newMenuItem)));
     }
 
     private void installMenuItemAccelerator(EditorAcceleratorId acceleratorId, MenuItem menuItem) {

@@ -7,15 +7,18 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
-import yi.editor.EditorWindow;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
+import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
-import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorRadioAction;
 import yi.editor.framework.action.EditorSubMenuAction;
+import yi.editor.settings.EditorSettings;
 
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -48,8 +51,8 @@ public enum EditorPerspective {
         }
 
         @Override
-        protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
-            EditorPerspective.createPerspectiveAction(manager, this, submenu, 0.001d);
+        protected Optional<EditorAction> createAction(EditorSubMenuAction submenu) {
+            return Optional.of(EditorPerspective.createPerspectiveAction(this, submenu, 0.001d));
         }
     },
 
@@ -90,8 +93,8 @@ public enum EditorPerspective {
         }
 
         @Override
-        protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
-            EditorPerspective.createPerspectiveAction(manager, this, submenu, 0.002d);
+        protected Optional<EditorAction> createAction(EditorSubMenuAction submenu) {
+            return Optional.of(EditorPerspective.createPerspectiveAction(this, submenu, 0.002d));
         }
     },
 
@@ -108,7 +111,8 @@ public enum EditorPerspective {
         }
 
         @Override
-        protected void createAction(EditorActionManager manager, EditorSubMenuAction submenu) {
+        protected Optional<EditorAction> createAction(EditorSubMenuAction submenu) {
+            return Optional.empty();
         }
     }
 
@@ -161,7 +165,19 @@ public enum EditorPerspective {
      */
     public abstract Dimension2D getMinimumWindowSize();
 
-    protected abstract void createAction(EditorActionManager manager, EditorSubMenuAction submenu);
+    /**
+     * Creates one selectable {@link EditorAction} associated with this view perspective.
+     * This is primarily used in the main menu to list available perspectives.
+     * <p/>
+     * If the provided submenu is not null, the perspective action must be added as its
+     * child through {@link EditorSubMenuAction#addChildAction(EditorAction)}.
+     * <p/>
+     * If this perspective does not expose an action, return {@link Optional#empty()}.
+     *
+     * @param submenu Sub-menu that the perspective action belongs in.
+     * @return An optional action that exposes this perspective to the main menu.
+     */
+    protected abstract Optional<EditorAction> createAction(EditorSubMenuAction submenu);
 
     /**
      * Each layout may display extra (or fewer) components which require a custom adequate
@@ -202,37 +218,37 @@ public enum EditorPerspective {
         }
     }
 
-    public static void initializeActions(EditorActionManager manager) {
-        var perspectiveSubmenu = new EditorSubMenuAction(manager, EditorTextResources.MENU_PERSPECTIVE);
+    public static EditorAction[] createActions() {
+        var perspectiveSubmenu = new EditorSubMenuAction(EditorTextResources.MENU_PERSPECTIVE);
         perspectiveSubmenu.setInMainMenu(EditorMainMenuType.VIEW, 1.0d);
 
-        for (EditorPerspective p : values()) {
-            p.createAction(manager, perspectiveSubmenu);
+        var result = new HashSet<EditorAction>();
+        for (int i = 0; i < values().length; ++i) {
+            values()[i].createAction(perspectiveSubmenu)
+                       .ifPresent(result::add);
         }
+        if (result.size() > 0) {
+            result.add(perspectiveSubmenu);
+        }
+
+        return result.toArray(new EditorAction[0]);
     }
 
-    private static EditorPerspective getPerspective(EditorActionManager manager) {
-        return getPerspective(manager.getContext());
-    }
-
-    private static EditorPerspective getPerspective(EditorActionContext helper) {
-        return helper.getEditorFrame().getPerspective();
-    }
-
-    private static void createPerspectiveAction(EditorActionManager manager, 
-                                                EditorPerspective perspective,
-                                                EditorSubMenuAction submenu,
-                                                double position) {
+    private static EditorRadioAction createPerspectiveAction(EditorPerspective perspective,
+                                                             EditorSubMenuAction submenu,
+                                                             double position) {
 
         Consumer<EditorActionContext> action = helper -> helper.getEditorFrame().setPerspective(perspective);
-        var editorAction = new EditorRadioAction(manager, perspective.getFriendlyName(), action);
+        var editorAction = new EditorRadioAction(perspective.getFriendlyName(), action);
         editorAction.setInMainMenu(EditorMainMenuType.VIEW, position);
-        editorAction.setSelected(EditorPerspective.getPerspective(manager) == perspective);
+        editorAction.setSelected(EditorSettings.general.getPerspective() == perspective);
         editorAction.setMenuToggleGroup(MENU_ACTION_TOGGLE_GROUP);
         editorAction.setAccelerator(perspective.getAcceleratorId());
 
         if (submenu != null) {
             submenu.addChildAction(editorAction);
         }
+
+        return editorAction;
     }
 }

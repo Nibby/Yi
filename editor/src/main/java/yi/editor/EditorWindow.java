@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.common.utilities.GuiUtilities;
@@ -22,12 +21,13 @@ import yi.editor.components.EditorBoardArea;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.components.EditorPerspective;
 import yi.editor.components.EditorToolBar;
+import yi.editor.framework.EditorComponent;
+import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * The main frame for an editor session.
@@ -49,35 +49,18 @@ public final class EditorWindow extends Stage {
     private boolean addedMenuBarOnce = false;
 
     public EditorWindow(GameModel gameModel) {
-        this(gameModel, EditorSettings.general.getCurrentLayout());
+        this(gameModel, EditorSettings.general.getPerspective());
     }
 
     public EditorWindow(GameModel gameModel, EditorPerspective perspective) {
-        this(gameModel, perspective, null);
-    }
-
-    /**
-     * @implNote This constructor is a shortcut solution to the problem that
-     * actions initialised after the creation of {@link EditorMenuBar} will not
-     * have its menu component added to the main menu. This is a common issue
-     * in tests where test code needs to instantiate custom actions that also
-     * require {@link EditorActionManager} to be instantiated, but before
-     * main menu bar is created.
-     * <p/>
-     * For now, we sidestep this problem by providing this constructor. The
-     * clean solution would be to refactor the Action API to support unprocessed
-     * actions added to the frame.
-     */
-    protected EditorWindow(GameModel gameModel,
-                           EditorPerspective perspective,
-                           @Nullable Consumer<EditorActionManager> extraCodeBeforeCreatingMenuBar) {
         actionManager = new EditorActionManager(this);
-        EditorStandardActions.initialize(actionManager);
-        EditorPerspective.initializeActions(actionManager);
-        undoSystem = new EditorUndoSystem(actionManager);
+        undoSystem = new EditorUndoSystem();
+        addComponent(undoSystem);
 
         toolBar = new EditorToolBar();
-        boardArea = new EditorBoardArea(actionManager);
+        boardArea = new EditorBoardArea();
+        addComponent(boardArea);
+
         enableDragAndDropToOpenFile(boardArea.getGameBoardViewer());
 
         var treeViewerSettings = new GameTreeViewerSettings();
@@ -105,20 +88,36 @@ public final class EditorWindow extends Stage {
             }
         });
 
-        // TODO: Remove this workaround ASAP
-        if (extraCodeBeforeCreatingMenuBar != null) {
-            extraCodeBeforeCreatingMenuBar.accept(actionManager);
-        }
+        initializeActions(actionManager);
 
-        // Current action system implementation requires all actions (both shared and
-        // instance-based) to be created prior to creating the menu bar. After this point
-        // newly created actions will not be added to the menu bar.
+        // Current action system implementation requires all actions to be created prior
+        // to creating the menu bar. After this point newly created actions will not be
+        // added to the menu bar.
+        //
         // TODO: Consider supporting late-comers to remove this temporal coupling...
-        menuBar = new EditorMenuBar(actionManager);
+        menuBar = new EditorMenuBar(actionManager.getContext(), actionManager.getAllActions());
 
         setPerspective(perspective);
         setGameModel(gameModel);
         setTitle(EditorHelper.getProgramName());
+    }
+
+    /**
+     * @implNote This method is a least-effort solution to the problem that
+     * actions initialised after the creation of {@link EditorMenuBar} will not
+     * have its menu component added to the main menu. This is a common issue
+     * in tests where test code needs to instantiate custom actions that also
+     * require {@link EditorActionManager} to be instantiated, but before
+     * main menu bar is created.
+     * <p/>
+     * For now, we solve this problem by providing this inheritable method so that
+     * additional actions can be loaded to this window.
+     *
+     * @param actionManager Action manager for this editor window.
+     */
+    protected void initializeActions(EditorActionManager actionManager) {
+        addComponent(EditorStandardActions.getInstance());
+        actionManager.addActions(EditorPerspective.createActions());
     }
 
     private void enableDragAndDropToOpenFile(GameBoardViewer boardViewer) {
@@ -217,6 +216,21 @@ public final class EditorWindow extends Stage {
         EditorSettings.general.setCurrentLayout(newLayout);
     }
 
+    private <ComponentType> void addComponent(EditorComponent<ComponentType> component) {
+        for (EditorAction action : component.getActions(actionManager)) {
+            if (action.isInMainMenu() && menuBar != null) {
+                // Current action system implementation requires all actions to be created
+                // prior to creating the menu bar. In other words, if an action is to
+                // export a menu item, it should be done in this class constructor, or
+                // by overriding initializeActions() and creating it there.
+                throw new IllegalStateException("Main menu is already created. " +
+                        "The action '" + action.getLocalisedName() + "' will not be " +
+                        "included in the main menu despite being requested to do so.");
+            }
+            actionManager.addAction(action);
+        }
+    }
+
     /**
      * Wrapper for {@link #setScene(Scene)} but also runs some custom routines.
      * It is highly recommended to use this method rather than the base {@link #setScene(Scene)}
@@ -229,23 +243,16 @@ public final class EditorWindow extends Stage {
     }
 
     public Parent getBoardComponent() {
-        return boardArea;
+        return boardArea.getComponent()
+                        .orElseThrow(() -> new IllegalStateException("Board component not initialized."));
     }
 
     public Parent getTreeComponent() {
         return treeViewer.getComponent();
     }
 
-    public @NotNull EditorPerspective getPerspective() {
-        return contentLayout.get();
-    }
-
     public EditorBoardArea getBoardArea() {
         return boardArea;
-    }
-
-    public void addContentLayoutChangeListener(PropertyListener<EditorPerspective> listener) {
-        contentLayout.addListener(listener);
     }
 
     public void addGameModelChangeListener(PropertyListener<GameModel> listener) {

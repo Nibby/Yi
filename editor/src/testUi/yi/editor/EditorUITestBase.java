@@ -35,7 +35,13 @@ public abstract class EditorUITestBase {
     @Start
     public void startFx(Stage stage) {
         gameModel = GameModelUtilities.createGameModel(19, 19, StandardGameRules.CHINESE);
-        frame = new EditorWindow(gameModel, EditorPerspective.COMPACT, this::initializeTestActions);
+        frame = new EditorWindow(gameModel, EditorPerspective.COMPACT) {
+            @Override
+            protected void initializeActions(EditorActionManager actionManager) {
+                super.initializeActions(actionManager);
+                initializeTestActions(actionManager);
+            }
+        };
         stage = frame;
         stage.show();
         stage.requestFocus();

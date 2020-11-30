@@ -40,10 +40,6 @@ public final class GameBoardViewer implements YiComponent {
         content.push(inputCanvas);
 
         container = new CanvasContainer(content);
-        container.addSizeUpdateListener(newSize -> {
-            manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), manager.getGameModel());
-            renderAll();
-        });
 
         addRenderSignalHooks();
         setEditable(true);
@@ -52,6 +48,11 @@ public final class GameBoardViewer implements YiComponent {
     private void addRenderSignalHooks() {
         manager.addPreviewNodeChangeListener(newPreview -> renderAll());
         manager.addShowCoordinateValueListener(newValue -> renderAll());
+
+        container.addSizeUpdateListener(newSize -> {
+            manager.setBoardCanvasSize(newSize.getWidth(), newSize.getHeight(), manager.getGameModel());
+            renderAll();
+        });
     }
 
     /**

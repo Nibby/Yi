@@ -18,10 +18,9 @@ import java.util.function.Consumer;
  */
 public class EditorBasicAction extends EditorAbstractAction {
 
-    public EditorBasicAction(@Nullable EditorActionManager manager,
-                             TextResource name,
+    public EditorBasicAction(@NotNull TextResource name,
                              @Nullable Consumer<EditorActionContext> action) {
-        super(manager, name, action);
+        super(name, action);
     }
 
     @Override

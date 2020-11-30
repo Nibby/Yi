@@ -86,9 +86,6 @@ public interface EditorAction {
     boolean isInMainMenu();
 
     /**
-     * TODO: I think this is more about implementation detail and should not be part
-     *       of the general contract...
-     *
      * @return {@code true} if this component {@link #isInMainMenu() is in main menu} and
      *         it does not belong in a sub-menu within that menu.
      */
