@@ -41,9 +41,21 @@ public final class EditorActionManager {
      *
      * @param action Action to be registered.
      */
-    public synchronized void registerAction(EditorAction action) {
+    public void addAction(EditorAction action) {
         synchronized (allActions) {
             allActions.add(action);
+        }
+    }
+
+    /**
+     * Register a series of actions to this manager, which works specifically
+     * with the {@link EditorWindow} containing it.
+     *
+     * @param actions Array of actions to be registered.
+     */
+    public void addActions(EditorAction[] actions) {
+        for (EditorAction action : actions) {
+            addAction(action);
         }
     }
 

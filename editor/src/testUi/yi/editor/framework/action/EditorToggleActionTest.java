@@ -26,17 +26,19 @@ public final class EditorToggleActionTest extends EditorUITestBase {
     }
 
     @Override
-    protected void initializeTestActions(EditorActionManager manager) {
-        action1 = createTestToggleAction(manager);
+    protected void initializeTestActions(EditorActionManager actionManager) {
+        action1 = createTestToggleAction();
         action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
 
-        action2 = createTestToggleAction(manager);
+        action2 = createTestToggleAction();
         action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
 
-        action3 = createTestToggleAction(manager);
+        action3 = createTestToggleAction();
         action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
 
         action1.setSelected(true);
+
+        actionManager.addActions(new EditorAction[]{ action1, action2, action3 });
     }
 
     @Test
@@ -87,8 +89,8 @@ public final class EditorToggleActionTest extends EditorUITestBase {
         Assertions.assertEquals(action3Selected, action3.isSelected());
     }
 
-    private EditorToggleAction createTestToggleAction(EditorActionManager manager) {
-        return new EditorToggleAction(manager, EditorTextResources.EMPTY, null);
+    private EditorToggleAction createTestToggleAction() {
+        return new EditorToggleAction(EditorTextResources.EMPTY, null);
     }
 
 }

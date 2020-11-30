@@ -84,7 +84,7 @@ public final class EditorGeneralSettings extends EditorSettingsModule {
         this.selectedBoardThemeDirectory = selectedBoardThemeDirectory;
     }
 
-    public EditorPerspective getCurrentLayout() {
+    public EditorPerspective getPerspective() {
         return currentLayout;
     }
 

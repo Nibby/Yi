@@ -26,22 +26,23 @@ public class EditorRadioAction extends EditorAbstractAction {
 
     private final BooleanProperty selectedProperty = new BooleanProperty(false);
 
-    public EditorRadioAction(EditorActionManager managerInstance,
-                             TextResource name,
-                             Consumer<EditorActionContext> action) {
-        super(managerInstance, name, action);
+    public EditorRadioAction(@NotNull TextResource name,
+                             @Nullable Consumer<EditorActionContext> action) {
+        super(name, action);
 
-        selectedProperty.addListener(newValue -> {
+        selectedProperty.addListener(newValue ->
             getCachedMenuItem().ifPresent(item -> {
                 assert item instanceof YiRadioMenuItem;
                 ((YiRadioMenuItem) item).setSelected(newValue);
-            });
-        });
+            })
+        );
     }
 
     @Override
     protected @NotNull MenuItem getAsMenuItemImpl() {
-        return new YiRadioMenuItem(getName(), getIcon());
+        var item = new YiRadioMenuItem(getName(), getIcon());
+        item.setSelected(isSelected());
+        return item;
     }
 
     @Override
@@ -64,6 +65,10 @@ public class EditorRadioAction extends EditorAbstractAction {
         group.getToggles().add((YiRadioMenuItem) menuItem);
         group.selectedToggleProperty().addListener(toggle ->
                 setSelected(group.getSelectedToggle().equals(menuItem)));
+
+        if (isSelected()) {
+            ((YiRadioMenuItem) menuItem).setSelected(true);
+        }
     }
 
     /**

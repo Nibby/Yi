@@ -27,8 +27,8 @@ public class EditorSubMenuAction extends EditorAbstractAction {
 
     private final Set<EditorAction> children = new HashSet<>();
 
-    public EditorSubMenuAction(EditorActionManager manager, TextResource name) {
-        super(manager, name, null);
+    public EditorSubMenuAction(@NotNull TextResource name) {
+        super(name, null);
     }
 
     /**
