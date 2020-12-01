@@ -3,11 +3,10 @@ package yi.component.board.editmodes;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
-import org.jetbrains.annotations.Nullable;
-import yi.component.board.GameBoardAudio;
 import yi.component.board.GameBoardManager;
 import yi.component.board.edits.PlayMoveEdit;
-import yi.models.go.GameNode;
+import yi.models.go.GameModel;
+import yi.models.go.MoveValidationResult;
 import yi.models.go.StoneColor;
 
 import java.util.Optional;
@@ -52,23 +51,44 @@ final class PlayMoveEditMode extends AbstractEditMode {
             PlayMoveEdit playMoveEdit = PlayMoveEdit.forMove(gridX, gridY);
             manager.edit.recordAndApply(playMoveEdit, manager);
 
-            playSounds(manager.audio, playMoveEdit.getSubmittedNode());
+            playSounds(manager, playMoveEdit);
         } else {
             // TODO: This is only temporary.
             manager.getGameModel().submitPass();
         }
     }
 
-    private void playSounds(GameBoardAudio audio, @Nullable GameNode submittedNode) {
-        if (submittedNode != null && submittedNode.getPrimaryMove() != null) {
-            StoneColor moveColor = submittedNode.getPrimaryMove().getColor();
-            audio.playMoveSound(moveColor);
+    private void playSounds(GameBoardManager manager, PlayMoveEdit edit) {
+        if (edit.getMoveValidationResult() == MoveValidationResult.OK) {
+            var submittedNode = edit.getSubmittedNode();
+            StoneColor moveColor = getStoneColor(manager.getGameModel(), edit);
+            manager.audio.playMoveSound(moveColor);
 
-            int captures = submittedNode.getCaptures().size();
-            if (captures > 0) {
-                audio.playCaptureSound(250, captures, moveColor);
+            if (submittedNode != null) {
+                int captures = submittedNode.getCaptures().size();
+                if (captures > 0) {
+                    manager.audio.playCaptureSound(250, captures, moveColor);
+                }
             }
         }
+    }
+
+    private StoneColor getStoneColor(GameModel model, PlayMoveEdit edit) {
+        var node = edit.getSubmittedNode() != null ? edit.getSubmittedNode() : model.getCurrentNode();
+        var primaryMove = node.getPrimaryMove();
+        StoneColor color;
+
+        if (primaryMove != null) {
+            color = primaryMove.getColor();
+        } else if (node.getStoneEdits().size() == 1) {
+            color = node.getStoneEdits().iterator().next().getColor();
+        } else {
+            int thisTurn = model.getCurrentMoveNumber();
+            boolean isHandicapped = model.getInfo().getHandicapCount() > 0;
+            color = model.getRules().getStoneColorForTurn(thisTurn, isHandicapped);
+        }
+
+        return color;
     }
 
     @Override
