@@ -7,11 +7,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import yi.models.go.GameModel;
-import yi.models.go.StandardGameRules;
 import yi.editor.components.EditorPerspective;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.utilities.GameModelUtilities;
+import yi.models.go.GameModel;
+import yi.models.go.StandardGameRules;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,11 +22,10 @@ import java.util.Optional;
 public abstract class EditorUITestBase {
 
     @BeforeAll
-    public static void initializeContext() {
+    public static void initializeTestEnvironment() {
         EditorHelper.setRunningAsTest(true);
         EditorHelper.setUseSystemMenuBar(false); // So that testFx can find the menu components...
         EditorHelper.setPreferredSettingsRootPath(getSettingsPathForTests());
-        EditorHelper.initializeContext();
     }
 
     protected EditorWindow window;
@@ -34,6 +33,8 @@ public abstract class EditorUITestBase {
 
     @Start
     public void startFx(Stage stage) {
+        EditorHelper.initializeContext();
+
         gameModel = GameModelUtilities.createGameModel(19, 19, StandardGameRules.CHINESE);
         window = new EditorWindow(gameModel, EditorPerspective.COMPACT) {
             @Override
