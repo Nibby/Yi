@@ -26,8 +26,8 @@ public final class EditorGeneralSettings extends EditorSettingsModule {
     private static final String KEY_SHOW_BOARD_COORDINATES = "showCoordinates";
 
     // The theme directory to be loaded
-    private EditorPerspective currentLayout = EditorPerspective.getDefaultValue();
-    private String selectedBoardThemeDirectory;
+    private EditorPerspective perspective = EditorPerspective.getDefaultValue();
+    private String boardThemeDirectory;
     private boolean showBoardCoordinates;
 
     EditorGeneralSettings(String settingsFilePath) {
@@ -49,8 +49,8 @@ public final class EditorGeneralSettings extends EditorSettingsModule {
     }
 
     private void loadFromJson(JSONObject settings) {
-        JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> selectedBoardThemeDirectory = value);
-        JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> currentLayout = EditorPerspective.getValue(value));
+        JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> boardThemeDirectory = value);
+        JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> perspective = EditorPerspective.getValue(value));
         setShowBoardCoordinates(JSON.getBoolean(settings, KEY_SHOW_BOARD_COORDINATES, true));
     }
 
@@ -58,7 +58,7 @@ public final class EditorGeneralSettings extends EditorSettingsModule {
     public void save() {
         JSONObject settings = new JSONObject();
         settings.put(KEY_BOARD_THEME_DIRECTORY, EditorBoardThemeSettings.getDefaultThemeDirectory());
-        settings.put(KEY_CONTENT_LAYOUT, currentLayout.name());
+        settings.put(KEY_CONTENT_LAYOUT, perspective.name());
         settings.put(KEY_SHOW_BOARD_COORDINATES, showBoardCoordinates);
 
         Path file = Paths.get(settingsFile);
@@ -71,25 +71,25 @@ public final class EditorGeneralSettings extends EditorSettingsModule {
     }
 
     private void useAndSaveDefaults() {
-        setSelectedBoardThemeDirectory(EditorBoardThemeSettings.getDefaultThemeDirectory());
-        setCurrentLayout(EditorPerspective.getDefaultValue());
+        setBoardThemeDirectory(EditorBoardThemeSettings.getDefaultThemeDirectory());
+        setPerspective(EditorPerspective.getDefaultValue());
         save();
     }
 
     public String getSelectedBoardTheme() {
-        return selectedBoardThemeDirectory;
+        return boardThemeDirectory;
     }
 
-    public void setSelectedBoardThemeDirectory(String selectedBoardThemeDirectory) {
-        this.selectedBoardThemeDirectory = selectedBoardThemeDirectory;
+    public void setBoardThemeDirectory(String boardThemeDirectory) {
+        this.boardThemeDirectory = boardThemeDirectory;
     }
 
     public EditorPerspective getPerspective() {
-        return currentLayout;
+        return perspective;
     }
 
-    public void setCurrentLayout(EditorPerspective currentLayout) {
-        this.currentLayout = currentLayout;
+    public void setPerspective(EditorPerspective perspective) {
+        this.perspective = perspective;
     }
 
     protected final @NotNull String getSettingsFileName() {
