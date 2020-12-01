@@ -236,6 +236,7 @@ public final class GameTreeViewer implements YiComponent {
                 treeStructure.getNodeElement(x, y).ifPresent(element -> {
                     var selectedNode = element.getNode();
                     gameModel.setCurrentNode(selectedNode);
+                    previewNode.set(null);
                 });
             }
 

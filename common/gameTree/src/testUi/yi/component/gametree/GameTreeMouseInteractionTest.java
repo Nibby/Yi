@@ -1,5 +1,6 @@
 package yi.component.gametree;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VerticalDirection;
 import javafx.scene.input.MouseButton;
@@ -51,6 +52,24 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
         testClickSetsCurrentNode(robot);
         testScrollWheelAdjustsViewport(robot);
         testDragAdjustsViewport(robot);
+
+        testClickWhileCameraScrollCorrectlyUpdatesHighlightedNode(robot);
+    }
+
+    private void testClickWhileCameraScrollCorrectlyUpdatesHighlightedNode(FxRobot robot) throws InterruptedException {
+        for (int i = 0; i < 100; ++i) {
+            model.submitPass();
+        }
+        Point2D mouseLocation = centerOnRootNode(robot);
+        Thread.sleep(50);
+        robot.moveTo(mouseLocation.getX() - 5, mouseLocation.getY() + 60);
+        Thread.sleep(50);
+        for (int i = 0; i < 20; ++i) {
+            robot.clickOn(MouseButton.PRIMARY);
+            Thread.sleep(10);
+            Assertions.assertNull(highlightedNode, "highlightedNode not being reset " +
+                    "to null when clicking continuously on the tree to update currentNode");
+        }
     }
 
     private void testScrollWheelAdjustsViewport(FxRobot robot) {
@@ -107,12 +126,6 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
         robot.release(MouseButton.PRIMARY);
     }
 
-    private void centerOnRootNode(FxRobot robot) {
-        treeViewer.getCamera().setCenterOnCoordinateImmediately(0, 0);
-        Rectangle2D bounds = treeViewer.getElementBoundsForNode(model.getRootNode()).orElseThrow();
-        moveToCenter(bounds, robot);
-    }
-
     private void testClickSetsCurrentNode(FxRobot robot) throws InterruptedException {
         var currentNode = model.getRootNode();
 
@@ -157,9 +170,16 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
                         " node element bounds");
     }
 
-    private void moveToCenter(Rectangle2D bounds, FxRobot robot) {
-        double xCenter = bounds.getMinX() + bounds.getWidth() / 2;
-        double yCenter = bounds.getMinY() + bounds.getHeight() / 2;
-        robot.moveTo(xCenter + stage.getX(), yCenter + stage.getY());
+    private Point2D centerOnRootNode(FxRobot robot) {
+        treeViewer.getCamera().setCenterOnCoordinateImmediately(0, 0);
+        Rectangle2D bounds = treeViewer.getElementBoundsForNode(model.getRootNode()).orElseThrow();
+        return moveToCenter(bounds, robot);
+    }
+
+    private Point2D moveToCenter(Rectangle2D bounds, FxRobot robot) {
+        double xCenter = bounds.getMinX() + bounds.getWidth() / 2 + stage.getX();
+        double yCenter = bounds.getMinY() + bounds.getHeight() / 2 + stage.getY();
+        robot.moveTo(xCenter, yCenter);
+        return new Point2D(xCenter, yCenter);
     }
 }
