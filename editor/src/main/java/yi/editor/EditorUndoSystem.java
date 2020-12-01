@@ -26,16 +26,16 @@ public class EditorUndoSystem implements EditorComponent<Object> {
     }
 
     private void requestUndo(EditorActionContext context) {
-        var frame = context.getEditorFrame();
-        var board = frame.getBoardArea();
+        var window = context.getEditorWindow();
+        var board = window.getBoardArea();
         boolean canUndoAgain = board.requestUndo();
         undo.setEnabled(canUndoAgain);
         redo.setEnabled(board.canRedo());
     }
 
     private void requestRedo(EditorActionContext context) {
-        var frame = context.getEditorFrame();
-        var board = frame.getBoardArea();
+        var window = context.getEditorWindow();
+        var board = window.getBoardArea();
         boolean canRedoAgain = board.requestRedo();
         redo.setEnabled(canRedoAgain);
         undo.setEnabled(board.canUndo());

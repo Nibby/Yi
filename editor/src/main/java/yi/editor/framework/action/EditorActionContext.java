@@ -10,16 +10,16 @@ import yi.editor.EditorWindow;
  */
 public final class EditorActionContext {
 
-    private final EditorWindow frame;
+    private final EditorWindow window;
 
-    public EditorActionContext(@NotNull EditorWindow frame) {
-        this.frame = frame;
+    public EditorActionContext(@NotNull EditorWindow window) {
+        this.window = window;
     }
 
     /**
      * @return The currently active editor window invoking the action.
      */
-    public @NotNull EditorWindow getEditorFrame() {
-        return frame;
+    public @NotNull EditorWindow getEditorWindow() {
+        return window;
     }
 }

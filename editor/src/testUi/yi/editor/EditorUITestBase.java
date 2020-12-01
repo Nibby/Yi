@@ -29,20 +29,20 @@ public abstract class EditorUITestBase {
         EditorHelper.initializeContext();
     }
 
-    protected EditorWindow frame;
+    protected EditorWindow window;
     protected GameModel gameModel;
 
     @Start
     public void startFx(Stage stage) {
         gameModel = GameModelUtilities.createGameModel(19, 19, StandardGameRules.CHINESE);
-        frame = new EditorWindow(gameModel, EditorPerspective.COMPACT) {
+        window = new EditorWindow(gameModel, EditorPerspective.COMPACT) {
             @Override
             protected void initializeActions(EditorActionManager actionManager) {
                 super.initializeActions(actionManager);
                 initializeTestActions(actionManager);
             }
         };
-        stage = frame;
+        stage = window;
         stage.show();
         stage.requestFocus();
     }
@@ -56,7 +56,7 @@ public abstract class EditorUITestBase {
     }
 
     public EditorWindow getFrame() {
-        return frame;
+        return window;
     }
 
     public GameModel getGameModel() {
@@ -72,8 +72,8 @@ public abstract class EditorUITestBase {
      * @return The corresponding menu, if it exists.
      */
     public Optional<Menu> getMenu(EditorMainMenuType menuType) {
-        if (frame != null) {
-            return frame.getMainMenuBar().getMenus().stream()
+        if (window != null) {
+            return window.getMainMenuBar().getMenus().stream()
                     .filter(menu -> menu.getUserData() == menuType)
                     .findFirst();
         }

@@ -40,10 +40,10 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createNewGameAction() {
         Consumer<EditorActionContext> action = helper -> {
-            var frame = helper.getEditorFrame();
+            var window = helper.getEditorWindow();
             // TODO: Show a new dialog prompting for new game document information.
             //       The values below are hard-coded, and are temporary.
-            var existingModel = frame.getGameModel();
+            var existingModel = window.getGameModel();
             var doIt = new AtomicBoolean(false);
 
             if (existingModel.isModified()) {
@@ -54,7 +54,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
                     if (selectedButton == ButtonType.CANCEL) {
                         doIt.set(false);
                     } else if (selectedButton == ButtonType.YES) {
-                        promptAndStoreSaveFile(existingModel, frame);
+                        promptAndStoreSaveFile(existingModel, window);
                         doIt.set(true);
                     } else {
                         doIt.set(true);
@@ -66,7 +66,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
             if (doIt.get()) {
                 var newModel = new GameModel(19, 19, StandardGameRules.CHINESE);
-                frame.setGameModel(newModel);
+                window.setGameModel(newModel);
             }
         };
 
@@ -79,14 +79,14 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createOpenGameAction() {
         Consumer<EditorActionContext> action = helper -> {
-            var frame = helper.getEditorFrame();
+            var window = helper.getEditorWindow();
             var fileChooser = new FileChooser();
             fileChooser.setTitle(EditorTextResources.MENUITEM_OPEN_GAME.getLocalisedText());
-            File selectedFile = fileChooser.showOpenDialog(frame);
+            File selectedFile = fileChooser.showOpenDialog(window);
             if (selectedFile != null) {
                 try {
                     var importedModel = GameModelImporter.INSTANCE.fromFile(selectedFile.toPath());
-                    frame.setGameModel(importedModel);
+                    window.setGameModel(importedModel);
                 } catch (GameParseException | IOException e) {
                     // TODO: Error handling
                     e.printStackTrace();
@@ -103,12 +103,12 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createSaveAction() {
         Consumer<EditorActionContext> action = helper -> {
-            var frame = helper.getEditorFrame();
-            var existingModel = frame.getGameModel();
+            var window = helper.getEditorWindow();
+            var existingModel = window.getGameModel();
             Path saveFilePath = existingModel.getLastSavePath();
 
             if (saveFilePath == null) {
-                saveFilePath = promptAndStoreSaveFile(existingModel, frame);
+                saveFilePath = promptAndStoreSaveFile(existingModel, window);
             }
 
             if (saveFilePath != null && existingModel.getLastSaveFormat() != null) {
@@ -125,9 +125,9 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createSaveAsAction() {
         Consumer<EditorActionContext> action = helper -> {
-            var frame = helper.getEditorFrame();
-            var existingModel = frame.getGameModel();
-            Path saveFilePath = promptAndStoreSaveFile(existingModel, frame);
+            var window = helper.getEditorWindow();
+            var existingModel = window.getGameModel();
+            Path saveFilePath = promptAndStoreSaveFile(existingModel, window);
             FileFormat saveFileFormat = existingModel.getLastSaveFormat();
 
             if (saveFilePath != null) {
@@ -149,11 +149,11 @@ final class EditorStandardActions implements EditorComponent<Object> {
             2. For now we're assuming the format being saved is SGF, but we need to determine
                this from the selected extension filter.
      */
-    private static Path promptAndStoreSaveFile(GameModel gameModel, EditorWindow frame) {
+    private static Path promptAndStoreSaveFile(GameModel gameModel, EditorWindow window) {
         var saveFileChooser = new FileChooser();
         saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Smart Game Format (*.sgf)", "sgf"));
         saveFileChooser.setTitle("Select Save Location");
-        File saveFile = saveFileChooser.showSaveDialog(frame);
+        File saveFile = saveFileChooser.showSaveDialog(window);
         if (saveFile != null) {
             Path savePath = saveFile.toPath();
             gameModel.setLastSavePath(savePath);

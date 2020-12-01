@@ -82,7 +82,7 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
     }
 
     private void testActionPerformed() {
-        var mainMenuBar = frame.getMainMenuBar();
+        var mainMenuBar = window.getMainMenuBar();
         Menu testingMenu = mainMenuBar.getMenus().stream()
                 .filter(menu -> menu.getUserData() == EditorMainMenuType.TESTING)
                 .findFirst()
@@ -207,7 +207,7 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
 
 
     private void testPositionCorrect() {
-        var mainMenuBar = frame.getMainMenuBar();
+        var mainMenuBar = window.getMainMenuBar();
         Menu testingMenu = mainMenuBar.getMenus().stream()
                 .filter(menu -> menu.getUserData() == EditorMainMenuType.TESTING)
                 .findFirst()
