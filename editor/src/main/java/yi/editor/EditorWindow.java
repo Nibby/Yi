@@ -145,6 +145,7 @@ public class EditorWindow extends Stage {
             this.gameModel.get().dispose();
         }
         this.gameModel.set(newModel);
+        this.actionManager.refreshActions();
     }
 
     public @NotNull GameModel getGameModel() {
@@ -261,5 +262,9 @@ public class EditorWindow extends Stage {
 
     public EditorMenuBar getMainMenuBar() {
         return menuBar;
+    }
+
+    public EditorPerspective getPerspective() {
+        return perspective.get();
     }
 }

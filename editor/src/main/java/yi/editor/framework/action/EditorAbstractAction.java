@@ -248,9 +248,9 @@ public abstract class EditorAbstractAction implements EditorAction {
     }
 
     @Override
-    public void performAction(EditorActionContext helper) {
+    public void performAction(EditorActionContext context) {
         if (action != null) {
-            action.accept(helper);
+            action.accept(context);
         }
     }
 
@@ -335,5 +335,11 @@ public abstract class EditorAbstractAction implements EditorAction {
      */
     protected Optional<Node> getCachedComponent() {
         return createdComponent.get();
+    }
+
+    @Override
+    public void refreshState(EditorActionContext context) {
+        // Implementations that need to closely reflect some editor state can
+        // override this method anonymously.
     }
 }

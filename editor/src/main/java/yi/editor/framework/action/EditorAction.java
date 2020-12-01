@@ -165,8 +165,16 @@ public interface EditorAction {
     /**
      * Executes the action represented by this model.
      *
-     * @param helper Helper class supplying the context in which this action is executed
+     * @param context Helper class supplying the context in which this action is executed
      *               in, such as the {@link EditorWindow} that invoked it.
      */
-    void performAction(EditorActionContext helper);
+    void performAction(EditorActionContext context);
+
+    /**
+     * Requests this action to re-fresh its state because a major state change has
+     * occurred within {@link EditorWindow}.
+     *
+     * @param context Helper class supplying the context in which this event was triggered.
+     */
+    void refreshState(EditorActionContext context);
 }

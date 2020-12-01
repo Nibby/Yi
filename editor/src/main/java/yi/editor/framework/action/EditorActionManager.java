@@ -66,4 +66,8 @@ public final class EditorActionManager {
     public EditorActionContext getContext() {
         return context;
     }
+
+    public void refreshActions() {
+        getAllActions().forEach(action -> action.refreshState(context));
+    }
 }
