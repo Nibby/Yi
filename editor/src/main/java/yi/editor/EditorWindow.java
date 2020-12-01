@@ -30,13 +30,13 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * The main frame for an editor session.
+ * The main window for the {@link GameModel} editor tool.
  */
 public class EditorWindow extends Stage {
 
     private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
 
-    private final Property<EditorPerspective> contentLayout = new Property<>(EditorPerspective.NONE);
+    private final Property<EditorPerspective> perspective = new Property<>(EditorPerspective.NONE);
     private final EditorActionManager actionManager;
     private final EditorMenuBar menuBar;
     private final EditorToolBar toolBar;
@@ -155,7 +155,7 @@ public class EditorWindow extends Stage {
     }
 
     public void setPerspective(@NotNull EditorPerspective newLayout) {
-        if (this.contentLayout.get() == newLayout) {
+        if (this.perspective.get() == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
         var model = gameModel.get();
@@ -212,7 +212,7 @@ public class EditorWindow extends Stage {
             setHeight(minSize.getHeight());
         }
 
-        this.contentLayout.set(newLayout);
+        this.perspective.set(newLayout);
         EditorSettings.general.setPerspective(newLayout);
     }
 

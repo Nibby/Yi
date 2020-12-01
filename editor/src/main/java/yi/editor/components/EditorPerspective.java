@@ -37,10 +37,10 @@ public enum EditorPerspective {
         private final Consumer<EditorActionContext> consumer = createActionConsumer(this);
 
         @Override
-        public Parent getContent(EditorWindow frame) {
+        public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
 
-            var board = frame.getBoardComponent();
+            var board = window.getBoardComponent();
             content.setCenter(board);
 
             // TODO: A footer component showing player name / color and move number
@@ -67,11 +67,11 @@ public enum EditorPerspective {
         private final Consumer<EditorActionContext> consumer = createActionConsumer(this);
 
         @Override
-        public Parent getContent(EditorWindow frame) {
+        public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
 
-            var board = frame.getBoardComponent();
-            var tree = frame.getTreeComponent();
+            var board = window.getBoardComponent();
+            var tree = window.getTreeComponent();
 
             var splitPane = new SplitPane(board, tree);
             content.setCenter(splitPane);
@@ -107,7 +107,7 @@ public enum EditorPerspective {
     // Value created solely for the purpose of keeping the layout property non-null in EditorFrame.
     NONE(EditorTextResources.EMPTY, null) {
         @Override
-        public Parent getContent(EditorWindow frame) {
+        public Parent getContent(EditorWindow window) {
             throw new UnsupportedOperationException("Should not be able to set perspective to NONE");
         }
 
@@ -156,13 +156,13 @@ public enum EditorPerspective {
     }
 
     /**
-     * Creates a container that has the frame components arranged by this perspective.
+     * Creates a container that has the window components arranged by this perspective.
      * The client can set the output container as its primary content.
      *
-     * @param frame The frame to arrange.
+     * @param window The window to arrange.
      * @return The container with the layout defined by this perspective.
      */
-    public abstract Parent getContent(EditorWindow frame);
+    public abstract Parent getContent(EditorWindow window);
 
     /**
      *
@@ -195,7 +195,7 @@ public enum EditorPerspective {
      * @return Code to set the window to this edit perspective.
      */
     protected Consumer<EditorActionContext> createActionConsumer(EditorPerspective perspective) {
-        return helper -> helper.getEditorFrame().setPerspective(perspective);
+        return helper -> helper.getEditorWindow().setPerspective(perspective);
     }
 
     /**

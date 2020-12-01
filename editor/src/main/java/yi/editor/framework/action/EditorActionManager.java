@@ -10,7 +10,7 @@ import java.util.Set;
  * Stores all actions created in the editor module.
  * <p/>
  * Each {@link EditorWindow} instantiates with an instance of this class, which will
- * manage all the actions that are specific to that frame.
+ * manage all the actions that are specific to that window.
  *
  * @see EditorAction Action system contract
  * @see EditorAbstractAction Base implementation
@@ -21,8 +21,8 @@ public final class EditorActionManager {
 
     private final EditorActionContext context;
 
-    public EditorActionManager(EditorWindow frame) {
-        this.context = new EditorActionContext(frame);
+    public EditorActionManager(EditorWindow window) {
+        this.context = new EditorActionContext(window);
     }
 
     /**
