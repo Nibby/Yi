@@ -21,6 +21,8 @@ internal object GameMoveSubmitter {
      * If this is true, and the proposed move is not in compliance with game rules,
      * it will be played anyway. This is false by default.
      */
+    // TODO: This doesn't reuse existing identical moves if one exists in the position
+    //       being played. Check if it should do that instead.
     fun createMoveNode(gameModel: GameModel, currentNode: GameNode,
                        proposedMove: Stone, ignoreRules: Boolean = false)
             : Pair<MoveValidationResult, GameNode?> {
@@ -79,15 +81,10 @@ internal object GameMoveSubmitter {
         return GameNode(rootDelta)
     }
 
-    /**
-     * Validates the [proposedMove] against the game rules and if the move is legal
-     * (as given by [MoveValidationResult.OK]), returns a [StateDelta] representing the
+    /*
+     * Validates the proposed move against the game rules and if the move is legal
+     * (as given by MoveValidationResult.OK), returns a StateDelta representing the
      * game state updates caused by playing this move on the game board.
-     *
-     * @param gameModel Game information this move belongs to.
-     * @param currentNode The position at which the new move will be validated.
-     * @param proposedMove Information pertaining to the proposed move, see [Stone].
-     * @param ignoreRules Whether to ignore the game rules when validating this move.
      */
     private fun validateAndCreateStateUpdate(gameModel: GameModel, currentNode: GameNode,
                                              proposedMove: Stone, ignoreRules: Boolean = false)

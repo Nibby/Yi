@@ -11,7 +11,6 @@ import yi.editor.EditorWindow;
 public final class EditorActionContext {
 
     private final EditorWindow frame;
-    private EditorAction invokedAction;
 
     public EditorActionContext(@NotNull EditorWindow frame) {
         this.frame = frame;
@@ -22,13 +21,5 @@ public final class EditorActionContext {
      */
     public @NotNull EditorWindow getEditorFrame() {
         return frame;
-    }
-
-    public EditorAction getInvokedAction() {
-        return invokedAction;
-    }
-
-    public void setInvokedAction(EditorAction invokedAction) {
-        this.invokedAction = invokedAction;
     }
 }

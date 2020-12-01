@@ -55,7 +55,11 @@ public final class PlayMoveEdit extends UndoableEdit {
         MoveSubmitResult moveSubmitResult = gameModel.submitMove(moveX, moveY);
         MoveValidationResult validationResult = moveSubmitResult.getValidationResult();
 
-        if (validationResult != MoveValidationResult.OK) {
+        // Do not record this edit if we are re-using an existing node because technically
+        // our change doesn't count as a new "edit", so attempting to undo this change
+        // will corrupt the edit history.
+        if (validationResult != MoveValidationResult.OK
+                || moveSubmitResult.isReusingExistingNode()) {
             return false;
         }
 

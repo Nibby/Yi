@@ -144,6 +144,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
         val validationResult: MoveValidationResult
         val node: GameNode?
         val movePlayed: Boolean
+        val reusedExistingNode: Boolean
 
         if (identicalExistingMove == null) {
             val validationAndNewNode = GameMoveSubmitter.createMoveNode(this,
@@ -157,6 +158,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
             }
 
             movePlayed = validationResult == MoveValidationResult.OK
+            reusedExistingNode = false
             isModified = true
         } else {
             setCurrentNode(identicalExistingMove!!)
@@ -164,9 +166,10 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
             validationResult = MoveValidationResult.OK
             node = identicalExistingMove
             movePlayed = true
+            reusedExistingNode = true
         }
 
-        return MoveSubmitResult(validationResult, node, movePlayed)
+        return MoveSubmitResult(validationResult, node, movePlayed, reusedExistingNode)
     }
 
     /**
@@ -219,11 +222,13 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
 
         return if (existingContinuation != null) {
             setCurrentNode(existingContinuation)
-            MoveSubmitResult(MoveValidationResult.OK, existingContinuation, true)
+            MoveSubmitResult(MoveValidationResult.OK, existingContinuation,
+                    isPlayed = true, isReusingExistingNode = true)
         } else {
             val newNode = GameMoveSubmitter.createPassNode(getCurrentNode())
             submitNode(newNode)
-            MoveSubmitResult(MoveValidationResult.OK, newNode, true)
+            MoveSubmitResult(MoveValidationResult.OK, newNode,
+                    isPlayed = true, isReusingExistingNode = false)
         }
     }
 
