@@ -40,15 +40,12 @@ public final class GameBoardManager {
         return debugMode;
     }
 
-    void setDebugMode(boolean debugMode) {
+    protected final void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
 
-    public void setGameModel(@NotNull GameModel gameModel) {
+    protected final void setGameModel(@NotNull GameModel gameModel) {
         var isSameModel = this.model == gameModel;
-
-        // TODO: This method was made public because of test cases. Consider using
-        //       jigsaw project structure to sort out the method visibilities.
         this.model = Objects.requireNonNull(gameModel);
 
         if (!isSameModel) {

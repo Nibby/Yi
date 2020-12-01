@@ -1,4 +1,4 @@
-package yi.component.board;
+package yi.component.board.editmodes;
 
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import yi.component.board.editmodes.EditMode;
+import yi.component.board.GameBoardAccessor;
+import yi.component.board.GameBoardUITestBase;
 import yi.component.board.edits.PlayMoveEdit;
 import yi.models.go.GameModel;
 import yi.models.go.StandardGameRules;
@@ -70,7 +71,7 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
             Assertions.assertTrue(currentNodeChangeEventReceived.get(),
                     "onCurrentNodeChange() event was not received for move #" + currentMoveNumber);
 
-            int undoSystemHistorySize = getBoard().getManager().edit.getCurrentHistorySize();
+            int undoSystemHistorySize = GameBoardAccessor.getManager(getBoard()).edit.getCurrentHistorySize();
             Assertions.assertEquals(currentMoveNumber, undoSystemHistorySize,
                     "Undo system history size mismatch.");
 
@@ -101,7 +102,7 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
                         "same location as the next move in the model.");
 
         // No new edits should be created for clicking on a continuation.
-        Assertions.assertEquals(0, getBoard().getManager().edit.getCurrentHistorySize(),
+        Assertions.assertEquals(0, GameBoardAccessor.getManager(getBoard()).edit.getCurrentHistorySize(),
                 "Undo system registered a new " + PlayMoveEdit.class.getSimpleName() + " " +
                         "when we clicked on the same location the next move in the " +
                         "game model.");

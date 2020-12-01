@@ -4,6 +4,7 @@ import javafx.scene.input.MouseButton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.GameBoardClassFactory;
+import yi.component.board.GameBoardManagerAccessor;
 import yi.component.board.edits.StoneEdit;
 import yi.models.go.*;
 
@@ -13,7 +14,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_NonEditNode_CreatesOne() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         Assertions.assertNotSame(GameNodeType.STONE_EDIT, model.getCurrentNode().getType());
 
@@ -28,7 +29,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_MultipleEdits_UsesOneNode() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         Assertions.assertNotSame(GameNodeType.STONE_EDIT, model.getCurrentNode().getType());
 
@@ -46,7 +47,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_SameColorStone_RemovesIt() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         model.beginMoveSequence().playMove(0, 0);
 
@@ -69,7 +70,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_DifferentColorStone_RemoveIt() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         model.beginMoveSequence().playMove(0, 0);
 
@@ -92,7 +93,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_PlayedMoveColorStillCorrect() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editStoneMode = EditMode.editStones(StoneColor.BLACK);
         manager.edit.setEditMode(editStoneMode);
@@ -120,7 +121,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_SetupManualPosition_GameRulesUseTheseStones() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editStoneMode = EditMode.editStones(StoneColor.WHITE);
         manager.edit.setEditMode(editStoneMode);
@@ -154,7 +155,7 @@ public final class StoneEditModeMechanismTest {
     public void testStoneEdit_onRootNode_doesNotCreateNewNode() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editStoneMode = EditMode.editStones(StoneColor.WHITE);
         manager.edit.setEditMode(editStoneMode);

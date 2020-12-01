@@ -3,6 +3,7 @@ package yi.component.board.editmodes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.GameBoardClassFactory;
+import yi.component.board.GameBoardManagerAccessor;
 import yi.component.board.edits.PlayMoveEdit;
 import yi.component.board.edits.PlayMoveEditAccessor;
 import yi.models.go.GameModel;
@@ -19,7 +20,7 @@ public final class PlayMoveEditModeUndoRedoTest {
     public void testPlayMoveCreatesHistoryItem() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);
@@ -36,7 +37,7 @@ public final class PlayMoveEditModeUndoRedoTest {
     public void testUndoAdjustsCurrentMove() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);
@@ -56,7 +57,7 @@ public final class PlayMoveEditModeUndoRedoTest {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
 
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(9);
@@ -159,7 +160,7 @@ public final class PlayMoveEditModeUndoRedoTest {
         model.onCurrentNodeChange().addListener((event) -> newNodeFromEvent.set(event.getNode()));
 
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);
@@ -181,7 +182,7 @@ public final class PlayMoveEditModeUndoRedoTest {
     public void testRedoAdjustsCurrentMove() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);
@@ -202,7 +203,7 @@ public final class PlayMoveEditModeUndoRedoTest {
     public void testUndoThenRedo_WithManyBranches_ReconstructsModelStateCorrectly() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(50);
@@ -287,7 +288,7 @@ public final class PlayMoveEditModeUndoRedoTest {
 //    public void testUndo_Pass_StateCorrect() {
 //        var model = new GameModel(3, 3, GameRules.CHINESE);
 //        var manager = GameBoardClassFactory.createGameBoardManager();
-//        manager.setGameModel(model);
+//        GameBoardManagerAccessor.setGameModel(manager, model);
 //
 //        var editor = GameBoardClassFactory.createGameModelEditor();
 //        editor.setMaxHistorySize(50);

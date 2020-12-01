@@ -4,6 +4,7 @@ import javafx.scene.input.MouseButton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.GameBoardClassFactory;
+import yi.component.board.GameBoardManagerAccessor;
 import yi.models.go.GameModel;
 import yi.models.go.StandardGameRules;
 import yi.models.go.StoneColor;
@@ -14,7 +15,7 @@ public final class StoneEditModeUndoRedoTest {
     public void testAddRemoveStone_UndoRedoWorks() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editStoneMode = EditMode.editStones(StoneColor.WHITE);
         manager.edit.setEditMode(editStoneMode);
@@ -68,7 +69,7 @@ public final class StoneEditModeUndoRedoTest {
     public void testSubmitEditNode_UndoRedoWorks() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         // Setup
         var playMoveMode = EditMode.playMove();

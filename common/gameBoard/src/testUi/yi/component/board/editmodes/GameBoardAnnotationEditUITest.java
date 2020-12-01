@@ -1,4 +1,4 @@
-package yi.component.board;
+package yi.component.board.editmodes;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -11,8 +11,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
-import yi.component.board.editmodes.AnnotationEditMode;
-import yi.component.board.editmodes.EditMode;
+import yi.component.board.GameBoardUITestBase;
 import yi.models.go.Annotation;
 import yi.models.go.AnnotationType;
 import yi.models.go.StandardGameRules;
