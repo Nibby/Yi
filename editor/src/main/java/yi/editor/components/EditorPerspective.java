@@ -253,16 +253,23 @@ public enum EditorPerspective {
         return result.toArray(new EditorAction[0]);
     }
 
-    private static EditorRadioAction createPerspectiveAction(EditorPerspective perspective,
+    private static EditorRadioAction createPerspectiveAction(EditorPerspective thisPerspective,
                                                              Consumer<EditorActionContext> action,
                                                              EditorSubMenuAction submenu,
                                                              double position) {
 
-        var editorAction = new EditorRadioAction(perspective.getFriendlyName(), action);
+        var editorAction = new EditorRadioAction(thisPerspective.getFriendlyName(), action) {
+            @Override
+            public void refreshState(EditorActionContext context) {
+                super.refreshState(context);
+                var window = context.getEditorWindow();
+                setSelected(window.getPerspective() == thisPerspective);
+            }
+        };
         editorAction.setInMainMenu(EditorMainMenuType.VIEW, position);
-        editorAction.setSelected(EditorSettings.general.getPerspective() == perspective);
+        editorAction.setSelected(EditorSettings.general.getPerspective() == thisPerspective);
         editorAction.setMenuToggleGroup(MENU_ACTION_TOGGLE_GROUP);
-        editorAction.setAccelerator(perspective.getAcceleratorId());
+        editorAction.setAccelerator(thisPerspective.getAcceleratorId());
 
         if (submenu != null) {
             submenu.addChildAction(editorAction);

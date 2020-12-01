@@ -14,15 +14,31 @@ public class EditorUndoSystem implements EditorComponent<Object> {
     private final EditorAction redo;
 
     public EditorUndoSystem() {
-        undo = new EditorBasicAction(EditorTextResources.UNDO, this::requestUndo)
-                    .setInMainMenu(EditorMainMenuType.EDIT, 0d)
-                    .setAccelerator(EditorAcceleratorId.UNDO)
-                    .setEnabled(false);
+        undo = new EditorBasicAction(EditorTextResources.UNDO, this::requestUndo) {
+            @Override
+            public void refreshState(EditorActionContext context) {
+                super.refreshState(context);
+                var window = context.getEditorWindow();
+                var board = window.getBoardArea();
+                undo.setEnabled(board.canUndo());
+            }
+        };
+        undo.setInMainMenu(EditorMainMenuType.EDIT, 0d);
+        undo.setAccelerator(EditorAcceleratorId.UNDO);
+        undo.setEnabled(false);
 
-        redo = new EditorBasicAction(EditorTextResources.REDO, this::requestRedo)
-                .setInMainMenu(EditorMainMenuType.EDIT, 0.001d)
-                .setAccelerator(EditorAcceleratorId.REDO)
-                .setEnabled(false);
+        redo = new EditorBasicAction(EditorTextResources.REDO, this::requestRedo) {
+            @Override
+            public void refreshState(EditorActionContext context) {
+                super.refreshState(context);
+                var window = context.getEditorWindow();
+                var board = window.getBoardArea();
+                redo.setEnabled(board.canRedo());
+            }
+        };
+        redo.setInMainMenu(EditorMainMenuType.EDIT, 0.001d);
+        redo.setAccelerator(EditorAcceleratorId.REDO);
+        redo.setEnabled(false);
     }
 
     private void requestUndo(EditorActionContext context) {
