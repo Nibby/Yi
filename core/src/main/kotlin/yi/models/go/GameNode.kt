@@ -141,7 +141,7 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.primaryMove
     }
 
-    fun getCaptures(): Collection<Stone> {
+    fun getCapturesThisTurn(): Collection<Stone> {
         return Collections.unmodifiableSet(delta.captures)
     }
 

@@ -288,7 +288,7 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
         val pathToRoot = gameNode.getMoveHistory()
 
         pathToRoot.forEach { node ->
-            val captures = node.getCaptures()
+            val captures = node.getCapturesThisTurn()
 
             positionState.apply(node.delta)
             prisonersWhite += captures.stream().filter { capture -> capture.color == StoneColor.BLACK }.count().toInt()

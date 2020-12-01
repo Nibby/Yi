@@ -65,7 +65,7 @@ final class PlayMoveEditMode extends AbstractEditMode {
             manager.audio.playMoveSound(moveColor);
 
             if (submittedNode != null) {
-                int captures = submittedNode.getCaptures().size();
+                int captures = submittedNode.getCapturesThisTurn().size();
                 if (captures > 0) {
                     manager.audio.playCaptureSound(250, captures, moveColor);
                 }

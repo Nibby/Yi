@@ -202,7 +202,7 @@ internal object GameMoveSubmitter {
                     // Lastly, make sure we're trying to capture 1 opponent stone this
                     // turn and during opponent's capture, it's also 1 stone, and
                     // that captured stone is at the same location we're trying to play.
-                    val lastKoRecaptureCapturedStones = currentNode.getCaptures()
+                    val lastKoRecaptureCapturedStones = currentNode.getCapturesThisTurn()
 
                     // Be as concise as possible because edge case 1x1 board self-capture
                     // can also result in the same conditions and it does not qualify as
