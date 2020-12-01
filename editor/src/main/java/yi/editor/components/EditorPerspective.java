@@ -33,9 +33,6 @@ public enum EditorPerspective {
      * A minimal layout that focuses on the game board.
      */
     COMPACT(EditorTextResources.MENUITEM_PERSPECTIVE_COMPACT, EditorAcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
-
-        private final Consumer<EditorActionContext> consumer = createActionConsumer(this);
-
         @Override
         public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
@@ -55,7 +52,7 @@ public enum EditorPerspective {
 
         @Override
         protected Optional<EditorAction> createAction(EditorSubMenuAction submenu) {
-            return Optional.of(EditorPerspective.createPerspectiveAction(this, consumer, submenu, 0.001d));
+            return Optional.of(EditorPerspective.createPerspectiveAction(this, submenu, 0.001d));
         }
     },
 
@@ -63,9 +60,6 @@ public enum EditorPerspective {
      * An expansive layout that with in-depth editing tools.
      */
     REVIEW(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
-
-        private final Consumer<EditorActionContext> consumer = createActionConsumer(this);
-
         @Override
         public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
@@ -100,7 +94,7 @@ public enum EditorPerspective {
 
         @Override
         protected Optional<EditorAction> createAction(EditorSubMenuAction submenu) {
-            return Optional.of(EditorPerspective.createPerspectiveAction(this, consumer, submenu, 0.002d));
+            return Optional.of(EditorPerspective.createPerspectiveAction(this, submenu, 0.002d));
         }
     },
 
@@ -186,19 +180,6 @@ public enum EditorPerspective {
     protected abstract Optional<EditorAction> createAction(EditorSubMenuAction submenu);
 
     /**
-     * @apiNote This method exists solely to store the action consumer for
-     * {@link #createAction(EditorSubMenuAction)} into a local field so that it won't be
-     * garbage collected. If we inlined the consumer, there is a chance that the action
-     * will be null and not get executed.
-     *
-     * @param perspective Editor perspective to create the action consumer for.
-     * @return Code to set the window to this edit perspective.
-     */
-    protected Consumer<EditorActionContext> createActionConsumer(EditorPerspective perspective) {
-        return helper -> helper.getEditorWindow().setPerspective(perspective);
-    }
-
-    /**
      * Each layout may display extra (or fewer) components which require a custom adequate
      * aspect ratio. This value will be used to adjust window size upon switching to the
      * layout so that its contents can fit properly within the window.
@@ -254,10 +235,10 @@ public enum EditorPerspective {
     }
 
     private static EditorRadioAction createPerspectiveAction(EditorPerspective thisPerspective,
-                                                             Consumer<EditorActionContext> action,
                                                              EditorSubMenuAction submenu,
                                                              double position) {
 
+        Consumer<EditorActionContext> action = helper -> helper.getEditorWindow().setPerspective(thisPerspective);
         var editorAction = new EditorRadioAction(thisPerspective.getFriendlyName(), action) {
             @Override
             public void refreshState(EditorActionContext context) {
