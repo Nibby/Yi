@@ -1,6 +1,6 @@
 package yi.editor;
 
-import yi.core.go.GameModel;
+import yi.models.go.GameModel;
 import yi.editor.components.EditorBoardArea;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;

@@ -1,7 +1,7 @@
 package yi.editor.utilities;
 
-import yi.core.go.GameModel;
-import yi.core.go.StandardGameRules;
+import yi.models.go.GameModel;
+import yi.models.go.StandardGameRules;
 import yi.editor.EditorHelper;
 
 public final class GameModelUtilities {
