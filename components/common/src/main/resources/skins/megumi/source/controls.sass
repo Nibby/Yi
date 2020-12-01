@@ -5,20 +5,40 @@
   -fx-border-color: transparent
   -fx-border-insets: 0px
   -fx-border-width: 0px
-  -fx-background-color: $BACKGROUND_LIGHT
+  -fx-background-color: $BACKGROUND_DARK_SECONDARY
 
 .menu-bar
   -fx-padding: 0px
   -fx-box-border: transparent
+  -fx-background-color: $BACKGROUND_DARK_SECONDARY
 
 .menu .label
-  -fx-text-fill: $CONTROLS_FOREGROUND_LIGHT
+  -fx-text-fill: $FOREGROUND_DARK
 
-.menu:hover, .menu:selected
+.menu:hover, .menu:showing
   -fx-background-color: $CONTROLS_BACKGROUND_HOVER
 
   .label
     -fx-text-fill: $CONTROLS_FOREGROUND_LIGHT
+
+// Only style selected menu inside main menus.
+.menu:showing > .menu:showing
+  -fx-background-color: $CONTROLS_BACKGROUND_SELECTED
+
+.context-menu
+  -fx-background-color: $CONTROLS_BACKGROUND_HOVER
+  -fx-padding: 0px
+  -fx-box-border: transparent
+  -fx-border-insets: 0px
+
+.menu-item .label
+  -fx-text-fill: $CONTROLS_FOREGROUND_LIGHT
+
+.menu-item:focused
+  -fx-background-color: $CONTROLS_BACKGROUND_SELECTED
+
+  .label
+    -fx-text-fill: white
 
 /* Buttons */
 .tool-bar
