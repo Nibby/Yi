@@ -375,7 +375,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
 
             assert current != shown;
 
-            if (shown.getMoveNumber() > current.getMoveNumber()) {
+            if (shown.getMoveNumber() > current.getMoveNumber()
+                    && shown.getMoveHistory().contains(current)) {
                 renderMoveNumbersUpToPreviewNode(current, shown, g, manager);
             } else {
                 renderMoveMarker(shown, g, manager);
