@@ -5,9 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import yi.component.board.GameBoardManager;
 import yi.component.board.edits.PlayMoveEdit;
-import yi.models.go.GameModel;
-import yi.models.go.MoveValidationResult;
-import yi.models.go.StoneColor;
+import yi.models.go.*;
 
 import java.util.Optional;
 
@@ -64,11 +62,16 @@ final class PlayMoveEditMode extends AbstractEditMode {
             StoneColor moveColor = getStoneColor(manager.getGameModel(), edit);
             manager.audio.playMoveSound(moveColor);
 
+            int captures = 0;
             if (submittedNode != null) {
-                int captures = submittedNode.getCapturesThisTurn().size();
-                if (captures > 0) {
-                    manager.audio.playCaptureSound(250, captures, moveColor);
-                }
+                captures = submittedNode.getCapturesThisTurn().size();
+            } else {
+                GameNode currentNode = manager.getGameModel().getCurrentNode();
+                captures = currentNode.getCapturesThisTurn().size();
+            }
+
+            if (captures > 0) {
+                manager.audio.playCaptureSound(250, captures, moveColor);
             }
         }
     }
