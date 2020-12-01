@@ -213,7 +213,7 @@ public class EditorWindow extends Stage {
         }
 
         this.contentLayout.set(newLayout);
-        EditorSettings.general.setCurrentLayout(newLayout);
+        EditorSettings.general.setPerspective(newLayout);
     }
 
     private <ComponentType> void addComponent(EditorComponent<ComponentType> component) {
