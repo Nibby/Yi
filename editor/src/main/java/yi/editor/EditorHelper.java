@@ -1,5 +1,6 @@
 package yi.editor;
 
+import com.sun.javafx.tk.Toolkit;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
 import yi.common.audio.CommonAudioSets;
@@ -68,6 +69,10 @@ public final class EditorHelper {
     }
 
     public static void initializeContext() {
+        if (!Toolkit.getToolkit().isFxUserThread()) {
+            throw new UnsupportedOperationException(
+                    "initializeContext() must be called on the FX user thread.");
+        }
         loadBundledFonts();
         EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
