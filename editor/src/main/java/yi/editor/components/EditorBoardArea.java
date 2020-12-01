@@ -2,6 +2,7 @@ package yi.editor.components;
 
 import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
+import yi.common.audio.CommonAudioSets;
 import yi.component.board.GameBoardViewer;
 import yi.models.go.GameModel;
 import yi.models.go.GameNode;
@@ -30,6 +31,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
 
     public EditorBoardArea() {
         board = new GameBoardViewer();
+        board.setAudio(CommonAudioSets.Stones.CERAMIC_BICONVEX);
 
         toolBar = new EditorActionToolBar();
         toolBar.addSelectedToolChangeListener(newTool -> newTool.apply(board));

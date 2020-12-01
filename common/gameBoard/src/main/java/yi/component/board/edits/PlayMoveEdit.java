@@ -74,7 +74,7 @@ public final class PlayMoveEdit extends UndoableEdit {
         return submittedNode != null;
     }
 
-    protected final GameNode getSubmittedNode() {
+    public final GameNode getSubmittedNode() {
         return submittedNode;
     }
 

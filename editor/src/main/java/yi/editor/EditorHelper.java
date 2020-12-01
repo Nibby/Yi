@@ -2,6 +2,8 @@ package yi.editor;
 
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
+import yi.common.audio.CommonAudioSets;
+import yi.common.audio.SoundManager;
 import yi.common.utilities.SystemUtilities;
 import yi.component.FontManager;
 import yi.component.SkinManager;
@@ -72,6 +74,7 @@ public final class EditorHelper {
         EditorTextResources.installSupportedLanguages();
         SkinManager.useDefaultSkin();
         EditorSettings.load();
+        SoundManager.load(CommonAudioSets.Stones.CERAMIC_BICONVEX); // TODO: Temporary value, extract this to a setting
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             EditorSettings.general.save();
