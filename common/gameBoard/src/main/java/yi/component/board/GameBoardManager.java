@@ -45,9 +45,15 @@ public final class GameBoardManager {
     }
 
     public void setGameModel(@NotNull GameModel gameModel) {
+        var isSameModel = this.model == gameModel;
+
         // TODO: This method was made public because of test cases. Consider using
         //       jigsaw project structure to sort out the method visibilities.
         this.model = Objects.requireNonNull(gameModel);
+
+        if (!isSameModel) {
+            edit.clearEditHistory();
+        }
     }
 
     public @NotNull GameModel getGameModel() {

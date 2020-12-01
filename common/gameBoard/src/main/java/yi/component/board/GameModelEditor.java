@@ -150,7 +150,7 @@ public final class GameModelEditor {
      */
     public void clearEditHistory() {
         undoHistory.clear();
-        positionInHistory = undoHistory.size();
+        positionInHistory = 0;
     }
 
     /**

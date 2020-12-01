@@ -32,6 +32,59 @@ public final class UndoRedoBaseMechanismTest {
     }
 
     @Test
+    public void testSetNewModelClearsHistory() {
+        var model = new GameModel(3, 3, StandardGameRules.CHINESE);
+        var manager = new GameBoardManager();
+        manager.setGameModel(model);
+
+        var editor = manager.edit;
+        editor.setMaxHistorySize(3);
+
+        Assertions.assertEquals(0, editor.getCurrentHistorySize());
+
+        var item1 = new TestEdit();
+        var item2 = new TestEdit();
+        var item3 = new TestEdit();
+
+        editor.recordAndApply(item1, manager);
+        editor.recordAndApply(item2, manager);
+        editor.recordAndApply(item3, manager);
+
+        // Sanity check
+        Assertions.assertEquals(3, editor.getCurrentHistorySize());
+        Assertions.assertTrue(editor.canUndo());
+
+        // Section under test
+        // First we set the existing model again. This should still leave the
+        // undo history untouched.
+        manager.setGameModel(model);
+        Assertions.assertEquals(3, editor.getCurrentHistorySize(),
+                "Undo history size is different after calling setGameModel() using the " +
+                        "same model as before.");
+        Assertions.assertTrue(editor.canUndo(),
+                "Editor reports no undo allowed when nothing should have changed.");
+
+        // Check undo doesn't throw any exceptions
+        editor.performUndo(manager);
+        editor.performUndo(manager);
+        editor.performUndo(manager);
+        editor.performRedo(manager);
+        editor.performRedo(manager);
+        editor.performRedo(manager);
+        editor.performUndo(manager);
+
+        // Now set a new model, this should clear the undo history
+        manager.setGameModel(new GameModel(3, 3, StandardGameRules.CHINESE));
+        Assertions.assertEquals(0, editor.getCurrentHistorySize(),
+                "Undo history size is not cleared when a new game model is set with " +
+                        "no edits.");
+        Assertions.assertFalse(editor.canUndo(), "GameModelEditor still allows undos " +
+                "when a new game model is set with no edits.");
+        Assertions.assertFalse(editor.canRedo(), "GameModelEditor still allows redos " +
+                "when a new game model is set with no edits.");
+    }
+
+    @Test
     public void testActionRecordedToHistory() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = new GameBoardManager();
