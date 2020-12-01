@@ -250,7 +250,6 @@ public abstract class EditorAbstractAction implements EditorAction {
     @Override
     public void performAction(EditorActionContext helper) {
         if (action != null) {
-            helper.setInvokedAction(this);
             action.accept(helper);
         }
     }
