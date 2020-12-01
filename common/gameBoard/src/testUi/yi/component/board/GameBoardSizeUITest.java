@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * as the script will properly post-process the test output data.
  */
 @ExtendWith(ApplicationExtension.class)
-public class GameBoardSizeUITest extends GameBoardUITestBase {
+public final class GameBoardSizeUITest extends GameBoardUITestBase {
 
     @Start
     public void start(Stage stage) {

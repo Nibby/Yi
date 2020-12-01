@@ -3,6 +3,7 @@ package yi.component.board.editmodes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.board.GameBoardClassFactory;
+import yi.component.board.GameBoardManagerAccessor;
 import yi.component.board.edits.AnnotationEdit;
 import yi.models.go.Annotation;
 import yi.models.go.GameModel;
@@ -14,7 +15,7 @@ public final class AnnotationsEditModeMechanismTest {
     public void testManyAdditions_InOneSession_MergedIntoMostRecentEdit() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);
@@ -37,7 +38,7 @@ public final class AnnotationsEditModeMechanismTest {
     public void testManyDeletions_InOneSession_MergedIntoMostRecentEdit() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
-        manager.setGameModel(model);
+        GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editor = GameBoardClassFactory.createGameModelEditor();
         editor.setMaxHistorySize(3);

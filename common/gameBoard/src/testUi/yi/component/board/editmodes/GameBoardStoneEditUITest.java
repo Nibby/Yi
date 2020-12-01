@@ -1,4 +1,4 @@
-package yi.component.board;
+package yi.component.board.editmodes;
 
 import javafx.geometry.Pos;
 import javafx.scene.input.MouseButton;
@@ -10,12 +10,12 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.robot.Motion;
-import yi.component.board.editmodes.EditMode;
+import yi.component.board.GameBoardUITestBase;
 import yi.models.go.StandardGameRules;
 import yi.models.go.StoneColor;
 
 @ExtendWith(ApplicationExtension.class)
-public class GameBoardStoneEditUITest extends GameBoardUITestBase {
+public final class GameBoardStoneEditUITest extends GameBoardUITestBase {
 
     @Start
     @Override
