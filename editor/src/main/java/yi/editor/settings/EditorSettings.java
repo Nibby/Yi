@@ -3,7 +3,7 @@ package yi.editor.settings;
 import org.json.JSONObject;
 import yi.component.board.GameBoardViewer;
 import yi.editor.EditorHelper;
-import yi.editor.Main;
+import yi.editor.EditorMain;
 import yi.common.utilities.JSON;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ public final class EditorSettings {
 
     /**
      * Called once upon startup, invokes {@link EditorSettingsModule#load()} on all registered modules to fetch the settings from
-     * configuration files. In almost any circumstance, there is no need to use this method outside of {@link Main}.
+     * configuration files. In almost any circumstance, there is no need to use this method outside of {@link EditorMain}.
      */
     public static void load() {
         if (loadedOnce) {

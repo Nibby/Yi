@@ -84,7 +84,7 @@ public final class EditorHelper {
         URI fontDirectoryUri;
 
         try {
-            fontDirectoryUri = Main.class.getResource(FONT_RESOURCE_DIR).toURI();
+            fontDirectoryUri = EditorMain.class.getResource(FONT_RESOURCE_DIR).toURI();
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Malformed font resource directory value: " +
                     "\"" + FONT_RESOURCE_DIR + "\"");

@@ -3,8 +3,8 @@ package yi.editor;
 import yi.component.board.GameBoardViewer;
 import yi.component.board.editmodes.AnnotationEditMode;
 import yi.component.board.editmodes.EditMode;
-import yi.core.go.AnnotationType;
-import yi.core.go.StoneColor;
+import yi.models.go.AnnotationType;
+import yi.models.go.StoneColor;
 
 /**
  * List of supported edit operations.

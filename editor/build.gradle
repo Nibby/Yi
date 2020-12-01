@@ -10,8 +10,8 @@ buildDir = '../build/' + getProject().getName()
 
 dependencies {
     compile project(':core')
-    compile project(':components:gameBoard')
-    compile project(':components:gameTree')
+    compile project(':common:gameBoard')
+    compile project(':common:gameTree')
 
     // JavaFx dependencies
     implementation rootProject.ext.javaFxDependencies.implementation
@@ -65,7 +65,7 @@ application {
     }
     workingDirectory = workingDirectory.resolve("temp")
 
-    mainClassName('yi.editor.Main')
+    mainClassName('yi.editor.EditorMain')
     applicationDefaultJvmArgs = [
         "-ea",
         "-Duser.dir=$workingDirectory",
