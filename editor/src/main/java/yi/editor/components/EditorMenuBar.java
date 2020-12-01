@@ -25,12 +25,13 @@ public class EditorMenuBar extends MenuBar {
         var topLevelActionsByMenu = new HashMap<EditorMainMenuType, List<EditorAction>>();
 
         for (EditorAction action : allActions) {
+            var menuItem = action.getAsMenuItem();
+            menuItem.setOnAction(e -> action.performAction(context));
+            menuItem.setUserData(action);
+
             if (action.isInMainMenu() && !action.isAddedToMenu()) {
                 var menuType = action.getMainMenuType();
                 topLevelActionsByMenu.putIfAbsent(menuType, new ArrayList<>());
-
-                var menuItem = action.getAsMenuItem();
-                menuItem.setOnAction(e -> action.performAction(context));
 
                 if (action.isTopLevelMenuItem()) {
                     // Non top-level items will be added by
@@ -41,6 +42,7 @@ public class EditorMenuBar extends MenuBar {
                     // because it relies on implementation detail...
                     topLevelActionsByMenu.get(menuType).add(action);
                 }
+                action.markAsAddedToMenu();
             }
         }
 

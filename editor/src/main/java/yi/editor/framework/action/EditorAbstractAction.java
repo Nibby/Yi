@@ -342,4 +342,9 @@ public abstract class EditorAbstractAction implements EditorAction {
         // Implementations that need to closely reflect some editor state can
         // override this method anonymously.
     }
+
+    @Override
+    public String toString() {
+        return "Action: " + getLocalisedName();
+    }
 }
