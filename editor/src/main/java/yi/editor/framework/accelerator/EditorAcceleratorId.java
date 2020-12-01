@@ -24,6 +24,8 @@ public enum EditorAcceleratorId {
     SAVE_GAME("saveGame"),
     SAVE_AS_GAME("saveAsGame"),
 
+    TEST_ACCEL_1("testAccel1"),
+    TEST_ACCEL_2("testAccel2"),
     ;
 
     private final String id;

@@ -10,6 +10,7 @@ import yi.common.utilities.GuiUtilities;
 import yi.common.utilities.SystemUtilities;
 import yi.component.KeyModifier;
 import yi.component.YiScene;
+import yi.editor.EditorHelper;
 import yi.editor.EditorTextResources;
 
 import java.util.*;
@@ -41,9 +42,13 @@ public final class EditorAcceleratorManager {
             register(new Accelerator(EditorAcceleratorId.OPEN_GAME, EditorTextResources.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(EditorAcceleratorId.SAVE_GAME, EditorTextResources.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(EditorAcceleratorId.SAVE_AS_GAME, EditorTextResources.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
-
             register(new Accelerator(EditorAcceleratorId.TOGGLE_BOARD_COORDINATES, EditorTextResources.MENUITEM_TOGGLE_COORDINATES, KeyCode.C, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
 
+            if (EditorHelper.isRunningAsTest()) {
+                var modifiers = new KeyModifier[] { KeyModifier.CTRL, KeyModifier.ALT, KeyModifier.SHIFT };
+                register(new Accelerator(EditorAcceleratorId.TEST_ACCEL_1, EditorTextResources.EMPTY, KeyCode.DIGIT1, modifiers));
+                register(new Accelerator(EditorAcceleratorId.TEST_ACCEL_2, EditorTextResources.EMPTY, KeyCode.DIGIT2, modifiers));
+            }
             INITIALIZED.set(true);
         }
     }
