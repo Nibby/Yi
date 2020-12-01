@@ -119,6 +119,10 @@ class GameNode constructor(val delta: StateDelta) {
         return result
     }
 
+    /**
+     * Assuming the supplied node is a child of this node, returns the index of the node
+     * in the children list. This is equivalent to a [List.indexOf] operation.
+     */
     fun getChildOrder(node: GameNode): Int {
         return children.indexOf(node)
     }
@@ -133,22 +137,43 @@ class GameNode constructor(val delta: StateDelta) {
                else null
     }
 
+    /**
+     * @return General move category this node represents. This is one of the values
+     * within [GameNodeType].
+     */
     fun getType(): GameNodeType {
         return delta.type
     }
 
+    /**
+     * @return player played move for this node, or null if no move was played this
+     * turn. A move can contain no primary move if it is a pass, or consists entirely
+     * of stone edits.
+     */
     fun getPrimaryMove(): Stone? {
         return delta.primaryMove
     }
 
+    /**
+     * @return Collection of stones captured on this turn.
+     */
     fun getCapturesThisTurn(): Collection<Stone> {
         return Collections.unmodifiableSet(delta.captures)
     }
 
+    /**
+     * @return Hash code of the current board state as given by the game model's
+     * [GameStateHasher]. This value is often used internally to check for position
+     * repeats.
+     */
     fun getStateHash(): Long {
         return delta.stateHash
     }
 
+    /**
+     * @return List of stones placed or removed from the game position that is not
+     * a player move. These stones are usually the result of manual edits by a program.
+     */
     fun getStoneEdits(): Collection<Stone> {
         return Collections.unmodifiableSet(delta.stoneEdits)
     }
@@ -195,16 +220,25 @@ class GameNode constructor(val delta: StateDelta) {
         return "Node ($moveNumber): $delta"
     }
 
+    /**
+     * @return true if the game position at this node has any annotation at the specified
+     * coordinates.
+     */
     fun hasAnnotationAt(x: Int, y: Int): Boolean {
         return getAnnotationAt(x, y) != null
     }
 
+    /**
+     * @return Annotation at the given coordinate if one exists, or null otherwise. Note
+     * that for directional annotations (lines and arrows), choosing the co-ordinate at
+     * either end will return that annotation.
+     */
     fun getAnnotationAt(x: Int, y: Int): Annotation? {
         return getAnnotations().firstOrNull { it.isOccupyingPosition(x, y) }
     }
 
     /**
-     * @return stone edit on this node at the given position if it exists.
+     * @return Stone edit on this node at the given position if it exists.
      */
     fun getStoneEditAt(x: Int, y: Int): Stone? {
         val edit = delta.stoneEdits.firstOrNull { it.x == x && it.y == y }

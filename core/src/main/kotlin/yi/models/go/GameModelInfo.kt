@@ -24,10 +24,16 @@ class GameModelInfo {
     private val data = HashMap<String, Any>()
     private val changeListeners = HashSet<BiConsumer<String, Any>>()
 
+    /**
+     * Register a listener to be informed about any of the metadata value changes.
+     */
     fun addChangeListener(listener: BiConsumer<String, Any>) {
         changeListeners.add(listener)
     }
 
+    /**
+     * Removes a previously registered listener for metadata value changes.
+     */
     fun removeChangeListener(listener: BiConsumer<String, Any>) {
         changeListeners.remove(listener)
     }
@@ -43,6 +49,10 @@ class GameModelInfo {
         return Optional.empty()
     }
 
+    /**
+     * @return Number of handicap stones used in this game. This value is used to determine
+     * which player is to play the next move.
+     */
     fun getHandicapCount(): Int {
         return get<Int>(KEY_HANDICAP_COUNT).orElse(0)
     }
@@ -58,6 +68,9 @@ class GameModelInfo {
         put(KEY_HANDICAP_COUNT, handicaps)
     }
 
+    /**
+     * @return Name of the application that produced the data for this game model.
+     */
     fun getApplicationName(): String {
         return get<String>(KEY_APPLICATION_NAME).orElse("")
     }
@@ -69,6 +82,10 @@ class GameModelInfo {
         put(KEY_APPLICATION_NAME, value)
     }
 
+    /**
+     * @return The actual komi value used for this game, which is used for score
+     * calculations. This is one of the few model metadata whose value serves a purpose.
+     */
     fun getKomi(): Float {
         return get<Float>(KEY_KOMI).orElse(0f)
     }
@@ -81,6 +98,9 @@ class GameModelInfo {
         put(KEY_KOMI, value)
     }
 
+    /**
+     * @return Name of the player who played black.
+     */
     fun getPlayerBlackName(): String {
         return get<String>(KEY_PLAYER_BLACK_NAME).orElse("")
     }
@@ -92,6 +112,9 @@ class GameModelInfo {
         put(KEY_PLAYER_BLACK_NAME, value)
     }
 
+    /**
+     * @return Rank of the player who played black.
+     */
     fun getPlayerBlackRank(): String {
         return get<String>(KEY_PLAYER_BLACK_RANK).orElse("")
     }
@@ -103,6 +126,9 @@ class GameModelInfo {
         put(KEY_PLAYER_BLACK_RANK, value)
     }
 
+    /**
+     * @return Name of the player who played white.
+     */
     fun getPlayerWhiteName(): String {
         return get<String>(KEY_PLAYER_WHITE_NAME).orElse("")
     }
@@ -114,6 +140,9 @@ class GameModelInfo {
         put(KEY_PLAYER_WHITE_NAME, value)
     }
 
+    /**
+     * @return Rank data of the player who played white.
+     */
     fun getPlayerWhiteRank(): String {
         return get<String>(KEY_PLAYER_WHITE_RANK).orElse("")
     }
