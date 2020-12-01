@@ -2,23 +2,46 @@
   -fx-border-color: transparent;
   -fx-border-insets: 0px;
   -fx-border-width: 0px;
-  -fx-background-color: #DDDDDD;
+  -fx-background-color: #333333;
 }
 
 .menu-bar {
   -fx-padding: 0px;
   -fx-box-border: transparent;
+  -fx-background-color: #333333;
 }
 
 .menu .label {
+  -fx-text-fill: #CCCCCC;
+}
+
+.menu:hover, .menu:showing {
+  -fx-background-color: #CCCCCC;
+}
+.menu:hover .label, .menu:showing .label {
   -fx-text-fill: #5C5C5C;
 }
 
-.menu:hover, .menu:selected {
-  -fx-background-color: #CCCCCC;
+.menu:showing > .menu:showing {
+  -fx-background-color: #4A7BB0;
 }
-.menu:hover .label, .menu:selected .label {
+
+.context-menu {
+  -fx-background-color: #CCCCCC;
+  -fx-padding: 0px;
+  -fx-box-border: transparent;
+  -fx-border-insets: 0px;
+}
+
+.menu-item .label {
   -fx-text-fill: #5C5C5C;
+}
+
+.menu-item:focused {
+  -fx-background-color: #4A7BB0;
+}
+.menu-item:focused .label {
+  -fx-text-fill: white;
 }
 
 /* Buttons */
@@ -40,11 +63,11 @@
 }
 
 .button:pressed {
-  -fx-background-color: #9CC7F2;
+  -fx-background-color: #4A7BB0;
 }
 
 .toggle-button:selected {
-  -fx-background-color: #9CC7F2;
+  -fx-background-color: #4A7BB0;
 }
 
 .button-style2 {
