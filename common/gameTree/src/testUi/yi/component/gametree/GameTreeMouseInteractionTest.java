@@ -53,10 +53,10 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
         testScrollWheelAdjustsViewport(robot);
         testDragAdjustsViewport(robot);
 
-        testClickWhileCameraScrollCorrectlyUpdatesHighlightedNode(robot);
+        testSetNewCurrentNodeResetsHighlightedNode(robot);
     }
 
-    private void testClickWhileCameraScrollCorrectlyUpdatesHighlightedNode(FxRobot robot) throws InterruptedException {
+    private void testSetNewCurrentNodeResetsHighlightedNode(FxRobot robot) throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
             model.submitPass();
         }
