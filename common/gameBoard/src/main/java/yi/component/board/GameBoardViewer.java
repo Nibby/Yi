@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.BooleanPropertyListener;
 import yi.common.NullablePropertyListener;
+import yi.common.audio.StoneAudioSet;
 import yi.component.CanvasContainer;
 import yi.component.YiComponent;
 import yi.component.board.editmodes.AbstractEditMode;
@@ -274,6 +275,16 @@ public final class GameBoardViewer implements YiComponent {
      */
     public void setPreviewNode(@Nullable GameNode node) {
         manager.setPreviewNode(node);
+    }
+
+    /**
+     * Set the sound set to be played for played moves, captures, passes and resignations.
+     * This parameter may be null to play no sound.
+     *
+     * @param audioSet Nullable audio set.
+     */
+    public void setAudio(@Nullable StoneAudioSet audioSet) {
+        manager.audio.set(audioSet);
     }
 
     /**

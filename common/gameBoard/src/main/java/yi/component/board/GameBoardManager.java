@@ -6,6 +6,7 @@ import yi.common.BooleanProperty;
 import yi.common.BooleanPropertyListener;
 import yi.common.NullableProperty;
 import yi.common.NullablePropertyListener;
+import yi.common.audio.StoneAudioSet;
 import yi.models.go.GameModel;
 import yi.models.go.GameNode;
 
@@ -21,6 +22,7 @@ public final class GameBoardManager {
     public final GameBoardSize size = new GameBoardSize();
     public final GameBoardView view = new GameBoardView();
     public final GameModelEditor edit = new GameModelEditor();
+    public final GameBoardAudio audio = new GameBoardAudio();
 
     private final NullableProperty<GameNode> previewNode = new NullableProperty<>(null);
     private final BooleanProperty showCoordinates = new BooleanProperty(false);

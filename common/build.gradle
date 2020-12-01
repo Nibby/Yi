@@ -21,7 +21,7 @@ subprojects {
 
     javafx {
         version = globalConfigurations.javaFxVersion
-        modules = ['javafx.controls', 'javafx.swing']
+        modules = ['javafx.controls', 'javafx.swing', 'javafx.media']
     }
 
     configurations {

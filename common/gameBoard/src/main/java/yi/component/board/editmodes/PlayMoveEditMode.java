@@ -3,8 +3,12 @@ package yi.component.board.editmodes;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
+import org.jetbrains.annotations.Nullable;
+import yi.component.board.GameBoardAudio;
 import yi.component.board.GameBoardManager;
 import yi.component.board.edits.PlayMoveEdit;
+import yi.models.go.GameNode;
+import yi.models.go.StoneColor;
 
 import java.util.Optional;
 
@@ -45,11 +49,25 @@ final class PlayMoveEditMode extends AbstractEditMode {
     @Override
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         if (button == MouseButton.PRIMARY) {
-            var playMoveEdit = PlayMoveEdit.forMove(gridX, gridY);
+            PlayMoveEdit playMoveEdit = PlayMoveEdit.forMove(gridX, gridY);
             manager.edit.recordAndApply(playMoveEdit, manager);
+
+            playSounds(manager.audio, playMoveEdit.getSubmittedNode());
         } else {
             // TODO: This is only temporary.
             manager.getGameModel().submitPass();
+        }
+    }
+
+    private void playSounds(GameBoardAudio audio, @Nullable GameNode submittedNode) {
+        if (submittedNode != null && submittedNode.getPrimaryMove() != null) {
+            StoneColor moveColor = submittedNode.getPrimaryMove().getColor();
+            audio.playMoveSound(moveColor);
+
+            int captures = submittedNode.getCaptures().size();
+            if (captures > 0) {
+                audio.playCaptureSound(250, captures, moveColor);
+            }
         }
     }
 
