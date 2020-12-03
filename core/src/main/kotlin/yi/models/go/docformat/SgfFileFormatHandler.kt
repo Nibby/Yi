@@ -4,6 +4,7 @@ import yi.models.go.*
 import yi.models.go.Annotation
 import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.lang.IllegalStateException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -691,25 +692,40 @@ internal class SgfFileFormatHandler : FileFormatHandler {
         private fun exportNode(gameModel: GameModel, currentNode: GameNode, writer: BufferedWriter) {
             writer.write(DELIM_NODE_START.toString())
 
+            val nodeData = ExportableNodeData()
+
             if (currentNode.isRoot()) {
-                exportRootNodeData(gameModel, writer)
+                mapRootNodeData(gameModel, nodeData)
             }
 
-            exportPlayedMoveData(gameModel, currentNode, writer)
-            exportStoneEditData(currentNode, writer)
-            exportAnnotationData(currentNode, writer)
-            exportCommentData(currentNode, writer)
-
-            // TODO: Export other metadata?
+            mapPlayedMoveData(gameModel, currentNode, nodeData)
+            mapStoneEditData(currentNode, nodeData)
+            mapAnnotationData(currentNode, nodeData)
+            mapCommentData(currentNode, nodeData)
+            mapMetadata(currentNode, nodeData)
+            
+            nodeData.export(writer)
         }
 
-        private fun exportRootNodeData(gameModel: GameModel, writer: BufferedWriter) {
-            writeTag(SGF_GAME_TYPE, "1", writer)
-            writeTag(SGF_FILE_FORMAT, SGF_EXPORTED_FILE_FORMAT_VERSION.toString(), writer)
+        private fun mapMetadata(currentNode: GameNode, nodeData: ExportableNodeData) {
+            for (key in currentNode.getMetadataKeys()) {
+                val values = currentNode.getMetadataMultiValue(key)
+
+                for (value in values) {
+                    if (!nodeData.contains(key, value)) {
+                        nodeData.append(key, value)
+                    }
+                }
+            }
+        }
+
+        private fun mapRootNodeData(gameModel: GameModel, nodeData: ExportableNodeData) {
+            nodeData.put(SGF_GAME_TYPE, "1")
+            nodeData.put(SGF_FILE_FORMAT, SGF_EXPORTED_FILE_FORMAT_VERSION.toString())
 
             val appName = gameModel.info.getApplicationName()
             if (appName.isNotBlank()) {
-                writeTag(SGF_APPLICATION, appName, writer)
+                nodeData.put(SGF_APPLICATION, appName)
             }
 
             val boardSizeValue: String = if (gameModel.boardWidth == gameModel.boardHeight) {
@@ -717,21 +733,16 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             } else {
                 gameModel.boardWidth.toString() + DELIM_TAG_VALUE_SPLIT + gameModel.boardHeight.toString()
             }
-            writeTag(SGF_BOARD_SIZE, boardSizeValue, writer)
-
-            writeTag(SGF_KOMI, gameModel.info.getKomi().toString(), writer)
-            writeTag(SGF_RULESET, gameModel.rules.getInternalName(), writer)
+            nodeData.put(SGF_BOARD_SIZE, boardSizeValue)
+            nodeData.put(SGF_KOMI, gameModel.info.getKomi().toString())
+            nodeData.put(SGF_RULESET, gameModel.rules.getInternalName())
 
             if (gameModel.info.getHandicapCount() > 0) {
-                writeTag(SGF_HANDICAP_COUNT, gameModel.info.getHandicapCount().toString(), writer)
+                nodeData.put(SGF_HANDICAP_COUNT, gameModel.info.getHandicapCount().toString())
             }
-
-            // TODO: Export other metadata on the root node not covered here?
         }
 
-        private fun exportAnnotationData(currentNode: GameNode, writer: BufferedWriter) {
-            val annotationData = HashMap<String, ArrayList<String>>()
-
+        private fun mapAnnotationData(currentNode: GameNode, nodeData: ExportableNodeData) {
             for (annotation in currentNode.getAnnotations()) {
                 @Suppress("ThrowableNotThrown") // Anticipating future additions
                 val key = when (annotation.type) {
@@ -746,8 +757,6 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     else -> throw NotImplementedError("Unimplemented annotation type for export: ${annotation.type}")
                 }
 
-                annotationData.putIfAbsent(key, ArrayList())
-
                 when (annotation) {
                     is Annotation.PointAnnotation -> {
                         val x = annotation.x
@@ -759,7 +768,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                             data += DELIM_TAG_VALUE_SPLIT + annotation.text
                         }
 
-                        annotationData[key]!!.add(data)
+                        nodeData.append(key, data)
                     }
                     is Annotation.DirectionalAnnotation -> {
                         val xStart = annotation.x
@@ -767,20 +776,17 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         val xEnd = annotation.xEnd
                         val yEnd = annotation.yEnd
                         val coordinate = getSgfCoordinates(xStart, yStart) + DELIM_TAG_VALUE_SPLIT + getSgfCoordinates(xEnd, yEnd)
-                        annotationData[key]!!.add(coordinate)
+
+                        nodeData.append(key, coordinate)
                     }
                     else -> {
                         throw NotImplementedError("Unrecognised annotation type for export: " + annotation.javaClass)
                     }
                 }
             }
-
-            writeTags(annotationData, writer)
         }
 
-        private fun exportStoneEditData(currentNode: GameNode, writer: BufferedWriter) {
-            val stoneEditData = HashMap<String, ArrayList<String>>()
-
+        private fun mapStoneEditData(currentNode: GameNode, nodeData: ExportableNodeData) {
             for (stoneEdit in currentNode.getStoneEdits()) {
                 if (stoneEdit == currentNode.getPrimaryMove()) {
                     continue
@@ -797,15 +803,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 }
 
                 val coordinate = getSgfCoordinates(x, y)
-
-                stoneEditData.putIfAbsent(key, ArrayList())
-                stoneEditData[key]!!.add(coordinate)
+                nodeData.append(key, coordinate)
             }
-
-            writeTags(stoneEditData, writer)
         }
 
-        private fun exportPlayedMoveData(gameModel: GameModel, currentNode: GameNode, writer: BufferedWriter) {
+        private fun mapPlayedMoveData(gameModel: GameModel, currentNode: GameNode, nodeData: ExportableNodeData) {
             val moveType = currentNode.getType()
 
             if (moveType == GameNodeType.MOVE_PLAYED) {
@@ -820,7 +822,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         else -> throw NotImplementedError("Unsupported stone color: $color")
                     }
 
-                    writeTag(key, coordinates, writer)
+                    nodeData.put(key, coordinates)
                 }
             } else if (moveType == GameNodeType.PASS) {
                 val ruleset = gameModel.rules
@@ -831,37 +833,17 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     else -> throw NotImplementedError("Unsupported stone color: $expectedColor")
                 }
 
-                writeTag(key, "", writer)
+                nodeData.put(key, "")
             }
         }
 
-        private fun exportCommentData(currentNode: GameNode, writer: BufferedWriter) {
+        private fun mapCommentData(currentNode: GameNode, nodeData: ExportableNodeData) {
             if (currentNode.getComments().isNotBlank()) {
-                writeTag(SGF_COMMENT, currentNode.getComments(), writer)
+                nodeData.put(SGF_COMMENT, currentNode.getComments())
             }
         }
 
-        private fun writeTags(data: Map<String, List<String>>, writer: BufferedWriter) {
-            for (key in data.keys) {
-                val value = data[key] ?: error("No value exists for key: $key")
-                writeTag(key, value, writer)
-            }
-        }
 
-        private fun writeTag(tagKey: String, atomicValue: String, writer: BufferedWriter) {
-            writeTag(tagKey, listOf(atomicValue), writer)
-        }
-
-        private fun writeTag(tagKey: String, tagValues: List<String>, writer: BufferedWriter) {
-            assert(tagValues.isNotEmpty()) { "Cannot write empty values" }
-            writer.write(tagKey)
-            for (value in tagValues) {
-                writeDelimiter(DELIM_TAG_VALUE_START, writer)
-                val escapedValue = escapeDelimiters(value)
-                writer.write(escapedValue)
-                writeDelimiter(DELIM_TAG_VALUE_END, writer)
-            }
-        }
 
         private fun writeDelimiter(delimiter: Char, writer: BufferedWriter) {
             writer.write(delimiter.toString())
@@ -887,6 +869,58 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         "0-${SGF_COORDINATES.length-1}")
             }
             return SGF_COORDINATES[x].toString() + SGF_COORDINATES[y].toString()
+        }
+
+        private class ExportableNodeData {
+
+            private val dataMap = HashMap<String, ArrayList<String>>()
+
+            fun put(sgfTag: String, value: String) {
+                val singleValue = ArrayList<String>()
+                singleValue.add(value)
+                this.put(sgfTag, singleValue)
+            }
+
+            fun put(sgfTag: String, values: ArrayList<String>) {
+                dataMap[sgfTag] = values
+            }
+
+            fun append(sgfTag: String, value: String) {
+                dataMap.putIfAbsent(sgfTag, ArrayList())
+                dataMap[sgfTag]!!.add(value)
+            }
+
+            fun contains(sgfTag: String, value: String?): Boolean {
+                return if (!dataMap.containsKey(sgfTag)) {
+                    false
+                } else if (value != null) {
+                    dataMap[sgfTag]!!.contains(value)
+                } else {
+                    return dataMap.containsKey(sgfTag)
+                }
+            }
+
+            fun export(writer: BufferedWriter) {
+                writeTags(dataMap, writer)
+            }
+
+            private fun writeTags(data: Map<String, List<String>>, writer: BufferedWriter) {
+                for (key in data.keys) {
+                    val value = data[key] ?: error("No value exists for key: $key")
+                    writeTag(key, value, writer)
+                }
+            }
+
+            private fun writeTag(tagKey: String, tagValues: List<String>, writer: BufferedWriter) {
+                assert(tagValues.isNotEmpty()) { "Cannot write empty values" }
+                writer.write(tagKey)
+                for (value in tagValues) {
+                    writeDelimiter(DELIM_TAG_VALUE_START, writer)
+                    val escapedValue = escapeDelimiters(value)
+                    writer.write(escapedValue)
+                    writeDelimiter(DELIM_TAG_VALUE_END, writer)
+                }
+            }
         }
     }
 }

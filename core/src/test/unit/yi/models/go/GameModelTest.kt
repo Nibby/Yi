@@ -34,4 +34,19 @@ class GameModelTest {
 
         Assertions.assertEquals(whereCurrentNodeShouldBeAt, model.getCurrentNode())
     }
+
+//    @Test
+//    fun `add metadata value with empty key fails`() {
+//        // TODO: Implement me
+//    }
+//
+//    @Test
+//    fun `add metadata value with whitespace key fails`() {
+//        // TODO: Implement me
+//    }
+//
+//    @Test
+//    fun `add metadata value with non-alphanumeric character fails`() {
+//        // TODO: Implement me
+//    }
 }

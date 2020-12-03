@@ -523,6 +523,35 @@ class SgfFileFormatHandlerTest {
         testExportedFormatCorrectness(data, model)
     }
 
+    @Test
+    fun `exports node metadata correctly`() {
+        val model = GameModel(19, 19, StandardGameRules.CHINESE)
+        model.beginMoveSequence().pass()
+
+        val root = model.getRootNode()
+        root.putMetadata("CUSTOM_KEY", "some value")
+        root.putMetadata("CUSTOM_KEY2", "")
+
+        val child = root.getNextNodeInMainBranch()!!;
+        child.putMetadata("CUSTOM", "child value")
+
+        val data = exportModel(model)
+        val segments = data.split(SgfFileFormatHandler.DELIM_NODE_START)
+        Assertions.assertEquals(3, segments.size, "Exported data segment size mismatch. Exported: $data")
+
+        val rootData = segments[1]
+        Assertions.assertTrue(rootData.contains("CUSTOM_KEY[some value]"), "CUSTOM_KEY not exported")
+        Assertions.assertTrue(rootData.contains("CUSTOM_KEY2[]"), "CUSTOM_KEY2 (with empty value) not exported")
+
+        val childData = segments[2]
+        Assertions.assertTrue(childData.contains("CUSTOM[child value]"), "CUSTOM not exported")
+    }
+
+//    @Test
+//    fun `imports node metadata correctly`() {
+//        TODO("To be implemented")
+//    }
+
     private fun exportModel(gameModel: GameModel): String {
         val output = ByteArrayOutputStream()
         GameModelExporter.toOutputStream(gameModel, output, FileFormat.SGF)
