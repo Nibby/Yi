@@ -271,7 +271,22 @@ class GameNode constructor(val delta: StateDelta) {
      * application, but is present in the node data (usually from an externally loaded file).
      */
     fun putMetadata(key: String, value: List<String>) {
+        if (key.isBlank() || key.isEmpty()) {
+            throw IllegalArgumentException("Metadata key cannot be empty or " +
+                    "consist entirely of whitespace")
+        } else if (key.contains(Regex("[^\\d\\w]"))) {
+            throw IllegalArgumentException("Illegal metadata key name: $key. " +
+                    "It must only contain letters and/or numbers.")
+        }
+
         delta.metadata[key] = value
+    }
+
+    /**
+     * @return All the registered metadata keys on this node.
+     */
+    fun getMetadataKeys(): Set<String> {
+        return Collections.unmodifiableSet(delta.metadata.keys)
     }
 
     /**

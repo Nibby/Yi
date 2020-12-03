@@ -2,6 +2,7 @@ package yi.models.go
 
 import yi.models.go.docformat.FileFormat
 import yi.models.go.docformat.FileFormatHandler
+import java.io.CharArrayReader
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -112,5 +113,20 @@ object GameModelImporter {
         return Arrays.stream(FileFormat.values())
                 .filter { t: FileFormat -> formatEvaluator.apply(t) }
                 .collect(Collectors.toSet())
+    }
+
+    /**
+     * Parses string data into a [GameModel] using a specified data format.
+     *
+     * @param modelData Game model data as String.
+     * @param format Format of the game data.
+     */
+    @Throws(GameParseException::class)
+    fun fromString(modelData: String, format: FileFormat): GameModel {
+        val charArray = modelData.toCharArray()
+        val reader = CharArrayReader(charArray)
+        val bufferedReader = reader.buffered(DEFAULT_BUFFER_SIZE)
+
+        return format.getHandler().doImport(bufferedReader)
     }
 }
