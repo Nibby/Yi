@@ -3,6 +3,7 @@ package yi.models.go
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import yi.models.go.TestGameRules.TestingGameRulesNoSuicide
+import java.lang.IllegalArgumentException
 
 class GameModelTest {
 
@@ -35,18 +36,54 @@ class GameModelTest {
         Assertions.assertEquals(whereCurrentNodeShouldBeAt, model.getCurrentNode())
     }
 
-//    @Test
-//    fun `add metadata value with empty key fails`() {
-//        // TODO: Implement me
-//    }
-//
-//    @Test
-//    fun `add metadata value with whitespace key fails`() {
-//        // TODO: Implement me
-//    }
-//
-//    @Test
-//    fun `add metadata value with non-alphanumeric character fails`() {
-//        // TODO: Implement me
-//    }
+    @Test
+    fun `add metadata value with empty key fails`() {
+        val model = GameModel(19, 19, TestingGameRulesNoSuicide())
+        var thrownException = false
+
+        try {
+            model.getRootNode().putMetadata("", "this key shouldn't be added")
+        } catch (e: IllegalArgumentException) {
+            thrownException = true
+        }
+
+        if (!thrownException) {
+            Assertions.fail<String>("Setting metadata with empty key is permitted when it " +
+                    "should have failed.")
+        }
+    }
+
+    @Test
+    fun `add metadata value with whitespace key fails`() {
+        val model = GameModel(19, 19, TestingGameRulesNoSuicide())
+        var thrownException = false
+
+        try {
+            model.getRootNode().putMetadata("    ", "this key shouldn't be added")
+        } catch (e: IllegalArgumentException) {
+            thrownException = true
+        }
+
+        if (!thrownException) {
+            Assertions.fail<String>("Setting metadata with whitespaces as key is permitted " +
+                    "when it should have failed.")
+        }
+    }
+
+    @Test
+    fun `add metadata value with non-alphanumeric character fails`() {
+        val model = GameModel(19, 19, TestingGameRulesNoSuicide())
+        var thrownException = false
+
+        try {
+            model.getRootNode().putMetadata("J.", "this key shouldn't be added")
+        } catch (e: IllegalArgumentException) {
+            thrownException = true
+        }
+
+        if (!thrownException) {
+            Assertions.fail<String>("Setting metadata with key containing non-alphanumeric " +
+                    "characters is permitted when it should have failed.")
+        }
+    }
 }

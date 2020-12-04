@@ -532,7 +532,7 @@ class SgfFileFormatHandlerTest {
         root.putMetadata("CUSTOM_KEY", "some value")
         root.putMetadata("CUSTOM_KEY2", "")
 
-        val child = root.getNextNodeInMainBranch()!!;
+        val child = root.getNextNodeInMainBranch()!!
         child.putMetadata("CUSTOM", "child value")
 
         val data = exportModel(model)
@@ -547,10 +547,29 @@ class SgfFileFormatHandlerTest {
         Assertions.assertTrue(childData.contains("CUSTOM[child value]"), "CUSTOM not exported")
     }
 
-//    @Test
-//    fun `imports node metadata correctly`() {
-//        TODO("To be implemented")
-//    }
+    @Test
+    fun `imports node metadata correctly`() {
+        val data = "(;GM[1]FF[4]SZ[19]CUSTOM_METADATA[abc123]MULTI[a][b])"
+        val model = GameModelImporter.fromString(data, FileFormat.SGF)
+        val root = model.getRootNode()
+
+        Assertions.assertTrue(root.getMetadataKeys().contains("CUSTOM_METADATA"), "Custom metadata key not imported")
+        Assertions.assertEquals("abc123", root.getMetadataSingleValue("CUSTOM_METADATA"))
+
+        Assertions.assertTrue(root.getMetadataKeys().contains("MULTI"), "Custom metadata key not imported")
+        val multiValues = root.getMetadataMultiValue("MULTI")
+        when {
+            multiValues[0] == "a" -> {
+                Assertions.assertEquals("b", multiValues[1], "Multi-value metadata not imported correctly")
+            }
+            multiValues[0] == "b" -> {
+                Assertions.assertEquals("a", multiValues[1], "Multi-value metadata not imported correctly")
+            }
+            else -> {
+                Assertions.fail<String>("Multi-value metadata not imported correctly")
+            }
+        }
+    }
 
     private fun exportModel(gameModel: GameModel): String {
         val output = ByteArrayOutputStream()
