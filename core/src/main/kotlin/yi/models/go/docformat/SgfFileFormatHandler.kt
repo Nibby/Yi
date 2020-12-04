@@ -4,7 +4,6 @@ import yi.models.go.*
 import yi.models.go.Annotation
 import java.io.BufferedReader
 import java.io.BufferedWriter
-import java.lang.IllegalStateException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
