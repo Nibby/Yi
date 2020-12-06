@@ -1,7 +1,6 @@
 package yi.editor.framework.action;
 
 import javafx.scene.Node;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +18,7 @@ import java.util.function.Consumer;
  * For stateful actions, see {@link EditorRadioAction} and
  * {@link EditorToggleAction}.
  */
-public class EditorBasicAction extends EditorAbstractAction {
+public class EditorBasicAction extends EditorAbstractAction<YiMenuItem, Node> {
 
     public EditorBasicAction(@NotNull TextResource name,
                              @Nullable Consumer<EditorActionContext> action) {
@@ -27,7 +26,7 @@ public class EditorBasicAction extends EditorAbstractAction {
     }
 
     @Override
-    protected @NotNull MenuItem getAsMenuItemImpl() {
+    protected @NotNull YiMenuItem getAsMenuItemImpl() {
         return new YiMenuItem(getName(), getIcon());
     }
 

@@ -1,7 +1,6 @@
 package yi.editor.framework.action;
 
 import javafx.scene.Node;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +21,7 @@ import java.util.function.Consumer;
  *
  * @see EditorBasicAction
  */
-public class EditorRadioAction extends EditorAbstractAction {
+public class EditorRadioAction extends EditorAbstractAction<YiRadioMenuItem, Node> {
 
     private final BooleanProperty selectedProperty = new BooleanProperty(false);
 
@@ -31,15 +30,12 @@ public class EditorRadioAction extends EditorAbstractAction {
         super(name, action);
 
         selectedProperty.addListener(newValue ->
-            getCachedMenuItem().ifPresent(item -> {
-                assert item instanceof YiRadioMenuItem;
-                ((YiRadioMenuItem) item).setSelected(newValue);
-            })
+            getCachedMenuItem().ifPresent(item -> item.setSelected(newValue))
         );
     }
 
     @Override
-    protected @NotNull MenuItem getAsMenuItemImpl() {
+    protected @NotNull YiRadioMenuItem getAsMenuItemImpl() {
         var item = new YiRadioMenuItem(getName(), getIcon());
         item.setSelected(isSelected());
         return item;
@@ -61,8 +57,8 @@ public class EditorRadioAction extends EditorAbstractAction {
     public void setMenuToggleGroup(@NotNull ToggleGroup group) {
         Objects.requireNonNull(group, "ToggleGroup cannot be null.");
 
-        MenuItem menuItem = getAsMenuItem();
-        group.getToggles().add((YiRadioMenuItem) menuItem);
+        YiRadioMenuItem menuItem = getAsMenuItem();
+        group.getToggles().add(menuItem);
         group.selectedToggleProperty().addListener(toggle -> {
             var selectedToggle = group.getSelectedToggle();
             if (selectedToggle != null) {
@@ -71,7 +67,7 @@ public class EditorRadioAction extends EditorAbstractAction {
         });
 
         if (isSelected()) {
-            ((YiRadioMenuItem) menuItem).setSelected(true);
+            menuItem.setSelected(true);
         }
     }
 

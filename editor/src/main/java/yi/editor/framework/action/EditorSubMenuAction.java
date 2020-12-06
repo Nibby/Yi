@@ -1,7 +1,7 @@
 package yi.editor.framework.action;
 
 import javafx.scene.Node;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ import java.util.Set;
  * <p/>
  * Currently exporting to component is not supported.
  */
-public class EditorSubMenuAction extends EditorAbstractAction {
+public class EditorSubMenuAction extends EditorAbstractAction<Menu, Node> {
 
     private final Set<EditorAction> children = new HashSet<>();
 
@@ -40,13 +40,13 @@ public class EditorSubMenuAction extends EditorAbstractAction {
      */
     public void addChildAction(EditorAction child) {
         if (child instanceof EditorAbstractAction) {
-            ((EditorAbstractAction) child).setParentAction(this);
+            ((EditorAbstractAction<?, ?>) child).setParentAction(this);
         }
         children.add(child);
     }
 
     @Override
-    protected @NotNull MenuItem getAsMenuItemImpl() {
+    protected @NotNull Menu getAsMenuItemImpl() {
         var menu = new YiMenu(getName(), getIcon());
 
         var sortedChildren = new ArrayList<>(children);
