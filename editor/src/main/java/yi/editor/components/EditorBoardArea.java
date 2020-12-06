@@ -33,7 +33,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
 
     public EditorBoardArea() {
         board = new GameBoardViewer();
-        board.setAudio(CommonAudioSets.Stones.CERAMIC_BICONVEX);
+//        board.setAudio(CommonAudioSets.Stones.CERAMIC_BICONVEX);
 
         toolBar = new EditorActionToolBar();
         toolBar.addSelectedToolChangeListener(newTool -> newTool.apply(board));
