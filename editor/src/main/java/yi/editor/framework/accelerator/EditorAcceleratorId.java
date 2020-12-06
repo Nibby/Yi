@@ -19,6 +19,19 @@ public enum EditorAcceleratorId {
 
     TOGGLE_BOARD_COORDINATES("toggleBoardCoordinates"),
 
+    TOOL_PLAY_MOVE("toolPlayMove"),
+//    TOOL_ADD_BLACK("toolAddBlack"),
+//    TOOL_ADD_WHITE("toolAddWhite"),
+    TOOL_TRIANGLE("toolTriangle"),
+    TOOL_SQUARE("toolSquare"),
+    TOOL_CIRCLE("toolCircle"),
+    TOOL_CROSS("toolCross"),
+    TOOL_LABEL_LETTER("toolLetter"),
+    TOOL_LABEL_NUMBER("toolNumber"),
+//    TOOL_DIM("toolDim"),
+    TOOL_LINE("toolLine"),
+    TOOL_ARROW("toolArrow"),
+
     NEW_GAME("newGame"),
     OPEN_GAME("openGame"),
     SAVE_GAME("saveGame"),

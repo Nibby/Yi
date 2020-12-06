@@ -7,8 +7,9 @@ public enum EditorMainMenuType {
 
     FILE(0, EditorTextResources.MENU_FILE),
     EDIT(1, EditorTextResources.MENU_EDIT),
-    VIEW(2, EditorTextResources.MENU_VIEW),
-    HELP(3, EditorTextResources.MENU_HELP),
+    TOOLS(2, EditorTextResources.MENU_TOOLS),
+    VIEW(3, EditorTextResources.MENU_VIEW),
+    HELP(4, EditorTextResources.MENU_HELP),
 
     DEBUG(99, EditorTextResources.MENU_DEBUG) {
         @Override

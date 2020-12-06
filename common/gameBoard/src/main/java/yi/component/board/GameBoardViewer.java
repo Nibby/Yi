@@ -12,6 +12,7 @@ import yi.common.audio.StoneAudioSet;
 import yi.component.CanvasContainer;
 import yi.component.YiComponent;
 import yi.component.board.editmodes.AbstractEditMode;
+import yi.component.board.editmodes.EditMode;
 import yi.models.go.EventListener;
 import yi.models.go.GameModel;
 import yi.models.go.GameNode;
@@ -299,5 +300,12 @@ public final class GameBoardViewer implements YiComponent {
      */
     public boolean canRedo() {
         return manager.edit.canRedo();
+    }
+
+    /**
+     * @return Currently set edit mode used by the game board editor.
+     */
+    public AbstractEditMode getEditMode() {
+        return manager.edit.getEditMode();
     }
 }

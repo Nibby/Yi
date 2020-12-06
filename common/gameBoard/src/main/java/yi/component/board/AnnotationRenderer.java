@@ -96,7 +96,7 @@ public final class AnnotationRenderer {
                         centerPoint[0], centerPoint[1], annoBounds.getWidth(), annoBounds.getHeight(),
                         stone == StoneColor.NONE);
                 break;
-            case FADE:
+            case DIM:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
                 double gridUnitSize = manager.size.getGridUnitSizeInPixels();
                 renderFade(g, x, y, gridUnitSize);

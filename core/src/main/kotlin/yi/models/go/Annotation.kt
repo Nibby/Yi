@@ -66,7 +66,7 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
 
     class Label(x: Int, y: Int, val text: String) : PointAnnotation(AnnotationType.LABEL, x, y)
 
-    class Fade(x: Int, y: Int) : PointAnnotation(AnnotationType.FADE, x, y)
+    class Fade(x: Int, y: Int) : PointAnnotation(AnnotationType.DIM, x, y)
 
     /**
      * This is not part of the SGF-4 standard. Rather, it is an internal annotation
@@ -129,7 +129,7 @@ abstract class Annotation constructor(val type: AnnotationType, val x: Int, val 
                 AnnotationType.CIRCLE -> Circle(x1, y1)
                 AnnotationType.SQUARE -> Square(x1, y1)
                 AnnotationType.CROSS -> Cross(x1, y1)
-                AnnotationType.FADE -> Fade(x1, y1)
+                AnnotationType.DIM -> Fade(x1, y1)
                 AnnotationType.LABEL -> Label(x1, y1, text)
 
                 AnnotationType.LINE -> Line(x1, y1, x2, y2)
