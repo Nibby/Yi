@@ -69,10 +69,6 @@ public final class EditorHelper {
     }
 
     public static void initializeContext() {
-        if (!Toolkit.getToolkit().isFxUserThread()) {
-            throw new UnsupportedOperationException(
-                    "initializeContext() must be called on the FX user thread.");
-        }
         loadBundledFonts();
         EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
