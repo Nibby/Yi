@@ -14,12 +14,14 @@ import yi.common.PropertyListener;
 import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.component.YiToggleButton;
-import yi.models.go.GameModel;
-import yi.models.go.GameModelInfo;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
 import yi.editor.EditorWindow;
+import yi.editor.framework.action.EditorAction;
+import yi.models.go.GameModel;
+import yi.models.go.GameModelInfo;
 
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static yi.editor.EditorTextResources.*;

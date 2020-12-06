@@ -8,11 +8,11 @@ import yi.models.go.GameNode;
 import yi.models.go.GameNodeType;
 import yi.models.go.StoneColor;
 
-final class StoneEditMode extends AbstractEditMode {
+public final class StoneEditMode extends AbstractEditMode {
 
     private final StoneColor colorToEdit;
 
-    StoneEditMode(StoneColor colorToEdit) {
+    protected StoneEditMode(StoneColor colorToEdit) {
         if (colorToEdit == StoneColor.NONE) {
             throw new IllegalArgumentException("Stone color must not be NONE.");
         }
@@ -82,5 +82,13 @@ final class StoneEditMode extends AbstractEditMode {
         }
 
         manager.edit.recordAndApply(edit, manager);
+    }
+
+    /**
+     *
+     * @return Color of the stone to add or remove.
+     */
+    public StoneColor getColorToEdit() {
+        return colorToEdit;
     }
 }

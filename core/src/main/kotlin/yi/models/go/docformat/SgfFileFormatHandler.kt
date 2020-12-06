@@ -750,7 +750,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     AnnotationType.TRIANGLE -> SGF_MARKUP_TRIANGLE
                     AnnotationType.CROSS -> SGF_MARKUP_CROSS
                     AnnotationType.LABEL -> SGF_MARKUP_LABEL
-                    AnnotationType.FADE -> SGF_MARKUP_DIM
+                    AnnotationType.DIM -> SGF_MARKUP_DIM
                     AnnotationType.ARROW -> SGF_MARKUP_ARROW
                     AnnotationType.LINE -> SGF_MARKUP_LINE
                     else -> throw NotImplementedError("Unimplemented annotation type for export: ${annotation.type}")

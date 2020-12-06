@@ -38,6 +38,7 @@ public final class EditorAcceleratorManager {
         if (!INITIALIZED.get()) {
             createUndoRedo();
             createPerspectiveAccelerators();
+            createEditToolAccelerators();
             register(new Accelerator(EditorAcceleratorId.NEW_GAME, EditorTextResources.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(EditorAcceleratorId.OPEN_GAME, EditorTextResources.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(EditorAcceleratorId.SAVE_GAME, EditorTextResources.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
@@ -51,6 +52,18 @@ public final class EditorAcceleratorManager {
             }
             INITIALIZED.set(true);
         }
+    }
+
+    private static void createEditToolAccelerators() {
+        register(new Accelerator(EditorAcceleratorId.TOOL_PLAY_MOVE, EditorTextResources.TOOL_PLAY_MOVE, KeyCode.DIGIT1, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_CROSS, EditorTextResources.TOOL_CROSS, KeyCode.DIGIT2, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_TRIANGLE, EditorTextResources.TOOL_TRIANGLE, KeyCode.DIGIT3, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_SQUARE, EditorTextResources.TOOL_SQUARE, KeyCode.DIGIT4, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_CIRCLE, EditorTextResources.TOOL_CIRCLE, KeyCode.DIGIT5, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_LABEL_LETTER, EditorTextResources.TOOL_LABEL_LETTER, KeyCode.DIGIT6, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_LABEL_NUMBER, EditorTextResources.TOOL_LABEL_NUMBER, KeyCode.DIGIT7, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_LINE, EditorTextResources.TOOL_LINE, KeyCode.DIGIT8, new KeyModifier[] { KeyModifier.SHORTCUT }));
+        register(new Accelerator(EditorAcceleratorId.TOOL_ARROW, EditorTextResources.TOOL_ARROW, KeyCode.DIGIT9, new KeyModifier[] { KeyModifier.SHORTCUT }));
     }
 
     private static void createPerspectiveAccelerators() {

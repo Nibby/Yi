@@ -14,6 +14,7 @@ import yi.models.go.Annotation;
 import yi.models.go.AnnotationType;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -315,5 +316,23 @@ public final class AnnotationEditMode extends AbstractEditMode {
     private void assertLabelTypeNotNull() {
         if (labelType == null)
             throw new IllegalStateException("Bad internal state. Should not be retrieving label text if labelType is null.");
+    }
+
+    /**
+     *
+     * @return Type of annotation being created or removed.
+     */
+    public AnnotationType getTypeToApply() {
+        return typeToApply;
+    }
+
+    /**
+     * Result of this return type is null if {@link #getTypeToApply()} is
+     * not equal to {@link AnnotationType#LABEL}.
+     *
+     * @return Type of label being created or removed.
+     */
+    public Optional<LabelType> getLabelType() {
+        return Optional.ofNullable(labelType);
     }
 }

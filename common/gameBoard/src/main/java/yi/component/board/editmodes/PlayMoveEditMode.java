@@ -9,7 +9,11 @@ import yi.models.go.*;
 
 import java.util.Optional;
 
-final class PlayMoveEditMode extends AbstractEditMode {
+public final class PlayMoveEditMode extends AbstractEditMode {
+
+    protected PlayMoveEditMode() {
+
+    }
 
     @Override
     public void renderGridCursor(GraphicsContext g, GameBoardManager manager, int gridX, int gridY) {

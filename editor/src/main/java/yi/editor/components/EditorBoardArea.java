@@ -4,17 +4,19 @@ import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
 import yi.common.audio.CommonAudioSets;
 import yi.component.board.GameBoardViewer;
-import yi.models.go.GameModel;
-import yi.models.go.GameNode;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
+import yi.editor.EditorTool;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorToggleAction;
 import yi.editor.settings.EditorSettings;
+import yi.models.go.GameModel;
+import yi.models.go.GameNode;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 /**
@@ -103,7 +105,11 @@ public class EditorBoardArea implements EditorComponent<Pane> {
 
     @Override
     public EditorAction[] getActions(EditorActionManager actionManager) {
-        return new EditorAction[] { actionToggleCoordinates };
+        var actions = new HashSet<EditorAction>();
+        actions.add(actionToggleCoordinates);
+        actions.addAll(EditorTool.createActionSet());
+
+        return actions.toArray(new EditorAction[0]);
     }
 
     @Override
