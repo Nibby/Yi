@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 /**
  * This class is the base implementation for all actions in the editor module.
  */
-public abstract class EditorAbstractAction implements EditorAction {
+public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> implements EditorAction {
 
     private final Property<TextResource> nameProperty = new Property<>(EditorTextResources.EMPTY);
     private final NullableProperty<ImageView> iconProperty = new NullableProperty<>(null);
@@ -37,8 +37,8 @@ public abstract class EditorAbstractAction implements EditorAction {
     private EditorMainMenuType mainMenuType = null;
     private double menuPosition = 0d;
 
-    private final NullableProperty<MenuItem> createdMenuItem = new NullableProperty<>(null);
-    private final NullableProperty<Node> createdComponent = new NullableProperty<>(null);
+    private final NullableProperty<M> createdMenuItem = new NullableProperty<>(null);
+    private final NullableProperty<C> createdComponent = new NullableProperty<>(null);
     private final NullableProperty<EditorAcceleratorId> acceleratorId = new NullableProperty<>(null);
 
     /**
@@ -154,18 +154,18 @@ public abstract class EditorAbstractAction implements EditorAction {
     }
 
     @Override
-    public @NotNull MenuItem getAsMenuItem() {
+    public @NotNull M getAsMenuItem() {
         if (!isInMainMenu()) {
             throw new IllegalStateException("Cannot create menu item for action that is " +
                     "not set to appear in the main menu. Action: " + getLocalisedName());
         }
-        Optional<MenuItem> menuItem = createdMenuItem.get();
+        Optional<M> menuItem = createdMenuItem.get();
 
         if (menuItem.isPresent()) {
             return menuItem.get();
         }
 
-        MenuItem newMenuItem = getAsMenuItemImpl();
+        M newMenuItem = getAsMenuItemImpl();
         newMenuItem.setUserData(this);
         newMenuItem.setVisible(isVisible());
         newMenuItem.setDisable(!isEnabled());
@@ -173,17 +173,17 @@ public abstract class EditorAbstractAction implements EditorAction {
         return newMenuItem;
     }
 
-    protected abstract @NotNull MenuItem getAsMenuItemImpl();
+    protected abstract @NotNull M getAsMenuItemImpl();
 
     @Override
-    public Node getAsComponent() {
-        Optional<Node> component = createdComponent.get();
+    public C getAsComponent() {
+        Optional<C> component = createdComponent.get();
 
         if (component.isPresent()) {
             return component.get();
         }
 
-        Node newComponent = getAsComponentImpl();
+        C newComponent = getAsComponentImpl();
         if (newComponent != null) {
             newComponent.setUserData(this);
             newComponent.setVisible(isVisible());
@@ -193,7 +193,7 @@ public abstract class EditorAbstractAction implements EditorAction {
         return newComponent;
     }
 
-    protected abstract @Nullable Node getAsComponentImpl();
+    protected abstract @Nullable C getAsComponentImpl();
 
     /**
      * Notifies that the icon for this action has changed.
@@ -324,7 +324,7 @@ public abstract class EditorAbstractAction implements EditorAction {
      * The returned result may be empty, which means either the action was not set to
      * appear in the main menu, or {@link #getAsMenuItem()} has not been called yet.
      */
-    protected Optional<MenuItem> getCachedMenuItem() {
+    protected Optional<M> getCachedMenuItem() {
         return createdMenuItem.get();
     }
 
@@ -333,7 +333,7 @@ public abstract class EditorAbstractAction implements EditorAction {
      * The returned result may be null, which means either the action does not support
      * exporting to component, or {@link #getAsComponent()} has not been called yet.
      */
-    protected Optional<Node> getCachedComponent() {
+    protected Optional<C> getCachedComponent() {
         return createdComponent.get();
     }
 
