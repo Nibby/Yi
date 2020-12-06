@@ -75,7 +75,7 @@ public final class EditorHelper {
         EditorTextResources.installSupportedLanguages();
         SkinManager.useDefaultSkin();
         EditorSettings.load();
-        SoundManager.load(CommonAudioSets.Stones.CERAMIC_BICONVEX); // TODO: Temporary value, extract this to a setting
+//        SoundManager.load(CommonAudioSets.Stones.CERAMIC_BICONVEX); // TODO: Temporary value, extract this to a setting
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             EditorSettings.general.save();
