@@ -107,7 +107,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
     public EditorAction[] getActions(EditorActionManager actionManager) {
         var actions = new HashSet<EditorAction>();
         actions.add(actionToggleCoordinates);
-        actions.addAll(EditorTool.createActionSet());
+        actions.addAll(toolBar.getAllActions());
 
         return actions.toArray(new EditorAction[0]);
     }

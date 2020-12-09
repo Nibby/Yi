@@ -6,9 +6,12 @@ import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
+import yi.common.utilities.GuiUtilities;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
+
+import java.util.Optional;
 
 /**
  * Defines one actionable task in the game editor. Each action must be atomic and
@@ -39,6 +42,13 @@ public interface EditorAction {
      * @return this instance for method chaining.
      */
     EditorAction setName(@NotNull TextResource name);
+
+
+    default EditorAction setIcon(@NotNull String iconResPath) {
+        var icon = GuiUtilities.getIcon(iconResPath, this.getClass())
+                .orElseThrow(() -> new IllegalArgumentException("Icon not loaded: \"" + iconResPath + "\""));
+        return setIcon(icon);
+    }
 
     /**
      * Sets the graphic used on the exported action component. The menu component
@@ -177,4 +187,34 @@ public interface EditorAction {
      * @param context Helper class supplying the context in which this event was triggered.
      */
     void refreshState(EditorActionContext context);
+
+    /**
+     * Optionally associate an object with this action. Use cases for this include
+     * assigning an enum value to identify this action within a list.
+     *
+     * @param userObject Optional user object.
+     * @see #getUserObject()
+     */
+    void setUserObject(@Nullable Object userObject);
+
+    /**
+     * If a user object is not set, returns {@link Optional#empty()}.
+     *
+     * @return User object stored within this action.
+     * @see #setUserObject(Object)
+     */
+    Optional<Object> getUserObject();
+
+    /**
+     * Requests that the component of this action take up as little space as possible.
+     *
+     * @param compact true to make component compact.
+     */
+    void setComponentCompact(boolean compact);
+
+    /**
+     * @return {@code true} if the component is in compact mode.
+     * @see #setComponentCompact(boolean)
+     */
+    boolean isComponentCompact();
 }

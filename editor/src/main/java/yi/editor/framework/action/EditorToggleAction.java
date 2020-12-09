@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.BooleanProperty;
+import yi.common.NullableProperty;
 import yi.common.i18n.TextResource;
 import yi.component.YiCheckMenuItem;
 import yi.component.YiToggleButton;
@@ -16,7 +17,8 @@ import java.util.function.Consumer;
 
 public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, YiToggleButton> {
 
-    private ToggleGroup toggleGroup = null;
+    private final NullableProperty<ToggleGroup> componentGroup = new NullableProperty<>(null);
+    private final NullableProperty<ToggleGroup> menuItemGroup = new NullableProperty<>(null);
     private final BooleanProperty selectedProperty = new BooleanProperty(false);
 
     public EditorToggleAction(@NotNull TextResource name,
@@ -25,6 +27,14 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
 
         selectedProperty.addListener(newValue ->
             getCachedMenuItem().ifPresent(item -> item.setSelected(newValue))
+        );
+
+        componentGroup.addListener(newValue ->
+            getCachedComponent().ifPresent(comp -> comp.setToggleGroup(newValue))
+        );
+
+        menuItemGroup.addListener(newValue ->
+            getCachedMenuItem().ifPresent(menuItem -> menuItem.setToggleGroup(newValue))
         );
     }
 
@@ -39,6 +49,7 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
     protected @Nullable YiToggleButton getAsComponentImpl() {
         var toggleButton = new YiToggleButton(getName(), getIcon());
         toggleButton.setSelected(isSelected());
+        toggleButton.selectedProperty().addListener(actionEvent -> setSelected(toggleButton.isSelected()));
         return toggleButton;
     }
 
@@ -60,23 +71,49 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
     }
 
     /**
-     * Set a toggle group for this action. Once set, only one item in the group may be
-     * selected at any time. The parameter may be null, in which case the toggle will
+     * Set a toggle group for the component of this action created using
+     * {@link #getAsComponent()}. Once set, only one item in the group may be
+     * selected at any time. The parameter may be null, in which case the component will
      * not be set to any group.
+     * <p/>
+     * Note that this method only applies to the component, not the menu item. Use
+     * {@link #setMenuToggleGroup(ToggleGroup)} to assign toggle groups to menu items.
      *
-     * @param toggleGroup Toggle group for this action.
+     * @param toggleGroup Component toggle group.
      */
-    public void setToggleGroup(@Nullable ToggleGroup toggleGroup) {
-        this.toggleGroup = toggleGroup;
-        getCachedComponent().ifPresent(node -> node.setToggleGroup(null));
+    public void setComponentToggleGroup(@Nullable ToggleGroup toggleGroup) {
+        this.componentGroup.set(toggleGroup);
     }
 
     /**
-     * @return Toggle group this action currently belongs to.
-     * @see #setToggleGroup(ToggleGroup)
+     * @return Toggle group the component for this action currently belongs to.
+     * @see #setComponentToggleGroup(ToggleGroup)
      */
-    public Optional<ToggleGroup> getToggleGroup() {
-        return Optional.ofNullable(toggleGroup);
+    public Optional<ToggleGroup> getComponentToggleGroup() {
+        return componentGroup.get();
+    }
+
+    /**
+     * Set a toggle group for the menu item of this action created using
+     * {@link #getAsMenuItem()}. Once set, only one item in the group may be
+     * selected at any time. The parameter may be null, in which case the menu item will
+     * not be set to any group.
+     * <p/>
+     * Note that this method only applies to the menu item, not the component. Use
+     * {@link #setComponentToggleGroup(ToggleGroup)} to assign toggle groups to components.
+     *
+     * @param toggleGroup Menu item toggle group.
+     */
+    public void setMenuToggleGroup(@Nullable ToggleGroup toggleGroup) {
+        this.menuItemGroup.set(toggleGroup);
+    }
+
+    /**
+     * @return Toggle group the menu item for this action currently belongs to.
+     * @see #setMenuToggleGroup(ToggleGroup)
+     */
+    public Optional<ToggleGroup> getMenuItemToggleGroup() {
+        return menuItemGroup.get();
     }
 
     // Methods overridden to enable co-variant return types for smoother method chaining

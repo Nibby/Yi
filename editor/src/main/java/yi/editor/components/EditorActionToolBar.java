@@ -1,6 +1,5 @@
 package yi.editor.components;
 
-import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
@@ -11,20 +10,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
-import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.component.YiToggleButton;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
 import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
+import yi.editor.framework.action.EditorToggleAction;
 import yi.models.go.GameModel;
 import yi.models.go.GameModelInfo;
 
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static yi.editor.EditorTextResources.*;
+import static yi.editor.EditorTextResources.MOVE_COUNT;
 
 /**
  * Primary toolbar for {@link EditorWindow} that displays a set of supported editing tools
@@ -36,18 +37,8 @@ public class EditorActionToolBar extends ToolBar {
 
     private final ToggleGroup toolButtonGroup;
 
-    private final YiToggleButton toolPlayMove;
-    private final YiToggleButton toolAddBlackStone;
-    private final YiToggleButton toolAddWhiteStone;
-    private final YiToggleButton toolAnnotateTriangle;
-    private final YiToggleButton toolAnnotateCircle;
-    private final YiToggleButton toolAnnotateSquare;
-    private final YiToggleButton toolAnnotateCross;
-    private final YiToggleButton toolAnnotateText;
-    private final YiToggleButton toolAnnotateNumber;
-    private final YiToggleButton toolAnnotateLine;
-    private final YiToggleButton toolAnnotateArrow;
-    private final YiToggleButton toolAnnotateDim;
+    private YiToggleButton toolPlayMove; // Effectively final and non-null because of assertions in constructor
+    private final List<EditorToggleAction> editToolActions;
 
     private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/icons/blackStone32_white.png", getClass()).orElse(null));
     private final Label playerBlackRank = new Label("");
@@ -59,21 +50,31 @@ public class EditorActionToolBar extends ToolBar {
     public EditorActionToolBar() {
         toolButtonGroup = new ToggleGroup();
 
-        toolPlayMove = createEditToolButton(EditorTool.PLAY_MOVE, "/icons/playStone32_white.png", TOOL_PLAY_MOVE);
-        toolAddBlackStone = createEditToolButton(EditorTool.ADD_BLACK_STONE, "/icons/addBlackStone32_white.png", TOOL_ADD_BLACK);
-        toolAddWhiteStone = createEditToolButton(EditorTool.ADD_WHITE_STONE, "/icons/addWhiteStone32_white.png", TOOL_ADD_WHITE);
+        editToolActions = Arrays.stream(EditorTool.values())
+                                .map(value -> {
+                                    var action = value.createAction(toolButtonGroup);
+                                    action.setUserObject(value);
+                                    action.setComponentCompact(true);
+                                    return action;
+                                })
+                                .sorted(Comparator.comparingDouble(EditorAction::getMenuPosition))
+                                .collect(Collectors.toList());
 
-        toolAnnotateTriangle = createEditToolButton(EditorTool.ANNOTATE_TRIANGLE, "/icons/annoTriangle32_white.png", TOOL_TRIANGLE);
-        toolAnnotateCircle = createEditToolButton(EditorTool.ANNOTATE_CIRCLE, "/icons/annoCircle32_white.png", TOOL_CIRCLE);
-        toolAnnotateSquare = createEditToolButton(EditorTool.ANNOTATE_SQUARE, "/icons/annoSquare32_white.png", TOOL_SQUARE);
-        toolAnnotateCross = createEditToolButton(EditorTool.ANNOTATE_CROSS, "/icons/annoCross32_white.png", TOOL_CROSS);
-        toolAnnotateText = createEditToolButton(EditorTool.ANNOTATE_LETTER, "/icons/annoLetter32_white.png", TOOL_LABEL_LETTER);
-        toolAnnotateNumber = createEditToolButton(EditorTool.ANNOTATE_NUMBER, "/icons/annoNumber32_white.png", TOOL_LABEL_NUMBER);
-        toolAnnotateLine = createEditToolButton(EditorTool.ANNOTATE_LINE, "/icons/annoLine32_white.png", TOOL_LINE);
-        toolAnnotateArrow = createEditToolButton(EditorTool.ANNOTATE_ARROW, "/icons/annoArrow32_white.png", TOOL_ARROW);
-        toolAnnotateDim = createEditToolButton(EditorTool.ANNOTATE_DIM, "/icons/annoDim32_white.png", TOOL_DIM);
+        for (EditorToggleAction action : editToolActions) {
+            YiToggleButton button = action.getAsComponent();
+            assert button != null : "Editor tool button shouldn't be null";
+            EditorTool editorTool = (EditorTool) action.getUserObject().orElseThrow();
+            button.getStyleClass().add("button-style2");
+            getItems().add(button);
 
-        toolPlayMove.setSelected(true);
+            if (editorTool == EditorTool.PLAY_MOVE) {
+                this.toolPlayMove = button;
+            }
+        }
+
+        assert this.toolPlayMove != null : "No \"Play Move\" tool was found when constructing toolbar";
+
+//        toolButtonGroup.getToggles().get(0).setSelected(true);
 
         // TODO: Consider putting these CSS class strings into a constant class ...
         playerBlackName.getStyleClass().add("editor-player-name-hud-label");
@@ -157,22 +158,9 @@ public class EditorActionToolBar extends ToolBar {
     }
 
     private void addReviewTools() {
-        final int gap = 10;
-
-        getItems().add(toolPlayMove);
-        getItems().add(staticSpacer(gap));
-        getItems().add(toolAddBlackStone);
-        getItems().add(toolAddWhiteStone);
-        getItems().add(staticSpacer(gap));
-        getItems().add(toolAnnotateTriangle);
-        getItems().add(toolAnnotateCircle);
-        getItems().add(toolAnnotateSquare);
-        getItems().add(toolAnnotateCross);
-        getItems().add(toolAnnotateText);
-        getItems().add(toolAnnotateNumber);
-        getItems().add(toolAnnotateDim);
-        getItems().add(toolAnnotateLine);
-        getItems().add(toolAnnotateArrow);
+        for (EditorAction action : editToolActions) {
+            getItems().add(action.getAsComponent());
+        }
     }
 
     private Pane dynamicSpacer() {
@@ -216,52 +204,11 @@ public class EditorActionToolBar extends ToolBar {
         }
     }
 
-    private YiToggleButton createEditToolButton(EditorTool editorTool, String iconResource, TextResource tooltip) {
-        var toggle = new YiToggleButton();
-        toggle.setFocusTraversable(false);
-        toggle.getStyleClass().add("button-style2");
-        toggle.setTooltip(tooltip);
-        setIcon(iconResource, toggle);
-
-        // TODO: I am way too tired to work out why clicking on the already-selected
-        //       toggle button causes the icon to go back to the unselected version,
-        //       so I put this flag here to ignore every second update to the icon.
-        //       I suspect toggle.setSelected(true) has something to do with it...
-        //
-        //       Nonetheless right now the code around this area is a very dirty trick.
-        AtomicBoolean ignoreIconUpdate = new AtomicBoolean(false);
-        toggle.selectedProperty().addListener((observable, wasSelected, isSelected) -> {
-            if (isSelected) {
-                selectedTool.set(editorTool);
-            } else {
-                if (toolButtonGroup.getSelectedToggle() == null && wasSelected) {
-                    toggle.setSelected(true);
-                    ignoreIconUpdate.set(true);
-                }
-            }
-
-            if (!ignoreIconUpdate.get()) {
-                if (isSelected) {
-                    setIcon(iconResource.replace("_white", ""), toggle);
-                } else {
-                    setIcon(iconResource, toggle);
-                }
-            } else {
-                ignoreIconUpdate.set(false);
-            }
-        });
-
-        toolButtonGroup.getToggles().add(toggle);
-
-        return toggle;
-    }
-
-    private void setIcon(String iconResource, ButtonBase buttonBase) {
-        GuiUtilities.getIcon(iconResource, getClass())
-                .ifPresentOrElse(buttonBase::setGraphic, () -> buttonBase.setText("?"));
-    }
-
     public void addSelectedToolChangeListener(PropertyListener<EditorTool> listener) {
         this.selectedTool.addListener(listener);
+    }
+
+    public List<EditorToggleAction> getAllActions() {
+        return editToolActions;
     }
 }
