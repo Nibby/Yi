@@ -121,7 +121,7 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
     private void testSetIcon(HashMap<EditorAction, MenuItem> menuItemMap,
                              HashMap<EditorAction, Node> nodeMap) {
 
-        action1.setIcon(null);
+        action1.setIcon((ImageView) null);
 
         Assertions.assertNull(menuItemMap.get(action1).getGraphic(),
                 "Initial graphic should be empty on menu item");
@@ -242,26 +242,6 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
             @Override
             protected @NotNull Node getAsComponentImpl() {
                 return new YiButton(getName());
-            }
-
-            @Override
-            protected void onIconUpdate(ImageView newIcon) {
-
-            }
-
-            @Override
-            protected void onNameUpdate(TextResource newName) {
-
-            }
-
-            @Override
-            protected void onEnabledStateUpdate(boolean isEnabledNow) {
-
-            }
-
-            @Override
-            protected void onVisibilityUpdate(boolean isVisibleNow) {
-
             }
         };
     }

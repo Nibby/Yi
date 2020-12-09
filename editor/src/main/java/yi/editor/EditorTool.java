@@ -8,7 +8,7 @@ import yi.component.board.editmodes.*;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
-import yi.editor.framework.action.EditorRadioAction;
+import yi.editor.framework.action.EditorToggleAction;
 import yi.models.go.AnnotationType;
 import yi.models.go.StoneColor;
 
@@ -29,14 +29,15 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_PLAY_MOVE,
-                EditorAcceleratorId.TOOL_PLAY_MOVE,
-                editMode -> editMode instanceof PlayMoveEditMode,
-                0d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_PLAY_MOVE,
+                    "/icons/playStone32_white.png",
+                    EditorAcceleratorId.TOOL_PLAY_MOVE,
+                    editMode -> editMode instanceof PlayMoveEditMode,
+                    0d
             );
         }
     },
@@ -48,20 +49,21 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_ADD_BLACK,
-                null,
-                editMode -> {
-                    if (!(editMode instanceof StoneEditMode)) {
-                        return false;
-                    }
-                    var stoneEditMode = (StoneEditMode) editMode;
-                    return stoneEditMode.getColorToEdit() == StoneColor.BLACK;
-                },
-                0.01d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_ADD_BLACK,
+                    "/icons/addBlackStone32_white.png",
+                    null,
+                    editMode -> {
+                        if (!(editMode instanceof StoneEditMode)) {
+                            return false;
+                        }
+                        var stoneEditMode = (StoneEditMode) editMode;
+                        return stoneEditMode.getColorToEdit() == StoneColor.BLACK;
+                    },
+                    0.01d
             );
         }
     },
@@ -73,20 +75,21 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_ADD_WHITE,
-                null,
-                editMode -> {
-                    if (!(editMode instanceof StoneEditMode)) {
-                        return false;
-                    }
-                    var stoneEditMode = (StoneEditMode) editMode;
-                    return stoneEditMode.getColorToEdit() == StoneColor.WHITE;
-                },
-                0.02d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_ADD_WHITE,
+                    "/icons/addWhiteStone32_white.png",
+                    null,
+                    editMode -> {
+                        if (!(editMode instanceof StoneEditMode)) {
+                            return false;
+                        }
+                        var stoneEditMode = (StoneEditMode) editMode;
+                        return stoneEditMode.getColorToEdit() == StoneColor.WHITE;
+                    },
+                    0.02d
             );
         }
     },
@@ -98,11 +101,12 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
                     this,
                     toggleGroup,
                     EditorTextResources.TOOL_CROSS,
+                    "/icons/annoCross32_white.png",
                     EditorAcceleratorId.TOOL_CROSS,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -123,20 +127,21 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
-            return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_TRIANGLE,
-                EditorAcceleratorId.TOOL_TRIANGLE,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    return annotationMode.getTypeToApply() == AnnotationType.TRIANGLE;
-                },
-                0.04d
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+                return EditorTool.createToolAction(
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_TRIANGLE,
+                    "/icons/annoTriangle32_white.png",
+                    EditorAcceleratorId.TOOL_TRIANGLE,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        return annotationMode.getTypeToApply() == AnnotationType.TRIANGLE;
+                    },
+                    0.04d
             );
         }
     },
@@ -148,21 +153,22 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
-            return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_SQUARE,
-                EditorAcceleratorId.TOOL_SQUARE,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    return annotationMode.getTypeToApply() == AnnotationType.SQUARE;
-                },
-                0.05d
-            );
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+                return EditorTool.createToolAction(
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_SQUARE,
+                    "/icons/annoSquare32_white.png",
+                    EditorAcceleratorId.TOOL_SQUARE,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        return annotationMode.getTypeToApply() == AnnotationType.SQUARE;
+                    },
+                    0.05d
+                );
         }
     },
 
@@ -173,11 +179,12 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
                     this,
                     toggleGroup,
                     EditorTextResources.TOOL_CIRCLE,
+                    "/icons/annoCircle32_white.png",
                     EditorAcceleratorId.TOOL_CIRCLE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -198,25 +205,26 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_LABEL_LETTER,
-                EditorAcceleratorId.TOOL_LABEL_LETTER,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
-                        return false;
-                    }
-                    Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
-                    assert labelType.isPresent();
-                    return labelType.get() == AnnotationEditMode.LabelType.LETTER;
-                },
-                0.07d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_LABEL_LETTER,
+                    "/icons/annoLetter32_white.png",
+                    EditorAcceleratorId.TOOL_LABEL_LETTER,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
+                            return false;
+                        }
+                        Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
+                        assert labelType.isPresent();
+                        return labelType.get() == AnnotationEditMode.LabelType.LETTER;
+                    },
+                    0.07d
             );
         }
     },
@@ -228,25 +236,26 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_LABEL_NUMBER,
-                EditorAcceleratorId.TOOL_LABEL_NUMBER,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
-                        return false;
-                    }
-                    Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
-                    assert labelType.isPresent();
-                    return labelType.get() == AnnotationEditMode.LabelType.NUMBER;
-                },
-                0.08d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_LABEL_NUMBER,
+                    "/icons/annoNumber32_white.png",
+                    EditorAcceleratorId.TOOL_LABEL_NUMBER,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
+                            return false;
+                        }
+                        Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
+                        assert labelType.isPresent();
+                        return labelType.get() == AnnotationEditMode.LabelType.NUMBER;
+                    },
+                    0.08d
             );
         }
     },
@@ -258,20 +267,21 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_LINE,
-                EditorAcceleratorId.TOOL_LINE,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    return annotationMode.getTypeToApply() == AnnotationType.LINE;
-                },
-                0.09d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_LINE,
+                    "/icons/annoLine32_white.png",
+                    EditorAcceleratorId.TOOL_LINE,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        return annotationMode.getTypeToApply() == AnnotationType.LINE;
+                    },
+                    0.09d
             );
         }
     },
@@ -283,20 +293,21 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_ARROW,
-                EditorAcceleratorId.TOOL_ARROW,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    return annotationMode.getTypeToApply() == AnnotationType.ARROW;
-                },
-                0.1d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_ARROW,
+                    "/icons/annoArrow32_white.png",
+                    EditorAcceleratorId.TOOL_ARROW,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        return annotationMode.getTypeToApply() == AnnotationType.ARROW;
+                    },
+                    0.1d
             );
         }
     },
@@ -309,27 +320,28 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorRadioAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
             return EditorTool.createToolAction(
-                this,
-                toggleGroup,
-                EditorTextResources.TOOL_DIM,
-                null,
-                editMode -> {
-                    if (!(editMode instanceof AnnotationEditMode)) {
-                        return false;
-                    }
-                    var annotationMode = (AnnotationEditMode) editMode;
-                    return annotationMode.getTypeToApply() == AnnotationType.DIM;
-                },
-                0.09d
+                    this,
+                    toggleGroup,
+                    EditorTextResources.TOOL_DIM,
+                    "/icons/annoDim32_white.png",
+                    null,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        return annotationMode.getTypeToApply() == AnnotationType.DIM;
+                    },
+                    0.09d
             );
         }
     };
 
     public abstract void apply(GameBoardViewer board);
 
-    public abstract EditorRadioAction createAction(ToggleGroup toggleGroup);
+    public abstract EditorToggleAction createAction(ToggleGroup toggleGroup);
 
     private static GameBoardViewer getGameBoardViewer(EditorActionContext context) {
         var window = context.getEditorWindow();
@@ -337,14 +349,15 @@ public enum EditorTool {
         return board.getGameBoardViewer();
     }
 
-    private static EditorRadioAction createToolAction(EditorTool tool,
+    private static EditorToggleAction createToolAction(EditorTool tool,
                                                       ToggleGroup group,
                                                       TextResource label,
+                                                      @Nullable String iconPath,
                                                       @Nullable EditorAcceleratorId acceleratorId,
                                                       Predicate<AbstractEditMode> selectionCriteria,
                                                       double menuPosition) {
 
-        var action = new EditorRadioAction(label,
+        var action = new EditorToggleAction(label,
                 context -> tool.apply(getGameBoardViewer(context))) {
             @Override
             public void refreshState(EditorActionContext context) {
@@ -359,7 +372,11 @@ public enum EditorTool {
         if (acceleratorId != null) {
             action.setAccelerator(acceleratorId);
         }
-        action.setMenuToggleGroup(group);
+        if (iconPath != null) {
+            action.setIcon(iconPath);
+        }
+        action.setComponentToggleGroup(group);
+        group.getToggles().add(action.getAsComponent());
         return action;
     }
 

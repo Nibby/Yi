@@ -3,6 +3,7 @@ package yi.editor.framework.action;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     private final NullableProperty<ImageView> iconProperty = new NullableProperty<>(null);
     private final BooleanProperty enabledProperty = new BooleanProperty(true);
     private final BooleanProperty visibleProperty = new BooleanProperty(true);
+    private final BooleanProperty componentCompactProperty = new BooleanProperty(false);
     private EditorAction parentAction = null;
 
     private final Consumer<EditorActionContext> action;
@@ -40,6 +42,8 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     private final NullableProperty<M> createdMenuItem = new NullableProperty<>(null);
     private final NullableProperty<C> createdComponent = new NullableProperty<>(null);
     private final NullableProperty<EditorAcceleratorId> acceleratorId = new NullableProperty<>(null);
+
+    private Object userObject = null;
 
     /**
      * Instantiates an action.
@@ -59,6 +63,32 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         addIconUpdateListener();
         addVisibilityListener();
         addEnabledStateListener();
+        addCompactnessListener();
+    }
+
+    private void addCompactnessListener() {
+        componentCompactProperty.addListener(isCompactNow -> {
+            getCachedComponent().ifPresent(component -> {
+                if (component instanceof Labeled) {
+                    Labeled labeled = (Labeled) component;
+                    updateNodeCompactness(labeled, isCompactNow);
+                }
+            });
+            onComponentCompactnessUpdate(isCompactNow);
+        });
+    }
+
+    private void updateNodeCompactness(Node node, boolean isCompact) {
+        if (node instanceof Labeled) {
+            var labeled = (Labeled) node;
+            if (isCompact) {
+                labeled.setTooltip(new Tooltip(getLocalisedName()));
+                labeled.setText("");
+            } else {
+                labeled.setText(getLocalisedName());
+                labeled.setTooltip(null);
+            }
+        }
     }
 
     private void addEnabledStateListener() {
@@ -169,6 +199,8 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         newMenuItem.setUserData(this);
         newMenuItem.setVisible(isVisible());
         newMenuItem.setDisable(!isEnabled());
+        newMenuItem.setGraphic(getIcon());
+        newMenuItem.setText(getLocalisedName());
         createdMenuItem.set(newMenuItem);
         return newMenuItem;
     }
@@ -188,6 +220,12 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
             newComponent.setUserData(this);
             newComponent.setVisible(isVisible());
             newComponent.setDisable(!isEnabled());
+            updateNodeCompactness(newComponent, isComponentCompact());
+            if (newComponent instanceof Labeled) {
+                var labeled = (Labeled) newComponent;
+                labeled.setGraphic(getIcon());
+                labeled.setText(getLocalisedName());
+            }
         }
         createdComponent.set(newComponent);
         return newComponent;
@@ -200,7 +238,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
      *
      * @param newIcon New icon for this action.
      *
-     * @implNote The default implementation automatically updates
+     * @apiNote The default implementation automatically updates
      * the icon of components that are subclasses of {@link Labeled}.
      */
     protected void onIconUpdate(ImageView newIcon) {
@@ -212,7 +250,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
      *
      * @param newName New name for this action.
      *
-     * @implNote The default implementation automatically updates
+     * @apiNote The default implementation automatically updates
      * the text of components that are subclasses of {@link Labeled}.
      */
     protected void onNameUpdate(TextResource newName) {
@@ -224,7 +262,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
      *
      * @param isEnabledNow Current enabled status for this action.
      *
-     * @implNote The default implementation automatically calls
+     * @apiNote The default implementation automatically calls
      * {@link Node#setDisable(boolean)} on the exported menu item
      * and component.
      */
@@ -238,13 +276,35 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
      *
      * @param isVisibleNow Current visibility status for this action.
      *
-     * @implNote The default implementation automatically calls
+     * @apiNote The default implementation automatically calls
      * {@link Node#setVisible(boolean)} and {@link Node#setManaged(boolean)}
      * for exported components, and {@link MenuItem#setVisible(boolean)}
      * for menu items.
      */
     protected void onVisibilityUpdate(boolean isVisibleNow) {
 
+    }
+
+    /**
+     * Notifies that the exported component should be compact now.
+     *
+     * @param isCompactNow Current compactness status for this action.
+     *
+     * @apiNote The default implementation automatically handles compactness
+     * for all exported components that are subclasses of {@link Labeled}.
+     */
+    protected void onComponentCompactnessUpdate(boolean isCompactNow) {
+
+    }
+
+    @Override
+    public void setComponentCompact(boolean compact) {
+        componentCompactProperty.set(compact);
+    }
+
+    @Override
+    public boolean isComponentCompact() {
+        return componentCompactProperty.get();
     }
 
     @Override
@@ -267,7 +327,16 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
     @Override
     public EditorAction setIcon(@Nullable ImageView icon) {
-        this.iconProperty.set(icon);
+        var iconToUse = icon;
+
+        if (iconToUse != null) {
+            var wrapper = new ImageView(iconToUse.getImage());
+            wrapper.setFitWidth(16);
+            wrapper.setFitHeight(16);
+            iconToUse = wrapper;
+        }
+
+        this.iconProperty.set(iconToUse);
         return this;
     }
 
@@ -341,6 +410,16 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     public void refreshState(EditorActionContext context) {
         // Implementations that need to closely reflect some editor state can
         // override this method anonymously.
+    }
+
+    @Override
+    public void setUserObject(@Nullable Object userObject) {
+        this.userObject = userObject;
+    }
+
+    @Override
+    public Optional<Object> getUserObject() {
+        return Optional.ofNullable(userObject);
     }
 
     @Override
