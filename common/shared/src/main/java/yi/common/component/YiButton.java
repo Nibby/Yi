@@ -1,24 +1,30 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.scene.Node;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.I18n;
 import yi.common.i18n.TextResource;
 
-public class YiToggleButton extends ToggleButton implements YiComponent {
+/**
+ * Wrapper for {@link Button} with localised text support.
+ */
+@SuppressWarnings("unused")
+public class YiButton extends Button implements YiComponent {
 
-    public YiToggleButton() {
+    public YiButton() {
         super();
     }
 
-    public YiToggleButton(TextResource textResource) {
-        super(textResource.getLocalisedText());
+    public YiButton(TextResource key) {
+        super(key.getLocalisedText());
+        setText(key);
     }
 
-    public YiToggleButton(TextResource textResource, Node graphic) {
-        super(textResource.getLocalisedText(), graphic);
+    public YiButton(TextResource key, Node graphic) {
+        super(key.getLocalisedText(), graphic);
+        setText(key);
     }
 
     /**
@@ -42,5 +48,10 @@ public class YiToggleButton extends ToggleButton implements YiComponent {
     public void setTooltip(@Nullable TextResource key) {
         var tooltip = key == null ? new Tooltip() : new Tooltip(key.getLocalisedText());
         setTooltip(tooltip);
+    }
+
+    @Override
+    public Node getComponent() {
+        return this;
     }
 }

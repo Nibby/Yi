@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.common.utilities.SystemUtilities;
-import yi.component.KeyModifier;
-import yi.component.YiScene;
+import yi.common.component.KeyModifier;
+import yi.common.component.YiScene;
 import yi.editor.EditorHelper;
 import yi.editor.EditorTextResources;
 

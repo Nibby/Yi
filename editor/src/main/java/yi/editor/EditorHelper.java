@@ -1,13 +1,10 @@
 package yi.editor;
 
-import com.sun.javafx.tk.Toolkit;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
-import yi.common.audio.CommonAudioSets;
-import yi.common.audio.SoundManager;
 import yi.common.utilities.SystemUtilities;
-import yi.component.FontManager;
-import yi.component.SkinManager;
+import yi.common.component.FontManager;
+import yi.common.component.SkinManager;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.settings.EditorSettings;
 

@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.scene.input.KeyCode;
 import yi.common.utilities.GuiUtilities;

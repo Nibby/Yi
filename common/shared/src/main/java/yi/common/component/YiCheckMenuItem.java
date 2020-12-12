@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

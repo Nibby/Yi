@@ -9,7 +9,7 @@ import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.common.utilities.GuiUtilities;
 import yi.common.utilities.SystemUtilities;
-import yi.component.YiScene;
+import yi.common.component.YiScene;
 import yi.component.board.GameBoardViewer;
 import yi.component.gametree.GameTreeViewer;
 import yi.component.gametree.GameTreeViewerSettings;

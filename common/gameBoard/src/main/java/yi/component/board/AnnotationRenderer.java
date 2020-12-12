@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import org.jetbrains.annotations.Nullable;
-import yi.component.FontManager;
+import yi.common.component.FontManager;
 import yi.common.utilities.ComparisonUtilities;
 import yi.common.utilities.ShapeUtilities;
 import yi.models.go.Annotation;

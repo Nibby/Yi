@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.geometry.Dimension2D;
 import javafx.scene.canvas.Canvas;
