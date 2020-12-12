@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
-import yi.component.YiMenu;
+import yi.common.component.YiMenu;
 import yi.editor.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 

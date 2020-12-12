@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;

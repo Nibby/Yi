@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.common.utilities.GuiUtilities;
-import yi.component.YiToggleButton;
+import yi.common.component.YiToggleButton;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
 import yi.editor.EditorWindow;

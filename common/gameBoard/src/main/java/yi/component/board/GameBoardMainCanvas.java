@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import yi.component.FontManager;
+import yi.common.component.FontManager;
 import yi.common.utilities.ComparisonUtilities;
 import yi.models.go.*;
 

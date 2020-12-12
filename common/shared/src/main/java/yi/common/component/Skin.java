@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URI;

@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;

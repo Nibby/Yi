@@ -1,30 +1,24 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.scene.Node;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.I18n;
 import yi.common.i18n.TextResource;
 
 /**
- * Wrapper for {@link Menu} with localised text support.
+ * Wrapper for {@link MenuItem} with localised text support.
  */
 @SuppressWarnings("unused")
-public class YiMenu extends Menu implements YiComponent {
+public class YiMenuItem extends MenuItem implements YiComponent {
 
-    public YiMenu(TextResource key) {
+    public YiMenuItem(TextResource key) {
         super(key.getLocalisedText());
         setText(key);
     }
 
-    public YiMenu(TextResource key, Node graphic) {
+    public YiMenuItem(TextResource key, Node graphic) {
         super(key.getLocalisedText(), graphic);
-        setText(key);
-    }
-
-    public YiMenu(TextResource key, Node graphic, MenuItem... items) {
-        super(key.getLocalisedText(), graphic, items);
         setText(key);
     }
 

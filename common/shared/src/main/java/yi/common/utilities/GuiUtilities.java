@@ -5,9 +5,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import yi.component.KeyModifier;
+import yi.common.component.KeyModifier;
 
 import java.util.Arrays;
 import java.util.Optional;

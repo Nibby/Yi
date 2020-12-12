@@ -1,4 +1,4 @@
-package yi.component;
+package yi.common.component;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
