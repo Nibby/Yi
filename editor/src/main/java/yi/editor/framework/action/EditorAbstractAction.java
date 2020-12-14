@@ -98,7 +98,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         if (node instanceof Labeled) {
             var labeled = (Labeled) node;
             if (isCompact) {
-                StringBuilder tipText = new StringBuilder(getLocalisedName());
+                StringBuilder tipText = new StringBuilder(getLocalisedText());
 
                 acceleratorId.get().ifPresent(id -> {
                     var accelerator = EditorAcceleratorManager.getAccelerator(id);
@@ -108,7 +108,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
                 labeled.setTooltip(new Tooltip(tipText.toString()));
                 labeled.setText("");
             } else {
-                labeled.setText(getLocalisedName());
+                labeled.setText(getLocalisedText());
                 labeled.setTooltip(null);
             }
         }
@@ -216,7 +216,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     }
 
     @Override
-    public @NotNull String getLocalisedName() {
+    public @NotNull String getLocalisedText() {
         return nameProperty.get().getLocalisedText();
     }
 
@@ -253,7 +253,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     public @NotNull M getAsMenuItem() {
         if (!isInMainMenu()) {
             throw new IllegalStateException("Cannot create menu item for action that is " +
-                    "not set to appear in the main menu. Action: " + getLocalisedName());
+                    "not set to appear in the main menu. Action: " + getLocalisedText());
         }
         Optional<M> menuItem = createdMenuItem.get();
 
@@ -270,7 +270,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         } else {
             newMenuItem.setGraphic(null);
         }
-        newMenuItem.setText(getLocalisedName());
+        newMenuItem.setText(getLocalisedText());
         createdMenuItem.set(newMenuItem);
         return newMenuItem;
     }
@@ -296,7 +296,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
                 if (isShowingIconOnComponent()) {
                     labeled.setGraphic(getIcon());
                 }
-                labeled.setText(getLocalisedName());
+                labeled.setText(getLocalisedText());
             }
             if (newComponent instanceof ButtonBase) {
                 var buttonBase = (ButtonBase) newComponent;
@@ -391,13 +391,13 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     }
 
     @Override
-    public @NotNull TextResource getName() {
+    public @NotNull TextResource getText() {
         return nameProperty.get();
     }
 
     @Override
-    public EditorAction setName(@NotNull TextResource name) {
-        this.nameProperty.set(name);
+    public EditorAction setText(@NotNull TextResource i18nKey) {
+        this.nameProperty.set(i18nKey);
         return this;
     }
 
@@ -524,6 +524,6 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
     @Override
     public String toString() {
-        return "Action: " + getLocalisedName();
+        return "Action: " + getLocalisedText();
     }
 }

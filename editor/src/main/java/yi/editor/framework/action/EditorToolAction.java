@@ -54,7 +54,7 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
 
     @Override
     protected @NotNull YiRadioMenuItem getAsMenuItemImpl() {
-        var item = new YiRadioMenuItem(getName(), getIcon());
+        var item = new YiRadioMenuItem(getText(), getIcon());
         item.selectedProperty().addListener(event -> setSelected(item.isSelected()));
         getMenuItemToggleGroup().ifPresent(item::setToggleGroup);
         item.setSelected(isSelected());
@@ -63,7 +63,7 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
 
     @Override
     protected @Nullable YiToggleButton getAsComponentImpl() {
-        var toggleButton = new YiToggleButton(getName(), getIcon());
+        var toggleButton = new YiToggleButton(getText(), getIcon());
         toggleButton.selectedProperty().addListener(event -> setSelected(toggleButton.isSelected()));
         getComponentToggleGroup().ifPresent(toggleButton::setToggleGroup);
         toggleButton.setSelected(isSelected());

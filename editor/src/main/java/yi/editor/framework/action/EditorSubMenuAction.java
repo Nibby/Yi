@@ -47,7 +47,7 @@ public class EditorSubMenuAction extends EditorAbstractAction<Menu, Node> {
 
     @Override
     protected @NotNull Menu getAsMenuItemImpl() {
-        var menu = new YiMenu(getName(), getIcon());
+        var menu = new YiMenu(getText(), getIcon());
 
         var sortedChildren = new ArrayList<>(children);
         sortedChildren.sort(Comparator.comparingDouble(EditorAction::getMenuPosition));
@@ -80,8 +80,8 @@ public class EditorSubMenuAction extends EditorAbstractAction<Menu, Node> {
     }
 
     @Override
-    public EditorSubMenuAction setName(@NotNull TextResource name) {
-        super.setName(name);
+    public EditorSubMenuAction setText(@NotNull TextResource i18nKey) {
+        super.setText(i18nKey);
         return this;
     }
 

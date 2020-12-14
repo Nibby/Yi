@@ -40,14 +40,14 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
 
     @Override
     protected @NotNull YiCheckMenuItem getAsMenuItemImpl() {
-        var item = new YiCheckMenuItem(getName(), getIcon());
+        var item = new YiCheckMenuItem(getText(), getIcon());
         item.setSelected(isSelected());
         return item;
     }
 
     @Override
     protected @Nullable YiToggleButton getAsComponentImpl() {
-        var toggleButton = new YiToggleButton(getName(), getIcon());
+        var toggleButton = new YiToggleButton(getText(), getIcon());
         toggleButton.setSelected(isSelected());
         toggleButton.selectedProperty().addListener(actionEvent -> setSelected(toggleButton.isSelected()));
         return toggleButton;
@@ -131,8 +131,8 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
     }
 
     @Override
-    public EditorToggleAction setName(@NotNull TextResource name) {
-        super.setName(name);
+    public EditorToggleAction setText(@NotNull TextResource i18nKey) {
+        super.setText(i18nKey);
         return this;
     }
 

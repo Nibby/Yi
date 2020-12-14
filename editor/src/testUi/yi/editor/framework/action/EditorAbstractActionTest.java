@@ -150,7 +150,7 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
                 EditorTextResources.EMPTY.getLocalisedText(),
                 "Initial name not correct on node");
 
-        action1.setName(EditorTextResources.MENUITEM_SAVE_GAME);
+        action1.setText(EditorTextResources.MENUITEM_SAVE_GAME);
 
         Assertions.assertEquals(menuItemMap.get(action1).getText(),
                 EditorTextResources.MENUITEM_SAVE_GAME.getLocalisedText(),
@@ -238,12 +238,12 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
         return new EditorAbstractAction<>(EditorTextResources.EMPTY, context -> action.run()) {
             @Override
             protected @NotNull MenuItem getAsMenuItemImpl() {
-                return new YiMenuItem(getName());
+                return new YiMenuItem(getText());
             }
 
             @Override
             protected @NotNull Node getAsComponentImpl() {
-                return new YiButton(getName());
+                return new YiButton(getText());
             }
         };
     }

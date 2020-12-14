@@ -27,7 +27,7 @@ public class EditorBasicAction extends EditorAbstractAction<YiMenuItem, Node> {
 
     @Override
     protected @NotNull YiMenuItem getAsMenuItemImpl() {
-        return new YiMenuItem(getName(), getIcon());
+        return new YiMenuItem(getText(), getIcon());
     }
 
     @Override
@@ -50,8 +50,8 @@ public class EditorBasicAction extends EditorAbstractAction<YiMenuItem, Node> {
     }
 
     @Override
-    public EditorBasicAction setName(@NotNull TextResource name) {
-        super.setName(name);
+    public EditorBasicAction setText(@NotNull TextResource i18nKey) {
+        super.setText(i18nKey);
         return this;
     }
 
