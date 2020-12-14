@@ -2,7 +2,8 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
-subprojects {
+subprojects { subproject ->
+
     apply plugin: 'java'
     apply plugin: 'org.openjfx.javafxplugin'
 
@@ -11,6 +12,11 @@ subprojects {
 
     dependencies {
         compile project(":core")
+
+        if (subproject.name != 'shared') {
+            compile project(":common:shared")
+        }
+
         implementation "org.jetbrains.kotlin:kotlin-stdlib"
         implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
         implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
