@@ -2,19 +2,18 @@ package yi.editor;
 
 import javafx.scene.control.ToggleGroup;
 import org.jetbrains.annotations.Nullable;
+import yi.common.component.YiToggleButton;
 import yi.common.i18n.TextResource;
+import yi.common.utilities.GuiUtilities;
 import yi.component.board.GameBoardViewer;
 import yi.component.board.editmodes.*;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorToggleAction;
 import yi.models.go.AnnotationType;
 import yi.models.go.StoneColor;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -29,12 +28,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_PLAY_MOVE,
-                    "/icons/playStone32_white.png",
+                    "playMove",
                     EditorAcceleratorId.TOOL_PLAY_MOVE,
                     editMode -> editMode instanceof PlayMoveEditMode,
                     0d
@@ -49,12 +49,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_ADD_BLACK,
-                    "/icons/addBlackStone32_white.png",
+                    "addBlack",
                     null,
                     editMode -> {
                         if (!(editMode instanceof StoneEditMode)) {
@@ -75,12 +76,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup toggleGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
                     toggleGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_ADD_WHITE,
-                    "/icons/addWhiteStone32_white.png",
+                    "addWhite",
                     null,
                     editMode -> {
                         if (!(editMode instanceof StoneEditMode)) {
@@ -101,12 +103,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_CROSS,
-                    "/icons/annoCross32_white.png",
+                    "cross",
                     EditorAcceleratorId.TOOL_CROSS,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -127,12 +130,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
                 return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_TRIANGLE,
-                    "/icons/annoTriangle32_white.png",
+                    "triangle",
                     EditorAcceleratorId.TOOL_TRIANGLE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -153,12 +157,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
                 return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_SQUARE,
-                    "/icons/annoSquare32_white.png",
+                    "square",
                     EditorAcceleratorId.TOOL_SQUARE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -179,12 +184,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_CIRCLE,
-                    "/icons/annoCircle32_white.png",
+                    "circle",
                     EditorAcceleratorId.TOOL_CIRCLE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -205,12 +211,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_LABEL_LETTER,
-                    "/icons/annoLetter32_white.png",
+                    "letter",
                     EditorAcceleratorId.TOOL_LABEL_LETTER,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -236,12 +243,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_LABEL_NUMBER,
-                    "/icons/annoNumber32_white.png",
+                    "number",
                     EditorAcceleratorId.TOOL_LABEL_NUMBER,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -267,12 +275,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_LINE,
-                    "/icons/annoLine32_white.png",
+                    "line",
                     EditorAcceleratorId.TOOL_LINE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -293,12 +302,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_ARROW,
-                    "/icons/annoArrow32_white.png",
+                    "arrow",
                     EditorAcceleratorId.TOOL_ARROW,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -320,12 +330,13 @@ public enum EditorTool {
         }
 
         @Override
-        public EditorToggleAction createAction(ToggleGroup toggleGroup) {
+        public EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return EditorTool.createToolAction(
                     this,
-                    toggleGroup,
+                    componentGroup,
+                    menuGroup,
                     EditorTextResources.TOOL_DIM,
-                    "/icons/annoDim32_white.png",
+                    "dim",
                     null,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
@@ -341,7 +352,7 @@ public enum EditorTool {
 
     public abstract void apply(GameBoardViewer board);
 
-    public abstract EditorToggleAction createAction(ToggleGroup toggleGroup);
+    public abstract EditorToggleAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup);
 
     private static GameBoardViewer getGameBoardViewer(EditorActionContext context) {
         var window = context.getEditorWindow();
@@ -349,13 +360,14 @@ public enum EditorTool {
         return board.getGameBoardViewer();
     }
 
-    private static EditorToggleAction createToolAction(EditorTool tool,
-                                                      ToggleGroup group,
-                                                      TextResource label,
-                                                      @Nullable String iconPath,
-                                                      @Nullable EditorAcceleratorId acceleratorId,
-                                                      Predicate<AbstractEditMode> selectionCriteria,
-                                                      double menuPosition) {
+    private static EditorToggleAction createToolAction(final EditorTool tool,
+                                                       final ToggleGroup componentGroup,
+                                                       final ToggleGroup menuGroup,
+                                                       TextResource label,
+                                                       @Nullable String iconPath,
+                                                       @Nullable EditorAcceleratorId acceleratorId,
+                                                       Predicate<AbstractEditMode> selectionCriteria,
+                                                       double menuPosition) {
 
         var action = new EditorToggleAction(label,
                 context -> tool.apply(getGameBoardViewer(context))) {
@@ -372,20 +384,26 @@ public enum EditorTool {
         if (acceleratorId != null) {
             action.setAccelerator(acceleratorId);
         }
-        if (iconPath != null) {
-            action.setIcon(iconPath);
-        }
-        action.setComponentToggleGroup(group);
-        group.getToggles().add(action.getAsComponent());
-        return action;
-    }
 
-    public static Set<EditorAction> createActionSet() {
-        Set<EditorAction> actions = new HashSet<>();
-        var group = new ToggleGroup();
-        for (EditorTool tool : values()) {
-            actions.add(tool.createAction(group));
+        action.setShowIconOnMenuItem(false);
+        action.setShowIconOnComponent(true);
+
+        YiToggleButton actionComponent = action.getAsComponent();
+        assert actionComponent != null : "Editor tool action component must not be null";
+
+        if (iconPath != null) {
+            String iconDir = "/icons/" + iconPath + "/";
+            String iconNormal = iconDir + iconPath + "_white@2x.png";
+            String iconSelected = iconNormal.replace("_white@2x.png", "@2x.png");
+            GuiUtilities.getIcon(iconNormal, EditorTool.class, 16).ifPresent(action::setIcon);
+            actionComponent.selectedProperty().addListener(event -> {
+                boolean selectedNow = actionComponent.isSelected();
+                String icon = selectedNow ? iconSelected : iconNormal;
+                GuiUtilities.getIcon(icon, EditorTool.class, 16).ifPresent(action::setIcon);
+            });
         }
-        return actions;
+        action.setComponentToggleGroup(componentGroup);
+        action.setMenuToggleGroup(menuGroup);
+        return action;
     }
 }

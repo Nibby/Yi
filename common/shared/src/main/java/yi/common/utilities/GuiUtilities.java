@@ -96,14 +96,26 @@ public final class GuiUtilities {
     }
 
     public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass) {
+        return getIcon(resourceFile, aClass, -1);
+    }
+
+    public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass, int fitSize) {
+        return getIcon(resourceFile, aClass, fitSize, fitSize);
+    }
+
+    public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass,
+                                              int fitWidth, int fitHeight) {
         try {
             var resourceStream = aClass.getResourceAsStream(resourceFile);
             var iconImage = new Image(resourceStream);
             var icon = new ImageView(iconImage);
 
-            int ICON_SIZE = 16;
-            icon.setFitWidth(ICON_SIZE);
-            icon.setFitHeight(ICON_SIZE);
+            if (fitWidth > 0) {
+                icon.setFitWidth(fitWidth);
+            }
+            if (fitHeight > 0) {
+                icon.setFitHeight(fitHeight);
+            }
 
             return Optional.of(icon);
         } catch (NullPointerException e) {

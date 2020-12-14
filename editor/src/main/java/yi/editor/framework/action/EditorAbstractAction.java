@@ -31,6 +31,8 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     private final BooleanProperty enabledProperty = new BooleanProperty(true);
     private final BooleanProperty visibleProperty = new BooleanProperty(true);
     private final BooleanProperty componentCompactProperty = new BooleanProperty(false);
+    private final BooleanProperty showIconOnMenuItemProperty = new BooleanProperty(true);
+    private final BooleanProperty showIconOnComponentProperty = new BooleanProperty(true);
     private EditorAction parentAction = null;
 
     private final Consumer<EditorActionContext> action;
@@ -58,6 +60,8 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         this.nameProperty.set(name);
         this.action = action;
 
+        // TODO: Some listeners only work on cached components. Maybe initialize those
+        //       lazily to save memory.
         addAcceleratorUpdateListener();
         addNameUpdateListener();
         addIconUpdateListener();
@@ -82,7 +86,14 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         if (node instanceof Labeled) {
             var labeled = (Labeled) node;
             if (isCompact) {
-                labeled.setTooltip(new Tooltip(getLocalisedName()));
+                StringBuilder tipText = new StringBuilder(getLocalisedName());
+
+                acceleratorId.get().ifPresent(id -> {
+                    var accelerator = EditorAcceleratorManager.getAccelerator(id);
+                    var keyCombination = accelerator.getKeyCombination();
+                    tipText.append(" (").append(keyCombination.getDisplayText()).append(")");
+                });
+                labeled.setTooltip(new Tooltip(tipText.toString()));
                 labeled.setText("");
             } else {
                 labeled.setText(getLocalisedName());
@@ -119,6 +130,20 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
                 }
             });
             onIconUpdate(newIcon);
+        });
+
+        showIconOnMenuItemProperty.addListener(showOnMenu -> {
+            ImageView icon = showOnMenu ? getIcon() : null;
+            getCachedMenuItem().ifPresent(item -> item.setGraphic(icon));
+        });
+
+        showIconOnComponentProperty.addListener(showOnComponent -> {
+            ImageView icon = showOnComponent ? getIcon() : null;
+            getCachedComponent().ifPresent(node -> {
+                if (node instanceof Labeled) {
+                    ((Labeled) node).setGraphic(icon);
+                }
+            });
         });
     }
 
@@ -199,7 +224,9 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         newMenuItem.setUserData(this);
         newMenuItem.setVisible(isVisible());
         newMenuItem.setDisable(!isEnabled());
-        newMenuItem.setGraphic(getIcon());
+        if (isShowingIconOnMenuItem()) {
+            newMenuItem.setGraphic(getIcon());
+        }
         newMenuItem.setText(getLocalisedName());
         createdMenuItem.set(newMenuItem);
         return newMenuItem;
@@ -223,7 +250,9 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
             updateNodeCompactness(newComponent, isComponentCompact());
             if (newComponent instanceof Labeled) {
                 var labeled = (Labeled) newComponent;
-                labeled.setGraphic(getIcon());
+                if (isShowingIconOnComponent()) {
+                    labeled.setGraphic(getIcon());
+                }
                 labeled.setText(getLocalisedName());
             }
         }
@@ -338,6 +367,26 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
         this.iconProperty.set(iconToUse);
         return this;
+    }
+
+    @Override
+    public void setShowIconOnMenuItem(boolean showIcon) {
+        showIconOnMenuItemProperty.set(showIcon);
+    }
+
+    @Override
+    public boolean isShowingIconOnMenuItem() {
+        return showIconOnMenuItemProperty.get();
+    }
+
+    @Override
+    public void setShowIconOnComponent(boolean showIcon) {
+        showIconOnComponentProperty.set(showIcon);
+    }
+
+    @Override
+    public boolean isShowingIconOnComponent() {
+        return showIconOnComponentProperty.get();
     }
 
     @Override
