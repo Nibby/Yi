@@ -1,15 +1,14 @@
 package yi.editor.framework.action;
 
-import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import yi.editor.EditorTextResources;
 
-public class EditorSeparatorAction extends EditorAbstractAction<SeparatorMenuItem, Separator> {
+public final class EditorSeparatorAction extends EditorAbstractAction<SeparatorMenuItem, Pane> {
 
     public EditorSeparatorAction() {
-        super(EditorTextResources.EMPTY, null);
+        super(EditorTextResources.EMPTY);
     }
 
     @Override
@@ -18,8 +17,10 @@ public class EditorSeparatorAction extends EditorAbstractAction<SeparatorMenuIte
     }
 
     @Override
-    protected @Nullable Separator getAsComponentImpl() {
-        return new Separator();
+    protected @NotNull Pane getAsComponentImpl() {
+        var spacer = new Pane();
+        spacer.setPrefWidth(8);
+        spacer.setPrefHeight(8);
+        return spacer;
     }
-
 }
