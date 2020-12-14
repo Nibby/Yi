@@ -120,13 +120,16 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
     private void testSetIcon(HashMap<EditorAction, MenuItem> menuItemMap,
                              HashMap<EditorAction, Node> nodeMap) {
 
-        action1.setIcon((ImageView) null);
+        action1.setIcon(null);
 
         Assertions.assertNull(menuItemMap.get(action1).getGraphic(),
                 "Initial graphic should be empty on menu item");
         Assertions.assertNull(((Labeled) nodeMap.get(action1)).getGraphic(),
                 "Initial graphic should be empty on node");
 
+        // A little yuck, but we have to be careful to use a 16x16 icon here otherwise
+        // the action will wrap the image in a re-sized version, causing the two objects
+        // to not equal each other.
         ImageView icon = GuiUtilities.getIcon("/testIcon.png", getClass()).orElseThrow();
         action1.setIcon(icon);
 

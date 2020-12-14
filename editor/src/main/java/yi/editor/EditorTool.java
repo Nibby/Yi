@@ -314,7 +314,7 @@ public enum EditorTool {
                         var annotationMode = (AnnotationEditMode) editMode;
                         return annotationMode.getTypeToApply() == AnnotationType.ARROW;
                     },
-                    0.1d
+                    0.10d
             );
         }
     },
@@ -342,7 +342,7 @@ public enum EditorTool {
                         var annotationMode = (AnnotationEditMode) editMode;
                         return annotationMode.getTypeToApply() == AnnotationType.DIM;
                     },
-                    0.09d
+                    0.11d
             );
         }
     };
