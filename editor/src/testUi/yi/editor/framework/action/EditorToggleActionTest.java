@@ -1,6 +1,5 @@
 package yi.editor.framework.action;
 
-import javafx.scene.control.CheckMenuItem;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -76,9 +75,9 @@ public final class EditorToggleActionTest extends EditorUITestBase {
     private void assertMenuItemStateCorrect(boolean action1Selected,
                                             boolean action2Selected,
                                             boolean action3Selected) {
-        Assertions.assertEquals(action1Selected, ((CheckMenuItem) action1.getAsMenuItem()).isSelected());
-        Assertions.assertEquals(action2Selected, ((CheckMenuItem) action2.getAsMenuItem()).isSelected());
-        Assertions.assertEquals(action3Selected, ((CheckMenuItem) action3.getAsMenuItem()).isSelected());
+        Assertions.assertEquals(action1Selected, action1.getAsMenuItem().isSelected());
+        Assertions.assertEquals(action2Selected, action2.getAsMenuItem().isSelected());
+        Assertions.assertEquals(action3Selected, action3.getAsMenuItem().isSelected());
     }
 
     private void assertActionStateCorrect(boolean action1Selected,

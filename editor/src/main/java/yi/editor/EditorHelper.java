@@ -2,9 +2,9 @@ package yi.editor;
 
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
-import yi.common.utilities.SystemUtilities;
 import yi.common.component.FontManager;
 import yi.common.component.SkinManager;
+import yi.common.utilities.SystemUtilities;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.settings.EditorSettings;
 

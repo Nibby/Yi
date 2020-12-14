@@ -6,8 +6,8 @@ import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.BooleanProperty;
-import yi.common.i18n.TextResource;
 import yi.common.component.YiRadioMenuItem;
+import yi.common.i18n.TextResource;
 import yi.editor.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 

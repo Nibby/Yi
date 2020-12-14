@@ -2,9 +2,9 @@ package yi.editor.settings;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import yi.common.utilities.JSON;
 import yi.editor.EditorWindow;
 import yi.editor.components.EditorPerspective;
-import yi.common.utilities.JSON;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

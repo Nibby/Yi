@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
-import yi.common.utilities.GuiUtilities;
 import yi.common.component.YiButton;
 import yi.common.component.YiMenuItem;
+import yi.common.utilities.GuiUtilities;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorUITestBase;
@@ -235,7 +235,7 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
     }
 
     private EditorAction createAction(Runnable action) {
-        return new EditorAbstractAction(EditorTextResources.EMPTY, context -> action.run()) {
+        return new EditorAbstractAction<>(EditorTextResources.EMPTY, context -> action.run()) {
             @Override
             protected @NotNull MenuItem getAsMenuItemImpl() {
                 return new YiMenuItem(getName());
