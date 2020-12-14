@@ -1,8 +1,8 @@
 package yi.editor.components;
 
 import javafx.scene.control.MenuBar;
-import yi.common.utilities.SystemUtilities;
 import yi.common.component.YiMenu;
+import yi.common.utilities.SystemUtilities;
 import yi.editor.EditorHelper;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorWindow;

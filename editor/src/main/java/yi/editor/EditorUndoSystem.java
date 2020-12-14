@@ -1,10 +1,13 @@
 package yi.editor;
 
-import yi.models.go.GameModel;
 import yi.editor.components.EditorBoardArea;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.*;
+import yi.editor.framework.action.EditorAction;
+import yi.editor.framework.action.EditorActionContext;
+import yi.editor.framework.action.EditorActionManager;
+import yi.editor.framework.action.EditorBasicAction;
+import yi.models.go.GameModel;
 
 import java.util.Optional;
 

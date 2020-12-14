@@ -1,6 +1,5 @@
 package yi.editor.framework.action;
 
-import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
@@ -82,9 +81,9 @@ public final class EditorRadioActionTest extends EditorUITestBase {
     private void assertMenuItemStateCorrect(boolean action1Selected,
                                             boolean action2Selected,
                                             boolean action3Selected) {
-        Assertions.assertEquals(action1Selected, ((RadioMenuItem) action1.getAsMenuItem()).isSelected());
-        Assertions.assertEquals(action2Selected, ((RadioMenuItem) action2.getAsMenuItem()).isSelected());
-        Assertions.assertEquals(action3Selected, ((RadioMenuItem) action3.getAsMenuItem()).isSelected());
+        Assertions.assertEquals(action1Selected, action1.getAsMenuItem().isSelected());
+        Assertions.assertEquals(action2Selected, action2.getAsMenuItem().isSelected());
+        Assertions.assertEquals(action3Selected, action3.getAsMenuItem().isSelected());
     }
 
     private void assertActionStateCorrect(boolean action1Selected,

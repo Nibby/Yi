@@ -5,11 +5,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import org.jetbrains.annotations.NotNull;
+import yi.common.component.KeyModifier;
+import yi.common.component.YiScene;
 import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.common.utilities.SystemUtilities;
-import yi.common.component.KeyModifier;
-import yi.common.component.YiScene;
 import yi.editor.EditorHelper;
 import yi.editor.EditorTextResources;
 

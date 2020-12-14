@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.BooleanProperty;
 import yi.common.NullableProperty;
-import yi.common.i18n.TextResource;
 import yi.common.component.YiCheckMenuItem;
 import yi.common.component.YiToggleButton;
+import yi.common.i18n.TextResource;
 import yi.editor.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 

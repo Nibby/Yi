@@ -1,10 +1,10 @@
 package yi.editor.settings;
 
 import org.json.JSONObject;
+import yi.common.utilities.JSON;
 import yi.component.board.GameBoardViewer;
 import yi.editor.EditorHelper;
 import yi.editor.EditorMain;
-import yi.common.utilities.JSON;
 
 import java.io.IOException;
 import java.nio.file.Files;

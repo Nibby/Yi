@@ -3,14 +3,14 @@ package yi.editor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
-import yi.models.go.*;
-import yi.models.go.docformat.FileFormat;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorBasicAction;
+import yi.models.go.*;
+import yi.models.go.docformat.FileFormat;
 
 import java.io.File;
 import java.io.IOException;
