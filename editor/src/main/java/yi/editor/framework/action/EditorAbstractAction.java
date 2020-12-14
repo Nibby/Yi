@@ -202,10 +202,14 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
     @Override
     public void setAction(Consumer<EditorActionContext> action) {
-        this.action = () -> {
-            var context = getContext();
-            action.accept(context);
-        };
+        if (action != null) {
+            this.action = () -> {
+                var context = getContext();
+                action.accept(context);
+            };
+        } else {
+            this.action = null;
+        }
     }
 
     @Override
