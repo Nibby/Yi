@@ -265,6 +265,34 @@ public enum EditorTool {
         }
     },
 
+    ANNOTATE_DIM {
+        @Override
+        public void apply(GameBoardViewer board) {
+            var mode = new AnnotationEditMode(AnnotationType.DIM);
+            board.setEditMode(mode);
+        }
+
+        @Override
+        public EditorToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
+            return EditorToolAction.forTool(
+                    this,
+                    componentGroup,
+                    menuGroup,
+                    EditorTextResources.TOOL_DIM,
+                    "dim",
+                    null,
+                    editMode -> {
+                        if (!(editMode instanceof AnnotationEditMode)) {
+                            return false;
+                        }
+                        var annotationMode = (AnnotationEditMode) editMode;
+                        return annotationMode.getTypeToApply() == AnnotationType.DIM;
+                    },
+                    0.09d
+            );
+        }
+    },
+
     ANNOTATE_LINE {
         @Override
         public void apply(GameBoardViewer board) {
@@ -287,7 +315,7 @@ public enum EditorTool {
                         var annotationMode = (AnnotationEditMode) editMode;
                         return annotationMode.getTypeToApply() == AnnotationType.LINE;
                     },
-                    0.09d
+                    0.10d
             );
         }
     },
@@ -313,34 +341,6 @@ public enum EditorTool {
                         }
                         var annotationMode = (AnnotationEditMode) editMode;
                         return annotationMode.getTypeToApply() == AnnotationType.ARROW;
-                    },
-                    0.10d
-            );
-        }
-    },
-
-    ANNOTATE_DIM {
-        @Override
-        public void apply(GameBoardViewer board) {
-            var mode = new AnnotationEditMode(AnnotationType.DIM);
-            board.setEditMode(mode);
-        }
-
-        @Override
-        public EditorToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
-            return EditorToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    EditorTextResources.TOOL_DIM,
-                    "dim",
-                    null,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.DIM;
                     },
                     0.11d
             );

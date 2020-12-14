@@ -12,17 +12,17 @@ import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.common.component.YiToggleButton;
 import yi.common.utilities.GuiUtilities;
+import yi.editor.EditorMainMenuType;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
 import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
+import yi.editor.framework.action.EditorSeparatorAction;
 import yi.editor.framework.action.EditorToolAction;
 import yi.models.go.GameModel;
 import yi.models.go.GameModelInfo;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static yi.editor.EditorTextResources.MOVE_COUNT;
@@ -160,7 +160,7 @@ public class EditorActionToolBar extends ToolBar {
     }
 
     private void addReviewTools() {
-        for (EditorAction action : editToolActions) {
+        for (EditorAction action : EditorAction.sorted(getAllActions())) {
             getItems().add(action.getAsComponent());
         }
     }
@@ -210,7 +210,17 @@ public class EditorActionToolBar extends ToolBar {
         this.selectedTool.addListener(listener);
     }
 
-    public List<EditorToolAction> getAllActions() {
-        return editToolActions;
+    public List<? extends EditorAction> getAllActions() {
+        var allActions = new ArrayList<EditorAction>(editToolActions);
+        allActions.addAll(getDividers());
+        return allActions;
+    }
+
+    private Collection<? extends EditorAction> getDividers() {
+        var dividers = new ArrayList<EditorAction>();
+        dividers.add(new EditorSeparatorAction().setInMainMenu(EditorMainMenuType.TOOLS, 0.005));
+        dividers.add(new EditorSeparatorAction().setInMainMenu(EditorMainMenuType.TOOLS, 0.025));
+        dividers.add(new EditorSeparatorAction().setInMainMenu(EditorMainMenuType.TOOLS, 0.095));
+        return dividers;
     }
 }

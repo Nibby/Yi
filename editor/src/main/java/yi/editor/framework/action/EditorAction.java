@@ -11,6 +11,8 @@ import yi.editor.EditorMainMenuType;
 import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -24,6 +26,16 @@ import java.util.function.Consumer;
  * @see EditorActionManager
  */
 public interface EditorAction {
+
+    /**
+     * Sorts an action list in increasing order of {@link #getMenuPosition() menu position}.
+     * @param allActions
+     * @return
+     */
+    static List<? extends EditorAction> sorted(List<? extends EditorAction> allActions) {
+        allActions.sort(Comparator.comparing(EditorAction::getMenuPosition));
+        return allActions;
+    }
 
     /**
      * Sets the {@link EditorActionContext} for this action. This is the main mechanism
