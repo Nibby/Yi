@@ -43,12 +43,31 @@ public interface EditorAction {
      */
     EditorAction setName(@NotNull TextResource name);
 
+    /**
+     * Sets whether or not to show the {@link #getIcon() action icon} on the exported
+     * {@link #getAsMenuItem() menu item}.
+     *
+     * @param showIcon {@code true} if icon should be shown on the menu item.
+     */
+    void setShowIconOnMenuItem(boolean showIcon);
 
-    default EditorAction setIcon(@NotNull String iconResPath) {
-        var icon = GuiUtilities.getIcon(iconResPath, this.getClass())
-                .orElseThrow(() -> new IllegalArgumentException("Icon not loaded: \"" + iconResPath + "\""));
-        return setIcon(icon);
-    }
+    /**
+     * @return {@code true} if icon should be shown on the {@link #getAsMenuItem() menu item}.
+     */
+    boolean isShowingIconOnMenuItem();
+
+    /**
+     * Sets whether or not to show the {@link #getIcon() action icon} on the exported
+     * {@link #getAsComponent() component}.
+     *
+     * @param showIcon {@code true} if icon should be shown on the component.
+     */
+    void setShowIconOnComponent(boolean showIcon);
+
+    /**
+     * @return {@code true} if icon should be shown on the {@link #getAsComponent()} component}.
+     */
+    boolean isShowingIconOnComponent();
 
     /**
      * Sets the graphic used on the exported action component. The menu component
@@ -59,6 +78,20 @@ public interface EditorAction {
      * @return this instance for method chaining.
      */
     EditorAction setIcon(@Nullable ImageView icon);
+
+    /**
+     * Loads an icon resource on the classpath. Internally this method delegates the call
+     * to {@link #setIcon(ImageView)}}.
+     *
+     * @param iconResPath Icon resource path.
+     * @param resourceClass Class used to load the resource.
+     * @return this instance for method chaining.
+     */
+    default EditorAction setIcon(@NotNull String iconResPath, Class<?> resourceClass) {
+        var icon = GuiUtilities.getIcon(iconResPath, resourceClass)
+                .orElseThrow(() -> new IllegalArgumentException("Icon not loaded: \"" + iconResPath + "\""));
+        return setIcon(icon);
+    }
 
     /**
      * @return Desired graphic to show on the exported component.
