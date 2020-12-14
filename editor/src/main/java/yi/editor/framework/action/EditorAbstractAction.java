@@ -196,6 +196,9 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         this.context = context;
     }
 
+    /**
+     * @return The current editor window context this action is working with.
+     */
     protected final @NotNull EditorActionContext getContext() {
         return Objects.requireNonNull(context, "Context not yet initialized");
     }

@@ -25,8 +25,23 @@ import java.util.function.Consumer;
  */
 public interface EditorAction {
 
+    /**
+     * Sets the {@link EditorActionContext} for this action. This is the main mechanism
+     * for an action to distinguish which {@link EditorWindow} it is working with.
+     *
+     * @apiNote There should be no reason to invoke this method outside of
+     * {@link yi.editor.components.EditorMenuBar} unless it is in a test case.
+     *
+     * @param context Current action context.
+     */
     void setContext(EditorActionContext context);
 
+    /**
+     * Sets the task to be performed when this action component (menu item or node) is
+     * selected.
+     *
+     * @param action Tasks to perform when this action is selected.
+     */
     void setAction(Consumer<EditorActionContext> action);
 
     /**
