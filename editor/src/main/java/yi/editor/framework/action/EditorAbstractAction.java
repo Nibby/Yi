@@ -135,12 +135,17 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
     private void addIconUpdateListener() {
         iconProperty.addListener(newIcon -> {
-            createdMenuItem.get().ifPresent(item -> item.setGraphic(newIcon));
-            createdComponent.get().ifPresent(node -> {
-                if (node instanceof Labeled) {
-                    ((Labeled) node).setGraphic(newIcon);
-                }
-            });
+            if (isShowingIconOnMenuItem()) {
+                createdMenuItem.get().ifPresent(item -> item.setGraphic(newIcon));
+            }
+
+            if (isShowingIconOnComponent()) {
+                createdComponent.get().ifPresent(node -> {
+                    if (node instanceof Labeled) {
+                        ((Labeled) node).setGraphic(newIcon);
+                    }
+                });
+            }
             onIconUpdate(newIcon);
         });
 
@@ -255,6 +260,8 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         newMenuItem.setDisable(!isEnabled());
         if (isShowingIconOnMenuItem()) {
             newMenuItem.setGraphic(getIcon());
+        } else {
+            newMenuItem.setGraphic(null);
         }
         newMenuItem.setText(getLocalisedName());
         createdMenuItem.set(newMenuItem);
@@ -390,12 +397,16 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     @Override
     public EditorAction setIcon(@Nullable ImageView icon) {
         var iconToUse = icon;
+        final int REQUIRED_SIZE = 16;
 
         if (iconToUse != null) {
-            var wrapper = new ImageView(iconToUse.getImage());
-            wrapper.setFitWidth(16);
-            wrapper.setFitHeight(16);
-            iconToUse = wrapper;
+            var image = icon.getImage();
+            if (image.getWidth() > REQUIRED_SIZE || image.getWidth() != image.getHeight()) {
+                var wrapper = new ImageView(iconToUse.getImage());
+                wrapper.setFitWidth(REQUIRED_SIZE);
+                wrapper.setFitHeight(REQUIRED_SIZE);
+                iconToUse = wrapper;
+            }
         }
 
         this.iconProperty.set(iconToUse);
