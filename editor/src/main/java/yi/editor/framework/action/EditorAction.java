@@ -47,21 +47,25 @@ public interface EditorAction {
     /**
      * @return Locale-specific text for the component(s) representing this action.
      */
-    @NotNull String getLocalisedName();
+    @NotNull String getLocalisedText();
 
     /**
+     * Set the text to be displayed on the components of this action.
+     * All text content are stored using i18n keys.
+     *
      * @return {@link TextResource} used for localisation.
+     * @see yi.editor.EditorTextResources
      */
-    @NotNull TextResource getName();
+    @NotNull TextResource getText();
 
     /**
      * Sets the {@link TextResource} used for localisation. All text resources in
      * the editor module are found in {@link yi.editor.EditorTextResources}.
      *
-     * @param name Text resource for localisation.
+     * @param i18nKey Text resource for localisation.
      * @return this instance for method chaining.
      */
-    EditorAction setName(@NotNull TextResource name);
+    EditorAction setText(@NotNull TextResource i18nKey);
 
     /**
      * Sets whether or not to show the {@link #getIcon() action icon} on the exported

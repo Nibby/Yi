@@ -36,7 +36,7 @@ public class EditorRadioAction extends EditorAbstractAction<YiRadioMenuItem, Nod
 
     @Override
     protected @NotNull YiRadioMenuItem getAsMenuItemImpl() {
-        var item = new YiRadioMenuItem(getName(), getIcon());
+        var item = new YiRadioMenuItem(getText(), getIcon());
         item.setSelected(isSelected());
         return item;
     }
@@ -104,8 +104,8 @@ public class EditorRadioAction extends EditorAbstractAction<YiRadioMenuItem, Nod
     }
 
     @Override
-    public EditorRadioAction setName(@NotNull TextResource name) {
-        super.setName(name);
+    public EditorRadioAction setText(@NotNull TextResource i18nKey) {
+        super.setText(i18nKey);
         return this;
     }
 

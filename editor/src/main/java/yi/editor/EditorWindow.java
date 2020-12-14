@@ -225,7 +225,7 @@ public class EditorWindow extends Stage {
                 // export a menu item, it should be done in this class constructor, or
                 // by overriding initializeActions() and creating it there.
                 throw new IllegalStateException("Main menu is already created. " +
-                        "The action '" + action.getLocalisedName() + "' will not be " +
+                        "The action '" + action.getLocalisedText() + "' will not be " +
                         "included in the main menu despite being requested to do so.");
             }
             actionManager.addAction(action);
