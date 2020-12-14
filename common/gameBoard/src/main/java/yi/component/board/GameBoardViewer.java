@@ -307,4 +307,8 @@ public final class GameBoardViewer implements YiComponent {
     public AbstractEditMode getEditMode() {
         return manager.edit.getEditMode();
     }
+
+    public boolean isEditable() {
+        return manager.edit.isEditable();
+    }
 }

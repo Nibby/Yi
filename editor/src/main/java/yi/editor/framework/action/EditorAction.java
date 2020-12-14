@@ -12,6 +12,7 @@ import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Defines one actionable task in the game editor. Each action must be atomic and
@@ -23,6 +24,10 @@ import java.util.Optional;
  * @see EditorActionManager
  */
 public interface EditorAction {
+
+    void setContext(EditorActionContext context);
+
+    void setAction(Consumer<EditorActionContext> action);
 
     /**
      * @return Locale-specific text for the component(s) representing this action.
@@ -206,12 +211,9 @@ public interface EditorAction {
     boolean isAddedToMenu();
 
     /**
-     * Executes the action represented by this model.
-     *
-     * @param context Helper class supplying the context in which this action is executed
-     *               in, such as the {@link EditorWindow} that invoked it.
+     * Executes the task represented by this action.
      */
-    void performAction(EditorActionContext context);
+    void performAction();
 
     /**
      * Requests this action to re-fresh its state because a major state change has
