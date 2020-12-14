@@ -25,8 +25,10 @@ public class EditorMenuBar extends MenuBar {
         var topLevelActionsByMenu = new HashMap<EditorMainMenuType, List<EditorAction>>();
 
         for (EditorAction action : allActions) {
+            action.setContext(context);
+
             var menuItem = action.getAsMenuItem();
-            menuItem.setOnAction(e -> action.performAction(context));
+            menuItem.setOnAction(e -> action.performAction());
             menuItem.setUserData(action);
 
             if (action.isInMainMenu() && !action.isAddedToMenu()) {

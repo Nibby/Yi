@@ -1,6 +1,7 @@
 package yi.editor.framework.action;
 
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
@@ -35,7 +36,8 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     private final BooleanProperty showIconOnComponentProperty = new BooleanProperty(true);
     private EditorAction parentAction = null;
 
-    private final Consumer<EditorActionContext> action;
+    private EditorActionContext context;
+    private Runnable action;
 
     private boolean addedToMenu = false;
     private EditorMainMenuType mainMenuType = null;
@@ -48,9 +50,19 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     private Object userObject = null;
 
     /**
+     * Instantiates an action that does nothing when selected. Assign an action using
+     * {@link #setAction(Consumer)}.
+     *
+     * @param name I18n translation key for this action.
+     */
+    public EditorAbstractAction(@NotNull TextResource name) {
+        this(name, null);
+    }
+
+    /**
      * Instantiates an action.
      *
-     * @param name Locale-agnostic name of this action.
+     * @param name I18n translation key for this action.
      * @param action Task to perform when this action is executed. May be null, which
      *               does nothing on interaction.
      */
@@ -58,7 +70,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
                                 @Nullable Consumer<EditorActionContext> action) {
 
         this.nameProperty.set(name);
-        this.action = action;
+        setAction(action);
 
         // TODO: Some listeners only work on cached components. Maybe initialize those
         //       lazily to save memory.
@@ -175,6 +187,23 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     }
 
     @Override
+    public void setContext(EditorActionContext context) {
+        this.context = context;
+    }
+
+    protected final @NotNull EditorActionContext getContext() {
+        return Objects.requireNonNull(context, "Context not yet initialized");
+    }
+
+    @Override
+    public void setAction(Consumer<EditorActionContext> action) {
+        this.action = () -> {
+            var context = getContext();
+            action.accept(context);
+        };
+    }
+
+    @Override
     public @NotNull String getLocalisedName() {
         return nameProperty.get().getLocalisedText();
     }
@@ -254,6 +283,10 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
                     labeled.setGraphic(getIcon());
                 }
                 labeled.setText(getLocalisedName());
+            }
+            if (newComponent instanceof ButtonBase) {
+                var buttonBase = (ButtonBase) newComponent;
+                buttonBase.setOnAction(actionEvent -> performAction());
             }
         }
         createdComponent.set(newComponent);
@@ -337,9 +370,9 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     }
 
     @Override
-    public void performAction(EditorActionContext context) {
+    public void performAction() {
         if (action != null) {
-            action.accept(context);
+            action.run();
         }
     }
 

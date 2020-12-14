@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.Property;
 import yi.common.PropertyListener;
-import yi.common.utilities.GuiUtilities;
 import yi.common.component.YiToggleButton;
+import yi.common.utilities.GuiUtilities;
 import yi.editor.EditorTextResources;
 import yi.editor.EditorTool;
 import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
-import yi.editor.framework.action.EditorToggleAction;
+import yi.editor.framework.action.EditorToolAction;
 import yi.models.go.GameModel;
 import yi.models.go.GameModelInfo;
 
@@ -39,7 +39,7 @@ public class EditorActionToolBar extends ToolBar {
     private final ToggleGroup toolMenuGroup;
 
     private YiToggleButton toolPlayMove; // Effectively final and non-null because of assertions in constructor
-    private final List<EditorToggleAction> editToolActions;
+    private final List<EditorToolAction> editToolActions;
 
     private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/icons/blackStone/blackStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
@@ -62,7 +62,7 @@ public class EditorActionToolBar extends ToolBar {
                                 .sorted(Comparator.comparingDouble(EditorAction::getMenuPosition))
                                 .collect(Collectors.toList());
 
-        for (EditorToggleAction action : editToolActions) {
+        for (EditorToolAction action : editToolActions) {
             YiToggleButton button = action.getAsComponent();
             assert button != null : "Editor tool button shouldn't be null";
             EditorTool editorTool = (EditorTool) action.getUserObject().orElseThrow();
@@ -210,7 +210,7 @@ public class EditorActionToolBar extends ToolBar {
         this.selectedTool.addListener(listener);
     }
 
-    public List<EditorToggleAction> getAllActions() {
+    public List<EditorToolAction> getAllActions() {
         return editToolActions;
     }
 }
