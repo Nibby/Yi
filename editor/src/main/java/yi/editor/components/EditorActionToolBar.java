@@ -67,6 +67,7 @@ public class EditorActionToolBar extends ToolBar {
             assert button != null : "Editor tool button shouldn't be null";
             EditorTool editorTool = (EditorTool) action.getUserObject().orElseThrow();
             button.getStyleClass().add("button-style2");
+            button.setFocusTraversable(false);
             getItems().add(button);
 
             if (editorTool == EditorTool.PLAY_MOVE) {

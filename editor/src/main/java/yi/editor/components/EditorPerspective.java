@@ -1,6 +1,7 @@
 package yi.editor.components;
 
 import javafx.geometry.Dimension2D;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToggleGroup;
@@ -66,9 +67,16 @@ public enum EditorPerspective {
 
             var board = window.getBoardComponent();
             var tree = window.getTreeComponent();
+            var commentArea = window.getCommentComponent();
 
-            var splitPane = new SplitPane(board, tree);
+            var sideSplit = new SplitPane(tree, commentArea);
+            sideSplit.setOrientation(Orientation.VERTICAL);
+            sideSplit.getDividers().get(0).setPosition(0.7d);
+
+            var splitPane = new SplitPane(board, sideSplit);
             content.setCenter(splitPane);
+
+            SplitPane.setResizableWithParent(sideSplit, false);
             SplitPane.setResizableWithParent(tree, false);
 
             splitPane.getDividers().get(0).setPosition(0.7d);

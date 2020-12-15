@@ -1,3 +1,5 @@
+@import "palette.sass"
+
 // Not ideal that we have editor content in the common module :(
 .editor-player-name-hud-label
   -fx-text-fill: white
@@ -12,3 +14,19 @@
 
 .editor-move-number-hud-label
   -fx-text-fill: white
+
+.editor-comment-viewer
+  -fx-background-color: $BACKGROUND_DARK
+  -fx-focus-traversable: false
+  -fx-background-radius: 0px
+  -fx-border-insets: 0px
+  -fx-text-fill: $FOREGROUND_DARK
+  -fx-font-size: 14px
+
+  .scroll-pane
+    -fx-background-color: $BACKGROUND_DARK
+    -fx-background-radius: 0px
+
+    .content
+      -fx-background-color: $BACKGROUND_DARK
+      -fx-background-radius: 0px

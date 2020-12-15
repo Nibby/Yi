@@ -12,6 +12,7 @@ dependencies {
     compile project(':core')
     compile project(':common:gameBoard')
     compile project(':common:gameTree')
+    compile project(':common:commentViewer')
 
     // JavaFx dependencies
     implementation rootProject.ext.javaFxDependencies.implementation
@@ -23,7 +24,7 @@ dependencies {
 
 javafx {
     version = "11.0.2"
-    modules = ['javafx.controls', 'javafx.media']
+    modules = ['javafx.controls', 'javafx.media', 'javafx.web']
 }
 
 idea {

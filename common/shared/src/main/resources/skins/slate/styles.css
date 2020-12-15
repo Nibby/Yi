@@ -10,15 +10,12 @@
   -fx-background-color: rgba(0, 0, 0, 0.6);
 }
 
-.padding-4 {
-  -fx-padding: 4px;
+.fg-dark {
+  -fx-text-fill: #CCCCCC;
 }
 
-.editor-player-name-hud-label {
-  -fx-text-fill: white;
-  -fx-font-weight: bold;
-  -fx-font-size: 16px;
-  -fx-pref-height: 28px;
+.fg-dark-secondary {
+  -fx-text-fill: #7B7B7B;
 }
 
 /*# sourceMappingURL=styles.css.map */

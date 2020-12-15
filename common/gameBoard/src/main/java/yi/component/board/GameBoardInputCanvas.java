@@ -94,13 +94,14 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         if (!manager.edit.isEditable()) {
             return;
         }
-        requestFocus();
         retrieveCursorPosition(e.getX(), e.getY());
 
         if (manager.edit.isEditable()) {
             if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
+                requestFocus();
                 manager.edit.getEditMode().onMousePress(e.getButton(), manager, cursorX, cursorY);
             } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+                requestFocus();
                 manager.edit.getEditMode().onMouseDrag(e.getButton(), manager, cursorX, cursorY);
             } else if (e.getEventType() == MouseEvent.MOUSE_RELEASED) {
                 manager.edit.getEditMode().onMouseRelease(e.getButton(), manager, cursorX, cursorY);
@@ -133,6 +134,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     public void onScrollEvent(ScrollEvent e) {
+        requestFocus();
         double deltaY = e.getDeltaY();
 
         if (deltaY < 0) {

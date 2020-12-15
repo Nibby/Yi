@@ -258,6 +258,10 @@ class GameNode constructor(val delta: StateDelta) {
         return delta.comments
     }
 
+    internal fun setComments(comments: String) {
+        delta.comments = comments
+    }
+
     /**
      * Stores a series of key value pairs that are not semantically meaningful to this
      * application, but is present in the node data (usually from an externally loaded file).

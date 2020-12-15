@@ -94,12 +94,14 @@ public final class GameTreeViewer implements YiComponent {
     };
 
     private final EventListener<NodeEvent> currentMoveChangeListener = (event) -> updateCameraAndRender(event.getNode());
+    private final EventListener<NodeEvent> currentMoveDataChangeListener = (event) -> render();
 
     public void setGameModel(@NotNull GameModel model) {
         boolean panToNewNode = false;
 
         if (this.gameModel != null) {
             this.gameModel.onCurrentNodeChange().removeListener(currentMoveChangeListener);
+            this.gameModel.onCurrentNodeDataUpdate().removeListener(currentMoveDataChangeListener);
             this.gameModel.onNodeAdd().removeListener(treeStructureChangeListener);
             this.gameModel.onNodeRemove().removeListener(treeStructureChangeListener);
             panToNewNode = true;
@@ -117,6 +119,7 @@ public final class GameTreeViewer implements YiComponent {
         }
 
         this.gameModel.onCurrentNodeChange().addListener(currentMoveChangeListener);
+        this.gameModel.onCurrentNodeDataUpdate().addListener(currentMoveDataChangeListener);
         this.gameModel.onNodeAdd().addListener(treeStructureChangeListener);
         this.gameModel.onNodeRemove().addListener(treeStructureChangeListener);
 
