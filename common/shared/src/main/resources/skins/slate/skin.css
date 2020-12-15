@@ -110,6 +110,14 @@
   -fx-background-color: rgba(0, 0, 0, 0.6);
 }
 
+.fg-dark {
+  -fx-text-fill: #CCCCCC;
+}
+
+.fg-dark-secondary {
+  -fx-text-fill: #7B7B7B;
+}
+
 .editor-player-name-hud-label {
   -fx-text-fill: white;
   -fx-font-weight: bold;
@@ -125,6 +133,23 @@
 
 .editor-move-number-hud-label {
   -fx-text-fill: white;
+}
+
+.editor-comment-viewer {
+  -fx-background-color: #2B2B2B;
+  -fx-focus-traversable: false;
+  -fx-background-radius: 0px;
+  -fx-border-insets: 0px;
+  -fx-text-fill: #CCCCCC;
+  -fx-font-size: 14px;
+}
+.editor-comment-viewer .scroll-pane {
+  -fx-background-color: #2B2B2B;
+  -fx-background-radius: 0px;
+}
+.editor-comment-viewer .scroll-pane .content {
+  -fx-background-color: #2B2B2B;
+  -fx-background-radius: 0px;
 }
 
 * {

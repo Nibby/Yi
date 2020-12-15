@@ -15,4 +15,21 @@
   -fx-text-fill: white;
 }
 
+.editor-comment-viewer {
+  -fx-background-color: #2B2B2B;
+  -fx-focus-traversable: false;
+  -fx-background-radius: 0px;
+  -fx-border-insets: 0px;
+  -fx-text-fill: #CCCCCC;
+  -fx-font-size: 14px;
+}
+.editor-comment-viewer .scroll-pane {
+  -fx-background-color: #2B2B2B;
+  -fx-background-radius: 0px;
+}
+.editor-comment-viewer .scroll-pane .content {
+  -fx-background-color: #2B2B2B;
+  -fx-background-radius: 0px;
+}
+
 /*# sourceMappingURL=editor.css.map */

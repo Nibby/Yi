@@ -305,6 +305,29 @@ class GameModel(val boardWidth: Int, val boardHeight: Int,
     }
 
     /**
+     * Set the move comments on the current node.
+     *
+     * This method emits [onNodeDataUpdate] and [onCurrentNodeDataUpdate]
+     * events.
+     */
+    fun setCommentOnCurrentNode(comment: String) {
+        setComment(getCurrentNode(), comment)
+    }
+
+    /**
+     * Set the move comments on a node in this model.
+     *
+     * This method emits an [onNodeDataUpdate] event and optionally emits
+     * an [onCurrentNodeDataUpdate] event if the node being edited is the
+     * current node.
+     */
+    fun setComment(nodeToEdit: GameNode, comment: String) {
+        nodeToEdit.setComments(comment)
+        onNodeDataUpdate().fireEvent(NodeEvent(nodeToEdit))
+        isModified = true
+    }
+
+    /**
      * Adds one edited stone to the current node.
      *
      * This method emits an [onNodeDataUpdate] event.

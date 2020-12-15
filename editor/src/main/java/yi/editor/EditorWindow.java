@@ -11,6 +11,7 @@ import yi.common.component.YiScene;
 import yi.common.utilities.GuiUtilities;
 import yi.common.utilities.SystemUtilities;
 import yi.component.board.GameBoardViewer;
+import yi.component.commentview.GameCommentViewer;
 import yi.component.gametree.GameTreeViewer;
 import yi.component.gametree.GameTreeViewerSettings;
 import yi.editor.components.EditorBoardArea;
@@ -44,6 +45,7 @@ public class EditorWindow extends Stage {
 
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
+    private final GameCommentViewer commentViewer;
     private final Property<GameModel> gameModel = new Property<>(DEFAULT_MODEL);
 
     private boolean addedMenuBarOnce = false;
@@ -72,6 +74,8 @@ public class EditorWindow extends Stage {
         treeViewerSettings.setNodeWithCommentaryColor(GuiUtilities.getColor(87, 125, 186));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
 
+        commentViewer = new GameCommentViewer();
+
         treeViewer = new GameTreeViewer();
         treeViewer.setSettings(treeViewerSettings);
 
@@ -79,6 +83,7 @@ public class EditorWindow extends Stage {
             boardArea.setGameModel(newModel);
             treeViewer.setGameModel(newModel);
             undoSystem.setGameModel(newModel, boardArea);
+            commentViewer.setGameModel(newModel);
         });
 
         treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
@@ -250,6 +255,10 @@ public class EditorWindow extends Stage {
 
     public Parent getTreeComponent() {
         return treeViewer.getComponent();
+    }
+
+    public Parent getCommentComponent() {
+        return commentViewer.getComponent();
     }
 
     public EditorBoardArea getBoardArea() {
