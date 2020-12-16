@@ -16,7 +16,7 @@
 }
 
 .editor-comment-viewer {
-  -fx-background-color: #2B2B2B;
+  -fx-background-color: #333333;
   -fx-focus-traversable: false;
   -fx-background-radius: 0px;
   -fx-border-insets: 0px;
@@ -24,12 +24,27 @@
   -fx-font-size: 14px;
 }
 .editor-comment-viewer .scroll-pane {
-  -fx-background-color: #2B2B2B;
+  -fx-background-color: #333333;
   -fx-background-radius: 0px;
 }
 .editor-comment-viewer .scroll-pane .content {
-  -fx-background-color: #2B2B2B;
+  -fx-background-color: #333333;
   -fx-background-radius: 0px;
+}
+.editor-comment-viewer .scroll-pane *.scroll-bar {
+  -fx-background-color: #333333;
+}
+.editor-comment-viewer .scroll-pane *.scroll-bar .decrement-button {
+  -fx-background-color: inherit;
+}
+.editor-comment-viewer .scroll-pane *.scroll-bar .track {
+  -fx-background-color: inherit;
+}
+.editor-comment-viewer .scroll-pane *.scroll-bar .thumb {
+  -fx-background-color: #7B7B7B;
+}
+.editor-comment-viewer .scroll-pane *.scroll-bar .increment-button {
+  -fx-background-color: inherit;
 }
 
 /*# sourceMappingURL=editor.css.map */
