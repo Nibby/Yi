@@ -1,11 +1,20 @@
 {
-    "undo": "Shortcut+Z",
+    "toolCircle": "Shortcut+5",
+    "toolCross": "Shortcut+2",
     "togglePerspectiveCompact": "Shortcut+W",
     "newGame": "Shortcut+N",
-    "openGame": "Shortcut+O",
     "redo": "Shift+Shortcut+Z",
     "togglePerspectiveReview": "Shortcut+E",
     "saveAsGame": "Shift+Shortcut+S",
     "toggleBoardCoordinates": "Shift+Shortcut+C",
+    "toolPlayMove": "Shortcut+1",
+    "toolLine": "Shortcut+8",
+    "undo": "Shortcut+Z",
+    "toolLetter": "Shortcut+6",
+    "toolNumber": "Shortcut+7",
+    "openGame": "Shortcut+O",
+    "toolArrow": "Shortcut+9",
+    "toolSquare": "Shortcut+4",
+    "toolTriangle": "Shortcut+3",
     "saveGame": "Shortcut+S"
 }

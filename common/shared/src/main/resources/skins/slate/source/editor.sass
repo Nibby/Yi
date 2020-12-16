@@ -16,7 +16,7 @@
   -fx-text-fill: white
 
 .editor-comment-viewer
-  -fx-background-color: $BACKGROUND_DARK
+  -fx-background-color: $BACKGROUND_DARK_SECONDARY
   -fx-focus-traversable: false
   -fx-background-radius: 0px
   -fx-border-insets: 0px
@@ -24,9 +24,21 @@
   -fx-font-size: 14px
 
   .scroll-pane
-    -fx-background-color: $BACKGROUND_DARK
+    -fx-background-color: $BACKGROUND_DARK_SECONDARY
     -fx-background-radius: 0px
 
     .content
-      -fx-background-color: $BACKGROUND_DARK
+      -fx-background-color: $BACKGROUND_DARK_SECONDARY
       -fx-background-radius: 0px
+
+    *.scroll-bar
+      -fx-background-color: $BACKGROUND_DARK_SECONDARY
+
+      .decrement-button
+        -fx-background-color: inherit
+      .track
+        -fx-background-color: inherit
+      .thumb
+        -fx-background-color: $FOREGROUND_DARK_SECONDARY
+      .increment-button
+        -fx-background-color: inherit
