@@ -35,6 +35,7 @@ public final class EditorTextResources {
     public static final TextResource MENUITEM_PERSPECTIVE_REVIEW = new TextResource("menuItem.perspective.review", BUNDLE);
 
     public static final TextResource MENUITEM_NEW_GAME = new TextResource("menuItem.newGame", BUNDLE);
+    public static final TextResource MENUITEM_NEW_WINDOW = new TextResource("menuItem.newWindow", BUNDLE);
     public static final TextResource MENUITEM_OPEN_GAME = new TextResource("menuItem.openGame", BUNDLE);
     public static final TextResource MENUITEM_SAVE_GAME = new TextResource("menuItem.saveGame", BUNDLE);
     public static final TextResource MENUITEM_SAVE_AS_GAME = new TextResource("menuItem.saveAsGame", BUNDLE);

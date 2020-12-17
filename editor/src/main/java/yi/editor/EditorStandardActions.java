@@ -3,12 +3,14 @@ package yi.editor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
+import yi.editor.components.EditorPerspective;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorBasicAction;
+import yi.editor.utilities.GameModelUtilities;
 import yi.models.go.*;
 import yi.models.go.docformat.FileFormat;
 
@@ -29,6 +31,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private EditorStandardActions() {
         createNewGameAction();
+        createNewGameInNewWindowAction();
         createOpenGameAction();
         createSaveAction();
         createSaveAsAction();
@@ -73,6 +76,18 @@ final class EditorStandardActions implements EditorComponent<Object> {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_NEW_GAME, action);
         actionItem.setInMainMenu(EditorMainMenuType.FILE, 0d);
         actionItem.setAccelerator(EditorAcceleratorId.NEW_GAME);
+
+        standardActions.add(actionItem);
+    }
+
+    private void createNewGameInNewWindowAction() {
+        Consumer<EditorActionContext> action = context -> {
+            var newWindow = new EditorWindow(GameModelUtilities.createGameModel(), EditorPerspective.REVIEW);
+            newWindow.show();
+        };
+        var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_NEW_WINDOW, action);
+        actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.0005d);
+        actionItem.setAccelerator(EditorAcceleratorId.NEW_WINDOW);
 
         standardActions.add(actionItem);
     }

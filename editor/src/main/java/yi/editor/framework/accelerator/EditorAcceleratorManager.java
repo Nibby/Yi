@@ -40,6 +40,7 @@ public final class EditorAcceleratorManager {
             createPerspectiveAccelerators();
             createEditToolAccelerators();
             register(new Accelerator(EditorAcceleratorId.NEW_GAME, EditorTextResources.MENUITEM_NEW_GAME, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT }));
+            register(new Accelerator(EditorAcceleratorId.NEW_WINDOW, EditorTextResources.MENUITEM_NEW_WINDOW, KeyCode.N, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
             register(new Accelerator(EditorAcceleratorId.OPEN_GAME, EditorTextResources.MENUITEM_OPEN_GAME, KeyCode.O, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(EditorAcceleratorId.SAVE_GAME, EditorTextResources.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }));
             register(new Accelerator(EditorAcceleratorId.SAVE_AS_GAME, EditorTextResources.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }));
