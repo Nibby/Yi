@@ -33,6 +33,7 @@ public enum EditorAcceleratorId {
     TOOL_ARROW("toolArrow"),
 
     NEW_GAME("newGame"),
+    NEW_WINDOW("newWindow"),
     OPEN_GAME("openGame"),
     SAVE_GAME("saveGame"),
     SAVE_AS_GAME("saveAsGame"),
