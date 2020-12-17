@@ -152,17 +152,22 @@ public final class StoneEditModeMechanismTest {
     }
 
     @Test
-    public void testStoneEdit_onRootNode_doesNotCreateNewNode() {
+    public void testStoneEdit_onRootNode_createsNewNode() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         GameBoardManagerAccessor.setGameModel(manager, model);
+
+        // Sanity check
+        Assertions.assertTrue(model.getRootNode().isLastMoveInThisVariation());
 
         var editStoneMode = EditMode.editStones(StoneColor.WHITE);
         manager.edit.setEditMode(editStoneMode);
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
 
-        Assertions.assertEquals(model.getRootNode(), model.getCurrentNode());
-        Assertions.assertEquals(new Stone(0, 0, StoneColor.WHITE), model.getRootNode().getStoneEditAt(0, 0));
+        Assertions.assertFalse(model.getRootNode().isLastMoveInThisVariation());
+        var newNode = model.getRootNode().getNextNodeInMainBranch();
+        Assertions.assertNotNull(newNode);
+        Assertions.assertEquals(new Stone(0, 0, StoneColor.WHITE), newNode.getStoneEditAt(0, 0));
     }
 
 }
