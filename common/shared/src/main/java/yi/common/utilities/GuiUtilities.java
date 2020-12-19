@@ -1,11 +1,15 @@
 package yi.common.utilities;
 
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import org.jetbrains.annotations.NotNull;
 import yi.common.component.KeyModifier;
 
 import java.util.Arrays;
@@ -121,5 +125,11 @@ public final class GuiUtilities {
         } catch (NullPointerException e) {
             return Optional.empty();
         }
+    }
+
+    public static Bounds getTextBoundsLocal(@NotNull Font font, String text) {
+        var metricsTest = new Text(text);
+        metricsTest.setFont(font);
+        return metricsTest.getBoundsInLocal();
     }
 }

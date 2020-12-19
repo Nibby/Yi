@@ -6,6 +6,8 @@ import yi.common.audio.CommonAudioSets;
 import yi.common.audio.SoundManager;
 import yi.common.component.FontManager;
 import yi.common.component.SkinManager;
+import yi.common.i18n.I18n;
+import yi.common.i18n.Language;
 import yi.common.utilities.SystemUtilities;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.settings.EditorSettings;
@@ -72,6 +74,7 @@ public final class EditorHelper {
         EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
         EditorTextResources.installSupportedLanguages();
+//        I18n.setCurrentLanguage(Language.getSupportedLanguages().get(1));
         SkinManager.useDefaultSkin();
         EditorSettings.load();
         SoundManager.load(CommonAudioSets.Stones.CERAMIC_BICONVEX); // TODO: Temporary value, extract this to a setting
