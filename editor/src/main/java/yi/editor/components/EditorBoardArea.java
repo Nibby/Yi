@@ -69,13 +69,11 @@ public class EditorBoardArea implements EditorComponent<Pane> {
     }
 
     public void setGameModel(GameModel newModel) {
-        newModel.getInfo().addChangeListener(toolBar::onGameInfoUpdate);
         board.setGameModel(newModel);
-        toolBar.setGameModel(newModel);
     }
 
-    public void setContentForLayout(EditorPerspective newLayout, GameModel gameModel) {
-        toolBar.setContentForLayout(newLayout, gameModel);
+    public void setContentForLayout(EditorPerspective newLayout) {
+        toolBar.setContentForLayout(newLayout);
     }
 
     public boolean requestUndo() {

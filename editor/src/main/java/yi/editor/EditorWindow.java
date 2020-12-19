@@ -90,6 +90,7 @@ public class EditorWindow extends Stage {
             treeViewer.setGameModel(newModel);
             undoSystem.setGameModel(newModel, boardArea);
             commentViewer.setGameModel(newModel);
+            toolBar.setGameModel(newModel);
         });
 
         treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
@@ -172,8 +173,7 @@ public class EditorWindow extends Stage {
         if (this.perspective.get() == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        var model = gameModel.get();
-        boardArea.setContentForLayout(newLayout, model);
+        boardArea.setContentForLayout(newLayout);
 
         var content = newLayout.getContent(this);
 
