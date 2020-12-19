@@ -77,13 +77,13 @@ public final class GameTreeViewer implements YiComponent {
     private List<TreeNodeElement> getVisibleElementsInViewport() {
         var gridWidth = elementSize.getGridSize().getWidth();
         var gridHeight = elementSize.getGridSize().getHeight();
-        var offsetX = -camera.getOffsetX();
         var offsetY = -camera.getOffsetY();
 
-        var startX = (int) Math.floor(offsetX / gridWidth) - 1;
+        // Some branches may be very far from their parent, in this case we still want to render it
+        var startX = 0;
         var startY = (int) Math.floor(offsetY / gridHeight) - 1;
-        var endX = startX + (int) Math.ceil(canvas.getWidth() / gridWidth) + 2;
-        var endY = startY + (int) Math.ceil(canvas.getHeight() / gridHeight) + 2;
+        var endX = startX + (int) Math.ceil(canvas.getWidth() / gridWidth) + 3;
+        var endY = startY + (int) Math.ceil(canvas.getHeight() / gridHeight) + 3;
 
         return treeStructure.getNodeElementsWithinVerticalRegion(startX, startY, endX, endY);
     }
