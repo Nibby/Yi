@@ -1,5 +1,6 @@
 package yi.component.gametree;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.models.go.GameNode;
 import yi.models.go.GameNodeType;
@@ -44,6 +46,7 @@ final class GameTreeCanvas extends Canvas {
                        List<TreeNodeElement> visibleElements, GameNode currentNode,
                        @Nullable GameNode previewNode,
                        GameTreeElementSize size) {
+        graphics.setFont(settings.getPreviewTextFont());
         var currentVariationHistory = currentNode.getMoveHistory();
 
         graphics.clearRect(0, 0, getWidth(), getHeight());
@@ -62,6 +65,33 @@ final class GameTreeCanvas extends Canvas {
 
         renderTracks(settings, visibleElements, currentVariationHistory, previewNode, gridWidth, gridHeight, offsetX, offsetY);
         renderNodes(settings, visibleElements, currentNode, currentVariationHistory, previewNode, gridWidth, gridHeight, offsetX, offsetY);
+
+        if (settings.isPreviewPromptEnabled()) {
+            renderPreviewPrompt(settings, previewNode);
+        }
+    }
+
+    private void renderPreviewPrompt(GameTreeViewerSettings settings, @Nullable GameNode previewNode) {
+        final int PROMPT_HEIGHT = 30;
+
+        if (previewNode != null) {
+            graphics.setFill(settings.getPreviewPromptBackground());
+            graphics.fillRect(0, getHeight() - PROMPT_HEIGHT, getWidth(), PROMPT_HEIGHT);
+            graphics.setFill(settings.getPreviewPromptForeground());
+
+            TextResource previewText =  settings.getPreviewTextResource();
+            if (previewText != null) {
+                var font = graphics.getFont();
+                var moveNumber = previewNode.getMoveNumber();
+                var localizedText = previewText.getLocalisedText(moveNumber);
+
+                Bounds bounds = GuiUtilities.getTextBoundsLocal(font, localizedText);
+                double x = getWidth() / 2 - bounds.getWidth() / 2;
+                double y = (getHeight() - PROMPT_HEIGHT / 2d) - bounds.getHeight() / 2 + font.getSize();
+
+                graphics.fillText(localizedText, x, y);
+            }
+        }
     }
 
     private void renderNodes(GameTreeViewerSettings settings, List<TreeNodeElement> nodeElements,

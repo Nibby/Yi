@@ -1,8 +1,10 @@
 package yi.component.gametree;
 
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.common.i18n.TextResource;
 
 import java.util.Objects;
 
@@ -19,6 +21,11 @@ public final class GameTreeViewerSettings {
     private Color nodeWithCommentary = Color.ORANGE;
     private Color nodePass = null;
     private Color nodeWithStoneEdit = null;
+    private Color previewPromptBackground = Color.BLACK;
+    private Color previewPromptForeground = Color.WHITE;
+    private TextResource previewTextResource = null;
+    private Font previewTextFont = new Font(12);
+    private boolean previewPromptEnabled = false;
 
     public static GameTreeViewerSettings getDefault() {
         return new GameTreeViewerSettings();
@@ -139,5 +146,45 @@ public final class GameTreeViewerSettings {
     public void setCurrentNodeColor(@NotNull Color color) {
         Objects.requireNonNull(color, "Color must not be null");
         this.currentNode = color;
+    }
+
+    public Color getPreviewPromptBackground() {
+        return previewPromptBackground;
+    }
+
+    public void setPreviewPromptBackground(Color previewPromptBackground) {
+        this.previewPromptBackground = previewPromptBackground;
+    }
+
+    public Color getPreviewPromptForeground() {
+        return previewPromptForeground;
+    }
+
+    public void setPreviewPromptForeground(Color previewPromptForeground) {
+        this.previewPromptForeground = previewPromptForeground;
+    }
+
+    public TextResource getPreviewTextResource() {
+        return previewTextResource;
+    }
+
+    public void setPreviewTextResource(TextResource previewTextResource) {
+        this.previewTextResource = previewTextResource;
+    }
+
+    public Font getPreviewTextFont() {
+        return previewTextFont;
+    }
+
+    public void setPreviewTextFont(Font previewTextFont) {
+        this.previewTextFont = previewTextFont;
+    }
+
+    public boolean isPreviewPromptEnabled() {
+        return previewPromptEnabled;
+    }
+
+    public void setPreviewPromptEnabled(boolean previewPromptEnabled) {
+        this.previewPromptEnabled = previewPromptEnabled;
     }
 }

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.NullableProperty;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public final class GameTreeViewer implements YiComponent {
 
-    private final CanvasContainer component;
+    private final CanvasContainer canvasContainer;
     private GameTreeViewerSettings settings = GameTreeViewerSettings.getDefault();
     private final GameTreeCanvas canvas;
     private final Camera camera;
@@ -41,11 +42,11 @@ public final class GameTreeViewer implements YiComponent {
         canvas = new GameTreeCanvas();
         canvas.addInputHandler(new CanvasInputHandler());
 
-        component = new CanvasContainer(canvas);
+        canvasContainer = new CanvasContainer(canvas);
         elementSize = new GameTreeElementSize();
-        camera = new Camera(component.getWidth(), component.getHeight());
+        camera = new Camera(canvasContainer.getWidth(), canvasContainer.getHeight());
 
-        component.addSizeUpdateListener(newSize -> {
+        canvasContainer.addSizeUpdateListener(newSize -> {
             camera.setViewportSize(newSize.getWidth(), newSize.getHeight());
             render();
         });
@@ -142,7 +143,7 @@ public final class GameTreeViewer implements YiComponent {
 
     @Override
     public Parent getComponent() {
-        return component;
+        return canvasContainer;
     }
 
     public @Nullable GameNode getPreviewNode() {

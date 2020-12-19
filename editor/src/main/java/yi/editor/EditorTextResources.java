@@ -64,4 +64,5 @@ public final class EditorTextResources {
     public static final TextResource DEFAULT_WHITE_NAME = new TextResource("default.whiteName", BUNDLE);
 
     public static final TextResource MOVE_COUNT = new TextResource("moveCount", BUNDLE);
+    public static final TextResource PREVIEW_MOVE_PROMPT = new TextResource("previewMoveText", BUNDLE);
 }

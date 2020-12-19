@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import yi.common.Property;
 import yi.common.PropertyListener;
+import yi.common.component.FontManager;
 import yi.common.component.YiScene;
 import yi.common.utilities.GuiUtilities;
 import yi.common.utilities.SystemUtilities;
@@ -73,6 +74,11 @@ public class EditorWindow extends Stage {
         treeViewerSettings.setNodeInCurrentVariationColor(GuiUtilities.getColor(203, 203, 203));
         treeViewerSettings.setNodeWithCommentaryColor(GuiUtilities.getColor(87, 125, 186));
         treeViewerSettings.setCurrentNodeColor(GuiUtilities.getColor(255, 255, 255));
+        treeViewerSettings.setPreviewPromptForeground(GuiUtilities.getColor(200, 200, 200));
+        treeViewerSettings.setPreviewPromptBackground(GuiUtilities.getColor(30, 30, 30));
+        treeViewerSettings.setPreviewTextResource(EditorTextResources.PREVIEW_MOVE_PROMPT);
+        treeViewerSettings.setPreviewTextFont(FontManager.getDefaultFont(13));
+        treeViewerSettings.setPreviewPromptEnabled(true);
 
         commentViewer = new GameCommentViewer();
 
