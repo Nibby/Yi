@@ -259,7 +259,38 @@ public final class GameTreeViewer implements YiComponent {
             double offsetX = camera.getOffsetX();
             double offsetY = camera.getOffsetY();
 
-            camera.setOffset(offsetX + xDiff, offsetY + yDiff);
+            setBoundedOffset(offsetX + xDiff, offsetY + yDiff);
+        }
+
+        private void setBoundedOffset(double offsetX, double offsetY) {
+            double viewWidth = canvas.getWidth();
+            double viewHeight = canvas.getHeight();
+
+            double leftBound = viewWidth / 4 * 3;
+            double rightBound = leftBound - viewWidth / 2
+                    - (treeStructure.getFurthestHorizontalNode()+1) * elementSize.getGridSize().getWidth();
+            double topBound = viewHeight / 4 * 3;
+            double bottomBound = topBound - viewHeight / 2
+                    - (treeStructure.getFurthestVerticalNode()) * elementSize.getGridSize().getHeight();
+
+            double boundOffsetX = offsetX;
+            double boundOffsetY = offsetY;
+
+            if (boundOffsetX > leftBound) {
+                boundOffsetX = leftBound;
+            }
+            if (boundOffsetX < rightBound) {
+                boundOffsetX = rightBound;
+            }
+
+            if (boundOffsetY > topBound) {
+                boundOffsetY = topBound;
+            }
+            if (boundOffsetY < bottomBound) {
+                boundOffsetY = bottomBound;
+            }
+
+            camera.setOffset(boundOffsetX, boundOffsetY);
         }
 
         @Override
