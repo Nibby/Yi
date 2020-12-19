@@ -98,6 +98,11 @@ public class EditorWindow extends Stage {
             if (newPreview != treeViewer.getPreviewNode()) {
                 treeViewer.setPreviewNode(newPreview);
             }
+
+            var nodeToShowCommentsFor = newPreview == null
+                                            ? getGameModel().getCurrentNode()
+                                            : newPreview;
+            commentViewer.setText(nodeToShowCommentsFor.getComments());
         });
 
         initializeActions(actionManager);
