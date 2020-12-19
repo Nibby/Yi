@@ -96,9 +96,6 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
     }
 
     private void onMouseEvent(MouseEvent e) {
-        if (!manager.edit.isEditable()) {
-            return;
-        }
         retrieveCursorPosition(e.getX(), e.getY());
 
         if (manager.edit.isEditable()) {
