@@ -152,6 +152,14 @@ final class GameTreeStructure {
         return treeElementManager.getHighlightedNode();
     }
 
+    public int getFurthestHorizontalNode() {
+        return treeElementManager.positionStorage.furthestNodeHorizontal;
+    }
+
+    public int getFurthestVerticalNode() {
+        return treeElementManager.positionStorage.furthestNodeVertical;
+    }
+
     private static final class TreeElementManager {
 
         private List<TreeElement> allElements = new ArrayList<>();
@@ -251,6 +259,8 @@ final class GameTreeStructure {
         // Map of <X, <Y, Element>> where (X, Y) denote the grid position of the element
         private final Map<Integer, Map<Integer, TreeElement>> elementPositions = new HashMap<>();
         private final Map<GameNode, Integer> branchHeadToColumn = new HashMap<>();
+        private int furthestNodeHorizontal = 0;
+        private int furthestNodeVertical = 0;
 
         public TreeNodeElement addNode(TreeNodeElement nodeParent, GameNode nodeToAdd,
                                        GameNode firstNodeInThisBranch) {
@@ -357,6 +367,9 @@ final class GameTreeStructure {
             }
 
             yMap.put(y, element);
+
+            furthestNodeHorizontal = Math.max(furthestNodeHorizontal, x);
+            furthestNodeVertical = Math.max(furthestNodeVertical, y);
         }
 
         /**
@@ -413,6 +426,14 @@ final class GameTreeStructure {
 
 
             branchHeadToColumn.put(firstNodeInThisBranch, columnToUse);
+        }
+
+        public int getFurtheristNodeHorizontal() {
+            return furthestNodeHorizontal;
+        }
+
+        public int getFurthestNodeVertical() {
+            return furthestNodeVertical;
         }
     }
 }
