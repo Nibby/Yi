@@ -6,6 +6,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -131,5 +134,19 @@ public final class GuiUtilities {
         var metricsTest = new Text(text);
         metricsTest.setFont(font);
         return metricsTest.getBoundsInLocal();
+    }
+
+    public static Pane createDynamicSpacer() {
+        var dynamicSpacer = new Pane();
+        HBox.setHgrow(dynamicSpacer, Priority.SOMETIMES);
+
+        return dynamicSpacer;
+    }
+
+    public static Pane createStaticSpacer(int width) {
+        var spacer = new Pane();
+        spacer.setPrefWidth(width);
+
+        return spacer;
     }
 }
