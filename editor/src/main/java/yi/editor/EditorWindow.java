@@ -127,7 +127,9 @@ public class EditorWindow extends Stage {
      * @param actionManager Action manager for this editor window.
      */
     protected void initializeActions(EditorActionManager actionManager) {
-        addComponent(EditorStandardActions.getInstance());
+        var actionHandler = new EditorStandardActionsHandler();
+        var standardActions = new EditorStandardActions(actionHandler);
+        addComponent(standardActions);
         actionManager.addActions(EditorPerspective.createActions());
     }
 
