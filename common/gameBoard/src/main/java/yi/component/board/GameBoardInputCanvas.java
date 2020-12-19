@@ -1,5 +1,6 @@
 package yi.component.board;
 
+import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -38,9 +39,13 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         g.clearRect(0, 0, getWidth(), getHeight());
         
         if (renderCursor) {
-            var editMode = manager.edit.getEditMode();
-            editMode.getMouseCursor().ifPresent(this::setCursor);
-            editMode.renderGridCursor(g, manager, cursorX, cursorY);
+            if (manager.edit.isEditable()) {
+                var editMode = manager.edit.getEditMode();
+                editMode.getMouseCursor().ifPresent(this::setCursor);
+                editMode.renderGridCursor(g, manager, cursorX, cursorY);
+            } else {
+                setCursor(Cursor.DEFAULT);
+            }
         }
     }
 
