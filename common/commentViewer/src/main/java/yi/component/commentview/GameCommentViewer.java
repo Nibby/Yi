@@ -27,10 +27,13 @@ public final class GameCommentViewer implements YiComponent {
         commentEditor.getStyleClass().add("fg-dark-secondary");
         commentEditor.setWrapText(true);
 
-        commentEditor.textProperty().addListener(event -> {
-            String text = commentEditor.getText();
-            gameModel.setCommentOnCurrentNode(text);
-        });
+        commentEditor.onKeyPressedProperty().addListener(event -> saveCommentsToNode());
+        commentEditor.onKeyReleasedProperty().addListener(event -> saveCommentsToNode());
+    }
+
+    private void saveCommentsToNode() {
+        String text = commentEditor.getText();
+        gameModel.setCommentOnCurrentNode(text);
     }
 
     private void setCommentsFromNode(GameNode node) {
