@@ -46,6 +46,7 @@ final class GameTreeCanvas extends Canvas {
                        List<TreeNodeElement> visibleElements, GameNode currentNode,
                        @Nullable GameNode previewNode,
                        GameTreeElementSize size) {
+
         graphics.setFont(settings.getPreviewTextFont());
         var currentVariationHistory = currentNode.getMoveHistory();
 
