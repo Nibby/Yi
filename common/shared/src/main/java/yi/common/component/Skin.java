@@ -52,7 +52,7 @@ public final class Skin {
 
     /**
      * Determines if a directory is a likely candidate containing skin information. The result of
-     * this method is not deterministic, as it only checks for the presence of key files, not the
+     * this method is not fool-proof, as it only checks for the presence of key files, not the
      * validity of their content.
      *
      * @param directory The external file directory to test.
