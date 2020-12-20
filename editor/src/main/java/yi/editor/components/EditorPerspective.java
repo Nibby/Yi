@@ -97,7 +97,7 @@ public enum EditorPerspective {
 
         @Override
         public Dimension2D getMinimumWindowSize() {
-            return new Dimension2D(800, 600);
+            return new Dimension2D(800, 650);
         }
 
         @Override
