@@ -144,12 +144,12 @@ final class GameTreeStructure {
         return treeElementManager.setHighlightedGrid(x, y);
     }
 
-    public void setPreviewNode(@Nullable GameNode node) {
-        treeElementManager.setHighlightedNode(node);
+    public void setHighlightedNodePath(@Nullable GameNode endPoint) {
+        treeElementManager.setHighlightedNodePath(endPoint);
     }
 
-    public @Nullable GameNode getPreviewNode() {
-        return treeElementManager.getHighlightedNode();
+    public @Nullable GameNode getHighlightedNodePath() {
+        return treeElementManager.getHighlightedNodePath();
     }
 
     public int getFurthestHorizontalNode() {
@@ -227,7 +227,7 @@ final class GameTreeStructure {
         /**
          * @return Currently highlighted node if one exists.
          */
-        public @Nullable GameNode getHighlightedNode() {
+        public @Nullable GameNode getHighlightedNodePath() {
             if(currentHighlight != null
                     && currentHighlight.isHighlighted()
                     && currentHighlight instanceof TreeNodeElement) {
@@ -238,11 +238,11 @@ final class GameTreeStructure {
             }
         }
 
-        public void setHighlightedNode(@Nullable GameNode node) {
-            if (node == null) {
+        public void setHighlightedNodePath(@Nullable GameNode endPoint) {
+            if (endPoint == null) {
                 setHighlightedGrid(-1, -1);
             } else {
-                TreeNodeElement nodeElement = gameNodeToTreeElement.get(node);
+                TreeNodeElement nodeElement = gameNodeToTreeElement.get(endPoint);
                 setHighlightedGrid(nodeElement.getGridX(), nodeElement.getGridY());
             }
         }

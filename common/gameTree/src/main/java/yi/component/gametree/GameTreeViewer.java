@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.NullableProperty;
@@ -36,7 +35,7 @@ public final class GameTreeViewer implements YiComponent {
     private GameModel gameModel;
     private GameTreeStructure treeStructure;
     private final GameTreeElementSize elementSize;
-    private final NullableProperty<GameNode> previewNode = new NullableProperty<>(null);
+    private final NullableProperty<GameNode> highlightedNode = new NullableProperty<>(null);
 
     public GameTreeViewer() {
         canvas = new GameTreeCanvas();
@@ -69,7 +68,7 @@ public final class GameTreeViewer implements YiComponent {
         if (gameModel != null && treeStructure != null) {
             var elements = getVisibleElementsInViewport();
             var currentNode = gameModel.getCurrentNode();
-            var previewNode = treeStructure.getPreviewNode();
+            var previewNode = treeStructure.getHighlightedNodePath();
 
             canvas.render(settings, camera, elements, currentNode, previewNode, elementSize);
         }
@@ -134,11 +133,11 @@ public final class GameTreeViewer implements YiComponent {
      * @param listener New listener to add.
      */
     public void addPreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
-        previewNode.addListener(listener);
+        highlightedNode.addListener(listener);
     }
 
     public void removePreviewNodeChangeListener(NullablePropertyListener<GameNode> listener) {
-        previewNode.removeListener(listener);
+        highlightedNode.removeListener(listener);
     }
 
     @Override
@@ -146,13 +145,13 @@ public final class GameTreeViewer implements YiComponent {
         return canvasContainer;
     }
 
-    public @Nullable GameNode getPreviewNode() {
-        return treeStructure.getPreviewNode();
+    public @Nullable GameNode getHighlightedNode() {
+        return treeStructure.getHighlightedNodePath();
     }
 
-    public void setPreviewNode(@Nullable GameNode node) {
-        treeStructure.setPreviewNode(node);
-        updateCameraAndRender(node != null ? node : this.gameModel.getCurrentNode());
+    public void setHighlightedNodePath(@Nullable GameNode endPoint) {
+        treeStructure.setHighlightedNodePath(endPoint);
+        updateCameraAndRender(endPoint != null ? endPoint : this.gameModel.getCurrentNode());
     }
 
     /**
@@ -199,28 +198,34 @@ public final class GameTreeViewer implements YiComponent {
             int x = gridPosition[0];
             int y = gridPosition[1];
 
-            boolean hasItem = treeStructure.setHighlightedGrid(x, y);
-            if (!hasItem) {
-                canvas.setCursor(Cursor.OPEN_HAND);
-            } else {
+            boolean hasHighlight = treeStructure.setHighlightedGrid(x, y);
+
+            if (hasHighlight) {
                 canvas.setCursor(Cursor.HAND);
+            } else {
+                canvas.setCursor(Cursor.OPEN_HAND);
             }
 
-            maybeFireHighlightedNodeChangeEvent(hasItem);
+            maybeFireHighlightedNodeChangeEvent(hasHighlight);
             render();
         }
 
-        private void maybeFireHighlightedNodeChangeEvent(boolean hasItem) {
-            GameNode newValue = treeStructure.getPreviewNode();
-            if (hasItem) {
-                if (lastFiredHighlightedNodeValue == null
-                        || !lastFiredHighlightedNodeValue.equals(newValue)) {
-                    previewNode.set(newValue);
+        private void maybeFireHighlightedNodeChangeEvent(boolean hasHighlight) {
+            GameNode newValue = treeStructure.getHighlightedNodePath();
+            if (hasHighlight) {
+                if (newValue != gameModel.getCurrentNode()) {
+                    if (lastFiredHighlightedNodeValue == null
+                            || !lastFiredHighlightedNodeValue.equals(newValue)) {
+                        highlightedNode.set(newValue);
+                    }
+                    lastFiredHighlightedNodeValue = newValue;
+                } else {
+                    highlightedNode.set(null);
+                    lastFiredHighlightedNodeValue = null;
                 }
-                lastFiredHighlightedNodeValue = newValue;
             } else if (lastFiredHighlightedNodeValue != null) {
                 lastFiredHighlightedNodeValue = null;
-                previewNode.set(null);
+                highlightedNode.set(null);
             }
         }
 
@@ -240,7 +245,7 @@ public final class GameTreeViewer implements YiComponent {
                 treeStructure.getNodeElement(x, y).ifPresent(element -> {
                     var selectedNode = element.getNode();
                     gameModel.setCurrentNode(selectedNode);
-                    previewNode.set(null);
+                    highlightedNode.set(null);
                 });
             }
 
