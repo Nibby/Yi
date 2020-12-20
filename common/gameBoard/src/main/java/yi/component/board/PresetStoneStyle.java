@@ -21,7 +21,7 @@ public enum PresetStoneStyle {
                 new Stop(0.99d, Color.color(0.1d, 0.1d, 0.0d, 1d)));
         final RadialGradient whiteGradient = createRadialGradient(
                 new Stop(0d, Color.color(0.92d, 0.92d, 0.92d, 1d)),
-                new Stop(0.99d, Color.color(0.82d, 0.82d, 0.82d, 1d)));
+                new Stop(0.99d, Color.color(0.8d, 0.8d, 0.8d, 1d)));
 
         DropShadow dropShadow = null;
 
