@@ -3,10 +3,7 @@ package yi.editor;
 import org.jetbrains.annotations.NotNull;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorAction;
-import yi.editor.framework.action.EditorActionContext;
-import yi.editor.framework.action.EditorActionManager;
-import yi.editor.framework.action.EditorBasicAction;
+import yi.editor.framework.action.*;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -23,9 +20,16 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
         createNewGameAction();
         createNewGameInNewWindowAction();
+        createDivider(EditorMainMenuType.FILE, 0.00055);
         createOpenGameAction();
         createSaveAction();
         createSaveAsAction();
+    }
+
+    private void createDivider(EditorMainMenuType menuType, double position) {
+        var sep = new EditorSeparatorAction();
+        sep.setInMainMenu(menuType, position);
+        standardActions.add(sep);
     }
 
     private void createNewGameAction() {
