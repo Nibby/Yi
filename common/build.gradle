@@ -17,9 +17,7 @@ subprojects { subproject ->
             compile project(":common:shared")
         }
 
-        implementation "org.jetbrains.kotlin:kotlin-stdlib"
-        implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
-        implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.kotlinVersion}"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.21"
         implementation globalConfigurations.javaFxDependencies.implementation
 
         testImplementation globalConfigurations.commonDependencies.testImplementation

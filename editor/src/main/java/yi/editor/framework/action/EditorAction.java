@@ -10,6 +10,7 @@ import yi.common.utilities.GuiUtilities;
 import yi.editor.EditorMainMenuType;
 import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.i18n.EditorTextResources;
 
 import java.util.Comparator;
 import java.util.List;
@@ -66,13 +67,13 @@ public interface EditorAction {
      * All text content are stored using i18n keys.
      *
      * @return {@link TextResource} used for localisation.
-     * @see yi.editor.EditorTextResources
+     * @see EditorTextResources
      */
     @NotNull TextResource getText();
 
     /**
      * Sets the {@link TextResource} used for localisation. All text resources in
-     * the editor module are found in {@link yi.editor.EditorTextResources}.
+     * the editor module are found in {@link EditorTextResources}.
      *
      * @param i18nKey Text resource for localisation.
      * @return this instance for method chaining.

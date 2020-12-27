@@ -5,6 +5,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import yi.editor.components.EditorPerspective;
 import yi.editor.framework.action.EditorActionContext;
+import yi.editor.i18n.EditorTextResources;
 import yi.editor.utilities.GameModelUtilities;
 import yi.models.go.*;
 import yi.models.go.docformat.FileFormat;

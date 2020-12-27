@@ -2,6 +2,9 @@ package yi.common.i18n;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+import java.util.ResourceBundle;
+
 /**
  * Represents a resource key for localised text in a resource bundle. At runtime, the
  * actual text can be retrieved using {@link #getLocalisedText()}, which picks the
@@ -13,20 +16,19 @@ import org.jetbrains.annotations.NotNull;
 public class TextResource {
 
     private final String resourceKey;
-    private final String bundleName;
+    private final ResourceBundle resourceBundle;
 
-    public TextResource(@NotNull String resourceKey,
-                        @NotNull String bundleName) {
-        this.resourceKey = resourceKey;
-        this.bundleName = bundleName;
+    public TextResource(@NotNull String resourceKey, @NotNull ResourceBundle bundle) {
+        this.resourceKey = Objects.requireNonNull(resourceKey);
+        this.resourceBundle = Objects.requireNonNull(bundle);
     }
 
     public String getLocalisedText() {
-        return I18n.getResourceBundle(bundleName).getString(resourceKey);
+        return resourceBundle.getString(resourceKey);
     }
 
     public String getLocalisedText(Object ... parameters) {
-        String rawString = I18n.getResourceBundle(bundleName).getString(resourceKey);
+        String rawString = resourceBundle.getString(resourceKey);
         for (Object parameter : parameters) {
             rawString = rawString.replaceFirst("\\$\\{}", String.valueOf(parameter));
         }
@@ -36,6 +38,9 @@ public class TextResource {
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + " [localised: " + getLocalisedText() + ", bundle: " + bundleName + "]";
+                + " [localised: " + getLocalisedText()
+                + ", bundle: " + resourceBundle.getBaseBundleName()
+                               + "_" + resourceBundle.getLocale().toString()
+                + "]";
     }
 }

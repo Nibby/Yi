@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
 import yi.editor.EditorMainMenuType;
-import yi.editor.EditorTextResources;
+import yi.editor.i18n.EditorTextResources;
 import yi.editor.EditorUITestBase;
 
 /**

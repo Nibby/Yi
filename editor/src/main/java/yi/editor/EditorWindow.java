@@ -22,6 +22,7 @@ import yi.editor.components.EditorToolBar;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
+import yi.editor.i18n.EditorTextResources;
 import yi.editor.settings.EditorSettings;
 import yi.models.go.GameModel;
 import yi.models.go.GameModelImporter;

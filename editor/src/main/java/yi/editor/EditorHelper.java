@@ -6,10 +6,10 @@ import yi.common.audio.CommonAudioSets;
 import yi.common.audio.SoundManager;
 import yi.common.component.FontManager;
 import yi.common.component.SkinManager;
-import yi.common.i18n.I18n;
-import yi.common.i18n.Language;
+import yi.common.component.YiScene;
 import yi.common.utilities.SystemUtilities;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
+import yi.editor.i18n.EditorTextResources;
 import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;
@@ -71,6 +71,7 @@ public final class EditorHelper {
 
     public static void initializeContext() {
         loadBundledFonts();
+        YiScene.addExtraStylesheet("/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
         EditorTextResources.installSupportedLanguages();

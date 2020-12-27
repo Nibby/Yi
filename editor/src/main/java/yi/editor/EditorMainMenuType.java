@@ -2,6 +2,7 @@ package yi.editor;
 
 import org.jetbrains.annotations.NotNull;
 import yi.common.i18n.TextResource;
+import yi.editor.i18n.EditorTextResources;
 
 public enum EditorMainMenuType {
 

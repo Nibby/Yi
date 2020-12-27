@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.Start;
 import yi.editor.EditorMainMenuType;
-import yi.editor.EditorTextResources;
+import yi.editor.i18n.EditorTextResources;
 import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
