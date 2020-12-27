@@ -149,16 +149,20 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
         var currentNode = model.getRootNode();
 
         do {
-            Rectangle2D bounds = treeViewer.getElementBoundsForNode(currentNode).orElseThrow();
-            moveToCenter(bounds, robot);
-            Thread.sleep(50);
-            Assertions.assertEquals(currentNode, highlightedNode);
+            GameNode nodeToHover = currentNode.getNextNodeInMainBranch();
+            if (nodeToHover != null) {
+                Rectangle2D bounds = treeViewer.getElementBoundsForNode(nodeToHover).orElseThrow();
+                moveToCenter(bounds, robot);
+                Thread.sleep(100);
 
-            assert currentNode != null;
-            if (currentNode.isLastMoveInThisVariation()) {
-                break;
+                if (nodeToHover.isLastMoveInThisVariation()) {
+                    break;
+                } else {
+                    Assertions.assertEquals(nodeToHover, highlightedNode);
+                    currentNode = nodeToHover;
+                }
             } else {
-                currentNode = currentNode.getNextNodeInMainBranch();
+                break;
             }
         } while (true);
 

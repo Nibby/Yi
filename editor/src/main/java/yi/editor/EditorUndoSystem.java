@@ -7,6 +7,7 @@ import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorBasicAction;
+import yi.editor.i18n.EditorTextResources;
 import yi.models.go.GameModel;
 
 import java.util.Optional;

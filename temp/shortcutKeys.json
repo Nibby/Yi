@@ -1,6 +1,7 @@
 {
     "toolCircle": "Shortcut+5",
     "toolCross": "Shortcut+2",
+    "newWindow": "Shift+Shortcut+N",
     "togglePerspectiveCompact": "Shortcut+W",
     "newGame": "Shortcut+N",
     "redo": "Shift+Shortcut+Z",

@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
 import yi.common.component.KeyModifier;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
@@ -102,32 +103,34 @@ public final class GuiUtilities {
         return modifierDown ? KeyCombination.ModifierValue.DOWN : KeyCombination.ModifierValue.UP;
     }
 
-    public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass) {
-        return getIcon(resourceFile, aClass, -1);
+    public static Optional<ImageView> getIcon(String resourceFile, Class<?> resourceClass) {
+        return getIcon(resourceFile, resourceClass, -1);
     }
 
-    public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass, int fitSize) {
-        return getIcon(resourceFile, aClass, fitSize, fitSize);
+    public static Optional<ImageView> getIcon(String resourceFile, Class<?> resourceClass, int fitSize) {
+        return getIcon(resourceFile, resourceClass, fitSize, fitSize);
     }
 
-    public static Optional<ImageView> getIcon(String resourceFile, Class<?> aClass,
+    public static Optional<ImageView> getIcon(String resourceFile, Class<?> resourceClass,
                                               int fitWidth, int fitHeight) {
-        try {
-            var resourceStream = aClass.getResourceAsStream(resourceFile);
-            var iconImage = new Image(resourceStream);
-            var icon = new ImageView(iconImage);
 
-            if (fitWidth > 0) {
-                icon.setFitWidth(fitWidth);
-            }
-            if (fitHeight > 0) {
-                icon.setFitHeight(fitHeight);
-            }
-
-            return Optional.of(icon);
-        } catch (NullPointerException e) {
+        InputStream resourceStream;
+        resourceStream = resourceClass.getResourceAsStream(resourceFile);
+        if (resourceStream == null) {
             return Optional.empty();
         }
+
+        var iconImage = new Image(resourceStream);
+        var icon = new ImageView(iconImage);
+
+        if (fitWidth > 0) {
+            icon.setFitWidth(fitWidth);
+        }
+        if (fitHeight > 0) {
+            icon.setFitHeight(fitHeight);
+        }
+
+        return Optional.of(icon);
     }
 
     public static Bounds getTextBoundsLocal(@NotNull Font font, String text) {

@@ -14,7 +14,7 @@ import yi.common.component.YiButton;
 import yi.common.component.YiMenuItem;
 import yi.common.utilities.GuiUtilities;
 import yi.editor.EditorMainMenuType;
-import yi.editor.EditorTextResources;
+import yi.editor.i18n.EditorTextResources;
 import yi.editor.EditorUITestBase;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
