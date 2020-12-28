@@ -5,7 +5,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import yi.component.boardviewer.GameBoardManager;
 import yi.component.boardviewer.edits.PlayMoveEdit;
-import yi.core.go.*;
+import yi.core.go.GameModel;
+import yi.core.go.GameNode;
+import yi.core.go.MoveValidationResult;
+import yi.core.go.StoneColor;
 
 import java.util.Optional;
 

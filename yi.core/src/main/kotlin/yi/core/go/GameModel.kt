@@ -4,7 +4,6 @@ package yi.core.go
 
 import yi.core.go.docformat.FileFormat
 import yi.core.go.rules.GameRulesHandler
-import java.lang.IllegalStateException
 import java.nio.file.Path
 import java.util.*
 import kotlin.collections.ArrayList

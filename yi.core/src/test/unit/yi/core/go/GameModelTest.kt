@@ -3,7 +3,6 @@ package yi.core.go
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import yi.core.go.TestGameRules.TestingGameRulesNoSuicide
-import java.lang.IllegalArgumentException
 
 class GameModelTest {
 

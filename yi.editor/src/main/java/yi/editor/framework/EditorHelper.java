@@ -9,8 +9,8 @@ import yi.component.shared.component.SkinManager;
 import yi.component.shared.component.YiScene;
 import yi.component.shared.utilities.SystemUtilities;
 import yi.editor.EditorMain;
-import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.components.EditorTextResources;
+import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;

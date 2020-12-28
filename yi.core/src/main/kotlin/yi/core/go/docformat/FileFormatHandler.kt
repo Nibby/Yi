@@ -1,7 +1,8 @@
 package yi.core.go.docformat
 
 import yi.core.go.GameModel
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
 
 /**
  * Specifies the contract for a supported file format that a [yi.core.go.GameModel]

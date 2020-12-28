@@ -3,8 +3,8 @@ package yi.editor.components;
 import javafx.scene.control.MenuBar;
 import yi.component.shared.component.YiMenu;
 import yi.component.shared.utilities.SystemUtilities;
-import yi.editor.framework.EditorHelper;
 import yi.editor.EditorWindow;
+import yi.editor.framework.EditorHelper;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 

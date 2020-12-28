@@ -6,10 +6,10 @@ import yi.component.boardviewer.editmodes.AnnotationEditMode;
 import yi.component.boardviewer.editmodes.EditMode;
 import yi.component.boardviewer.editmodes.PlayMoveEditMode;
 import yi.component.boardviewer.editmodes.StoneEditMode;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.action.EditorToolAction;
 import yi.core.go.AnnotationType;
 import yi.core.go.StoneColor;
+import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.action.EditorToolAction;
 
 import java.util.Optional;
 

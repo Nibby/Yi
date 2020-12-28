@@ -1,5 +1,6 @@
 package yi.core.go
 
+import yi.core.go.GameModelExporter.toOutputStream
 import yi.core.go.docformat.FileFormat
 import java.io.OutputStream
 import java.nio.file.Files

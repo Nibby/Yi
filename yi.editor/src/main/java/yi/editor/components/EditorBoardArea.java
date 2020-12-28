@@ -2,16 +2,16 @@ package yi.editor.components;
 
 import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
-import yi.component.shared.audio.CommonAudioSets;
 import yi.component.boardviewer.GameBoardViewer;
+import yi.component.shared.audio.CommonAudioSets;
+import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorToggleAction;
 import yi.editor.settings.EditorSettings;
-import yi.core.go.GameModel;
-import yi.core.go.GameNode;
 
 import java.util.HashSet;
 import java.util.Optional;
