@@ -3,6 +3,7 @@ package yi.editor;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import yi.editor.framework.EditorHelper;
 import yi.editor.settings.EditorSettings;
 import yi.editor.utilities.GameModelUtilities;
 

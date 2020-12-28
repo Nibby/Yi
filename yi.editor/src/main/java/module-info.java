@@ -7,6 +7,7 @@ module yi.editor {
     requires yi.component.treeviewer;
     requires yi.component.commentviewer;
     requires yi.core;
+    requires json;
 
     exports yi.editor;
 

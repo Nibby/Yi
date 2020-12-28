@@ -12,9 +12,9 @@ import yi.common.BooleanProperty;
 import yi.common.NullableProperty;
 import yi.common.Property;
 import yi.common.i18n.TextResource;
-import yi.editor.EditorHelper;
-import yi.editor.EditorMainMenuType;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.framework.EditorHelper;
+import yi.editor.components.EditorMainMenuType;
+import yi.editor.components.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 

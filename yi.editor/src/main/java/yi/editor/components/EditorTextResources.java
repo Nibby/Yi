@@ -1,4 +1,4 @@
-package yi.editor.i18n;
+package yi.editor.components;
 
 import yi.common.i18n.I18n;
 import yi.common.i18n.Language;
@@ -14,16 +14,8 @@ public final class EditorTextResources {
 
     private static final String I18N_PACKAGE = "i18n.";
 
-    public static void installSupportedLanguages() {
-        Language.add(new Language("\u7b80\u4f53\u4e2d\u6587", Locale.SIMPLIFIED_CHINESE));
-    }
-
-    private static TextResource standardResource(String i18nKey) {
-        return new TextResource(i18nKey, BUNDLE);
-    }
-
     private static final String BUNDLE_NAME = I18N_PACKAGE + "EditorTranslations";
-    private static final ResourceBundle BUNDLE = getResourceBundle(BUNDLE_NAME);
+    private static final ResourceBundle BUNDLE = I18n.getResourceBundle(BUNDLE_NAME, EditorTextResources.class.getModule());
 
     public static final TextResource EMPTY = standardResource("empty");
 
@@ -73,32 +65,11 @@ public final class EditorTextResources {
     public static final TextResource MOVE_COUNT = standardResource("moveCount");
     public static final TextResource PREVIEW_MOVE_PROMPT = standardResource("previewMoveText");
 
-
-    /**
-     * Retrieves a resource bundle under the current language given by
-     * {@link I18n#getCurrentLanguage()}. The bundle name can be period (.)-delimited
-     * to indicate the bundle file is in a subdirectory.
-     *
-     * @param bundleName Name of the resource bundle.
-     * @return A {@link ResourceBundle} corresponding to the bundle name.
-     *
-     * @see ResourceBundle#getBundle(String)
-     */
-    private static ResourceBundle getResourceBundle(String bundleName) {
-        return getResourceBundle(bundleName, I18n.getCurrentLanguage());
+    public static void installSupportedLanguages() {
+        Language.add(new Language("\u7b80\u4f53\u4e2d\u6587", Locale.SIMPLIFIED_CHINESE));
     }
 
-    /**
-     * Retrieves a resource bundle for an arbitrary language. The bundle name can be
-     * period (.)-delimited to indicate the bundle file is in a subdirectory.
-     *
-     * @param bundleName Name of the resource bundle.
-     * @param language Language for the resource bundle.
-     * @return A {@link ResourceBundle} corresponding to the bundle name.
-     *
-     * @see ResourceBundle#getBundle(String)
-     */
-    private static ResourceBundle getResourceBundle(String bundleName, Language language) {
-        return ResourceBundle.getBundle(bundleName, language.getLocale());
+    private static TextResource standardResource(String i18nKey) {
+        return new TextResource(i18nKey, BUNDLE);
     }
 }

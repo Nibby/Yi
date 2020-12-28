@@ -3,7 +3,7 @@ package yi.editor.framework.action;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.components.EditorTextResources;
 
 public final class EditorSeparatorAction extends EditorAbstractAction<SeparatorMenuItem, Pane> {
 

@@ -1,10 +1,11 @@
 package yi.editor;
 
 import org.jetbrains.annotations.NotNull;
+import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.*;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.components.EditorTextResources;
 
 import java.util.HashSet;
 import java.util.Objects;

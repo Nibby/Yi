@@ -11,8 +11,8 @@ import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
 import yi.component.board.GameBoardViewer;
 import yi.component.board.editmodes.AbstractEditMode;
-import yi.editor.EditorMainMenuType;
-import yi.editor.EditorTool;
+import yi.editor.components.EditorMainMenuType;
+import yi.editor.components.EditorTool;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.Optional;

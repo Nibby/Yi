@@ -9,7 +9,7 @@ import yi.common.NullableProperty;
 import yi.common.component.YiCheckMenuItem;
 import yi.common.component.YiToggleButton;
 import yi.common.i18n.TextResource;
-import yi.editor.EditorMainMenuType;
+import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.Optional;

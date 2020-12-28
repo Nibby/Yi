@@ -4,8 +4,8 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
-import yi.editor.EditorMainMenuType;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.components.EditorMainMenuType;
+import yi.editor.components.EditorTextResources;
 import yi.editor.EditorUITestBase;
 
 /**

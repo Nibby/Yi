@@ -1,4 +1,4 @@
-package yi.editor;
+package yi.editor.framework;
 
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
@@ -8,8 +8,9 @@ import yi.common.component.FontManager;
 import yi.common.component.SkinManager;
 import yi.common.component.YiScene;
 import yi.common.utilities.SystemUtilities;
+import yi.editor.EditorMain;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.components.EditorTextResources;
 import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;
@@ -28,6 +29,10 @@ public final class EditorHelper {
     private static boolean runningAsTest = false;
     private static Path preferredSettingsRootPath = null;
 
+    private EditorHelper() {
+        // Utility class, no instantiation
+    }
+
     public static Version getVersion() {
         return VERSION;
     }
@@ -37,8 +42,7 @@ public final class EditorHelper {
     }
 
     public static boolean isRunningFromSource() {
-        return System.getProperty("yi.fromSource", "false")
-                .toLowerCase().equalsIgnoreCase("true");
+        return System.getProperty("yi.fromSource", "false").equalsIgnoreCase("true");
     }
 
     public static boolean isDebugMode() {

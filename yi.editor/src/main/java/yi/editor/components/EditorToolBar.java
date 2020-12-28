@@ -4,11 +4,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import org.jetbrains.annotations.NotNull;
 import yi.common.utilities.GuiUtilities;
-import yi.editor.i18n.EditorTextResources;
 import yi.models.go.GameModel;
 import yi.models.go.GameModelInfo;
 
-import static yi.editor.i18n.EditorTextResources.MOVE_COUNT;
+import static yi.editor.components.EditorTextResources.MOVE_COUNT;
 
 public class EditorToolBar extends ToolBar {
 

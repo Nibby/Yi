@@ -1,4 +1,4 @@
-package yi.editor;
+package yi.editor.framework;
 
 /**
  * Version information for the application. Uses semantic versioning.
