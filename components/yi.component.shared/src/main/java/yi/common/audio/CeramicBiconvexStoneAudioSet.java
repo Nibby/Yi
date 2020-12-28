@@ -45,7 +45,7 @@ final class CeramicBiconvexStoneAudioSet extends ExtendedStoneAudioSet {
     }
 
     private String sound(String audioNameWithoutExtensionOrPrefix) {
-        return "/sounds/biconvex/" + audioNameWithoutExtensionOrPrefix + ".mp3";
+        return "/yi/component/shared/sounds/biconvex/" + audioNameWithoutExtensionOrPrefix + ".mp3";
     }
 
     @Override

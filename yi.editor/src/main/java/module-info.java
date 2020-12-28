@@ -11,6 +11,7 @@ module yi.editor {
 
     exports yi.editor;
 
-    opens icons;
-    opens fonts;
+    opens yi.editor.icons;
+    opens yi.editor.fonts;
+    opens yi.editor.i18n;
 }

@@ -75,7 +75,7 @@ public final class EditorHelper {
 
     public static void initializeContext() {
         loadBundledFonts();
-        YiScene.addExtraStylesheet("/fonts/font.css", EditorHelper.class);
+        YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
         EditorTextResources.installSupportedLanguages();
@@ -91,7 +91,7 @@ public final class EditorHelper {
     }
 
     private static void loadBundledFonts() {
-        final String FONT_RESOURCE_DIR = "/fonts/";
+        final String FONT_RESOURCE_DIR = "/yi/editor/fonts/";
         URI fontDirectoryUri;
 
         try {

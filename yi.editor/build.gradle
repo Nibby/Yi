@@ -57,9 +57,9 @@ sourceSets {
     }
 }
 
-application {
-    def workingDirectory = rootProject.path + File.separator + "temp"
+def workingDirectory = rootProject.projectDir.absoluteFile.toPath().resolve("temp").toString()
 
+application {
     mainModule = 'yi.editor'
     mainClassName = 'yi.editor.EditorMain'
     applicationDefaultJvmArgs = [
@@ -77,12 +77,14 @@ configurations {
 test {
     useJUnitPlatform()
     testClassesDirs = sourceSets.test.output
+    jvmArgs += [ "-Duser.dir=$workingDirectory" ]
 }
 
 task testUi(type: Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.testUi.output.classesDirs
     classpath = sourceSets.testUi.runtimeClasspath
+    jvmArgs += [ "-Duser.dir=$workingDirectory" ]
 }
 
 dependencies {

@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
  */
 public final class EditorTextResources {
 
-    private static final String I18N_PACKAGE = "i18n.";
+    private static final String I18N_PACKAGE = "yi.editor.i18n.";
 
     private static final String BUNDLE_NAME = I18N_PACKAGE + "EditorTranslations";
     private static final ResourceBundle BUNDLE = I18n.getResourceBundle(BUNDLE_NAME, EditorTextResources.class.getModule());

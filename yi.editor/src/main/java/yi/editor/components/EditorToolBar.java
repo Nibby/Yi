@@ -11,9 +11,9 @@ import static yi.editor.components.EditorTextResources.MOVE_COUNT;
 
 public class EditorToolBar extends ToolBar {
 
-    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
+    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
-    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/icons/whiteStone_white@2x.png", getClass(), 16).orElse(null));
+    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
     private final Label moveLabel = new Label("");
