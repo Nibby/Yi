@@ -5,5 +5,5 @@ module yi.component.commentviewer {
     requires javafx.controls;
     requires yi.core;
 
-    exports yi.component.commentview;
+    exports yi.component.commentviewer;
 }

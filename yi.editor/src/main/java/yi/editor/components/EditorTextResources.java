@@ -1,8 +1,8 @@
 package yi.editor.components;
 
-import yi.common.i18n.I18n;
-import yi.common.i18n.Language;
-import yi.common.i18n.TextResource;
+import yi.component.shared.i18n.I18n;
+import yi.component.shared.i18n.Language;
+import yi.component.shared.i18n.TextResource;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

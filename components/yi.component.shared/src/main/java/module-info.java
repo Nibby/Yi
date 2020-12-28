@@ -5,8 +5,8 @@ module yi.component.shared {
     requires yi.core;
 
     exports yi.common;
-    exports yi.common.audio;
-    exports yi.common.component;
-    exports yi.common.i18n;
-    exports yi.common.utilities;
+    exports yi.component.shared.audio;
+    exports yi.component.shared.component;
+    exports yi.component.shared.i18n;
+    exports yi.component.shared.utilities;
 }

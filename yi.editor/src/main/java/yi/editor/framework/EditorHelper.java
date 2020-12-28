@@ -2,12 +2,12 @@ package yi.editor.framework;
 
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
-import yi.common.audio.CommonAudioSets;
-import yi.common.audio.SoundManager;
-import yi.common.component.FontManager;
-import yi.common.component.SkinManager;
-import yi.common.component.YiScene;
-import yi.common.utilities.SystemUtilities;
+import yi.component.shared.audio.CommonAudioSets;
+import yi.component.shared.audio.SoundManager;
+import yi.component.shared.component.FontManager;
+import yi.component.shared.component.SkinManager;
+import yi.component.shared.component.YiScene;
+import yi.component.shared.utilities.SystemUtilities;
 import yi.editor.EditorMain;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.components.EditorTextResources;

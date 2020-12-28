@@ -12,8 +12,8 @@ import yi.editor.components.EditorPerspective;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.EditorHelper;
 import yi.editor.utilities.GameModelUtilities;
-import yi.models.go.GameModel;
-import yi.models.go.StandardGameRules;
+import yi.core.go.GameModel;
+import yi.core.go.StandardGameRules;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

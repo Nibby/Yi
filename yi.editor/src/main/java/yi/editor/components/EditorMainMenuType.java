@@ -1,7 +1,7 @@
 package yi.editor.components;
 
 import org.jetbrains.annotations.NotNull;
-import yi.common.i18n.TextResource;
+import yi.component.shared.i18n.TextResource;
 import yi.editor.framework.EditorHelper;
 
 public enum EditorMainMenuType {

@@ -1,15 +1,15 @@
 package yi.editor.components;
 
 import javafx.scene.control.ToggleGroup;
-import yi.component.board.GameBoardViewer;
-import yi.component.board.editmodes.AnnotationEditMode;
-import yi.component.board.editmodes.EditMode;
-import yi.component.board.editmodes.PlayMoveEditMode;
-import yi.component.board.editmodes.StoneEditMode;
+import yi.component.boardviewer.GameBoardViewer;
+import yi.component.boardviewer.editmodes.AnnotationEditMode;
+import yi.component.boardviewer.editmodes.EditMode;
+import yi.component.boardviewer.editmodes.PlayMoveEditMode;
+import yi.component.boardviewer.editmodes.StoneEditMode;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorToolAction;
-import yi.models.go.AnnotationType;
-import yi.models.go.StoneColor;
+import yi.core.go.AnnotationType;
+import yi.core.go.StoneColor;
 
 import java.util.Optional;
 

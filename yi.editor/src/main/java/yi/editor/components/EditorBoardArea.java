@@ -2,22 +2,22 @@ package yi.editor.components;
 
 import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
-import yi.common.audio.CommonAudioSets;
-import yi.component.board.GameBoardViewer;
+import yi.component.shared.audio.CommonAudioSets;
+import yi.component.boardviewer.GameBoardViewer;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorToggleAction;
 import yi.editor.settings.EditorSettings;
-import yi.models.go.GameModel;
-import yi.models.go.GameNode;
+import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 
 import java.util.HashSet;
 import java.util.Optional;
 
 /**
- * Combines {@link yi.component.board.GameBoardViewer} with additional components
+ * Combines {@link yi.component.boardviewer.GameBoardViewer} with additional components
  * around the border edges while using the same background image to cover them all.
  */
 public class EditorBoardArea implements EditorComponent<Pane> {

@@ -5,5 +5,5 @@ module yi.component.treeviewer {
     requires yi.component.shared;
     requires yi.core;
 
-    exports yi.component.gametree;
+    exports yi.component.treeviewer;
 }

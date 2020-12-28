@@ -2,7 +2,7 @@ package yi.editor.settings;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-import yi.common.utilities.JSON;
+import yi.component.shared.utilities.JSON;
 import yi.editor.EditorWindow;
 import yi.editor.components.EditorPerspective;
 

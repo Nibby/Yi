@@ -1,8 +1,8 @@
 package yi.editor.settings;
 
 import org.json.JSONObject;
-import yi.common.utilities.JSON;
-import yi.component.board.GameBoardViewer;
+import yi.component.shared.utilities.JSON;
+import yi.component.boardviewer.GameBoardViewer;
 import yi.editor.EditorMain;
 import yi.editor.framework.EditorHelper;
 
