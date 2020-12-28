@@ -10,8 +10,8 @@ import yi.component.shared.component.YiScene;
 import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.component.shared.utilities.SystemUtilities;
-import yi.editor.framework.EditorHelper;
 import yi.editor.components.EditorTextResources;
+import yi.editor.framework.EditorHelper;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;

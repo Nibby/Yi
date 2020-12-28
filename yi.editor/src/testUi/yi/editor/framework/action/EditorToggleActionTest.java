@@ -4,9 +4,9 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
+import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.components.EditorTextResources;
-import yi.editor.EditorUITestBase;
 
 /**
  * Tests the selection state of {@link EditorToggleAction} is behaving correctly

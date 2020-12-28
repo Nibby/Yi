@@ -10,7 +10,6 @@ import java.nio.file.StandardOpenOption
 import java.util.*
 import java.util.function.Function
 import java.util.stream.Collectors
-import kotlin.jvm.Throws
 
 /**
  * Provides the functionality to load a [GameModel] from an
