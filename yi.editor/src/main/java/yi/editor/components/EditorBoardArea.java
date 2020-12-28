@@ -4,8 +4,6 @@ import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
 import yi.common.audio.CommonAudioSets;
 import yi.component.board.GameBoardViewer;
-import yi.editor.EditorMainMenuType;
-import yi.editor.i18n.EditorTextResources;
 import yi.editor.framework.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;

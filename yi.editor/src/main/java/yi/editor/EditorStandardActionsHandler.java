@@ -5,7 +5,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import yi.editor.components.EditorPerspective;
 import yi.editor.framework.action.EditorActionContext;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.components.EditorTextResources;
 import yi.editor.utilities.GameModelUtilities;
 import yi.models.go.*;
 import yi.models.go.docformat.FileFormat;
@@ -15,7 +15,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public final class EditorStandardActionsHandler implements EditorStandardActions.ActionHandler {
+final class EditorStandardActionsHandler implements EditorStandardActions.ActionHandler {
+
+    protected EditorStandardActionsHandler() {
+        // Make inaccessible to exported API
+    }
 
     @Override
     public void handleCreateNewGame(EditorActionContext context) {

@@ -1,4 +1,4 @@
-package yi.editor;
+package yi.editor.components;
 
 import javafx.scene.control.ToggleGroup;
 import yi.component.board.GameBoardViewer;
@@ -8,7 +8,6 @@ import yi.component.board.editmodes.PlayMoveEditMode;
 import yi.component.board.editmodes.StoneEditMode;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorToolAction;
-import yi.editor.i18n.EditorTextResources;
 import yi.models.go.AnnotationType;
 import yi.models.go.StoneColor;
 

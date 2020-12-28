@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.component.YiMenuItem;
 import yi.common.i18n.TextResource;
-import yi.editor.EditorMainMenuType;
+import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.function.Consumer;

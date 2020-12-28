@@ -6,8 +6,6 @@ import yi.common.Property;
 import yi.common.PropertyListener;
 import yi.common.component.YiToggleButton;
 import yi.common.utilities.GuiUtilities;
-import yi.editor.EditorMainMenuType;
-import yi.editor.EditorTool;
 import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorSeparatorAction;

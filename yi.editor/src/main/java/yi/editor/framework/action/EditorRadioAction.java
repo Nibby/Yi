@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.common.BooleanProperty;
 import yi.common.component.YiRadioMenuItem;
 import yi.common.i18n.TextResource;
-import yi.editor.EditorMainMenuType;
+import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.Objects;

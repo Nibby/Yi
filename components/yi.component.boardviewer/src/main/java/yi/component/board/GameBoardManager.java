@@ -29,7 +29,7 @@ public final class GameBoardManager {
     private boolean debugMode = false;
     private GameModel model = null;
 
-    public GameBoardManager() { }
+    protected GameBoardManager() { }
 
     public void setBoardCanvasSize(double componentWidth, double componentHeight, GameModel game) {
         size.compute(componentWidth, componentHeight, game.getBoardWidth(),

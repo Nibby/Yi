@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yi.common.i18n.TextResource;
 import yi.common.utilities.GuiUtilities;
-import yi.editor.EditorMainMenuType;
+import yi.editor.components.EditorMainMenuType;
 import yi.editor.EditorWindow;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.i18n.EditorTextResources;
+import yi.editor.components.EditorTextResources;
 
 import java.util.Comparator;
 import java.util.List;
