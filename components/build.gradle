@@ -1,0 +1,104 @@
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+subprojects { subproject ->
+
+    apply plugin: 'java'
+    apply plugin: 'org.openjfx.javafxplugin'
+
+    def globalConfigurations = rootProject.ext
+    buildDir = file(rootProject.getBuildDir().toString() + "/" + getProject().getName())
+
+    dependencies {
+        compile project(":yi.core")
+
+        if (subproject.name != "yi.component.shared") {
+            compile project(":components:yi.component.shared")
+        }
+
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.21"
+        implementation globalConfigurations.javaFxDependencies.implementation
+
+        testImplementation globalConfigurations.commonDependencies.testImplementation
+        testRuntimeOnly globalConfigurations.commonDependencies.testRuntimeOnly
+    }
+
+    javafx {
+        version = globalConfigurations.javaFxVersion
+        modules = ['javafx.controls', 'javafx.swing', 'javafx.media']
+    }
+
+    configurations {
+        testUiImplementation.extendsFrom testImplementation
+        testUiRuntimeOnly.extendsFrom testRuntimeOnly
+    }
+    
+    idea {
+        module {
+            testSourceDirs += file("$projectDir/src/testUi")
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+
+            resources {
+                srcDir 'src/main/resources'
+            }
+        }
+
+        test {
+            java {
+                srcDirs = ['src/test']
+            }
+        }
+
+        testUi {
+            java {
+                srcDirs = ['src/testUi']
+            }
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    def testScreenshotDir = "${rootProject.buildDir}/testScreenshots"
+
+    task clearTestData() {
+        doLast {
+            delete testScreenshotDir
+        }
+    }
+
+    task testUi(type: Test, dependsOn: clearTestData) {
+        useJUnitPlatform()
+
+        testClassesDirs = sourceSets.testUi.output.classesDirs
+        classpath = sourceSets.testUi.runtimeClasspath
+
+        finalizedBy 'submitTestData'
+    }
+
+    task submitTestData() {
+        doLast {
+            def screenshotDir = "${projectDir}/testScreenshots"
+            copy {
+                from screenshotDir
+                include "**/*.png"
+                into "${rootProject.buildDir}/testScreenshots/${project.getName()}"
+            }
+            delete screenshotDir
+        }
+    }
+
+    dependencies {
+        testUiCompile sourceSets.main.output
+        testUiImplementation rootProject.ext.javaFxDependencies.testUiImplementation
+    }
+}
