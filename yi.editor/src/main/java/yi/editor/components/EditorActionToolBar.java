@@ -2,10 +2,10 @@ package yi.editor.components;
 
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
-import yi.common.Property;
-import yi.common.PropertyListener;
-import yi.common.component.YiToggleButton;
-import yi.common.utilities.GuiUtilities;
+import yi.component.shared.Property;
+import yi.component.shared.PropertyListener;
+import yi.component.shared.component.YiToggleButton;
+import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.EditorWindow;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorSeparatorAction;

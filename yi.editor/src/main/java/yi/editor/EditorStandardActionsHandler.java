@@ -7,8 +7,8 @@ import yi.editor.components.EditorPerspective;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.components.EditorTextResources;
 import yi.editor.utilities.GameModelUtilities;
-import yi.models.go.*;
-import yi.models.go.docformat.FileFormat;
+import yi.core.go.*;
+import yi.core.go.docformat.FileFormat;
 
 import java.io.File;
 import java.io.IOException;

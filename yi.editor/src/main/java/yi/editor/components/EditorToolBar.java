@@ -3,9 +3,9 @@ package yi.editor.components;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import org.jetbrains.annotations.NotNull;
-import yi.common.utilities.GuiUtilities;
-import yi.models.go.GameModel;
-import yi.models.go.GameModelInfo;
+import yi.component.shared.utilities.GuiUtilities;
+import yi.core.go.GameModel;
+import yi.core.go.GameModelInfo;
 
 import static yi.editor.components.EditorTextResources.MOVE_COUNT;
 

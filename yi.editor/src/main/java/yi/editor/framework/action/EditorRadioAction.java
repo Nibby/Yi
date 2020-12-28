@@ -5,9 +5,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import yi.common.BooleanProperty;
-import yi.common.component.YiRadioMenuItem;
-import yi.common.i18n.TextResource;
+import yi.component.shared.BooleanProperty;
+import yi.component.shared.component.YiRadioMenuItem;
+import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 

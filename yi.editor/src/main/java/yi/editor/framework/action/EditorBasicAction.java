@@ -4,8 +4,8 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import yi.common.component.YiMenuItem;
-import yi.common.i18n.TextResource;
+import yi.component.shared.component.YiMenuItem;
+import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 

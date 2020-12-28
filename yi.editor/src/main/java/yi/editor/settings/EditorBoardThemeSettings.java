@@ -3,7 +3,7 @@ package yi.editor.settings;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
-import yi.common.utilities.ComparisonUtilities;
+import yi.component.shared.utilities.ComparisonUtilities;
 
 import java.io.IOException;
 import java.nio.file.Files;

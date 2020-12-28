@@ -1,7 +1,7 @@
 module yi.core {
     requires kotlin.stdlib;
 
-    exports yi.models.go;
-    exports yi.models.go.docformat;
-    exports yi.models.go.rules;
+    exports yi.core.go;
+    exports yi.core.go.docformat;
+    exports yi.core.go.rules;
 }

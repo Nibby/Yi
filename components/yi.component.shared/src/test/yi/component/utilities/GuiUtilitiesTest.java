@@ -2,8 +2,8 @@ package yi.component.utilities;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import yi.common.utilities.ComparisonUtilities;
-import yi.common.utilities.GuiUtilities;
+import yi.component.shared.utilities.ComparisonUtilities;
+import yi.component.shared.utilities.GuiUtilities;
 
 public final class GuiUtilitiesTest {
 

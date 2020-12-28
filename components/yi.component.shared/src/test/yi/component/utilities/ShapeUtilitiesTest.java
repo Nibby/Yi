@@ -3,8 +3,8 @@ package yi.component.utilities;
 import javafx.scene.shape.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import yi.common.utilities.ComparisonUtilities;
-import yi.common.utilities.ShapeUtilities;
+import yi.component.shared.utilities.ComparisonUtilities;
+import yi.component.shared.utilities.ShapeUtilities;
 
 public final class ShapeUtilitiesTest {
 
