@@ -82,7 +82,10 @@ public final class EditorHelper {
 //        I18n.setCurrentLanguage(Language.getSupportedLanguages().get(1));
         SkinManager.useDefaultSkin();
         EditorSettings.load();
-        SoundManager.load(CommonAudioSets.Stones.CERAMIC_BICONVEX); // TODO: Temporary value, extract this to a setting
+
+        if (!isRunningAsTest()) {
+            SoundManager.load(CommonAudioSets.Stones.CERAMIC_BICONVEX); // TODO: Temporary value, extract this to a setting
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             EditorSettings.general.save();

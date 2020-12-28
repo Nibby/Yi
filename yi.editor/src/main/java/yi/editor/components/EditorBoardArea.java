@@ -7,6 +7,7 @@ import yi.component.shared.audio.CommonAudioSets;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.editor.framework.EditorComponent;
+import yi.editor.framework.EditorHelper;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
@@ -30,7 +31,9 @@ public class EditorBoardArea implements EditorComponent<Pane> {
 
     public EditorBoardArea() {
         board = new GameBoardViewer();
-        board.setAudio(CommonAudioSets.Stones.CERAMIC_BICONVEX);
+        if (!EditorHelper.isRunningAsTest()) {
+            board.setAudio(CommonAudioSets.Stones.CERAMIC_BICONVEX);
+        }
 
         toolBar = new EditorActionToolBar();
         toolBar.addSelectedToolChangeListener(newTool -> newTool.apply(board));
