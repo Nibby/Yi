@@ -4,7 +4,7 @@ module yi.component.shared {
     requires javafx.controls;
     requires yi.core;
 
-    exports yi.common;
+    exports yi.component.shared;
     exports yi.component.shared.audio;
     exports yi.component.shared.component;
     exports yi.component.shared.i18n;
