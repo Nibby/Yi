@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class SkinManager {
 
-    private static final Skin SLATE = Skin.fromResources("/skins/slate/", SkinManager.class).orElseThrow();
+    private static final Skin SLATE = Skin.fromResources("/yi/component/shared/skins/slate/", SkinManager.class).orElseThrow();
 
     private static final AtomicReference<Skin> USED_SKIN = new AtomicReference<>(null);
 
