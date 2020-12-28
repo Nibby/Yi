@@ -7,17 +7,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import yi.editor.components.EditorMainMenuType;
-import yi.editor.components.EditorPerspective;
-import yi.editor.framework.action.EditorActionManager;
-import yi.editor.framework.EditorHelper;
-import yi.editor.utilities.GameModelUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.StandardGameRules;
+import yi.editor.components.EditorMainMenuType;
+import yi.editor.components.EditorPerspective;
+import yi.editor.framework.EditorHelper;
+import yi.editor.framework.action.EditorActionManager;
+import yi.editor.utilities.GameModelUtilities;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 @ExtendWith(ApplicationExtension.class)
@@ -27,7 +24,6 @@ public abstract class EditorUITestBase {
     public static void initializeTestEnvironment() {
         EditorHelper.setRunningAsTest(true);
         EditorHelper.setUseSystemMenuBar(false); // So that testFx can find the menu components...
-        EditorHelper.setPreferredSettingsRootPath(getSettingsPathForTests());
     }
 
     protected EditorWindow window;
@@ -81,19 +77,5 @@ public abstract class EditorUITestBase {
                     .findFirst();
         }
         return Optional.empty();
-    }
-
-    private static Path getSettingsPathForTests() {
-        Path currentDir = Paths.get(System.getProperty("user.dir"));
-        if (currentDir.getFileName().endsWith("yi.editor")) {
-            currentDir = currentDir.getParent();
-        }
-
-        Path tempDir = currentDir.resolve("temp");
-        if (Files.exists(tempDir) && Files.isDirectory(tempDir)) {
-            return tempDir;
-        }
-
-        throw new IllegalStateException("Cannot set root path for tests. currentDir: " + currentDir);
     }
 }
