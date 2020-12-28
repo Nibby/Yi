@@ -1,9 +1,11 @@
 rootProject.name = 'Yi'
 
-include 'core'
-include 'common'
-include 'editor'
+def componentProject = "components"
 
-file('common').listFiles().each { folder ->
-    include "common:$folder.name"
+include "yi.core"
+include componentProject
+include "yi.editor"
+
+file(componentProject).listFiles().each { folder ->
+    include "$componentProject:$folder.name"
 }

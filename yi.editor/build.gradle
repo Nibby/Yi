@@ -1,0 +1,97 @@
+import java.nio.file.Paths
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+buildDir = '../build/' + getProject().getName()
+
+dependencies {
+    compile project(":yi.core")
+    compile project(":components:yi.component.boardviewer")
+    compile project(":components:yi.component.treeviewer")
+    compile project(":components:yi.component.commentviewer")
+
+    // JavaFx dependencies
+    implementation rootProject.ext.javaFxDependencies.implementation
+
+    testImplementation rootProject.ext.commonDependencies.testImplementation
+    testRuntimeOnly rootProject.ext.commonDependencies.testRuntimeOnly
+    // Integration test dependencies are beneath where testUi task is defined.
+}
+
+javafx {
+    version = "11.0.2"
+    modules = ['javafx.controls', 'javafx.media', 'javafx.web']
+}
+
+idea {
+    module {
+        testSourceDirs += file("$projectDir/src/testUi")
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir('src/main/java')
+        }
+
+        resources {
+            srcDir('src/main/resources')
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+
+    testUi {
+        java {
+            srcDirs = ['src/testUi']
+        }
+    }
+}
+
+application {
+    def workingDirectory = Paths.get(System.getProperty("user.dir"))
+    // This is to work around a strange bug where the property "user.dir" returns
+    // the current module path on macOS, but returns Yi project path on Windows 10.
+    if (project.name == workingDirectory.getFileName().toString()) {
+        workingDirectory = workingDirectory.getParent()
+    }
+    workingDirectory = workingDirectory.resolve("temp")
+
+    mainModule = 'yi.editor'
+    mainClassName = 'yi.editor.EditorMain'
+    applicationDefaultJvmArgs = [
+        "-ea",
+        "-Duser.dir=$workingDirectory",
+        "-Dyi.fromSource=true"
+    ]
+}
+
+configurations {
+    testUiImplementation.extendsFrom testImplementation
+    testUiRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+test {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.test.output
+}
+
+task testUi(type: Test) {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.testUi.output.classesDirs
+    classpath = sourceSets.testUi.runtimeClasspath
+}
+
+dependencies {
+    testUiCompile sourceSets.main.output
+    testUiImplementation rootProject.ext.javaFxDependencies.testUiImplementation
+}

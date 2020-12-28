@@ -1,10 +1,15 @@
 ext {
-    commonDependencies = [
-            testImplementation: ['org.junit.jupiter:junit-jupiter-api:5.6.0'],
-            testRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.6.0'],
+    // Using JUnit 5.4.2 because tests work out of the box. If using higher version,
+    // we will probably need to add '--add-modules org.junit.platform.launcher' to the
+    // VM args when running tests, according to:
+    // https://youtrack.jetbrains.com/issue/IDEA-223700#focus=Comments-27-3714790.0-0
 
-            testUiImplementation: ['org.junit.jupiter:junit-jupiter-api:5.6.0'],
-            testUiRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.6.0'],
+    commonDependencies = [
+            testImplementation: ['org.junit.jupiter:junit-jupiter-api:5.4.2'],
+            testRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.4.2'],
+
+            testUiImplementation: ['org.junit.jupiter:junit-jupiter-api:5.4.2'],
+            testUiRuntimeOnly: ['org.junit.jupiter:junit-jupiter-engine:5.4.2'],
     ]
 
     javaFxDependencies = [
