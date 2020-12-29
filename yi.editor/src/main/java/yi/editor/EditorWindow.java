@@ -183,6 +183,7 @@ public class EditorWindow extends Stage {
             return; // Avoid flickering when setting the same layout
         }
         boardArea.setContentForLayout(newLayout);
+        toolBar.setContentForLayout(newLayout);
 
         var content = newLayout.getContent(this);
 
