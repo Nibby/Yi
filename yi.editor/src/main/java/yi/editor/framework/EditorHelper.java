@@ -133,6 +133,7 @@ public final class EditorHelper {
             throw new IllegalStateException("initializeContext() should only be called " +
                     "once in production");
         }
+        EditorOpenFileHandler.initialize();
         EditorFontManager.loadBundledFonts();
         YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();

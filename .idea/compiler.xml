@@ -3,4 +3,9 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="11" />
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Yi.yi.editor.main" options="--add-exports javafx.graphics/com.sun.glass.ui=yi.editor" />
+    </option>
+  </component>
 </project>
