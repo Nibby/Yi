@@ -95,8 +95,12 @@ public final class EditorSettings {
      * @return The directory path to use as top-level settings directory.
      */
     private static Path resolveRootPath() throws IOException {
-        return EditorHelper.getPreferredSettingsRootPath()
+        Path rootPath = EditorHelper.getPreferredSettingsRootPath()
                 .orElse(Paths.get(System.getProperty("user.dir")).toAbsolutePath());
+        if (!Files.isDirectory(rootPath)) {
+            Files.createDirectories(rootPath);
+        }
+        return rootPath;
     }
 
     /**

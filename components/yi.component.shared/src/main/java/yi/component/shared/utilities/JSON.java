@@ -6,11 +6,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Scanner;
 
 public final class JSON {
 
@@ -30,6 +32,16 @@ public final class JSON {
         BufferedReader reader = Files.newBufferedReader(jsonFilePath, Charset.defaultCharset());
         reader.lines().forEach(line -> jsonSource.append(line).append("\n"));
         reader.close();
+        return new JSONObject(jsonSource.toString());
+    }
+
+    public static JSONObject read(InputStream jsonFileInputStream) {
+        StringBuilder jsonSource = new StringBuilder();
+        Scanner scanner = new Scanner(jsonFileInputStream);
+        while (scanner.hasNextLine()) {
+            jsonSource.append(scanner.nextLine()).append("\n");
+        }
+        scanner.close();
         return new JSONObject(jsonSource.toString());
     }
 
