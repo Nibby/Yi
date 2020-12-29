@@ -1,19 +1,16 @@
 package yi.editor.framework;
 
 
+import com.sun.glass.ui.Application;
 import javafx.application.Platform;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
 import yi.editor.EditorWindow;
 
-import javax.swing.*;
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 
 /**
@@ -29,14 +26,15 @@ public final class EditorOpenFileHandler {
     private static boolean hasPreInitializationOpenFileEvent = false;
 
     public static void initialize() {
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)) {
-            Desktop.getDesktop().setOpenFileHandler(handler -> {
-                List<File> files = handler.getFiles();
-                for (File file : files) {
-                    handleOpenFileRequest(file);
+        Application.GetApplication().setEventHandler(new Application.EventHandler() {
+            @Override
+            public void handleOpenFilesAction(Application app, long time, String[] filePaths) {
+                super.handleOpenFilesAction(app, time, filePaths);
+                for (String filePath : filePaths) {
+                    handleOpenFileRequest(new File(filePath));
                 }
-            });
-        }
+            }
+        });
     }
 
     private static void handleOpenFileRequest(File file) {

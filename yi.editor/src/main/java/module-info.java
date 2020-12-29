@@ -3,7 +3,7 @@ module yi.editor {
     requires yi.component.shared;
     requires org.jetbrains.annotations;
     requires javafx.controls;
-    requires java.desktop;
+    requires javafx.graphics;
     requires yi.component.boardviewer;
     requires yi.component.treeviewer;
     requires yi.component.commentviewer;

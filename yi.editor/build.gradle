@@ -67,23 +67,28 @@ sourceSets {
 
 def workingDirectory = rootProject.projectDir.absoluteFile.toPath().resolve("temp").toString()
 
-def jvmArgRunningFromSource = "-Dyi.fromSource=true"
-def jvmArgUserDirFromSource = "-Duser.dir=$workingDirectory"
-def jvmArgEnableAssertions = "-ea"
+def jvmArgsFromSource = [
+        "-Dyi.fromSource=true",
+        "-Duser.dir=$workingDirectory",
+        "-ea",
+]
 
 application {
     mainModule = 'yi.editor'
     mainClassName = 'yi.editor.EditorMain'
 
+    applicationDefaultJvmArgs = [
+        "--add-exports", "javafx.graphics/com.sun.glass.ui=yi.editor"
+    ]
     // This should be part of IntelliJ's run configuration.
     // When running from Gradle, should also add '-Dyi.fromSource=true' to the run task
     if (System.getProperty("yi.fromSource") == "true") {
-        applicationDefaultJvmArgs += [
-                jvmArgEnableAssertions,
-                jvmArgUserDirFromSource,
-                jvmArgRunningFromSource
-        ]
+        applicationDefaultJvmArgs += jvmArgsFromSource
     }
+}
+
+compileJava {
+    options.compilerArgs += [ "--add-exports", "javafx.graphics/com.sun.glass.ui=yi.editor" ]
 }
 
 configurations {
@@ -94,18 +99,14 @@ configurations {
 test {
     useJUnitPlatform()
     testClassesDirs = sourceSets.test.output
-    jvmArgs += [ jvmArgEnableAssertions,
-                 jvmArgUserDirFromSource,
-                 jvmArgRunningFromSource ]
+    jvmArgs += [ jvmArgsFromSource ]
 }
 
 task testUi(type: Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.testUi.output.classesDirs
     classpath = sourceSets.testUi.runtimeClasspath
-    jvmArgs += [ jvmArgEnableAssertions,
-                 jvmArgUserDirFromSource,
-                 jvmArgRunningFromSource ]
+    jvmArgs += [ jvmArgsFromSource ]
 }
 
 dependencies {
