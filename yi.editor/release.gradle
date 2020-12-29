@@ -60,6 +60,6 @@ rpm.dependsOn prepareArtifactsForPackaging
 dmg {
     applicationIdentifier = "codes.nibby.yi"
     windowWidth = 500
-    windowHeight = 350
-    iconSize = 64
+    windowHeight = 400
+    iconSize = 128
 }
