@@ -60,11 +60,16 @@ def workingDirectory = rootProject.projectDir.absoluteFile.toPath().resolve("tem
 application {
     mainModule = 'yi.editor'
     mainClassName = 'yi.editor.EditorMain'
-    applicationDefaultJvmArgs = [
-        "-ea",
-//        "-Duser.dir=$workingDirectory",
-//        "-Dyi.fromSource=true"
-    ]
+
+    // This should be part of IntelliJ's run configuration.
+    // When running from Gradle, should also add '-Dyi.fromSource=true' to the run task
+    if (System.getProperty("yi.fromSource") == "true") {
+        applicationDefaultJvmArgs += [
+                "-ea",
+                "-Duser.dir=$workingDirectory",
+                "-Dyi.fromSource=true"
+        ]
+    }
 }
 
 configurations {
