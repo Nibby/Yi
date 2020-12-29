@@ -33,6 +33,10 @@ class PrepareArtifactsForPackagingTask extends DefaultTask {
         copyAssembleDistArtifactsToReleaseDir(project);
     }
 
+    /*
+        There's probably a better way to do this, such as copying all the :jar output
+        for the build target rather than extracting the assembled dist archive.
+     */
     private static void copyAssembleDistArtifactsToReleaseDir(Project project) {
         Path buildDir = project.buildDir.toPath()
         Path distDir = buildDir.resolve("distributions")
@@ -112,6 +116,12 @@ class PrepareArtifactsForPackagingTask extends DefaultTask {
         BuildUtilities.copyDirectoriesRecursive(source, destination)
     }
 
+    /*
+        :dmg task fails if 'MacOS' and 'Info.plist' is missing in the
+        subproject 'release' directory, so we pretend they do exist. AFAIK the copied
+        Info.plist won't be merged with the final generated one, so not sure why it is
+        required in the first place. Possibly a bug?
+     */
     private static void createMacOSPackagingEnvironment(Project project) {
         Path releaseDir = YiReleasePlugin.getReleaseDirectoryAsPath(project)
         Path macOSDir = releaseDir.resolve("MacOS")

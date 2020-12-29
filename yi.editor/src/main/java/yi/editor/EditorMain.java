@@ -2,23 +2,13 @@ package yi.editor;
 
 
 import javafx.application.Application;
-import javafx.stage.Stage;
-import yi.editor.framework.EditorHelper;
-import yi.editor.settings.EditorSettings;
-import yi.editor.utilities.GameModelUtilities;
+import yi.editor.framework.EditorOpenFileHandler;
 
-public class EditorMain extends Application {
+public class EditorMain {
 
     public static void main(String[] args) {
-        launch(args);
+        EditorOpenFileHandler.initialize();
+        Application.launch(EditorFxMain.class, args);
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        EditorHelper.initializeContext();
-
-        var gameModel = GameModelUtilities.createGameModel();
-        var window = new EditorWindow(gameModel, EditorSettings.general.getPerspective());
-        window.show();
-    }
 }

@@ -27,6 +27,8 @@ import yi.editor.framework.action.EditorActionManager;
 import yi.editor.settings.EditorSettings;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -35,6 +37,7 @@ import java.util.Objects;
 public class EditorWindow extends Stage {
 
     private static final GameModel DEFAULT_MODEL = new GameModel(1, 1, StandardGameRules.CHINESE);
+    private static final List<EditorWindow> ACTIVE_WINDOWS = new ArrayList<>();
 
     private final Property<EditorPerspective> perspective = new Property<>(EditorPerspective.NONE);
     private final EditorActionManager actionManager;
@@ -115,6 +118,9 @@ public class EditorWindow extends Stage {
         setPerspective(perspective);
         setGameModel(gameModel);
         setTitle(EditorHelper.getProgramName());
+
+        ACTIVE_WINDOWS.add(this);
+        onCloseRequestProperty().addListener(event -> ACTIVE_WINDOWS.remove(this));
     }
 
     /**
@@ -286,5 +292,9 @@ public class EditorWindow extends Stage {
 
     public EditorPerspective getPerspective() {
         return perspective.get();
+    }
+
+    public static int getActiveWindowCount() {
+        return ACTIVE_WINDOWS.size();
     }
 }

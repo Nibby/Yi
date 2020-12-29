@@ -41,11 +41,22 @@ setupBuilder {
     desktopStarter {
         displayName = applicationName
         description = "Go game record editor"
+        mimeTypes = "text/html;text"
+        categories = "software;game"
 
         javaVMArguments = [
+                // TODO: This --module-path value is for macOS only. Might need to figure
+                //       out how to set different VM args for different OSes.
                 "--module-path", "\$APP_ROOT/Contents/Java/",
                 "--module", "yi.editor/yi.editor.EditorMain"
         ]
+
+        documentType {
+            fileExtension = [ "sgf" ]
+            name = "Go Game File"
+            mimetype = "application/sgf"
+            role = "Editor"
+        }
     }
 }
 
