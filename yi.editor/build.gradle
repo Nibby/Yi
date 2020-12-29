@@ -99,14 +99,12 @@ configurations {
 test {
     useJUnitPlatform()
     testClassesDirs = sourceSets.test.output
-    jvmArgs += [ jvmArgsFromSource ]
 }
 
 task testUi(type: Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.testUi.output.classesDirs
     classpath = sourceSets.testUi.runtimeClasspath
-    jvmArgs += [ jvmArgsFromSource ]
 }
 
 dependencies {
