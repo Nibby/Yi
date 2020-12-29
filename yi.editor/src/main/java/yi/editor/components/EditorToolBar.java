@@ -33,16 +33,11 @@ public class EditorToolBar extends ToolBar {
 
         getItems().add(GuiUtilities.createStaticSpacer(4));
         getItems().add(playerBlackName);
-        if (!playerBlackRank.getText().isBlank()) {
-            getItems().add(playerBlackRank);
-        }
+        getItems().add(playerBlackRank);
         getItems().add(GuiUtilities.createStaticSpacer(8));
 
         getItems().add(playerWhiteName);
-        if (!playerWhiteRank.getText().isBlank()) {
-            getItems().add(playerWhiteRank);
-        }
-
+        getItems().add(playerWhiteRank);
         getItems().add(GuiUtilities.createDynamicSpacer());
 
         getItems().add(moveLabel);
