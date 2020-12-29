@@ -62,8 +62,8 @@ application {
     mainClassName = 'yi.editor.EditorMain'
     applicationDefaultJvmArgs = [
         "-ea",
-        "-Duser.dir=$workingDirectory",
-        "-Dyi.fromSource=true"
+//        "-Duser.dir=$workingDirectory",
+//        "-Dyi.fromSource=true"
     ]
 }
 

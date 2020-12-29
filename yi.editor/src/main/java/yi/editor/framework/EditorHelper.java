@@ -1,21 +1,20 @@
 package yi.editor.framework;
 
 import javafx.scene.text.Font;
+import org.jetbrains.annotations.Nullable;
 import yi.component.shared.audio.CommonAudioSets;
 import yi.component.shared.audio.SoundManager;
 import yi.component.shared.component.FontManager;
 import yi.component.shared.component.SkinManager;
 import yi.component.shared.component.YiScene;
 import yi.component.shared.utilities.SystemUtilities;
-import yi.editor.EditorMain;
+import yi.editor.components.EditorFontManager;
 import yi.editor.components.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.settings.EditorSettings;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Global helper class that manages various startup configurations for the editor
@@ -28,6 +27,7 @@ public final class EditorHelper {
 
     private static boolean useSystemMenuBar = SystemUtilities.isMac();
     private static boolean runningAsTest = false;
+    private static Path preferredSettingsRootPath = null;
 
     private EditorHelper() {
         // Utility class, no instantiation
@@ -100,13 +100,31 @@ public final class EditorHelper {
     }
 
     /**
+     * Sets a path to save settings data, which will override the default settings path
+     * determined by {@link EditorSettings} when the application starts up.
+     *
+     * @param path Settings data override path.
+     */
+    public static synchronized void setPreferredSettingsRootPath(@Nullable Path path) {
+        EditorHelper.preferredSettingsRootPath = path;
+    }
+
+    /**
+     * @return Settings data override path.
+     * @see #setPreferredSettingsRootPath(Path)
+     */
+    public static Optional<Path> getPreferredSettingsRootPath() {
+        return Optional.ofNullable(preferredSettingsRootPath);
+    }
+
+    /**
      * Initializes various core components as part of the startup procedure, before
      * any {@link yi.editor.EditorWindow} is created.
      *
      * This step should only be performed once upon startup.
      */
     public static void initializeContext() {
-        loadBundledFonts();
+        EditorFontManager.loadBundledFonts();
         YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
@@ -123,24 +141,5 @@ public final class EditorHelper {
             EditorSettings.general.save();
             EditorSettings.accelerator.save();
         }));
-    }
-
-    private static void loadBundledFonts() {
-        final String FONT_RESOURCE_DIR = "/yi/editor/fonts/";
-        URI fontDirectoryUri;
-
-        try {
-            fontDirectoryUri = EditorMain.class.getResource(FONT_RESOURCE_DIR).toURI();
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Malformed font resource directory value: " +
-                    "\"" + FONT_RESOURCE_DIR + "\"");
-        }
-
-        var fontDirectoryAsPath = Paths.get(fontDirectoryUri);
-        try {
-            FontManager.loadFontsInDirectory(fontDirectoryAsPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
