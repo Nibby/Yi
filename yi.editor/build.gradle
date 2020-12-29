@@ -57,6 +57,10 @@ sourceSets {
 
 def workingDirectory = rootProject.projectDir.absoluteFile.toPath().resolve("temp").toString()
 
+def jvmArgRunningFromSource = "-Dyi.fromSource=true"
+def jvmArgUserDirFromSource = "-Duser.dir=$workingDirectory"
+def jvmArgEnableAssertions = "-ea"
+
 application {
     mainModule = 'yi.editor'
     mainClassName = 'yi.editor.EditorMain'
@@ -65,9 +69,9 @@ application {
     // When running from Gradle, should also add '-Dyi.fromSource=true' to the run task
     if (System.getProperty("yi.fromSource") == "true") {
         applicationDefaultJvmArgs += [
-                "-ea",
-                "-Duser.dir=$workingDirectory",
-                "-Dyi.fromSource=true"
+                jvmArgEnableAssertions,
+                jvmArgUserDirFromSource,
+                jvmArgRunningFromSource
         ]
     }
 }
@@ -80,14 +84,18 @@ configurations {
 test {
     useJUnitPlatform()
     testClassesDirs = sourceSets.test.output
-    jvmArgs += [ "-Duser.dir=$workingDirectory" ]
+    jvmArgs += [ jvmArgEnableAssertions,
+                 jvmArgUserDirFromSource,
+                 jvmArgRunningFromSource ]
 }
 
 task testUi(type: Test) {
     useJUnitPlatform()
     testClassesDirs = sourceSets.testUi.output.classesDirs
     classpath = sourceSets.testUi.runtimeClasspath
-    jvmArgs += [ "-Duser.dir=$workingDirectory" ]
+    jvmArgs += [ jvmArgEnableAssertions,
+                 jvmArgUserDirFromSource,
+                 jvmArgRunningFromSource ]
 }
 
 dependencies {
