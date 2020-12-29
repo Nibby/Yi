@@ -6,7 +6,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 
-import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -123,24 +122,8 @@ class CreateJreImageTask {
         Path dirPath = Paths.get(dir)
         if (Files.exists(dirPath) || Files.isDirectory(dirPath)) {
             logger.lifecycle("Output directory already exists, deleting it...")
-            removeDirectory(dirPath)
+            BuildUtilities.removeDirectoryRecursive(dirPath)
             logger.lifecycle("Done.")
-        }
-    }
-
-    private static void removeDirectory(Path dir) {
-        if (Files.exists(dir)) {
-            if (Files.isDirectory(dir)) {
-                DirectoryStream<Path> contents = Files.newDirectoryStream(dir)
-                for (Path content in contents) {
-                    if (Files.isDirectory(content)) {
-                        removeDirectory(content)
-                    } else {
-                        Files.delete(content)
-                    }
-                }
-            }
-            Files.delete(dir)
         }
     }
 
