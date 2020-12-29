@@ -1,3 +1,6 @@
+import yi.buildsrc.release.BuildUtilities
+import yi.buildsrc.release.YiReleasePlugin
+
 ext {
     // Using JUnit 5.4.2 because tests work out of the box. If using higher version,
     // we will probably need to add '--add-modules org.junit.platform.launcher' to the
@@ -45,5 +48,12 @@ allprojects {
 
     java {
         modularity.inferModulePath = true
+    }
+
+    clean {
+        doLast {
+            def releaseDir = YiReleasePlugin.getReleaseDirectoryAsPath(project)
+            BuildUtilities.removeDirectoryRecursive(releaseDir)
+        }
     }
 }

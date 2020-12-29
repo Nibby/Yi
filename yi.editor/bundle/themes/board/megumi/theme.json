@@ -1,9 +1,0 @@
-{
-  "stoneShadowSize": 4,
-  "stoneShadowBlur": 2,
-  "stoneShadowColor": "80,80,80,0.33",
-  "boardGridThickness": 1,
-  "boardGridColor": "106,69,27,1.0",
-  "boardImage": "board.png",
-  "backgroundImage": "background.jpg"
-}

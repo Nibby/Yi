@@ -1,9 +1,15 @@
-import yi.buildsrc.release.YiReleasePlugin
+buildscript {
+    dependencies {
+        apply from: 'https://raw.githubusercontent.com/i-net-software/SetupBuilder/master/scripts/SetupBuilderVersion.gradle'
+        classpath 'gradle.plugin.de.inetsoftware:SetupBuilder:4.8.7'
+    }
+}
 
 plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
+    id "de.inetsoftware.appbundler" version "4.8.7"
 }
 
 apply from: "release.gradle"

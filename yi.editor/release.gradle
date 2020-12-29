@@ -1,6 +1,65 @@
+import yi.buildsrc.release.TargetPlatform
 import yi.buildsrc.release.YiReleasePlugin
 
+import java.nio.file.Paths
+
 apply plugin: YiReleasePlugin
+apply plugin: 'de.inetsoftware.setupbuilder'
 
+def releaseDir = YiReleasePlugin.getReleaseDirectory(project)
+def jreDir = Paths.get(releaseDir).resolve("jre").toAbsolutePath().toString()
+def artifactsDir = Paths.get(releaseDir).resolve("artifacts").toAbsolutePath().toString()
+
+jlinkOptions.jdkHome = null // If null, uses JAVA_HOME env value instead
 jlinkOptions.modules = [ 'java.base' ]
+jlinkOptions.outputDir = jreDir
 
+def applicationName = rootProject.name // TODO: Should just define a name for the editor project
+def applicationIcon = projectDir.toPath().resolve("packaging").resolve("macOS").resolve("AppIcon.icns")
+        .toAbsolutePath().toString()
+
+setupBuilder {
+    vendor = 'Sizhe (Kevin) Yang'
+    application = applicationName
+    appIdentifier = "codes.nibby.yi"
+    version = project.version
+//    licenseFile = Paths.get(rootProject.projectDir.toString()).resolve('LICENSE').toFile()
+    icons = [ applicationIcon ]
+    // all files for all platforms
+    from(artifactsDir) {
+        include '*.jar'
+    }
+    mainJar = "${project.name}-${project.version}.jar"
+    mainClass = "yi.editor.EditorMain"
+
+    // Bundle a custom JRE image tailored for this application.
+    // See buildSrc/YiReleasePlugin for details.
+    bundleJre = 11
+    bundleJreTarget = "runtime"
+    failOnEmptyFrom = "true"
+
+    desktopStarter {
+        displayName = applicationName
+        description = "Go game record editor"
+
+        javaVMArguments = [
+                "--module-path", "\$APP_ROOT/Contents/Java/",
+                "--module", "yi.editor/yi.editor.EditorMain"
+        ]
+    }
+}
+
+// This task is provided by YiReleasePlugin which expands the artifacts produced by
+// 'assembleDist' to the project 'release' directory. This should contain all the jars
+// used by the editor application.
+dmg.dependsOn prepareArtifactsForPackaging
+deb.dependsOn prepareArtifactsForPackaging
+msi.dependsOn prepareArtifactsForPackaging
+rpm.dependsOn prepareArtifactsForPackaging
+
+dmg {
+    applicationIdentifier = "codes.nibby.yi"
+    windowWidth = 500
+    windowHeight = 350
+    iconSize = 64
+}
