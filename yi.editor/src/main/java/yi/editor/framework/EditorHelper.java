@@ -28,6 +28,7 @@ public final class EditorHelper {
     private static boolean useSystemMenuBar = SystemUtilities.isMac();
     private static boolean runningAsTest = false;
     private static Path preferredSettingsRootPath = null;
+    private static boolean isInitialized = false;
 
     private EditorHelper() {
         // Utility class, no instantiation
@@ -117,13 +118,21 @@ public final class EditorHelper {
         return Optional.ofNullable(preferredSettingsRootPath);
     }
 
+    public static boolean isInitialized() {
+        return isInitialized;
+    }
+
     /**
      * Initializes various core components as part of the startup procedure, before
      * any {@link yi.editor.EditorWindow} is created.
      *
      * This step should only be performed once upon startup.
      */
-    public static void initializeContext() {
+    public static synchronized void initializeContext() {
+        if (isInitialized && !isRunningAsTest()) {
+            throw new IllegalStateException("initializeContext() should only be called " +
+                    "once in production");
+        }
         EditorFontManager.loadBundledFonts();
         YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();
@@ -141,5 +150,11 @@ public final class EditorHelper {
             EditorSettings.general.save();
             EditorSettings.accelerator.save();
         }));
+
+        isInitialized = true;
+
+        if (!isRunningAsTest()) {
+            EditorOpenFileHandler.loadAllQueuedOpenFiles();
+        }
     }
 }
