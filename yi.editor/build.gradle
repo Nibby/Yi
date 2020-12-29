@@ -1,8 +1,12 @@
+import yi.buildsrc.release.YiReleasePlugin
+
 plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
+
+apply from: "release.gradle"
 
 buildDir = '../build/' + getProject().getName()
 

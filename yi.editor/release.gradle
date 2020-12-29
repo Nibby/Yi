@@ -1,0 +1,6 @@
+import yi.buildsrc.release.YiReleasePlugin
+
+apply plugin: YiReleasePlugin
+
+jlinkOptions.modules = [ 'java.base' ]
+
