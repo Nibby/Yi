@@ -10,7 +10,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -61,7 +60,7 @@ public final class EditorGeneralSettings extends EditorSettingsModule {
         settings.put(KEY_CONTENT_LAYOUT, perspective.name());
         settings.put(KEY_SHOW_BOARD_COORDINATES, showBoardCoordinates);
 
-        Path file = Paths.get(settingsFile);
+        Path file = EditorSettings.getRootPath().resolve(settingsFile);
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
             writer.write(settings.toString(4));
             writer.flush();

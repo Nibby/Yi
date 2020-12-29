@@ -8,7 +8,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 public final class EditorAcceleratorSettings extends EditorSettingsModule {
@@ -60,7 +59,7 @@ public final class EditorAcceleratorSettings extends EditorSettingsModule {
             settings.put(accelerator.getId(), accelerator.getKeyCombination().getName());
         }
 
-        Path file = Paths.get(settingsFile);
+        Path file = EditorSettings.getRootPath().resolve(settingsFile);
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
             writer.write(settings.toString(4));
             writer.flush();
