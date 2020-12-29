@@ -133,7 +133,7 @@ public final class EditorHelper {
             throw new IllegalStateException("initializeContext() should only be called " +
                     "once in production");
         }
-        EditorOpenFileHandler.initialize();
+        EditorApplicationEventHandler.initialize();
         EditorFontManager.loadBundledFonts();
         YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();
@@ -155,7 +155,7 @@ public final class EditorHelper {
         isInitialized = true;
 
         if (!isRunningAsTest()) {
-            EditorOpenFileHandler.loadAllQueuedOpenFiles();
+            EditorApplicationEventHandler.loadAllQueuedOpenFiles();
         }
     }
 }
