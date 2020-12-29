@@ -6,7 +6,9 @@ import yi.component.shared.utilities.JSON;
 import yi.editor.EditorMain;
 import yi.editor.framework.EditorHelper;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -95,12 +97,33 @@ public final class EditorSettings {
      * @return The directory path to use as top-level settings directory.
      */
     private static Path resolveRootPath() throws IOException {
-        Path rootPath = EditorHelper.getPreferredSettingsRootPath()
-                .orElse(Paths.get(System.getProperty("user.dir")).toAbsolutePath());
+        Path rootPath = EditorHelper.getPreferredSettingsRootPath().orElse(getDefaultRootPath());
+
         if (!Files.isDirectory(rootPath)) {
             Files.createDirectories(rootPath);
         }
+
+        // Test directory writable
+        Path tempFile = rootPath.resolve("test-writable");
+        try (BufferedWriter writer = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+            writer.write("x");
+        } catch (IOException e) {
+            // TODO: Prompt user to set a new location?
+            throw new IllegalStateException("Settings root directory is not writable!", e);
+        }
+        Files.deleteIfExists(tempFile);
+
         return rootPath;
+    }
+
+    private static Path getDefaultRootPath() {
+        Path path;
+        if (EditorHelper.isRunningFromSource()) {
+            path = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
+        } else {
+            path = Paths.get(System.getProperty("user.home")).resolve(EditorHelper.getProgramName());
+        }
+        return path;
     }
 
     /**
