@@ -133,7 +133,7 @@
 }
 
 .editor-move-number-hud-label {
-  -fx-text-fill: white;
+  -fx-text-fill: #afafaf;
 }
 
 .editor-comment-viewer {
