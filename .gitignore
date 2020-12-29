@@ -212,4 +212,4 @@ gradle-app.setting
 
 **/testScreenshots
 temp/
-release/**
+release/
