@@ -3,6 +3,7 @@ module yi.component.shared {
     requires javafx.media;
     requires javafx.controls;
     requires yi.core;
+    requires json;
 
     exports yi.component.shared;
     exports yi.component.shared.audio;

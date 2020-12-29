@@ -4,10 +4,14 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
 import yi.component.shared.utilities.ComparisonUtilities;
+import yi.component.shared.utilities.JSON;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -15,6 +19,7 @@ import java.util.Optional;
  */
 public final class EditorBoardThemeSettings extends EditorSettingsModule {
 
+    private static final String DEFAULT_THEME_DIRECTORY = "/yi/editor/themes/";
     private static final String THEME_SETTINGS_FILE = "theme.json";
 
     // JSON keys
@@ -42,42 +47,61 @@ public final class EditorBoardThemeSettings extends EditorSettingsModule {
 
     @Override
     public void load() {
-        Path themeDirectory = EditorSettings.getRootPath()
-                                      .resolve(EditorSettings.THEME_DIRECTORY_NAME)
-                                      .resolve("board");
-        if (!Files.exists(themeDirectory)) {
-            try {
-                Files.createDirectories(themeDirectory);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        String selectedThemeDirectory = getSelectedThemeDirectory();
 
-        Path selectedThemeDirectory = themeDirectory.resolve(getSelectedThemeDirectory());
-        if (!Files.exists(selectedThemeDirectory)) {
-            throw new IllegalStateException("Cannot find board theme: theme directory \""
-                    + selectedThemeDirectory + "\" is missing!");
+        loadThemeSettings(selectedThemeDirectory);
+    }
+
+    private void loadThemeSettings(String selectedThemeDirectory) {
+        final Path customThemeDir = EditorSettings.getRootPath()
+                .resolve(EditorSettings.THEME_DIRECTORY_NAME).resolve("board");
+
+        Path selectedThemeInCustomThemeDir = customThemeDir.resolve(selectedThemeDirectory);
+        if (Files.isDirectory(selectedThemeInCustomThemeDir)) {
+            loadCustomTheme(customThemeDir, selectedThemeDirectory);
+        } else {
+            loadDefaultTheme(selectedThemeDirectory);
         }
+    }
+
+    private void loadCustomTheme(Path customThemeDir, String selectedThemeDirectory) {
+        String themeDir = customThemeDir.resolve(selectedThemeDirectory)
+                .toAbsolutePath().toString();
+        String jsonFile = themeDir + File.separator + THEME_SETTINGS_FILE;
 
         try {
-            EditorSettings.readJSON(selectedThemeDirectory.resolve(THEME_SETTINGS_FILE))
-                    .ifPresent(settingsJson -> this.loadFromJson(selectedThemeDirectory, settingsJson));
+            EditorSettings.readJSON(jsonFile).ifPresent(settingsJson -> this.loadFromJson(themeDir, settingsJson, true));
         } catch (IOException e) {
+            // TODO: Error handling
             e.printStackTrace();
         }
     }
 
-    private void loadFromJson(Path themeDirectory, JSONObject themeSettings) {
+    private void loadDefaultTheme(String selectedThemeDirectory) {
+        String themeDir = DEFAULT_THEME_DIRECTORY + selectedThemeDirectory;
+        // We just have to assume it exists at this point, otherwise something is horribly
+        // wrong.
+        String jsonFile = themeDir + "/" + THEME_SETTINGS_FILE;
+        InputStream jsonFileInputStream = EditorBoardThemeSettings.class.getResourceAsStream(jsonFile);
+        JSONObject json = JSON.read(jsonFileInputStream);
+        loadFromJson(themeDir, json, false);
+    }
+
+    private void loadFromJson(String themeDirectory, JSONObject themeSettings, boolean isCustomTheme) {
         stoneShadowSize = themeSettings.getDouble(KEY_STONE_SHADOW_SIZE);
         stoneShadowBlur = themeSettings.getDouble(KEY_STONE_SHADOW_BLUR);
         parseColor(themeSettings.getString(KEY_STONE_SHADOW_COLOR)).ifPresent(color -> stoneShadowColor = color);
         boardGridThickness = themeSettings.getDouble(KEY_BOARD_GRID_THICKNESS);
         parseColor(themeSettings.getString(KEY_BOARD_GRID_COLOR)).ifPresent(color -> boardGridColor = color);
 
-        loadOptionalImage(themeDirectory, themeSettings, KEY_BLACK_STONE_IMAGE).ifPresent(image -> blackStoneImage = image);
-        loadOptionalImage(themeDirectory, themeSettings, KEY_WHITE_STONE_IMAGE).ifPresent(image -> whiteStoneImage = image);
-        loadOptionalImage(themeDirectory, themeSettings, KEY_BOARD_IMAGE).ifPresent(image -> boardImage = image);
-        loadOptionalImage(themeDirectory, themeSettings, KEY_BACKGROUND_IMAGE).ifPresent(image -> backgroundImage = image);
+        loadOptionalImage(isCustomTheme, themeDirectory, themeSettings, KEY_BLACK_STONE_IMAGE)
+                .ifPresent(image -> blackStoneImage = image);
+        loadOptionalImage(isCustomTheme, themeDirectory, themeSettings, KEY_WHITE_STONE_IMAGE)
+                .ifPresent(image -> whiteStoneImage = image);
+        loadOptionalImage(isCustomTheme, themeDirectory, themeSettings, KEY_BOARD_IMAGE)
+                .ifPresent(image -> boardImage = image);
+        loadOptionalImage(isCustomTheme, themeDirectory, themeSettings, KEY_BACKGROUND_IMAGE)
+                .ifPresent(image -> backgroundImage = image);
     }
 
     /**
@@ -127,16 +151,38 @@ public final class EditorBoardThemeSettings extends EditorSettingsModule {
         return colorValue;
     }
 
-    private Optional<Image> loadOptionalImage(Path themeDirectory, JSONObject themeSettings, String key) {
-        if (themeSettings.has(key)) {
-            Path imagePath = themeDirectory.resolve(themeSettings.getString(key));
-            try {
-                return Optional.of(new Image(Files.newInputStream(imagePath)));
+    private Optional<Image> loadOptionalImage(boolean isCustomTheme, String themeDirectory,
+                                              JSONObject themeSettings, String key) {
 
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (themeSettings.has(key)) {
+            String imageFileName = themeSettings.getString(key);
+
+            String imagePathName = themeDirectory;
+            final String sep = isCustomTheme ? File.separator : "/";
+            imagePathName += sep + imageFileName;
+
+            InputStream inputStream;
+            Image result = null;
+
+            if (isCustomTheme) {
+                try {
+                    Path imagePath = Paths.get(imagePathName);
+                    inputStream = Files.newInputStream(imagePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    inputStream = null;
+                }
+            } else {
+                inputStream = EditorBoardThemeSettings.class.getResourceAsStream(imagePathName);
             }
+
+            if (inputStream != null) {
+                result = new Image(inputStream);
+            }
+
+            return Optional.ofNullable(result);
         }
+
         return Optional.empty();
     }
 
