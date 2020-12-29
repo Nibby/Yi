@@ -6,6 +6,7 @@ import javafx.scene.text.FontWeight;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -45,6 +46,22 @@ public class FontManager {
     }
 
     /**
+     * Loads one font resource and register it in the JavaFx font environment. Loaded fonts
+     * can then be initialized using {@code new Font()}.
+     * <p/>
+     * If the font is in a module outside of {@code yi.component.shared}, the module must
+     * open the package the font resource is in. See javadoc of {@link yi.component.shared.Resource}
+     * for details.
+     *
+     * @param fontResource Font resource path, must not be an alias.
+     * @param resourceClass Class to be used to load this font.
+     */
+    public static void loadFont(String fontResource, Class<?> resourceClass) {
+        InputStream inputStream = resourceClass.getResourceAsStream(fontResource);
+        Font.loadFont(inputStream, -1);
+    }
+
+    /**
      * Loads one font file and register it in the JavaFx font environment. Loaded fonts
      * can then be initialized using {@code new Font()}.
      * <p/>
@@ -55,7 +72,7 @@ public class FontManager {
      * @throws IOException When an input stream cannot be created on the given path.
      */
     public static void loadFont(Path fontFile) throws IOException {
-        Font.loadFont(Files.newInputStream(fontFile), 12);
+        Font.loadFont(Files.newInputStream(fontFile), -1);
     }
 
     /**
