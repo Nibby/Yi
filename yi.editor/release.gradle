@@ -6,18 +6,33 @@ import java.nio.file.Paths
 apply plugin: YiReleasePlugin
 apply plugin: 'de.inetsoftware.setupbuilder'
 
+def thisProject = rootProject.project(":yi.editor")
 def applicationName = rootProject.name // TODO: Should just define a name for the editor project
-def applicationIcon = projectDir.toPath().resolve("packaging").resolve("macOS").resolve("AppIcon.icns")
+def applicationIcon = thisProject.projectDir.toPath().resolve("packaging").resolve("macOS").resolve("AppIcon.icns")
         .toAbsolutePath().toString()
 
-def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(project).toAbsolutePath().toString()
-def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(project).toAbsolutePath().toString()
+def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(thisProject).toAbsolutePath().toString()
+def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(thisProject).toAbsolutePath().toString()
+def versionString = thisProject.version
+
+if (TargetPlatform.getCurrentPlatform() == TargetPlatform.Windows) {
+    versionString = versionString.replace("-SNAPSHOT", "") // MSI installer doesn't support this suffix
+}
 
 jlinkOptions.jdkHome = null // If null, uses JAVA_HOME env value instead
 jlinkOptions.bundledJdkVersion = 11
-jlinkOptions.mainModuleName = project.ext.mainModuleName
-jlinkOptions.mainJarArtifactName = "${project.name}-${project.version}.jar".toString()
+jlinkOptions.mainModuleName = thisProject.ext.mainModuleName
+jlinkOptions.mainJarArtifactName = "${thisProject.name}-${thisProject.version}.jar".toString()
 jlinkOptions.outputDir = jreDir
+
+def executableVMArguments = [
+        "--module-path", getPlatformTargetModulePath(),
+        "--add-exports", "javafx.graphics/com.sun.glass.ui=${jlinkOptions.mainModuleName}".toString(),
+
+        // This clause must appear after all --add-exports
+        "--module", "yi.editor/yi.editor.EditorMain",
+]
+
 if (TargetPlatform.getCurrentPlatform() == TargetPlatform.macOS) {
     def macOsJrePath = Paths.get(jreDir).resolve("Contents").resolve("Home")
     jreDir = macOsJrePath.toAbsolutePath().toString()
@@ -28,8 +43,9 @@ if (TargetPlatform.getCurrentPlatform() == TargetPlatform.macOS) {
 setupBuilder {
     vendor = 'Sizhe (Kevin) Yang'
     application = applicationName
+    description = "Go game record editor"
     appIdentifier = "codes.nibby.yi"
-    version = project.version
+    version = versionString
 //    licenseFile = Paths.get(rootProject.projectDir.toString()).resolve('LICENSE').toFile()
     icons = [ applicationIcon ]
     // all files for all platforms
@@ -38,6 +54,7 @@ setupBuilder {
     }
     mainJar = jlinkOptions.mainJarArtifactName
     mainClass = "yi.editor.EditorMain"
+    destinationDir = "artifacts"
 
     // Bundle a custom JRE image tailored for this application.
     // See buildSrc/YiReleasePlugin for details.
@@ -50,19 +67,11 @@ setupBuilder {
         mimeTypes = "text/html;text"
         categories = "software;game"
 
-        javaVMArguments = [
-                // TODO: This --module-path value is for macOS only. Might need to figure
-                //       out how to set different VM args for different OSes.
-                "--module-path", getPlatformTargetModulePath(),
-                "--add-exports", "javafx.graphics/com.sun.glass.ui=${jlinkOptions.mainModuleName}".toString(),
-
-                // This clause must appear after all --add-exports
-                "--module", "yi.editor/yi.editor.EditorMain",
-        ]
+        javaVMArguments = executableVMArguments
 
         documentType {
             fileExtension = [ "sgf" ]
-            name = "Go Game File"
+            name = "Smart Game File"
             mimetype = "application/sgf"
             role = "Editor"
         }
@@ -72,7 +81,7 @@ setupBuilder {
 private static String getPlatformTargetModulePath() {
     def os = System.getProperty("os.name").toLowerCase()
     if (os.contains("win")) {
-        throw new GradleException("Not implemented")
+        return "." // Doesn't really matter
     } else if (os.contains("mac")) {
         return "\$APP_ROOT/Contents/Java/"
     } else {
@@ -90,6 +99,20 @@ dmg.dependsOn(prerequisites)
 deb.dependsOn(prerequisites)
 msi.dependsOn(prerequisites)
 rpm.dependsOn(prerequisites)
+
+
+msi {
+    arch = "x64"
+    minOS = 6.1
+    multiInstanceCount = 1
+    installScope = "perMachine"
+    runAfterIsOptional = true
+
+    launch4j {
+        executable = "Yi.exe"
+        javaVMArguments = executableVMArguments
+    }
+}
 
 dmg {
     windowWidth = 500
