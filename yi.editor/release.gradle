@@ -46,7 +46,7 @@ setupBuilder {
         javaVMArguments = [
                 // TODO: This --module-path value is for macOS only. Might need to figure
                 //       out how to set different VM args for different OSes.
-                "--module-path", "\$APP_ROOT/Contents/Java/",
+                "--module-path", getPlatformTargetModulePath(),
                 "--add-exports", "javafx.graphics/com.sun.glass.ui=yi.editor",
 
                 // This clause must appear after all --add-exports
@@ -59,6 +59,18 @@ setupBuilder {
             mimetype = "application/sgf"
             role = "Editor"
         }
+    }
+}
+
+String getPlatformTargetModulePath() {
+    def os = System.getProperty("os.name").toLowerCase()
+    if (os.contains("win")) {
+        throw new GradleException("Not implemented")
+    } else if (os.contains("mac")) {
+        return "\$APP_ROOT/Contents/Java/"
+    } else {
+        // Assuming it's linux
+        return "/usr/share/yi/"
     }
 }
 
@@ -75,4 +87,12 @@ dmg {
     windowWidth = 500
     windowHeight = 400
     iconSize = 128
+}
+
+deb {
+    installationRoot = "/usr/share/yi"
+    section = "Games"
+    maintainerEmail = "nibby@null.net"
+    description = "Go game editor program"
+    bundleJre = System.getenv("JAVA_HOME")
 }
