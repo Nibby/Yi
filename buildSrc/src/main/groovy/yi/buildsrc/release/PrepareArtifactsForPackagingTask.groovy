@@ -29,8 +29,7 @@ class PrepareArtifactsForPackagingTask extends DefaultTask {
     }
 
     private static void run(Project project) {
-        createMacOSPackagingEnvironment(project);
-        copyAssembleDistArtifactsToReleaseDir(project);
+        copyAssembleDistArtifactsToReleaseDir(project)
     }
 
     /*
@@ -75,7 +74,7 @@ class PrepareArtifactsForPackagingTask extends DefaultTask {
         assert extractedDir != null : "Extracted zip file but did not obtain a folder"
 
         Path sourceDir = extractedDir.resolve("lib")
-        Path targetDir = YiReleasePlugin.getReleaseDirectoryAsPath(project).resolve("artifacts")
+        Path targetDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(project)
         copyAllArtifacts(sourceDir, targetDir)
     }
 
@@ -114,25 +113,5 @@ class PrepareArtifactsForPackagingTask extends DefaultTask {
         assert Files.isDirectory(source)
         BuildUtilities.removeDirectoryRecursive(destination)
         BuildUtilities.copyDirectoriesRecursive(source, destination)
-    }
-
-    /*
-        :dmg task fails if 'MacOS' and 'Info.plist' is missing in the
-        subproject 'release' directory, so we pretend they do exist. AFAIK the copied
-        Info.plist won't be merged with the final generated one, so not sure why it is
-        required in the first place. Possibly a bug?
-     */
-    private static void createMacOSPackagingEnvironment(Project project) {
-        Path releaseDir = YiReleasePlugin.getReleaseDirectoryAsPath(project)
-        Path macOSDir = releaseDir.resolve("MacOS")
-        if (!Files.exists(macOSDir)) {
-            Files.createDirectories(macOSDir)
-        }
-
-        Path infoPlist = YiReleasePlugin.getPackagingDirectoryAsPath(project, TargetPlatform.macOS)
-                .resolve("Info.plist")
-        assert Files.exists(infoPlist) : "No Info.plist found in: $infoPlist"
-
-        BuildUtilities.copyAndReplace(infoPlist, releaseDir.resolve("Info.plist"))
     }
 }

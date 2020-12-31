@@ -1,3 +1,4 @@
+import yi.buildsrc.release.TargetPlatform
 import yi.buildsrc.release.YiReleasePlugin
 
 import java.nio.file.Paths
@@ -5,17 +6,24 @@ import java.nio.file.Paths
 apply plugin: YiReleasePlugin
 apply plugin: 'de.inetsoftware.setupbuilder'
 
-def releaseDir = YiReleasePlugin.getReleaseDirectory(project)
-def jreDir = Paths.get(releaseDir).resolve("jre").toAbsolutePath().toString()
-def artifactsDir = Paths.get(releaseDir).resolve("artifacts").toAbsolutePath().toString()
-
-jlinkOptions.jdkHome = null // If null, uses JAVA_HOME env value instead
-jlinkOptions.modules = [ 'java.base' ]
-jlinkOptions.outputDir = jreDir
-
 def applicationName = rootProject.name // TODO: Should just define a name for the editor project
 def applicationIcon = projectDir.toPath().resolve("packaging").resolve("macOS").resolve("AppIcon.icns")
         .toAbsolutePath().toString()
+
+def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(project).toAbsolutePath().toString()
+def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(project).toAbsolutePath().toString()
+
+jlinkOptions.jdkHome = null // If null, uses JAVA_HOME env value instead
+jlinkOptions.bundledJdkVersion = 11
+jlinkOptions.mainModuleName = project.ext.mainModuleName
+jlinkOptions.mainJarArtifactName = "${project.name}-${project.version}.jar".toString()
+jlinkOptions.outputDir = jreDir
+if (TargetPlatform.getCurrentPlatform() == TargetPlatform.macOS) {
+    def macOsJrePath = Paths.get(jreDir).resolve("Contents").resolve("Home")
+    jreDir = macOsJrePath.toAbsolutePath().toString()
+    jlinkOptions.outputDir = jreDir
+
+}
 
 setupBuilder {
     vendor = 'Sizhe (Kevin) Yang'
@@ -28,13 +36,12 @@ setupBuilder {
     from(artifactsDir) {
         include '*.jar'
     }
-    mainJar = "${project.name}-${project.version}.jar"
+    mainJar = jlinkOptions.mainJarArtifactName
     mainClass = "yi.editor.EditorMain"
 
     // Bundle a custom JRE image tailored for this application.
     // See buildSrc/YiReleasePlugin for details.
-    bundleJre = 11
-    bundleJreTarget = "runtime"
+    bundleJre = jlinkOptions.outputDir
     failOnEmptyFrom = "true"
 
     desktopStarter {
@@ -47,7 +54,7 @@ setupBuilder {
                 // TODO: This --module-path value is for macOS only. Might need to figure
                 //       out how to set different VM args for different OSes.
                 "--module-path", getPlatformTargetModulePath(),
-                "--add-exports", "javafx.graphics/com.sun.glass.ui=yi.editor",
+                "--add-exports", "javafx.graphics/com.sun.glass.ui=${jlinkOptions.mainModuleName}".toString(),
 
                 // This clause must appear after all --add-exports
                 "--module", "yi.editor/yi.editor.EditorMain",
@@ -62,7 +69,7 @@ setupBuilder {
     }
 }
 
-String getPlatformTargetModulePath() {
+private static String getPlatformTargetModulePath() {
     def os = System.getProperty("os.name").toLowerCase()
     if (os.contains("win")) {
         throw new GradleException("Not implemented")
@@ -74,16 +81,17 @@ String getPlatformTargetModulePath() {
     }
 }
 
-// This task is provided by YiReleasePlugin which expands the artifacts produced by
+// These tasks are provided by YiReleasePlugin which expands the artifacts produced by
 // 'assembleDist' to the project 'release' directory. This should contain all the jars
 // used by the editor application.
-dmg.dependsOn prepareArtifactsForPackaging
-deb.dependsOn prepareArtifactsForPackaging
-msi.dependsOn prepareArtifactsForPackaging
-rpm.dependsOn prepareArtifactsForPackaging
+def prerequisites = [prepareArtifactsForPackaging, createJreImage]
+
+dmg.dependsOn(prerequisites)
+deb.dependsOn(prerequisites)
+msi.dependsOn(prerequisites)
+rpm.dependsOn(prerequisites)
 
 dmg {
-    applicationIdentifier = "codes.nibby.yi"
     windowWidth = 500
     windowHeight = 400
     iconSize = 128
@@ -94,5 +102,4 @@ deb {
     section = "Games"
     maintainerEmail = "nibby@null.net"
     description = "Go game editor program"
-    bundleJre = System.getenv("JAVA_HOME")
 }

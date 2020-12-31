@@ -12,9 +12,11 @@ plugins {
     id "de.inetsoftware.appbundler" version "4.8.7"
 }
 
-apply from: "release.gradle"
-
 buildDir = '../build/' + getProject().getName()
+project.ext.mainModuleName = "yi.editor"
+
+// Tasks related to app distribution
+apply from: "release.gradle"
 
 dependencies {
     compile project(":yi.core")
@@ -74,11 +76,11 @@ def jvmArgsFromSource = [
 ]
 
 application {
-    mainModule = 'yi.editor'
+    mainModule = project.ext.mainModuleName
     mainClassName = 'yi.editor.EditorMain'
 
     applicationDefaultJvmArgs = [
-        "--add-exports", "javafx.graphics/com.sun.glass.ui=yi.editor"
+        "--add-exports", "javafx.graphics/com.sun.glass.ui=${project.ext.mainModuleName}".toString()
     ]
     // This should be part of IntelliJ's run configuration.
     // When running from Gradle, should also add '-Dyi.fromSource=true' to the run task
