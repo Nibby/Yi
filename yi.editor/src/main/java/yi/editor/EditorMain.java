@@ -1,6 +1,5 @@
 package yi.editor;
 
-
 import javafx.application.Application;
 
 public class EditorMain {

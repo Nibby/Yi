@@ -117,9 +117,11 @@ public final class EditorApplicationEventHandler {
         OPEN_FILE_QUEUE.add(file);
     }
 
-    private static void loadGameModel(File file) {
+    private static boolean loadGameModel(File file) {
+        boolean loadedSomething = false;
         try {
             GameModel gameModel = GameModelImporter.INSTANCE.fromFile(file.toPath());
+            loadedSomething = true;
             Platform.runLater(() -> {
                 var window = new EditorWindow(gameModel);
                 window.show();
@@ -127,13 +129,17 @@ public final class EditorApplicationEventHandler {
         } catch (GameParseException | IOException e) {
             e.printStackTrace();
         }
+        return loadedSomething;
     }
 
     public static void loadAllQueuedOpenFiles() {
+        boolean loadedSomething = false;
         while (!OPEN_FILE_QUEUE.isEmpty()) {
             File file = OPEN_FILE_QUEUE.poll();
-            loadGameModel(file);
+            loadedSomething |= loadGameModel(file);
         }
+
+        hasPreInitializationOpenFileEvent = loadedSomething;
     }
 
     public static boolean hasPreInitializationOpenFileEvent() {
