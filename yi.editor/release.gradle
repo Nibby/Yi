@@ -111,6 +111,7 @@ msi {
     launch4j {
         executable = "Yi.exe"
         javaVMArguments = executableVMArguments
+        requestedExecutionLevel = "asInvoker"
     }
 }
 
