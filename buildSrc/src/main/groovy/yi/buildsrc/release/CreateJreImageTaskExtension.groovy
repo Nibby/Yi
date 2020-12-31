@@ -8,16 +8,22 @@ class CreateJreImageTaskExtension {
     String jdkHome = null
 
     /**
-     * Java modules to be included in the image.
-     */
-    List<String> modules = new ArrayList<>()
-
-    /**
      * Directory to store created JDK image.
      */
     String outputDir = null
 
-    CreateJreImageTaskExtension() {
-        modules.add("java.base");
-    }
+    /**
+     * File name of the main module containing the main class.
+     */
+    String mainModuleName = null
+
+    /**
+     * File name of the main executable jar artifact.
+     */
+    String mainJarArtifactName = null
+
+    /**
+     * Version of JDK to be packaged
+     */
+    String bundledJdkVersion = null
 }

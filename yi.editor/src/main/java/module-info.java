@@ -15,4 +15,5 @@ module yi.editor {
     opens yi.editor.icons;
     opens yi.editor.fonts;
     opens yi.editor.i18n;
+
 }

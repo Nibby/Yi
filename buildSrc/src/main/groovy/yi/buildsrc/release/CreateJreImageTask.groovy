@@ -1,11 +1,11 @@
 package yi.buildsrc.release
 
-
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 
+import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -34,6 +34,93 @@ class CreateJreImageTask {
     };
 
     private static void run(Project project, CreateJreImageTaskExtension ext) {
+        Set<String> requiredModules = getRequiredModulesForProject(project, ext)
+        createCustomJreImage(project, ext, requiredModules)
+        if (TargetPlatform.getCurrentPlatform() == TargetPlatform.macOS) {
+            createMacOsJreDirectoryStructure(project, ext)
+        }
+    }
+
+    private static void createMacOsJreDirectoryStructure(Project project, CreateJreImageTaskExtension ext) {
+        final String INFO_PLIST = "Info.plist"
+
+        // These directories aren't really necessary for the JRE directory, but
+        // the task fails if they are not present.
+        Path outputDir = Paths.get(getJreImageOutputDirectory(project, ext)).getParent()
+        Path macOSDir = outputDir.resolve("MacOS")
+        if (!Files.exists(macOSDir)) {
+            Files.createDirectories(macOSDir)
+        }
+
+        Path infoPlistPath = YiReleasePlugin.getPackagingDirectoryAsPath(project, TargetPlatform.macOS)
+                .resolve(INFO_PLIST)
+        assert Files.exists(infoPlistPath) : "No Info.plist found in: $infoPlistPath"
+
+        Path infoPlistFile = outputDir.resolve(INFO_PLIST)
+        Files.deleteIfExists(infoPlistFile)
+        Files.createFile(infoPlistFile)
+    }
+
+    private static Set<String> getRequiredModulesForProject(Project project, CreateJreImageTaskExtension ext) {
+        project.logger.lifecycle "Retrieving required modules for project '${project.path}'"
+
+        Path artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(project)
+        String mainJarArtifactPath = artifactsDir.resolve(ext.mainJarArtifactName).toAbsolutePath().toString()
+        Set<String> requiredModules = new HashSet<>()
+
+        project.logger.lifecycle "Main jar artifact path: $mainJarArtifactPath"
+
+        DirectoryStream<Path> artifacts = Files.newDirectoryStream(artifactsDir)
+        if (artifacts.size() == 0) {
+            throw new GradleException("Failed to retrieve required modules for project, no artifacts found in '$artifactsDir'!")
+        }
+        String modulePath = artifactsDir.toAbsolutePath().toString()
+        if (!modulePath.endsWith(File.separator)) {
+            modulePath += File.separator
+        }
+
+        String cmd = "jdeps -summary -recursive --multi-release ${ext.bundledJdkVersion} --module-path $modulePath ${mainJarArtifactPath}"
+        project.logger.lifecycle "Executing jdeps command: $cmd"
+
+        Process jdepsDependencyQuery = Runtime.getRuntime().exec(cmd)
+
+        while (jdepsDependencyQuery.isAlive()) {
+            Thread.sleep(100)
+        }
+
+        Scanner processOutput = new Scanner(jdepsDependencyQuery.getInputStream())
+        while (processOutput.hasNextLine()) {
+            String outputLine = processOutput.nextLine().trim()
+
+            if (outputLine.startsWith("Warning")) {
+                project.logger.lifecycle outputLine
+                continue
+            }
+            String[] segments = outputLine.split(" -> ")
+            String[] moduleDependencies = segments.last().trim().split(",")
+            for (String moduleDependency in moduleDependencies) {
+                if (!requiredModules.contains(moduleDependency)) {
+                    if (isJdkModule(moduleDependency)) {
+                        requiredModules.add(moduleDependency)
+                        project.logger.lifecycle "Found new JDK module dependency: '$moduleDependency'"
+                    } else {
+                        project.logger.lifecycle "Ignored module dependency: '$moduleDependency' because it is not part of the JDK"
+                    }
+                }
+            }
+        }
+
+        return requiredModules
+    }
+
+    private static boolean isJdkModule(String moduleName) {
+        return moduleName.startsWith("jdk.") || moduleName.startsWith("java.")
+    }
+
+    private static void createCustomJreImage(Project project,
+                                             CreateJreImageTaskExtension ext,
+                                             Set<String> requiredModules) {
+
         project.logger.lifecycle "Creating custom JRE image for '$project.name'"
 
         Path jdkHome = getValidJdkHomeDirectory(ext.jdkHome)
@@ -45,17 +132,15 @@ class CreateJreImageTask {
         project.logger.debug "sep=" + sep
         project.logger.debug "jlinkPath=" + jlinkPath
 
-        String outputDir = ext.outputDir == null
-                ? YiReleasePlugin.getReleaseDirectory(project) + "jre"
-                : ext.outputDir
+        String outputDir = getJreImageOutputDirectory(project, ext)
 
         project.logger.lifecycle "jlink output directory: $outputDir"
 
         ensureOutputDirDoesNotExist(project.logger, outputDir)
 
-        List<String> cmdArray = createCommandArray(jlinkPath, ext.modules, outputDir)
+        List<String> cmdArray = createJLinkCommand(jlinkPath, requiredModules, outputDir)
         project.logger.debug "exec command: $cmdArray"
-        project.logger.lifecycle("Executing jlink with modules: " + ext.modules)
+        project.logger.lifecycle("Executing jlink with modules: " + requiredModules)
 
         int exitCode = execute(project.logger, cmdArray)
 
@@ -104,18 +189,39 @@ class CreateJreImageTask {
         return javaHomePath
     }
 
-    private static List<String> createCommandArray(String jlinkPath, List<String> modules, String outputDir) {
+    private static List<String> createJLinkCommand(String jlinkPath, Set<String> modules, String outputDir) {
         def cmdArray = new ArrayList<String>()
 
         cmdArray.add(jlinkPath)
         cmdArray.add("--add-modules")
+
+        StringBuilder moduleParam = new StringBuilder()
         for (String module in modules) {
-            cmdArray.add(module)
+            moduleParam.append(module)
+            if (module != modules.last()) {
+                moduleParam.append(",")
+            }
         }
+        cmdArray.add(moduleParam.toString())
         cmdArray.add("--output")
         cmdArray.add(outputDir)
 
         return cmdArray
+    }
+
+    private static String getJreImageOutputDirectory(Project project, CreateJreImageTaskExtension extension) {
+        if (extension.outputDir == null) {
+            Path defaultDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(project)
+            if (TargetPlatform.getCurrentPlatform() == TargetPlatform.macOS) {
+                defaultDir = defaultDir.resolve("Contents").resolve("Home")
+            }
+            if (!Files.exists(defaultDir)) {
+                Files.createDirectories(defaultDir)
+            }
+            return defaultDir.toAbsolutePath().toString()
+        } else {
+            return extension.outputDir
+        }
     }
 
     private static void ensureOutputDirDoesNotExist(Logger logger, String dir) {

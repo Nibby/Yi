@@ -24,10 +24,10 @@ final class YiReleasePlugin implements Plugin<Project> {
             throw new GradleException("Cannot identify unique assembleDist task, found $hitSize tasks of same name")
         }
         Task assembleDistTask = assembleDistTaskHits.iterator().next()
-//        assembleDistTask.finalizedBy(createJreImageTask)
 
         Task prepareArtifactsTask = PrepareArtifactsForPackagingTask.apply(project)
         prepareArtifactsTask.dependsOn(assembleDistTask)
+        createJreImageTask.dependsOn(prepareArtifactsTask)
     }
 
     static String getReleaseDirectory(Project project) {
@@ -50,5 +50,13 @@ final class YiReleasePlugin implements Plugin<Project> {
 
     static Path getPackagingDirectoryAsPath(Project project, TargetPlatform platform) {
         return project.projectDir.toPath().resolve(PACKAGING_FOLDER).resolve(platform.getName())
+    }
+
+    static Path getReleaseArtifactsDirectoryAsPath(Project project) {
+        return getReleaseDirectoryAsPath(project).resolve("artifacts")
+    }
+
+    static Path getCustomJreImageDirectoryAsPath(Project project) {
+        return getReleaseDirectoryAsPath(project).resolve("runtime.jre")
     }
 }
