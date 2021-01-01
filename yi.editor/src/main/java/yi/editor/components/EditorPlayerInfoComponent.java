@@ -1,7 +1,12 @@
 package yi.editor.components;
 
+import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.core.go.GameModel;
@@ -9,18 +14,16 @@ import yi.core.go.GameModelInfo;
 
 import static yi.editor.components.EditorTextResources.MOVE_COUNT;
 
-public class EditorPlayerInfoBar extends ToolBar {
+public class EditorPlayerInfoComponent extends ToolBar {
 
-    private final Label blackStoneIcon = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
-    private final Label playerBlackName = new Label("");
+    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
-    private final Label whiteStoneIcon = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white@2x.png", getClass(), 16).orElse(null));
-    private final Label playerWhiteName = new Label("");
+    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
     private final Label moveLabel = new Label("");
 
-    public EditorPlayerInfoBar() {
+    public EditorPlayerInfoComponent() {
         // TODO: Consider putting these CSS class strings into a constant class ...
         playerBlackName.getStyleClass().add("editor-player-name-hud-label");
         playerBlackName.setMaxWidth(160);
@@ -32,20 +35,6 @@ public class EditorPlayerInfoBar extends ToolBar {
         playerWhiteRank.setMaxWidth(50);
 
         moveLabel.getStyleClass().add("editor-move-number-hud-label");
-
-        getItems().addAll(
-                GuiUtilities.createStaticSpacer(8),
-                blackStoneIcon,
-                playerBlackName,
-                playerBlackRank,
-                GuiUtilities.createDynamicSpacer(),
-                moveLabel,
-                GuiUtilities.createDynamicSpacer(),
-                whiteStoneIcon,
-                playerWhiteName,
-                playerWhiteRank,
-                GuiUtilities.createStaticSpacer(8)
-        );
     }
 
     private void updateGameModelInfo(GameModel gameModel) {
@@ -97,5 +86,58 @@ public class EditorPlayerInfoBar extends ToolBar {
                 playerWhiteRank.setText(newValue.toString());
                 break;
         }
+    }
+
+    public void setContentForPerspective(EditorPerspective perspective) {
+        getItems().clear();
+
+        if (perspective == EditorPerspective.COMPACT) {
+            setContentForCompactPerspective();
+        } else if (perspective == EditorPerspective.REVIEW) {
+            setContentForReviewPerspective();
+        }
+    }
+
+    private void setContentForCompactPerspective() {
+        setOrientation(Orientation.HORIZONTAL);
+        getItems().addAll(
+                GuiUtilities.createStaticSpacer(8),
+                playerBlackName,
+                playerBlackRank,
+                GuiUtilities.createDynamicSpacer(),
+                moveLabel,
+                GuiUtilities.createDynamicSpacer(),
+                playerWhiteName,
+                playerWhiteRank,
+                GuiUtilities.createStaticSpacer(8)
+        );
+    }
+
+    private void setContentForReviewPerspective() {
+        setOrientation(Orientation.VERTICAL);
+
+        BorderPane blackInfo = createOneLineComponent(playerBlackName, playerBlackRank);
+        BorderPane whiteInfo = createOneLineComponent(playerWhiteName, playerWhiteRank);
+
+        getItems().addAll(blackInfo, whiteInfo);
+    }
+
+    private BorderPane createOneLineComponent(Label nameLabel, Label rankLabel) {
+        var borderPane = new BorderPane();
+        borderPane.setLeft(GuiUtilities.createStaticSpacer(8));
+        borderPane.setCenter(nameLabel);
+
+        // Name label is far taller than rank label due to the stone icon
+        // we use this trick to put both labels on the same text baseline
+        rankLabel.setMinHeight(nameLabel.getHeight());
+        rankLabel.setMaxHeight(nameLabel.getHeight());
+        rankLabel.setPrefHeight(nameLabel.getHeight());
+
+        var rankLabelWithSpacing = new BorderPane();
+        rankLabelWithSpacing.setLeft(GuiUtilities.createStaticSpacer(4));
+        rankLabelWithSpacing.setCenter(rankLabel);
+        borderPane.setRight(rankLabelWithSpacing);
+
+        return borderPane;
     }
 }

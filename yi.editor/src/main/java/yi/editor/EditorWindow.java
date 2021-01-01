@@ -42,13 +42,14 @@ public class EditorWindow extends Stage {
 
     private final Property<EditorPerspective> perspective = new Property<>(EditorPerspective.NONE);
     private final EditorActionManager actionManager;
-    private final EditorMenuBar menuBar;
-    private final EditorPlayerInfoBar playerInfoBar;
     private final EditorUndoSystem undoSystem;
 
+    private final EditorMenuBar menuBar;
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
     private final GameCommentViewer commentViewer;
+    private final EditorPlayerInfoComponent playerInfoComponent;
+
     private final Property<GameModel> gameModel = new Property<>(DEFAULT_MODEL);
 
     private boolean addedMenuBarOnce = false;
@@ -62,7 +63,7 @@ public class EditorWindow extends Stage {
         undoSystem = new EditorUndoSystem();
         addComponent(undoSystem);
 
-        playerInfoBar = new EditorPlayerInfoBar();
+        playerInfoComponent = new EditorPlayerInfoComponent();
         boardArea = new EditorBoardArea();
         addComponent(boardArea);
 
@@ -92,7 +93,7 @@ public class EditorWindow extends Stage {
             treeViewer.setGameModel(newModel);
             undoSystem.setGameModel(newModel, boardArea);
             commentViewer.setGameModel(newModel);
-            playerInfoBar.setGameModel(newModel);
+            playerInfoComponent.setGameModel(newModel);
         });
 
         treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
@@ -183,7 +184,8 @@ public class EditorWindow extends Stage {
         if (this.perspective.get() == newLayout) {
             return; // Avoid flickering when setting the same layout
         }
-        boardArea.setContentForLayout(newLayout);
+        boardArea.setContentForPerspective(newLayout);
+        playerInfoComponent.setContentForPerspective(newLayout);
 
         var content = newLayout.getContent(this);
         var controlPane = new BorderPane();
@@ -297,7 +299,7 @@ public class EditorWindow extends Stage {
         return ACTIVE_WINDOWS.size();
     }
 
-    public Node getPlayerInfoBar() {
-        return playerInfoBar;
+    public Node getPlayerInfoComponent() {
+        return playerInfoComponent;
     }
 }
