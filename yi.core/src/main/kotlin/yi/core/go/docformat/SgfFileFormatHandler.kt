@@ -340,7 +340,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 } else {
                     val realCoords = convertCoordinates(sgfCoords)
                     gamePrimaryMove = Stone(realCoords[0], realCoords[1], StoneColor.WHITE)
-                    gameNodeType = GameNodeType.MOVE_PLAYED
+                    gameNodeType = if (isMoveWithinBounds(realCoords, gameModel)) GameNodeType.MOVE_PLAYED
+                                   else GameNodeType.PASS
                 }
             } else if (nodeData.containsKey(SGF_ADD_BLACK) || nodeData.containsKey(SGF_ADD_WHITE)) {
                 gameNodeType = GameNodeType.STONE_EDIT
@@ -369,6 +370,12 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             }
 
             return gameNode
+        }
+
+        private fun isMoveWithinBounds(coords: Array<Int>, gameModel: GameModel): Boolean {
+            val x = coords[0]
+            val y = coords[1]
+            return !(x < 0 || x >= gameModel.boardWidth || y < 0 || y >= gameModel.boardHeight)
         }
 
         /**
