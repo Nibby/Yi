@@ -52,10 +52,6 @@ class CreateJreImageTask {
             Files.createDirectories(macOSDir)
         }
 
-        Path infoPlistPath = YiReleasePlugin.getPackagingDirectoryAsPath(project, TargetPlatform.macOS)
-                .resolve(INFO_PLIST)
-        assert Files.exists(infoPlistPath) : "No Info.plist found in: $infoPlistPath"
-
         Path infoPlistFile = outputDir.resolve(INFO_PLIST)
         Files.deleteIfExists(infoPlistFile)
         Files.createFile(infoPlistFile)

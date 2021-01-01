@@ -7,9 +7,13 @@ apply plugin: YiReleasePlugin
 apply plugin: 'de.inetsoftware.setupbuilder'
 
 def thisProject = rootProject.project(":yi.editor")
+def packagingAssetDir = projectDir.toPath().resolve("packaging")
+
 def applicationName = rootProject.name // TODO: Should just define a name for the editor project
-def applicationIcon = thisProject.projectDir.toPath().resolve("packaging").resolve("macOS").resolve("AppIcon.icns")
-        .toAbsolutePath().toString()
+def applicationIcons = [
+    packagingAssetDir.resolve("AppIcon.icns").toAbsolutePath().toString(),
+    packagingAssetDir.resolve("AppIcon.ico").toAbsolutePath().toString()
+]
 
 def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(thisProject).toAbsolutePath().toString()
 def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(thisProject).toAbsolutePath().toString()
@@ -47,7 +51,7 @@ setupBuilder {
     appIdentifier = "codes.nibby.yi"
     version = versionString
 //    licenseFile = Paths.get(rootProject.projectDir.toString()).resolve('LICENSE').toFile()
-    icons = [ applicationIcon ]
+    icons = applicationIcons
     // all files for all platforms
     from(artifactsDir) {
         include '*.jar'
