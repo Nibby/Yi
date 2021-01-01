@@ -571,6 +571,20 @@ class SgfFileFormatHandlerTest {
         }
     }
 
+    @Test
+    fun `treats out of bounds move coordinates as pass`() {
+        /*
+            Some editors such as Lizzie uses [tt] (19,19) to represent a pass...
+         */
+        val data = "(;GM[1]FF[4]SZ[19];B[aa];W[tt])"
+        val model = GameModelImporter.fromString(data, FileFormat.SGF)
+        val root = model.getRootNode()
+        val firstChild = root.getNextNodeInMainBranch()!!
+        val secondChild = firstChild.getNextNodeInMainBranch()!!
+
+        Assertions.assertEquals(GameNodeType.PASS, secondChild.getType())
+    }
+
     private fun exportModel(gameModel: GameModel): String {
         val output = ByteArrayOutputStream()
         GameModelExporter.toOutputStream(gameModel, output, FileFormat.SGF)
