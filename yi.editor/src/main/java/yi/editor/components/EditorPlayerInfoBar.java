@@ -9,7 +9,7 @@ import yi.core.go.GameModelInfo;
 
 import static yi.editor.components.EditorTextResources.MOVE_COUNT;
 
-public class EditorToolBar extends ToolBar {
+public class EditorPlayerInfoBar extends ToolBar {
 
     private final Label blackStoneIcon = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerBlackName = new Label("");
@@ -20,7 +20,7 @@ public class EditorToolBar extends ToolBar {
 
     private final Label moveLabel = new Label("");
 
-    public EditorToolBar() {
+    public EditorPlayerInfoBar() {
         // TODO: Consider putting these CSS class strings into a constant class ...
         playerBlackName.getStyleClass().add("editor-player-name-hud-label");
         playerBlackName.setMaxWidth(160);
@@ -32,6 +32,20 @@ public class EditorToolBar extends ToolBar {
         playerWhiteRank.setMaxWidth(50);
 
         moveLabel.getStyleClass().add("editor-move-number-hud-label");
+
+        getItems().addAll(
+                GuiUtilities.createStaticSpacer(8),
+                blackStoneIcon,
+                playerBlackName,
+                playerBlackRank,
+                GuiUtilities.createDynamicSpacer(),
+                moveLabel,
+                GuiUtilities.createDynamicSpacer(),
+                whiteStoneIcon,
+                playerWhiteName,
+                playerWhiteRank,
+                GuiUtilities.createStaticSpacer(8)
+        );
     }
 
     private void updateGameModelInfo(GameModel gameModel) {
@@ -84,39 +98,4 @@ public class EditorToolBar extends ToolBar {
                 break;
         }
     }
-
-    public void setContentForLayout(EditorPerspective newLayout) {
-        getItems().clear();
-
-        if (newLayout == EditorPerspective.COMPACT) {
-            setCompactLayoutContent();
-        } else if (newLayout == EditorPerspective.REVIEW) {
-            setReviewLayoutContent();
-        }
-    }
-
-    private void setCompactLayoutContent() {
-        getItems().add(GuiUtilities.createDynamicSpacer());
-        getItems().add(playerBlackRank);
-        getItems().add(playerBlackName);
-        getItems().add(blackStoneIcon);
-        getItems().add(GuiUtilities.createStaticSpacer(8));
-        getItems().add(whiteStoneIcon);
-        getItems().add(playerWhiteName);
-        getItems().add(playerWhiteRank);
-        getItems().add(GuiUtilities.createDynamicSpacer());
-    }
-
-    private void setReviewLayoutContent() {
-        getItems().add(GuiUtilities.createStaticSpacer(4));
-        getItems().add(blackStoneIcon);
-        getItems().add(playerBlackName);
-        getItems().add(playerBlackRank);
-        getItems().add(GuiUtilities.createStaticSpacer(8));
-        getItems().add(whiteStoneIcon);
-        getItems().add(playerWhiteName);
-        getItems().add(playerWhiteRank);
-        getItems().add(GuiUtilities.createDynamicSpacer());
-    }
-
 }

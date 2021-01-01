@@ -1,5 +1,6 @@
 package yi.editor;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -42,7 +43,7 @@ public class EditorWindow extends Stage {
     private final Property<EditorPerspective> perspective = new Property<>(EditorPerspective.NONE);
     private final EditorActionManager actionManager;
     private final EditorMenuBar menuBar;
-    private final EditorToolBar toolBar;
+    private final EditorPlayerInfoBar playerInfoBar;
     private final EditorUndoSystem undoSystem;
 
     private final EditorBoardArea boardArea;
@@ -61,7 +62,7 @@ public class EditorWindow extends Stage {
         undoSystem = new EditorUndoSystem();
         addComponent(undoSystem);
 
-        toolBar = new EditorToolBar();
+        playerInfoBar = new EditorPlayerInfoBar();
         boardArea = new EditorBoardArea();
         addComponent(boardArea);
 
@@ -91,7 +92,7 @@ public class EditorWindow extends Stage {
             treeViewer.setGameModel(newModel);
             undoSystem.setGameModel(newModel, boardArea);
             commentViewer.setGameModel(newModel);
-            toolBar.setGameModel(newModel);
+            playerInfoBar.setGameModel(newModel);
         });
 
         treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
@@ -183,10 +184,8 @@ public class EditorWindow extends Stage {
             return; // Avoid flickering when setting the same layout
         }
         boardArea.setContentForLayout(newLayout);
-        toolBar.setContentForLayout(newLayout);
 
         var content = newLayout.getContent(this);
-
         var controlPane = new BorderPane();
 
         // Work around bug on macOS where setting the menu bar again causes the
@@ -199,7 +198,6 @@ public class EditorWindow extends Stage {
         if (!addedMenuBarOnce) {
             addedMenuBarOnce = true;
         }
-        controlPane.setCenter(toolBar);
 
         var container = new BorderPane();
         container.setTop(controlPane);
@@ -297,5 +295,9 @@ public class EditorWindow extends Stage {
 
     public static int getActiveWindowCount() {
         return ACTIVE_WINDOWS.size();
+    }
+
+    public Node getPlayerInfoBar() {
+        return playerInfoBar;
     }
 }
