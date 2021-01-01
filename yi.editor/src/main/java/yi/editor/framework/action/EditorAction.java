@@ -9,7 +9,7 @@ import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.EditorWindow;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.components.EditorTextResources;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.Comparator;

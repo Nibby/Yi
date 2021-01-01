@@ -8,6 +8,7 @@ import yi.component.boardviewer.editmodes.PlayMoveEditMode;
 import yi.component.boardviewer.editmodes.StoneEditMode;
 import yi.core.go.AnnotationType;
 import yi.core.go.StoneColor;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorToolAction;
 

@@ -1,4 +1,4 @@
-package yi.editor.components;
+package yi.editor.framework;
 
 import yi.component.shared.i18n.I18n;
 import yi.component.shared.i18n.Language;

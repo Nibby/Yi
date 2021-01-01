@@ -1,4 +1,4 @@
-package yi.editor.framework;
+package yi.editor.components;
 
 import org.jetbrains.annotations.NotNull;
 import yi.editor.framework.action.EditorAction;

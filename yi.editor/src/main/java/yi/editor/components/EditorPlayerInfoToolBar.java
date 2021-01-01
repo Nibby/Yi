@@ -8,10 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
+import yi.editor.framework.EditorTextResources;
 
-import static yi.editor.components.EditorTextResources.MOVE_COUNT;
+import static yi.editor.framework.EditorTextResources.MOVE_COUNT;
 
-public class EditorPlayerInfoComponent extends ToolBar {
+public class EditorPlayerInfoToolBar extends ToolBar {
 
     private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
@@ -20,7 +21,7 @@ public class EditorPlayerInfoComponent extends ToolBar {
 
     private final Label moveLabel = new Label("");
 
-    public EditorPlayerInfoComponent() {
+    public EditorPlayerInfoToolBar() {
         // TODO: Consider putting these CSS class strings into a constant class ...
         playerBlackName.getStyleClass().add("editor-player-name-hud-label");
         playerBlackName.setMaxWidth(160);

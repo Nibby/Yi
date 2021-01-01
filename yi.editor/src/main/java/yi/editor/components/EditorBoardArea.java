@@ -6,8 +6,8 @@ import yi.component.boardviewer.GameBoardViewer;
 import yi.component.shared.audio.CommonAudioSets;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
-import yi.editor.framework.EditorComponent;
 import yi.editor.framework.EditorHelper;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
@@ -25,7 +25,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
 
     private final BorderPane container;
     private final GameBoardViewer board;
-    private final EditorActionToolBar toolBar;
+    private final EditorReviewToolsToolBar toolBar;
 
     private final EditorToggleAction actionToggleCoordinates;
 
@@ -35,7 +35,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
             board.setAudio(CommonAudioSets.Stones.CERAMIC_BICONVEX);
         }
 
-        toolBar = new EditorActionToolBar();
+        toolBar = new EditorReviewToolsToolBar();
         toolBar.addSelectedToolChangeListener(newTool -> newTool.apply(board));
 
         container = new BorderPane();

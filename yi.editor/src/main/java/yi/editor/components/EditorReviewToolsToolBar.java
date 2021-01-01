@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Primary toolbar for {@link EditorWindow} that displays a set of supported editing tools
  * and other options.
  */
-public class EditorActionToolBar extends ToolBar {
+public class EditorReviewToolsToolBar extends ToolBar {
 
     private final Property<EditorTool> selectedTool = new Property<>(EditorTool.PLAY_MOVE);
 
@@ -28,7 +28,7 @@ public class EditorActionToolBar extends ToolBar {
     private YiToggleButton toolPlayMove; // Effectively final and non-null because of assertions in constructor
     private final List<EditorToolAction> editToolActions;
 
-    public EditorActionToolBar() {
+    public EditorReviewToolsToolBar() {
         toolButtonGroup = new ToggleGroup();
         toolMenuGroup = new ToggleGroup();
 
