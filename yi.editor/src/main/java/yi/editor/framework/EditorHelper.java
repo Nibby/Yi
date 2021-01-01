@@ -129,6 +129,9 @@ public final class EditorHelper {
      * This step should only be performed once upon startup.
      */
     public static synchronized void initializeContext() {
+        if (!isRunningAsTest()) {
+            EditorUncaughtExceptionHandler.initialize();
+        }
         if (isInitialized && !isRunningAsTest()) {
             throw new IllegalStateException("initializeContext() should only be called " +
                     "once in production");
