@@ -73,7 +73,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
         board.setGameModel(newModel);
     }
 
-    public void setContentForLayout(EditorPerspective newLayout) {
+    public void setContentForPerspective(EditorPerspective newLayout) {
         toolBar.setContentForLayout(newLayout);
     }
 

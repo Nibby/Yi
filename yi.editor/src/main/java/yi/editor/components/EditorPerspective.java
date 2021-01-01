@@ -38,7 +38,7 @@ public enum EditorPerspective {
 
             var board = window.getBoardComponent();
             content.setCenter(board);
-            content.setBottom(window.getPlayerInfoBar());
+            content.setBottom(window.getPlayerInfoComponent());
 
             return content;
         }
@@ -66,7 +66,11 @@ public enum EditorPerspective {
             var tree = window.getTreeComponent();
             var commentArea = window.getCommentComponent();
 
-            var sideSplit = new SplitPane(tree, commentArea);
+            BorderPane compositeArea = new BorderPane();
+            compositeArea.setCenter(commentArea);
+            compositeArea.setBottom(window.getPlayerInfoComponent());
+
+            var sideSplit = new SplitPane(tree, compositeArea);
             sideSplit.setOrientation(Orientation.VERTICAL);
             sideSplit.getDividers().get(0).setPosition(0.7d);
 
