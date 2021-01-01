@@ -38,8 +38,7 @@ public enum EditorPerspective {
 
             var board = window.getBoardComponent();
             content.setCenter(board);
-
-            // TODO: A footer component showing player name / color and move number
+            content.setBottom(window.getPlayerInfoBar());
 
             return content;
         }
