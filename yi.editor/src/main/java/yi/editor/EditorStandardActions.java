@@ -2,8 +2,8 @@ package yi.editor;
 
 import org.jetbrains.annotations.NotNull;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.components.EditorTextResources;
-import yi.editor.framework.EditorComponent;
+import yi.editor.framework.EditorTextResources;
+import yi.editor.components.EditorComponent;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.*;
 

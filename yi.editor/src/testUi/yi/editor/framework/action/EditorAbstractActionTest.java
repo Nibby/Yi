@@ -15,7 +15,7 @@ import yi.component.shared.component.YiMenuItem;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.components.EditorTextResources;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.accelerator.EditorAcceleratorManager;
 

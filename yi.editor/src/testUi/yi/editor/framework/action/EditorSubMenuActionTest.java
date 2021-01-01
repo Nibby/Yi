@@ -12,7 +12,7 @@ import org.testfx.framework.junit5.Start;
 import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.components.EditorMenuBar;
-import yi.editor.components.EditorTextResources;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 
 import java.util.concurrent.atomic.AtomicBoolean;

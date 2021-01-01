@@ -1,8 +1,8 @@
-package yi.editor.components;
+package yi.editor.framework;
 
 import yi.component.shared.component.FontManager;
 
-public final class EditorFontManager {
+final class EditorFontManager {
 
     private static final String FONT_RESOURCE_DIR = "/yi/editor/fonts/";
     private static final String[] BUNDLED_FONT_NAMES = {

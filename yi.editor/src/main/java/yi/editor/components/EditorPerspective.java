@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.Nullable;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.EditorWindow;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;

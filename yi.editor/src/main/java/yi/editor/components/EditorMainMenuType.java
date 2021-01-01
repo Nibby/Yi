@@ -3,6 +3,7 @@ package yi.editor.components;
 import org.jetbrains.annotations.NotNull;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.framework.EditorHelper;
+import yi.editor.framework.EditorTextResources;
 
 public enum EditorMainMenuType {
 

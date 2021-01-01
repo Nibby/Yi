@@ -1,7 +1,7 @@
 package yi.editor.components;
 
 import yi.core.go.GameModel;
-import yi.editor.framework.EditorComponent;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
@@ -10,7 +10,7 @@ import yi.editor.framework.action.EditorBasicAction;
 
 import java.util.Optional;
 
-public class EditorUndoSystem implements EditorComponent<Object> {
+public final class EditorUndoSystem implements EditorComponent<Object> {
 
     private final EditorAction undo;
     private final EditorAction redo;

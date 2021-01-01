@@ -21,8 +21,9 @@ import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
 import yi.core.go.StandardGameRules;
 import yi.editor.components.*;
-import yi.editor.framework.EditorComponent;
+import yi.editor.components.EditorComponent;
 import yi.editor.framework.EditorHelper;
+import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.settings.EditorSettings;
@@ -48,7 +49,7 @@ public class EditorWindow extends Stage {
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
     private final GameCommentViewer commentViewer;
-    private final EditorPlayerInfoComponent playerInfoComponent;
+    private final EditorPlayerInfoToolBar playerInfoComponent;
 
     private final Property<GameModel> gameModel = new Property<>(DEFAULT_MODEL);
 
@@ -63,7 +64,7 @@ public class EditorWindow extends Stage {
         undoSystem = new EditorUndoSystem();
         addComponent(undoSystem);
 
-        playerInfoComponent = new EditorPlayerInfoComponent();
+        playerInfoComponent = new EditorPlayerInfoToolBar();
         boardArea = new EditorBoardArea();
         addComponent(boardArea);
 
