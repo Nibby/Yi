@@ -43,7 +43,6 @@ public final class GameBoardViewer implements YiComponent {
         container = new CanvasContainer(content);
 
         addRenderSignalHooks();
-        setEditable(true);
     }
 
     private void addRenderSignalHooks() {
@@ -126,16 +125,7 @@ public final class GameBoardViewer implements YiComponent {
     public void setEditMode(@NotNull AbstractEditMode editMode) {
         Objects.requireNonNull(editMode, "Edit mode cannot be null. To disable editing, use setEditable(false)");
 
-        manager.edit.setEditMode(editMode);
-    }
-
-    /**
-     * Set whether the game model can be edited through the game board editor or not.
-     *
-     * @param editable true if editable
-     */
-    public void setEditable(boolean editable) {
-        manager.edit.setEditable(editable);
+        manager.editModeProperty().set(editMode);
     }
 
     /**
@@ -146,32 +136,6 @@ public final class GameBoardViewer implements YiComponent {
      */
     void update() {
         content.forEach(canvas -> canvas.onGameUpdate(manager.getGameModel(), this.manager));
-    }
-
-    /**
-     * Requests that the previous edit be undone. If the undo operation is not available,
-     * do nothing.
-     *
-     * @return Whether undo operation is available again after executing the undo request.
-     */
-    public boolean requestUndo() {
-        if (manager.edit.canUndo()) {
-            manager.edit.performUndo(manager);
-        }
-        return manager.edit.canUndo();
-    }
-
-    /**
-     * Requests that the next edit be re-done. If the redo operation is not available,
-     * do nothing.
-     *
-     * @return Whether redo operation is available again after executing the redo request.
-     */
-    public boolean requestRedo() {
-        if (manager.edit.canRedo()) {
-            manager.edit.performRedo(manager);
-        }
-        return manager.edit.canRedo();
     }
 
     /**
@@ -288,24 +252,10 @@ public final class GameBoardViewer implements YiComponent {
     }
 
     /**
-     * @return {@code true} if there exists at least one more edit that can be undone.
-     */
-    public boolean canUndo() {
-        return manager.edit.canUndo();
-    }
-
-    /**
-     * @return {@code true} if there exists at least one more edit that can be undone.
-     */
-    public boolean canRedo() {
-        return manager.edit.canRedo();
-    }
-
-    /**
      * @return Currently set edit mode used by the game board editor.
      */
     public AbstractEditMode getEditMode() {
-        return manager.edit.getEditMode();
+        return manager.editModeProperty().get();
     }
 
     public boolean isEditable() {

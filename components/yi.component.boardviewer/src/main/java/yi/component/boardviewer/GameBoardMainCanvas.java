@@ -456,7 +456,7 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
         private static void renderNextMoveMarkers(GraphicsContext g, GameBoardManager manager) {
             var model = manager.getGameModel();
             var currentNode = model.getCurrentNode();
-            var children = currentNode.getNextNodes();
+            var children = currentNode.getChildNodes();
 
             var primaryMoveVariations = 0;
             for (GameNode child : children) {

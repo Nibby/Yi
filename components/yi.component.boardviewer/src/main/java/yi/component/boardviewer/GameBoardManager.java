@@ -2,10 +2,9 @@ package yi.component.boardviewer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import yi.component.shared.BooleanProperty;
-import yi.component.shared.BooleanPropertyListener;
-import yi.component.shared.NullableProperty;
-import yi.component.shared.NullablePropertyListener;
+import yi.component.boardviewer.editmodes.AbstractEditMode;
+import yi.component.boardviewer.editmodes.EditMode;
+import yi.component.shared.*;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 
@@ -20,9 +19,10 @@ public final class GameBoardManager {
 
     public final GameBoardSize size = new GameBoardSize();
     public final GameBoardView view = new GameBoardView();
-    public final GameModelEditor edit = new GameModelEditor();
     public final GameBoardAudio audio = new GameBoardAudio();
+    public final GameBoardModelEditor edit = new GameBoardModelEditor(this);
 
+    private final Property<AbstractEditMode> editMode = new Property<>(EditMode.playMove());
     private final NullableProperty<GameNode> previewNode = new NullableProperty<>(null);
     private final BooleanProperty showCoordinates = new BooleanProperty(false);
     private boolean debugMode = false;
@@ -44,12 +44,7 @@ public final class GameBoardManager {
     }
 
     protected final void setGameModel(@NotNull GameModel gameModel) {
-        var isSameModel = this.model == gameModel;
         this.model = Objects.requireNonNull(gameModel);
-
-        if (!isSameModel) {
-            edit.clearEditHistory();
-        }
     }
 
     public @NotNull GameModel getGameModel() {
@@ -108,5 +103,9 @@ public final class GameBoardManager {
 
     public boolean isShowingCoordinates() {
         return showCoordinates.get();
+    }
+
+    public Property<AbstractEditMode> editModeProperty() {
+        return editMode;
     }
 }

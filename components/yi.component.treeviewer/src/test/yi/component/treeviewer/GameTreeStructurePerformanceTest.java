@@ -109,7 +109,7 @@ public class GameTreeStructurePerformanceTest {
         int w = model.getBoardWidth();
         int h = model.getBoardHeight();
 
-        var nextNodes = model.getCurrentNode().getNextNodes();
+        var nextNodes = model.getCurrentNode().getChildNodes();
 
         for (int x = 0; x < w; x++) {
             seekNext:
@@ -126,7 +126,7 @@ public class GameTreeStructurePerformanceTest {
                     }
                 }
 
-                boolean success = model.submitMove(x, y).getValidationResult() == MoveValidationResult.OK;
+                boolean success = model.getEditor().addMove(x, y).getValidationResult() == MoveValidationResult.OK;
 
                 if (success) {
                     return;

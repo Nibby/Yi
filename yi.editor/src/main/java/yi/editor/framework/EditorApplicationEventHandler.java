@@ -130,10 +130,12 @@ public final class EditorApplicationEventHandler {
     }
 
     private static void handleOpenFileRequest(File file) {
-        if (EditorHelper.isInitialized()) {
-            loadGameModel(file);
-        } else {
-            queueFile(file);
+        if (file.exists() && file.getAbsolutePath().contains(File.separator)) {
+            if (EditorHelper.isInitialized()) {
+                loadGameModel(file);
+            } else {
+                queueFile(file);
+            }
         }
     }
 

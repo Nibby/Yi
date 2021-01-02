@@ -9,9 +9,9 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.boardviewer.AnnotationRenderer;
 import yi.component.boardviewer.GameBoardManager;
 import yi.component.boardviewer.GameBoardSize;
-import yi.component.boardviewer.edits.AnnotationEdit;
 import yi.core.go.Annotation;
 import yi.core.go.AnnotationType;
+import yi.core.go.editor.edit.AnnotationEdit;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -231,16 +231,16 @@ public final class AnnotationEditMode extends AbstractEditMode {
 
         if (annotation != null) {
             var currentNode = manager.getGameModel().getCurrentNode();
-            var deletionEdit = AnnotationEdit.forRemoval(currentNode, annotation, sessionId);
+            var deletionEdit = AnnotationEdit.Companion.forRemoval(currentNode, annotation, sessionId);
 
-            manager.edit.recordAndApply(deletionEdit, manager);
+            manager.edit.submit(deletionEdit);
         }
     }
 
     private static void createAnnotation(GameBoardManager manager, Annotation annotation, long sessionId) {
         var currentNode = manager.getGameModel().getCurrentNode();
-        var additionEdit = AnnotationEdit.forNew(currentNode, annotation, sessionId);
-        manager.edit.recordAndApply(additionEdit, manager);
+        var additionEdit = AnnotationEdit.Companion.forNew(currentNode, annotation, sessionId);
+        manager.edit.submit(additionEdit);
     }
 
     private void resetDirectionalAnnotationCreateStep() {

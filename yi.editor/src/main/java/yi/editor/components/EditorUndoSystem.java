@@ -1,6 +1,7 @@
 package yi.editor.components;
 
 import yi.core.go.GameModel;
+import yi.core.go.editor.GameModelUndoSystem;
 import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.accelerator.EditorAcceleratorId;
 import yi.editor.framework.action.EditorAction;
@@ -21,8 +22,9 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
             public void refreshState(EditorActionContext context) {
                 super.refreshState(context);
                 var window = context.getEditorWindow();
-                var board = window.getBoardArea();
-                undo.setEnabled(board.canUndo());
+                var model = window.getGameModel();
+                var undoSystem = model.getEditor().getUndoSystem();
+                undo.setEnabled(undoSystem.canUndo());
             }
         };
         undo.setInMainMenu(EditorMainMenuType.EDIT, 0d);
@@ -34,8 +36,9 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
             public void refreshState(EditorActionContext context) {
                 super.refreshState(context);
                 var window = context.getEditorWindow();
-                var board = window.getBoardArea();
-                redo.setEnabled(board.canRedo());
+                var model = window.getGameModel();
+                var undoSystem = model.getEditor().getUndoSystem();
+                redo.setEnabled(undoSystem.canRedo());
             }
         };
         redo.setInMainMenu(EditorMainMenuType.EDIT, 0.001d);
@@ -45,32 +48,34 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
 
     private void requestUndo(EditorActionContext context) {
         var window = context.getEditorWindow();
-        var board = window.getBoardArea();
-        boolean canUndoAgain = board.requestUndo();
-        undo.setEnabled(canUndoAgain);
-        redo.setEnabled(board.canRedo());
+        var model = window.getGameModel();
+        var undoSystem = model.getEditor().getUndoSystem();
+        undoSystem.performUndo();
+        undo.setEnabled(undoSystem.canUndo());
+        redo.setEnabled(undoSystem.canRedo());
     }
 
     private void requestRedo(EditorActionContext context) {
         var window = context.getEditorWindow();
-        var board = window.getBoardArea();
-        boolean canRedoAgain = board.requestRedo();
-        redo.setEnabled(canRedoAgain);
-        undo.setEnabled(board.canUndo());
+        var model = window.getGameModel();
+        var undoSystem = model.getEditor().getUndoSystem();
+        undoSystem.performRedo();
+        redo.setEnabled(undoSystem.canRedo());
+        undo.setEnabled(undoSystem.canUndo());
     }
 
-    public void setGameModel(GameModel newGameModel, EditorBoardArea boardArea) {
-        refreshState(boardArea);
-
-        newGameModel.onCurrentNodeChange().addListener(e -> refreshState(boardArea));
-        newGameModel.onNodeDataUpdate().addListener(e -> refreshState(boardArea));
-        newGameModel.onNodeAdd().addListener(e -> refreshState(boardArea));
-        newGameModel.onNodeRemove().addListener(e -> refreshState(boardArea));
+    public void setGameModel(GameModel newGameModel) {
+        GameModelUndoSystem undoSystem = newGameModel.getEditor().getUndoSystem();
+        newGameModel.onCurrentNodeChange().addListener(e -> refreshState(undoSystem));
+        newGameModel.onNodeDataUpdate().addListener(e -> refreshState(undoSystem));
+        newGameModel.onNodeAdd().addListener(e -> refreshState(undoSystem));
+        newGameModel.onNodeRemove().addListener(e -> refreshState(undoSystem));
     }
 
-    private void refreshState(EditorBoardArea boardArea) {
-        undo.setEnabled(boardArea.canUndo());
-        redo.setEnabled(boardArea.canRedo());
+    private void refreshState(GameModelUndoSystem undoSystem) {
+
+        undo.setEnabled(undoSystem.canUndo());
+        redo.setEnabled(undoSystem.canRedo());
     }
 
     @Override
