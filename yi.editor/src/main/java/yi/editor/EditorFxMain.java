@@ -11,7 +11,7 @@ public class EditorFxMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        EditorHelper.initializeContext();
+        EditorHelper.initializeContext(getParameters());
 
         if (!EditorApplicationEventHandler.hasPreInitializationOpenFileEvent()) {
             var gameModel = GameModelUtilities.createGameModel();

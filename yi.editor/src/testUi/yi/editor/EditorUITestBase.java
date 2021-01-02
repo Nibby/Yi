@@ -31,7 +31,7 @@ public abstract class EditorUITestBase {
 
     @Start
     public void startFx(Stage stage) {
-        EditorHelper.initializeContext();
+        EditorHelper.initializeContext(null);
 
         gameModel = GameModelUtilities.createGameModel(19, 19, StandardGameRules.CHINESE);
         window = new EditorWindow(gameModel, EditorPerspective.COMPACT) {
