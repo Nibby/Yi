@@ -112,7 +112,7 @@ public final class GameBoardSizeUITest extends GameBoardUITestBase {
                 "move at (" + x + ", " + y + ") is rendered out of " + boundName + " bounds.";
 
         try {
-            getGameModel().submitMoveWithoutValidation(x, y);
+            getGameModel().getEditor().addMoveWithoutValidation(x, y);
             String screenshotName = boardWidth +"x" + boardHeight + "_at_" + x + "_" + y + ".png";
             boolean success = saveScreenshot("GameBoardSizeUITest", screenshotName);
 

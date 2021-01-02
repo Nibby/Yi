@@ -458,9 +458,9 @@ public class GameTreeStructureCorrectnessTest {
             String errorMessage = String.format("Unexpected node at %d,%d : '%s'", elementX, elementY, currentNode.toString());
             assertTrue(grids[elementX][elementY], errorMessage);
 
-            var children = currentNode.getNextNodes();
+            var children = currentNode.getChildNodes();
             if (children.size() > 0) {
-                currentNode.getNextNodesExcludingMainBranch().forEach(move -> testBranch(move, structure, grids));
+                currentNode.getChildNodesExcludingMainBranch().forEach(move -> testBranch(move, structure, grids));
                 currentNode = children.get(0);
             } else {
                 break;

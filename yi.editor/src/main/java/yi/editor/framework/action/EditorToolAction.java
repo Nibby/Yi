@@ -159,9 +159,9 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
 
             if (action.isSelected()) {
                 tool.apply(getGameBoardViewer(context));
-                board.setEditable(true);
+                window.getGameModel().getEditor().setEditable(true);
             } else if (componentGroup.getSelectedToggle() == null && board.isEditable()) {
-                board.setEditable(false);
+                window.getGameModel().getEditor().setEditable(false);
             }
         });
         action.setInMainMenu(EditorMainMenuType.TOOLS, menuPosition);

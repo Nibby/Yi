@@ -36,8 +36,8 @@ class SgfFileFormatHandlerTest {
         var currentNode = root
         var moveNumber = 0
 
-        while (currentNode.getNextNodeInMainBranch() != null) {
-            currentNode = currentNode.getNextNodeInMainBranch()!!
+        while (currentNode.getChildNodeInMainBranch() != null) {
+            currentNode = currentNode.getChildNodeInMainBranch()!!
             ++moveNumber
 
             Assertions.assertEquals(GameNodeType.MOVE_PLAYED, currentNode.getType(), "Each node in SGF is a primary move, but this node is parsed as something else.")
@@ -111,7 +111,7 @@ class SgfFileFormatHandlerTest {
         var currentNode = root
         var moveNumber = 0
         while (!currentNode.isLastMoveInThisVariation()) {
-            currentNode = currentNode.getNextNodeInMainBranch()!!
+            currentNode = currentNode.getChildNodeInMainBranch()!!
             ++moveNumber
         }
 
@@ -129,15 +129,15 @@ class SgfFileFormatHandlerTest {
 
         val root = gameModel.getRootNode()
 
-        val firstMove = root.getNextNodeInMainBranch()!!
+        val firstMove = root.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.STONE_EDIT, firstMove.getType())
         Assertions.assertEquals(StoneColor.WHITE, gameModel.getGameState(firstMove).boardPosition.getStoneColorAt(1, 1))
 
-        val secondMove = firstMove.getNextNodeInMainBranch()!!
+        val secondMove = firstMove.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.STONE_EDIT, secondMove.getType())
         Assertions.assertEquals(StoneColor.NONE, gameModel.getGameState(secondMove).boardPosition.getStoneColorAt(1, 1))
 
-        val thirdMove = secondMove.getNextNodeInMainBranch()!!
+        val thirdMove = secondMove.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.STONE_EDIT, thirdMove.getType())
         Assertions.assertEquals(StoneColor.WHITE, gameModel.getGameState(thirdMove).boardPosition.getStoneColorAt(1, 1))
     }
@@ -153,10 +153,10 @@ class SgfFileFormatHandlerTest {
 
         val root = gameModel.getRootNode()
 
-        val firstMove = root.getNextNodeInMainBranch()!!
+        val firstMove = root.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.PASS, firstMove.getType())
 
-        val secondMove = firstMove.getNextNodeInMainBranch()!!
+        val secondMove = firstMove.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.PASS, secondMove.getType())
 
         Assertions.assertTrue(secondMove.isLastMoveInThisVariation())
@@ -179,14 +179,14 @@ class SgfFileFormatHandlerTest {
         // Method under test
         val gameModel = GameModelImporter.fromInternalResources("/sgf/escapedSymbols.sgf", FileFormat.SGF, this::class.java)
 
-        val firstNode = gameModel.getRootNode().getNextNodeInMainBranch()!!
+        val firstNode = gameModel.getRootNode().getChildNodeInMainBranch()!!
         Assertions.assertEquals("This comment has an escaped tag close ] character and meta-escaped characters \\\\]",
                 firstNode.getComments(), "Escape symbols not parsed correctly")
 
         val customTagValue = firstNode.getMetadataSingleValue("CUSTOM_TAG")
         Assertions.assertEquals("] \\[ ]", customTagValue, "Custom tag value not correct")
 
-        val secondNode = firstNode.getNextNodeInMainBranch()!!
+        val secondNode = firstNode.getChildNodeInMainBranch()!!
         Assertions.assertTrue(secondNode.isLastMoveInThisVariation())
     }
 
@@ -195,10 +195,10 @@ class SgfFileFormatHandlerTest {
         val gameModel = GameModelImporter.fromInternalResources("/sgf/corruptTagData.sgf", FileFormat.SGF, this::class.java)
         val root = gameModel.getRootNode()
 
-        val firstMove = root.getNextNodeInMainBranch()
+        val firstMove = root.getChildNodeInMainBranch()
         Assertions.assertNotNull(firstMove, "Unexpected end of sequence after root node")
 
-        val secondMove = firstMove!!.getNextNodeInMainBranch()
+        val secondMove = firstMove!!.getChildNodeInMainBranch()
         Assertions.assertNotNull(secondMove, "Unexpected end of sequence after first move")
 
         // Should expect no annotations because both annotation tags are conjoined, forming
@@ -216,7 +216,7 @@ class SgfFileFormatHandlerTest {
         Assertions.assertEquals(19, gameModel.boardHeight, "Board height size incorrect")
         Assertions.assertEquals("2020-08-23", root.getMetadataSingleValue("DT"), "Date value incorrect")
 
-        val firstMove = root.getNextNodeInMainBranch()!!
+        val firstMove = root.getChildNodeInMainBranch()!!
         val annotations = firstMove.getAnnotations()
         Assertions.assertEquals(2, annotations.size)
         Assertions.assertTrue(annotations.contains(Annotation.Square(0, 0)))
@@ -249,31 +249,31 @@ class SgfFileFormatHandlerTest {
         Assertions.assertTrue(annotations.contains(Annotation.Arrow(17, 0, 17, 3)), "Arrow missing (17, 0) -> (17, 3)")
         Assertions.assertTrue(annotations.contains(Annotation.Arrow(16, 3, 16, 0)), "Arrow missing (16, 3) -> (16, 0)")
 
-        val move1 = rootNode.getNextNodeInMainBranch()!!
+        val move1 = rootNode.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move1.delta.type, "Move 1 node type incorrect")
         Assertions.assertEquals(Stone(3, 3, StoneColor.BLACK), move1.getPrimaryMove()!!, "First move stone position incorrect")
-        Assertions.assertEquals(2, move1.getNextNodes().size, "First move continuation size incorrect")
+        Assertions.assertEquals(2, move1.getChildNodes().size, "First move continuation size incorrect")
 
-        val move1a = move1.getNextNodesExcludingMainBranch()[0]
+        val move1a = move1.getChildNodesExcludingMainBranch()[0]
         Assertions.assertEquals(GameNodeType.STONE_EDIT, move1a.delta.type, "Move 1 variation node type incorrect")
 
-        val move2 = move1.getNextNodeInMainBranch()!!
+        val move2 = move1.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move2.delta.type, "Move 2 node type incorrect")
         Assertions.assertEquals(Stone(15, 3, StoneColor.WHITE), move2.getPrimaryMove()!!, "Second move stone position incorrect")
-        Assertions.assertEquals(2, move2.getNextNodes().size, "Second move continuation size incorrect")
+        Assertions.assertEquals(2, move2.getChildNodes().size, "Second move continuation size incorrect")
 
-        val move2a = move1.getNextNodesExcludingMainBranch()[0]
+        val move2a = move1.getChildNodesExcludingMainBranch()[0]
         Assertions.assertEquals(GameNodeType.STONE_EDIT, move2a.delta.type, "Move 2 variation node type incorrect")
 
-        val move3 = move2.getNextNodeInMainBranch()!!
+        val move3 = move2.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move3.delta.type, "Move 3 node type incorrect")
         Assertions.assertEquals(Stone(3, 16, StoneColor.BLACK), move3.getPrimaryMove()!!, "Second move stone position incorrect")
-        Assertions.assertEquals(1, move3.getNextNodes().size, "Third move continuation size incorrect")
+        Assertions.assertEquals(1, move3.getChildNodes().size, "Third move continuation size incorrect")
 
-        val move4 = move3.getNextNodeInMainBranch()!!
+        val move4 = move3.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.MOVE_PLAYED, move4.delta.type, "Move 4 node type incorrect")
 
-        val move5 = move4.getNextNodeInMainBranch()!!
+        val move5 = move4.getChildNodeInMainBranch()!!
         Assertions.assertEquals(GameNodeType.PASS, move5.delta.type, "Move 5 node type incorrect")
     }
 
@@ -287,7 +287,7 @@ class SgfFileFormatHandlerTest {
         Assertions.assertTrue(handicaps.contains(Stone(15, 3, StoneColor.BLACK)), "Missing handicap stone at (15,3)")
         Assertions.assertTrue(handicaps.contains(Stone(3, 15, StoneColor.BLACK)), "Missing handicap stone at (3, 15)")
 
-        val playedMove = model.submitMove(0, 0)
+        val playedMove = model.editor.addMove(0, 0)
         Assertions.assertEquals(StoneColor.WHITE, playedMove.moveNode!!.getPrimaryMove()!!.color,
                 "Next move color incorrect")
     }
@@ -301,7 +301,7 @@ class SgfFileFormatHandlerTest {
         val handicaps = root.getStoneEdits()
         Assertions.assertTrue(handicaps.contains(Stone(3, 15, StoneColor.BLACK)), "Missing handicap stone at (3, 15)")
 
-        val playedMove = model.submitMove(0, 0)
+        val playedMove = model.editor.addMove(0, 0)
         Assertions.assertEquals(StoneColor.WHITE, playedMove.moveNode!!.getPrimaryMove()!!.color,
             "Next move color incorrect")
     }
@@ -363,17 +363,17 @@ class SgfFileFormatHandlerTest {
                 .playMove(1, 1)
                 .pass()
 
-        model.setCurrentNode(model.getRootNode())
+        model.currentNode = model.getRootNode()
         model.beginMoveSequence()
                 .pass()
 
-        model.setCurrentNode(model.getRootNode())
+        model.currentNode = model.getRootNode()
         model.beginMoveSequence()
                 .playMove(1, 1)
                 .pass()
 
-        val move1 = model.getRootNode().getNextNodeInMainBranch()!!
-        model.setCurrentNode(move1)
+        val move1 = model.getRootNode().getChildNodeInMainBranch()!!
+        model.currentNode = move1
         model.beginMoveSequence()
                 .pass()
 
@@ -400,13 +400,13 @@ class SgfFileFormatHandlerTest {
     fun `export multi-value tag works`() {
         val model = GameModel(19, 19, StandardGameRules.CHINESE)
         val root = model.getRootNode()
-        model.addStoneEdit(root, Stone(0, 0, StoneColor.BLACK))
-        model.addStoneEdit(root, Stone(1, 0, StoneColor.BLACK))
+        model.editor.addStoneEdit(root, Stone(0, 0, StoneColor.BLACK))
+        model.editor.addStoneEdit(root, Stone(1, 0, StoneColor.BLACK))
 
-        model.addStoneEdit(root, Stone(2, 0, StoneColor.WHITE))
-        model.addStoneEdit(root, Stone(3, 0, StoneColor.WHITE))
+        model.editor.addStoneEdit(root, Stone(2, 0, StoneColor.WHITE))
+        model.editor.addStoneEdit(root, Stone(3, 0, StoneColor.WHITE))
 
-        model.addAnnotations(root, setOf(Annotation.Triangle(0, 0), Annotation.Triangle(1, 0)))
+        model.editor.addAnnotations(root, setOf(Annotation.Triangle(0, 0), Annotation.Triangle(1, 0)))
 
         val data = exportModel(model)
 
@@ -420,8 +420,8 @@ class SgfFileFormatHandlerTest {
     fun `export directional annotation works`() {
         val model = GameModel(19, 19, StandardGameRules.CHINESE)
         val root = model.getRootNode()
-        model.addAnnotations(root, listOf(Annotation.Arrow(0, 0, 2, 2), Annotation.Arrow(1, 1, 3, 3)))
-        model.addAnnotations(root, listOf(Annotation.Line(1, 1, 4, 4), Annotation.Line(3, 3, 5, 5)))
+        model.editor.addAnnotations(root, listOf(Annotation.Arrow(0, 0, 2, 2), Annotation.Arrow(1, 1, 3, 3)))
+        model.editor.addAnnotations(root, listOf(Annotation.Line(1, 1, 4, 4), Annotation.Line(3, 3, 5, 5)))
 
         val data = exportModel(model)
         assertContainsVariant(setOf("AR[aa:cc][bb:dd]", "AR[bb:dd][aa:cc]"), data, "Arrow annotations not exported correctly. Exported=$data")
@@ -442,8 +442,8 @@ class SgfFileFormatHandlerTest {
     fun `export handicapped game works`() {
         val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.info.setHandicapCount(2)
-        model.addStoneEdit(model.getRootNode(), Stone(3, 3, StoneColor.BLACK))
-        model.addStoneEdit(model.getRootNode(), Stone(15, 15, StoneColor.BLACK))
+        model.editor.addStoneEdit(model.getRootNode(), Stone(3, 3, StoneColor.BLACK))
+        model.editor.addStoneEdit(model.getRootNode(), Stone(15, 15, StoneColor.BLACK))
 
         val data = exportModel(model)
 
@@ -479,15 +479,15 @@ class SgfFileFormatHandlerTest {
     @Test
     fun `export all annotations correctly`() {
         val model = GameModel(19, 19, StandardGameRules.CHINESE)
-        model.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
-        model.addAnnotationToCurrentNode(Annotation.Square(1, 0))
-        model.addAnnotationToCurrentNode(Annotation.Circle(2, 0))
-        model.addAnnotationToCurrentNode(Annotation.Cross(3, 0))
-        model.addAnnotationToCurrentNode(Annotation.Fade(4, 0))
-        model.addAnnotationToCurrentNode(Annotation.Label(5, 0, "a"))
-        model.addAnnotationToCurrentNode(Annotation.Label(6, 0, "1"))
-        model.addAnnotationToCurrentNode(Annotation.Line(1, 1, 2, 2))
-        model.addAnnotationToCurrentNode(Annotation.Arrow(3, 3, 4, 4))
+        model.editor.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
+        model.editor.addAnnotationToCurrentNode(Annotation.Square(1, 0))
+        model.editor.addAnnotationToCurrentNode(Annotation.Circle(2, 0))
+        model.editor.addAnnotationToCurrentNode(Annotation.Cross(3, 0))
+        model.editor.addAnnotationToCurrentNode(Annotation.Fade(4, 0))
+        model.editor.addAnnotationToCurrentNode(Annotation.Label(5, 0, "a"))
+        model.editor.addAnnotationToCurrentNode(Annotation.Label(6, 0, "1"))
+        model.editor.addAnnotationToCurrentNode(Annotation.Line(1, 1, 2, 2))
+        model.editor.addAnnotationToCurrentNode(Annotation.Arrow(3, 3, 4, 4))
 
         val data = exportModel(model)
 
@@ -507,10 +507,10 @@ class SgfFileFormatHandlerTest {
     fun `export all stone edits correctly`() {
         val model = GameModel(19, 19, StandardGameRules.CHINESE)
         model.beginMoveSequence().playMove(9, 9)
-        val move1 = model.getRootNode().getNextNodeInMainBranch()!!
-        model.addStoneEdit(move1, Stone(0, 0, StoneColor.BLACK))
-        model.addStoneEdit(move1, Stone(1, 0, StoneColor.WHITE))
-        model.addStoneEdit(move1, Stone(9, 9, StoneColor.NONE))
+        val move1 = model.getRootNode().getChildNodeInMainBranch()!!
+        model.editor.addStoneEdit(move1, Stone(0, 0, StoneColor.BLACK))
+        model.editor.addStoneEdit(move1, Stone(1, 0, StoneColor.WHITE))
+        model.editor.addStoneEdit(move1, Stone(9, 9, StoneColor.NONE))
 
         val data = exportModel(model)
         val segments = data.split(SgfFileFormatHandler.DELIM_NODE_START)
@@ -532,7 +532,7 @@ class SgfFileFormatHandlerTest {
         root.putMetadata("CUSTOM_KEY", "some value")
         root.putMetadata("CUSTOM_KEY2", "")
 
-        val child = root.getNextNodeInMainBranch()!!
+        val child = root.getChildNodeInMainBranch()!!
         child.putMetadata("CUSTOM", "child value")
 
         val data = exportModel(model)
@@ -579,8 +579,8 @@ class SgfFileFormatHandlerTest {
         val data = "(;GM[1]FF[4]SZ[19];B[aa];W[tt])"
         val model = GameModelImporter.fromString(data, FileFormat.SGF)
         val root = model.getRootNode()
-        val firstChild = root.getNextNodeInMainBranch()!!
-        val secondChild = firstChild.getNextNodeInMainBranch()!!
+        val firstChild = root.getChildNodeInMainBranch()!!
+        val secondChild = firstChild.getChildNodeInMainBranch()!!
 
         Assertions.assertEquals(GameNodeType.PASS, secondChild.getType())
     }
@@ -672,13 +672,13 @@ class SgfFileFormatHandlerTest {
         var current = node
         do {
             ++nodeCount
-            for (branchNode in current.getNextNodesExcludingMainBranch()) {
+            for (branchNode in current.getChildNodesExcludingMainBranch()) {
                 nodeCount += countNodes(branchNode)
             }
             if (current.isLastMoveInThisVariation()) {
                 break
             } else {
-                current = current.getNextNodeInMainBranch()!!
+                current = current.getChildNodeInMainBranch()!!
             }
         } while (true)
 

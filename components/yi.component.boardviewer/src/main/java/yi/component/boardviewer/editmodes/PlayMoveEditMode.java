@@ -4,11 +4,11 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import yi.component.boardviewer.GameBoardManager;
-import yi.component.boardviewer.edits.PlayMoveEdit;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.MoveValidationResult;
 import yi.core.go.StoneColor;
+import yi.core.go.editor.edit.MoveEdit;
 
 import java.util.Optional;
 
@@ -53,17 +53,17 @@ public final class PlayMoveEditMode extends AbstractEditMode {
     @Override
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         if (button == MouseButton.PRIMARY) {
-            PlayMoveEdit playMoveEdit = PlayMoveEdit.forMove(gridX, gridY);
-            manager.edit.recordAndApply(playMoveEdit, manager);
+            MoveEdit playMoveEdit = new MoveEdit(gridX, gridY);
+            manager.edit.submit(playMoveEdit);
 
             playSounds(manager, playMoveEdit);
         } else {
             // TODO: This is only temporary.
-            manager.getGameModel().submitPass();
+            manager.getGameModel().getEditor().addPass();
         }
     }
 
-    private void playSounds(GameBoardManager manager, PlayMoveEdit edit) {
+    private void playSounds(GameBoardManager manager, MoveEdit edit) {
         if (edit.getMoveValidationResult() == MoveValidationResult.OK) {
             var submittedNode = edit.getSubmittedNode();
             StoneColor moveColor = getStoneColor(manager.getGameModel(), edit);
@@ -83,7 +83,7 @@ public final class PlayMoveEditMode extends AbstractEditMode {
         }
     }
 
-    private StoneColor getStoneColor(GameModel model, PlayMoveEdit edit) {
+    private StoneColor getStoneColor(GameModel model, MoveEdit edit) {
         var node = edit.getSubmittedNode() != null ? edit.getSubmittedNode() : model.getCurrentNode();
         var primaryMove = node.getPrimaryMove();
         StoneColor color;

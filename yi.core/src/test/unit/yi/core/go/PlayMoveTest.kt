@@ -11,16 +11,16 @@ class PlayMoveTest {
     fun `play first legal move has correct move tree state`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val result = model.submitMove(0, 0)
+        val result = model.editor.addMove(0, 0)
 
-        Assertions.assertEquals(result.moveNode!!, model.getCurrentNode())
+        Assertions.assertEquals(result.moveNode!!, model.currentNode)
     }
 
     @Test
     fun `play first legal move returns correct move submission result`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val moveSubmitResult = model.submitMove(0, 0)
+        val moveSubmitResult = model.editor.addMove(0, 0)
 
         Assertions.assertEquals(MoveValidationResult.OK, moveSubmitResult.validationResult)
         Assertions.assertNotNull(moveSubmitResult.moveNode)
@@ -31,7 +31,7 @@ class PlayMoveTest {
     fun `play first legal move resolves to correct board position`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val moveSubmitResult = model.submitMove(0, 0)
+        val moveSubmitResult = model.editor.addMove(0, 0)
         val newNode = moveSubmitResult.moveNode
 
         val firstMoveGameState = model.getGameState(newNode!!)
@@ -44,7 +44,7 @@ class PlayMoveTest {
     fun `play five consecutive moves all have correct stone color`() {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
 
-        val moveSubmitResult = model.submitMove(0, 0)
+        val moveSubmitResult = model.editor.addMove(0, 0)
         val newNode = moveSubmitResult.moveNode
 
         val firstMoveGameState = model.getGameState(newNode!!)
@@ -64,7 +64,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1) // white removes last liberty, stone at 0,0 should be captured now
 
-        val gameState = model.getGameState(model.getCurrentNode())
+        val gameState = model.getGameState(model.currentNode)
         Assertions.assertEquals(1, gameState.prisonersWhite)
         Assertions.assertEquals(StoneColor.NONE, gameState.boardPosition.getStoneColorAt(0, 0))
     }
@@ -82,7 +82,7 @@ class PlayMoveTest {
                 .playMove(0, 2)
                 .playMove(1, 2) // After white plays this move, the three black stones on the left column should be all captured
 
-        val currentState = model.getGameState(model.getCurrentNode())
+        val currentState = model.getGameState(model.currentNode)
 
         Assertions.assertEquals(3, currentState.prisonersWhite)
 
@@ -106,8 +106,8 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(2, stateHashHistory.size)
-        Assertions.assertEquals(13, model.getCurrentNode().getStateHash()) // 0100b xor 1001b = 1101b (13)
-        Assertions.assertEquals(4, model.getCurrentNode().parent!!.getStateHash()) // 0100b (4)
+        Assertions.assertEquals(13, model.currentNode.getStateHash()) // 0100b xor 1001b = 1101b (13)
+        Assertions.assertEquals(4, model.currentNode.parent!!.getStateHash()) // 0100b (4)
     }
 
     @Test
@@ -121,7 +121,7 @@ class PlayMoveTest {
         val stateHashHistory = model.getStateHashHistory()
 
         Assertions.assertEquals(1, stateHashHistory.size)
-        Assertions.assertEquals(4, model.getCurrentNode().parent!!.getStateHash()) // 0100b (4)
+        Assertions.assertEquals(4, model.currentNode.parent!!.getStateHash()) // 0100b (4)
     }
 
     @Test
@@ -135,7 +135,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1)
 
-        val result = model.submitMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
+        val result = model.editor.addMove(1, 1) // This white move is played at an intersection with no liberties, but it captures black first so it is allowed
 
         Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
     }
@@ -154,7 +154,7 @@ class PlayMoveTest {
                 .playMove(0, 0) // black captures and starts ko
 
         // This move should now be illegal because 1,0 was just captured
-        val submitResult = model.submitMove(1, 0)
+        val submitResult = model.editor.addMove(1, 0)
 
         Assertions.assertEquals(MoveValidationResult.ERROR_KO_RECAPTURE, submitResult.validationResult)
     }
@@ -168,7 +168,7 @@ class PlayMoveTest {
                 .pass()
                 .playMove(0, 1)
 
-        val submitResult = model.submitMove(0, 0) // Tries to play inside black territory (0 liberties)
+        val submitResult = model.editor.addMove(0, 0) // Tries to play inside black territory (0 liberties)
 
         Assertions.assertEquals(MoveValidationResult.ERROR_MOVE_SUICIDAL, submitResult.validationResult)
     }
@@ -185,7 +185,7 @@ class PlayMoveTest {
                 .playMove(1, 1)
                 .pass()
 
-        val submitResult = model.submitMove(0, 0) // Tries to play inside black territory (0 liberties
+        val submitResult = model.editor.addMove(0, 0) // Tries to play inside black territory (0 liberties
 
         Assertions.assertEquals(MoveValidationResult.OK, submitResult.validationResult)
     }
@@ -197,7 +197,7 @@ class PlayMoveTest {
         model.beginMoveSequence()
                 .playMove(0, 0)
 
-        val result = model.submitMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
+        val result = model.editor.addMove(0, 0) // White tries to play the suicidal move again, which is a suicide and not permitted
 
         Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
@@ -216,7 +216,7 @@ class PlayMoveTest {
                 .playMove(1, 1) // After playing this move black's entire group is self-captured. This move is not a board state repeat (of root empty state) because that doesn't count as a valid unique state.
                 .pass()
 
-        val result = model.submitMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
+        val result = model.editor.addMove(0, 0) // Playing at the position of move 1 again, which is a board position repeat
 
         Assertions.assertEquals(MoveValidationResult.ERROR_POSITION_REPEAT, result.validationResult)
     }
@@ -228,7 +228,7 @@ class PlayMoveTest {
         model.beginMoveSequence()
                 .playMove(0, 0)
 
-        val currentMove = model.getCurrentNode()
+        val currentMove = model.currentNode
         Assertions.assertEquals(1, model.getCurrentMoveNumber()) // Sanity check
 
         val parent = currentMove.parent
@@ -243,55 +243,55 @@ class PlayMoveTest {
                 .playMove(0, 0)
 
         // Assume both playMoves() succeed
-        val variationOne = model.submitMove(1, 0).moveNode
+        val variationOne = model.editor.addMove(1, 0).moveNode
         model.toPreviousNode()
-        val variationTwo = model.submitMove(0, 1).moveNode
+        val variationTwo = model.editor.addMove(0, 1).moveNode
 
         // back to first node, now playing (1, 0) should set current position to variationOne
         // and playing (0, 1) should set current position to variationTwo without creating new
         // nodes for both situations.
         model.toPreviousNode()
 
-        Assertions.assertEquals(variationOne, model.submitMove(1, 0).moveNode)
+        Assertions.assertEquals(variationOne, model.editor.addMove(1, 0).moveNode)
         model.toPreviousNode()
 
-        Assertions.assertEquals(variationTwo, model.submitMove(0, 1).moveNode)
+        Assertions.assertEquals(variationTwo, model.editor.addMove(0, 1).moveNode)
         model.toPreviousNode()
 
         // Check child size is still correct
-        Assertions.assertEquals(2, model.getCurrentNode().children.size)
+        Assertions.assertEquals(2, model.currentNode.children.size)
     }
 
     @Test
     fun `pass at a position where the next move is also pass will set current move to that node instead`() {
         val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
 
-        val branchNode = model.submitMove(0, 0).moveNode!!
+        val branchNode = model.editor.addMove(0, 0).moveNode!!
 
-        model.submitMove(1, 0)
+        model.editor.addMove(1, 0)
         model.toPreviousNode()
-        val firstPassNode = model.submitPass().moveNode!!
+        val firstPassNode = model.editor.addPass().moveNode!!
         model.toPreviousNode()
 
         // Check setup is correct
-        Assertions.assertEquals(2, model.getCurrentNode().children.size)
+        Assertions.assertEquals(2, model.currentNode.children.size)
 
         // Pass again. This should set the current move to firstPassNode.
         // No new branch will be created.
-        model.submitPass()
+        model.editor.addPass()
 
         Assertions.assertEquals(2, branchNode.children.size, "Child size changed after passing the second time.")
-        Assertions.assertEquals(firstPassNode, model.getCurrentNode(), "Current node is not at the original pass node.")
+        Assertions.assertEquals(firstPassNode, model.currentNode, "Current node is not at the original pass node.")
     }
 
     @Test
     fun `play move, remove it, play there again at root still works`() {
         val model = GameModel(2, 2, TestingGameRulesSuicideAllowed(), TestingFourIntersectionXORHasher())
         model.beginMoveSequence().playMove(0, 0)
-        model.removeNodeSubtree(model.getRootNode())
+        model.editor.removeNodeSubtree(model.getRootNode())
 
         // Method under test
-        val result = model.submitMove(0, 0)
+        val result = model.editor.addMove(0, 0)
 
         // Assert
         Assertions.assertEquals(MoveValidationResult.OK, result.validationResult)
