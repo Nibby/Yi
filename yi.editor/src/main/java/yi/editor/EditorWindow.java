@@ -93,7 +93,7 @@ public class EditorWindow extends Stage {
         addGameModelChangeListener(newModel -> {
             boardArea.setGameModel(newModel);
             treeViewer.setGameModel(newModel);
-            undoSystem.setGameModel(newModel, boardArea);
+            undoSystem.setGameModel(newModel);
             commentViewer.setGameModel(newModel);
             playerInfoComponent.setGameModel(newModel);
         });

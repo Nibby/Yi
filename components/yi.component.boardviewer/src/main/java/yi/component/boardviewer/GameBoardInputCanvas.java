@@ -40,7 +40,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         
         if (renderCursor) {
             if (manager.edit.isEditable()) {
-                var editMode = manager.edit.getEditMode();
+                var editMode = manager.editModeProperty().get();
                 editMode.getMouseCursor().ifPresent(this::setCursor);
                 editMode.renderGridCursor(g, manager, cursorX, cursorY);
             } else {
@@ -59,11 +59,11 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         final int MAX_NUMBER_OF_MOVES_IN_PREVIEW = 20;
 
         intersectionsWithPreviewNode.clear();
-        if (currentNode.hasAlternativeNextMoves()) {
+        if (currentNode.hasAlternativeVariations()) {
             // TODO: Support OGS AI Reviews (1 stone edit rather than primary move)
-            var tempIntersectionMap = new HashMap<Integer, GameNode>(currentNode.getNextNodes().size());
+            var tempIntersectionMap = new HashMap<Integer, GameNode>(currentNode.getChildNodes().size());
 
-            for (GameNode nextNode : currentNode.getNextNodes()) {
+            for (GameNode nextNode : currentNode.getChildNodes()) {
                 var move = nextNode.getPrimaryMove();
                 if (move != null) {
                     var nodeToStore = nextNode;
@@ -72,7 +72,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
                         if (nodeToStore.isLastMoveInThisVariation()) {
                             break;
                         } else {
-                            var continuation = nodeToStore.getNextNodeInMainBranch();
+                            var continuation = nodeToStore.getChildNodeInMainBranch();
                             if (continuation != null) {
                                 nodeToStore = continuation;
                             }
@@ -99,14 +99,16 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         retrieveCursorPosition(e.getX(), e.getY());
 
         if (manager.edit.isEditable()) {
+            var editMode = manager.editModeProperty().get();
+
             if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
                 requestFocus();
-                manager.edit.getEditMode().onMousePress(e.getButton(), manager, cursorX, cursorY);
+                editMode.onMousePress(e.getButton(), manager, cursorX, cursorY);
             } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 requestFocus();
-                manager.edit.getEditMode().onMouseDrag(e.getButton(), manager, cursorX, cursorY);
+                editMode.onMouseDrag(e.getButton(), manager, cursorX, cursorY);
             } else if (e.getEventType() == MouseEvent.MOUSE_RELEASED) {
-                manager.edit.getEditMode().onMouseRelease(e.getButton(), manager, cursorX, cursorY);
+                editMode.onMouseRelease(e.getButton(), manager, cursorX, cursorY);
             }
         }
 
@@ -131,7 +133,7 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
 
     private void onKeyEvent(KeyEvent e) {
         if (e.getEventType() == KeyEvent.KEY_PRESSED) {
-            manager.edit.getEditMode().onKeyPress(manager, e);
+            manager.editModeProperty().get().onKeyPress(manager, e);
         }
     }
 

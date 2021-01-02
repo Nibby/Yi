@@ -58,7 +58,7 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
 
     private void testSetNewCurrentNodeResetsHighlightedNode(FxRobot robot) throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
-            model.submitPass();
+            model.getEditor().addPass();
         }
         Point2D mouseLocation = centerOnRootNode(robot);
         Thread.sleep(50);
@@ -134,13 +134,13 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
             Rectangle2D bounds = treeViewer.getElementBoundsForNode(currentNode).orElseThrow();
             moveToCenter(bounds, robot);
             robot.clickOn(MouseButton.PRIMARY);
-            Thread.sleep(50);
+            Thread.sleep(200);
             Assertions.assertEquals(currentNode, model.getCurrentNode());
             assert currentNode != null;
             if (currentNode.isLastMoveInThisVariation()) {
                 break;
             } else {
-                currentNode = currentNode.getNextNodeInMainBranch();
+                currentNode = currentNode.getChildNodeInMainBranch();
             }
         } while (true);
     }
@@ -149,7 +149,7 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
         var currentNode = model.getRootNode();
 
         do {
-            GameNode nodeToHover = currentNode.getNextNodeInMainBranch();
+            GameNode nodeToHover = currentNode.getChildNodeInMainBranch();
             if (nodeToHover != null) {
                 Rectangle2D bounds = treeViewer.getElementBoundsForNode(nodeToHover).orElseThrow();
                 moveToCenter(bounds, robot);

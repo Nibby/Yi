@@ -92,7 +92,7 @@ class GameNode constructor(val delta: StateDelta) {
      *
      * @return true if this position has more than 1 possible continuation.
      */
-    fun hasAlternativeNextMoves(): Boolean {
+    fun hasAlternativeVariations(): Boolean {
         return getVariationsCount() > 1
     }
 
@@ -100,7 +100,7 @@ class GameNode constructor(val delta: StateDelta) {
      *
      * @return All possible variations from this node.
      */
-    fun getNextNodes(): List<GameNode> {
+    fun getChildNodes(): List<GameNode> {
         return children
     }
 
@@ -109,7 +109,7 @@ class GameNode constructor(val delta: StateDelta) {
      * @return List of all immediate descendant nodes from this node that is not part of the
      *         main variation.
      */
-    fun getNextNodesExcludingMainBranch(): List<GameNode> {
+    fun getChildNodesExcludingMainBranch(): List<GameNode> {
         val result = ArrayList<GameNode>()
 
         for (i in 1 until getVariationsCount()) {
@@ -132,7 +132,7 @@ class GameNode constructor(val delta: StateDelta) {
     /**
      * @return The next move in the main branch if it exists, otherwise null.
      */
-    fun getNextNodeInMainBranch(): GameNode? {
+    fun getChildNodeInMainBranch(): GameNode? {
         return if (getVariationsCount() > 0) children[0]
                else null
     }

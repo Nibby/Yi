@@ -5,20 +5,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import yi.component.boardviewer.GameBoardClassFactory;
 import yi.component.boardviewer.GameBoardManagerAccessor;
-import yi.component.boardviewer.edits.StoneEdit;
 import yi.core.go.*;
+import yi.core.go.editor.edit.StoneEdit;
 
 public final class StoneEditModeMechanismTest {
 
     @Test
-    public void testStoneEdit_NonEditNode_CreatesOne() {
+    public void testStoneEdit_onNonStoneEditNode_createsIt() {
         var model = new GameModel(3, 3, StandardGameRules.CHINESE);
         var manager = GameBoardClassFactory.createGameBoardManager();
         GameBoardManagerAccessor.setGameModel(manager, model);
 
-        Assertions.assertNotSame(GameNodeType.STONE_EDIT, model.getCurrentNode().getType());
+        var editMode = EditMode.editStones(StoneColor.WHITE);
+        manager.editModeProperty().set(editMode);
 
-        manager.edit.recordAndApply(StoneEdit.add(null, 0, 0, StoneColor.WHITE), manager);
+        editMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
 
         Assertions.assertNotEquals(model.getRootNode(), model.getCurrentNode());
         Assertions.assertEquals(1, model.getCurrentMoveNumber());
@@ -33,10 +34,11 @@ public final class StoneEditModeMechanismTest {
 
         Assertions.assertNotSame(GameNodeType.STONE_EDIT, model.getCurrentNode().getType());
 
-        manager.edit.recordAndApply(StoneEdit.add(null, 0, 0, StoneColor.WHITE), manager);
-        // These two edits edits the current node because that's the node created. These edits should not create more nodes.
-        manager.edit.recordAndApply(StoneEdit.add(model.getCurrentNode(), 1, 0, StoneColor.WHITE), manager);
-        manager.edit.recordAndApply(StoneEdit.add(model.getCurrentNode(), 2, 0, StoneColor.WHITE), manager);
+        manager.edit.submit(new StoneEdit.Add(null, 0, 0, StoneColor.WHITE));
+        // These two edits edits the current node because that's the node created.
+        // These edits should not create more nodes.
+        manager.edit.submit(new StoneEdit.Add(model.getCurrentNode(), 1, 0, StoneColor.WHITE));
+        manager.edit.submit(new StoneEdit.Add(model.getCurrentNode(), 2, 0, StoneColor.WHITE));
 
         Assertions.assertNotEquals(model.getRootNode(), model.getCurrentNode());
         Assertions.assertEquals(1, model.getCurrentMoveNumber());
@@ -54,7 +56,7 @@ public final class StoneEditModeMechanismTest {
         Assertions.assertNotSame(GameNodeType.STONE_EDIT, model.getCurrentNode().getType());
 
         var editMode = EditMode.editStones(StoneColor.BLACK);
-        manager.edit.setEditMode(editMode);
+        manager.editModeProperty().set(editMode);
 
         // Method under test
         // Edits white stone at (0, 0) which already has a move there.
@@ -77,7 +79,7 @@ public final class StoneEditModeMechanismTest {
         Assertions.assertNotSame(GameNodeType.STONE_EDIT, model.getCurrentNode().getType());
 
         var editMode = EditMode.editStones(StoneColor.WHITE);
-        manager.edit.setEditMode(editMode);
+        manager.editModeProperty().set(editMode);
 
         // Method under test
         // Edits white stone at (0, 0) which already has a move there.
@@ -96,14 +98,14 @@ public final class StoneEditModeMechanismTest {
         GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editStoneMode = EditMode.editStones(StoneColor.BLACK);
-        manager.edit.setEditMode(editStoneMode);
+        manager.editModeProperty().set(editStoneMode);
 
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
 
         // Playing move at stone edit node. This move is the second 'node' but is the first game move to be played
         // so it should still be a black stone.
         var playMoveMode = EditMode.playMove();
-        manager.edit.setEditMode(playMoveMode);
+        manager.editModeProperty().set(playMoveMode);
 
         playMoveMode.onMousePress(MouseButton.PRIMARY, manager, 0, 1);
         Assertions.assertEquals(StoneColor.BLACK, model.getCurrentGameState().getBoardPosition().getStoneColorAt(0, 1));
@@ -124,7 +126,7 @@ public final class StoneEditModeMechanismTest {
         GameBoardManagerAccessor.setGameModel(manager, model);
 
         var editStoneMode = EditMode.editStones(StoneColor.WHITE);
-        manager.edit.setEditMode(editStoneMode);
+        manager.editModeProperty().set(editStoneMode);
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 1);
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 2);
@@ -135,7 +137,7 @@ public final class StoneEditModeMechanismTest {
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 2, 1);
 
         var playMoveMode = EditMode.playMove();
-        manager.edit.setEditMode(playMoveMode);
+        manager.editModeProperty().set(playMoveMode);
         // This move should capture all the white stones previously
         playMoveMode.onMousePress(MouseButton.PRIMARY, manager, 2, 2);
 
@@ -161,11 +163,11 @@ public final class StoneEditModeMechanismTest {
         Assertions.assertTrue(model.getRootNode().isLastMoveInThisVariation());
 
         var editStoneMode = EditMode.editStones(StoneColor.WHITE);
-        manager.edit.setEditMode(editStoneMode);
+        manager.editModeProperty().set(editStoneMode);
         editStoneMode.onMousePress(MouseButton.PRIMARY, manager, 0, 0);
 
         Assertions.assertFalse(model.getRootNode().isLastMoveInThisVariation());
-        var newNode = model.getRootNode().getNextNodeInMainBranch();
+        var newNode = model.getRootNode().getChildNodeInMainBranch();
         Assertions.assertNotNull(newNode);
         Assertions.assertEquals(new Stone(0, 0, StoneColor.WHITE), newNode.getStoneEditAt(0, 0));
     }
