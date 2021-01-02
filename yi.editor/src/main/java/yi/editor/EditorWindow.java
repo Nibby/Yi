@@ -3,6 +3,7 @@ package yi.editor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
@@ -121,9 +122,32 @@ public class EditorWindow extends Stage {
         setPerspective(perspective);
         setGameModel(gameModel);
         setTitle(EditorHelper.getProgramName());
+        setIcons();
 
         ACTIVE_WINDOWS.add(this);
         onCloseRequestProperty().addListener(event -> ACTIVE_WINDOWS.remove(this));
+    }
+
+    private void setIcons() {
+        final String baseDir = "/yi/editor/icons/stage/";
+
+        if (SystemUtilities.isMac()) {
+            final String macDir = baseDir + "mac/";
+
+            getIcons().addAll(
+                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_16x16.png")),
+                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_32x32.png")),
+                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_32x32@2x.png")),
+                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_128x128.png"))
+            );
+        } else {
+            getIcons().addAll(
+                new Image(EditorWindow.class.getResourceAsStream(baseDir + "icon16.png")),
+                new Image(EditorWindow.class.getResourceAsStream(baseDir + "icon32.png")),
+                new Image(EditorWindow.class.getResourceAsStream(baseDir + "icon64.png")),
+                new Image(EditorWindow.class.getResourceAsStream(baseDir + "icon128.png"))
+            );
+        }
     }
 
     /**
