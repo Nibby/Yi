@@ -3,6 +3,7 @@ package yi.editor.framework;
 
 import com.sun.glass.ui.Application;
 import javafx.application.Platform;
+import org.jetbrains.annotations.Nullable;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelImporter;
 import yi.core.go.GameParseException;
@@ -10,7 +11,11 @@ import yi.editor.EditorWindow;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -25,7 +30,7 @@ public final class EditorApplicationEventHandler {
     private static final Queue<File> OPEN_FILE_QUEUE = new ArrayDeque<>();
     private static boolean hasPreInitializationOpenFileEvent = false;
 
-    public static void initialize() {
+    public static void initialize(@Nullable javafx.application.Application.Parameters parameters) {
         Application.EventHandler internalHandler = Application.GetApplication().getEventHandler();
 
         Application.GetApplication().setEventHandler(new Application.EventHandler() {
@@ -101,6 +106,27 @@ public final class EditorApplicationEventHandler {
                 return internalHandler.handleThemeChanged(themeName);
             }
         });
+
+        handlePendingOpenFilesInProgramArgs(parameters);
+    }
+
+    /*
+        When a file is opened whose extension is associated with this application, the absolute file path is appended
+        to the program launch parameters on non-macOS platforms.
+     */
+    private static void handlePendingOpenFilesInProgramArgs(@Nullable javafx.application.Application.Parameters parameters) {
+        if (parameters == null) {
+            return;
+        }
+        List<String> paramValues = parameters.getRaw();
+        for (String param : paramValues) {
+            try {
+                Path paramAsPath = Paths.get(param);
+                handleOpenFileRequest(paramAsPath.toFile());
+            } catch (InvalidPathException e) {
+                // Oh well, this parameter is not an absolute file path, ignore it.
+            }
+        }
     }
 
     private static void handleOpenFileRequest(File file) {

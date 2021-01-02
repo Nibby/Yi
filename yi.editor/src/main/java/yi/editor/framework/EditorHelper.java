@@ -1,5 +1,6 @@
 package yi.editor.framework;
 
+import javafx.application.Application;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
 import yi.component.shared.audio.CommonAudioSets;
@@ -126,7 +127,7 @@ public final class EditorHelper {
      *
      * This step should only be performed once upon startup.
      */
-    public static synchronized void initializeContext() {
+    public static synchronized void initializeContext(@Nullable Application.Parameters parameters) {
         if (!isRunningAsTest()) {
             EditorUncaughtExceptionHandler.initialize();
         }
@@ -134,7 +135,7 @@ public final class EditorHelper {
             throw new IllegalStateException("initializeContext() should only be called " +
                     "once in production");
         }
-        EditorApplicationEventHandler.initialize();
+        EditorApplicationEventHandler.initialize(parameters);
         EditorFontManager.loadBundledFonts();
         YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
         EditorAcceleratorManager.initializeAll();
