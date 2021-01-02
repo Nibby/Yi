@@ -590,8 +590,8 @@ class SgfFileFormatHandlerTest {
         val data = "(;GM[1]FF[4]SZ[19];B[aa];C[:-);\\[internal value :)\\]])"
         val model = GameModelImporter.fromString(data, FileFormat.SGF)
         val root = model.getRootNode()
-        val firstChild = root.getNextNodeInMainBranch()!!
-        val secondChild = firstChild.getNextNodeInMainBranch()!!
+        val firstChild = root.getChildNodeInMainBranch()!!
+        val secondChild = firstChild.getChildNodeInMainBranch()!!
 
         Assertions.assertEquals(":-);\\[internal value :)]", secondChild.getComments())
     }
