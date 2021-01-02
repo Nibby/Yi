@@ -130,17 +130,7 @@ public class EditorWindow extends Stage {
 
     private void setIcons() {
         final String baseDir = "/yi/editor/icons/stage/";
-
-        if (SystemUtilities.isMac()) {
-            final String macDir = baseDir + "mac/";
-
-            getIcons().addAll(
-                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_16x16.png")),
-                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_32x32.png")),
-                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_32x32@2x.png")),
-                    new Image(EditorWindow.class.getResourceAsStream(macDir + "icon_128x128.png"))
-            );
-        } else {
+        if (!SystemUtilities.isMac()) {
             getIcons().addAll(
                 new Image(EditorWindow.class.getResourceAsStream(baseDir + "icon16.png")),
                 new Image(EditorWindow.class.getResourceAsStream(baseDir + "icon32.png")),
