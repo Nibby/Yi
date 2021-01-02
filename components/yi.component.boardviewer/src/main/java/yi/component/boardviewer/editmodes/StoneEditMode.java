@@ -3,10 +3,10 @@ package yi.component.boardviewer.editmodes;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import yi.component.boardviewer.GameBoardManager;
-import yi.component.boardviewer.edits.StoneEdit;
 import yi.core.go.GameNode;
 import yi.core.go.GameNodeType;
 import yi.core.go.StoneColor;
+import yi.core.go.editor.edit.StoneEdit;
 
 public final class StoneEditMode extends AbstractEditMode {
 
@@ -64,10 +64,10 @@ public final class StoneEditMode extends AbstractEditMode {
             // Otherwise use method 1 to erase stones created from another node.
             if (nodeToEdit == null || stoneEditHere == null) {
                 // No edit on this node created this stone, apply method 1
-                edit = StoneEdit.add(nodeToEdit, x, y, StoneColor.NONE);
+                edit = new StoneEdit.Add(nodeToEdit, x, y, StoneColor.NONE);
             } else {
                 // Another edit on this node created this stone, apply method 2
-                edit = StoneEdit.remove(nodeToEdit, x, y);
+                edit = new StoneEdit.Remove(nodeToEdit, x, y);
             }
         } else if (stoneEditHere != null) {
             // There may not be a stone here, but that could either mean:
@@ -75,13 +75,13 @@ public final class StoneEditMode extends AbstractEditMode {
             // 2. There was a stone last move, and a stone edit of StoneColor.NONE exists here
             //    which erased it from the position.
             assert stoneEditHere.getColor() == StoneColor.NONE;
-            edit = StoneEdit.remove(nodeToEdit, x, y);
+            edit = new StoneEdit.Remove(nodeToEdit, x, y);
         } else {
             // Assuming intersection here has always been empty.
-            edit = StoneEdit.add(nodeToEdit, x, y, colorToEdit);
+            edit = new StoneEdit.Add(nodeToEdit, x, y, colorToEdit);
         }
 
-        manager.edit.recordAndApply(edit, manager);
+        manager.edit.submit(edit);
     }
 
     /**

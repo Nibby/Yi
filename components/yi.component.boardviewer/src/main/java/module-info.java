@@ -4,8 +4,8 @@ module yi.component.boardviewer {
 
     requires javafx.graphics;
     requires org.jetbrains.annotations;
+    requires commons.lang3;
 
     exports yi.component.boardviewer;
     exports yi.component.boardviewer.editmodes;
-    exports yi.component.boardviewer.edits;
 }

@@ -33,7 +33,7 @@ public final class GameCommentViewer implements YiComponent {
 
     private void saveCommentsToNode() {
         String text = commentEditor.getText();
-        gameModel.setCommentOnCurrentNode(text);
+        gameModel.getEditor().setCommentOnCurrentNode(text);
     }
 
     private void setCommentsFromNode(GameNode node) {

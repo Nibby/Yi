@@ -141,7 +141,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         // Standard node
                         val nodeParent = branchStack.peek().latestNode!!
                         val node = parseNode(organizedNodeData, nodeParent, gameModel)
-                        gameModel.appendNode(nodeParent, node)
+                        gameModel.editor.appendNode(nodeParent, node)
                         branchStack.peek().latestNode = node
                     }
                 }
@@ -274,7 +274,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 twoPointAnnotationConverter.invoke(data) { from, to -> annotations.add(Annotation.Arrow(from[0], from[1], to[0], to[1])) }
             }
 
-            gameModel.addAnnotations(gameNode, annotations)
+            gameModel.editor.addAnnotations(gameNode, annotations)
         }
 
         /*
@@ -286,11 +286,11 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             val eraseStones = nodeData.getOrDefault(SGF_ADD_ERASE, listOf()).map { convertCoordinates(it) }
 
             demoBlackStones.forEach {
-                gameModel.addStoneEdit(gameNode, Stone(it[0], it[1], StoneColor.BLACK))
+                gameModel.editor.addStoneEdit(gameNode, Stone(it[0], it[1], StoneColor.BLACK))
             }
 
             demoWhiteStones.forEach {
-                gameModel.addStoneEdit(gameNode, Stone(it[0], it[1], StoneColor.WHITE))
+                gameModel.editor.addStoneEdit(gameNode, Stone(it[0], it[1], StoneColor.WHITE))
             }
 
             eraseStones.forEach {
@@ -298,10 +298,10 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 val y = it[1]
 
                 // Remove existing helper stones first
-                gameModel.removeStoneEdit(gameNode, Stone(x, y, StoneColor.BLACK))
-                gameModel.removeStoneEdit(gameNode, Stone(x, y, StoneColor.WHITE))
+                gameModel.editor.removeStoneEdit(gameNode, Stone(x, y, StoneColor.BLACK))
+                gameModel.editor.removeStoneEdit(gameNode, Stone(x, y, StoneColor.WHITE))
 
-                gameModel.addStoneEdit(gameNode, Stone(x, y, StoneColor.NONE))
+                gameModel.editor.addStoneEdit(gameNode, Stone(x, y, StoneColor.NONE))
             }
         }
 
@@ -693,14 +693,14 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             while (!done) {
                 exportNode(gameModel, currentNode, writer)
 
-                if (currentNode.hasAlternativeNextMoves()) {
-                    for (branchingChild in currentNode.getNextNodes()) {
+                if (currentNode.hasAlternativeVariations()) {
+                    for (branchingChild in currentNode.getChildNodes()) {
                         exportBranch(gameModel, branchingChild, writer)
                     }
                     done = true
                 } else {
                     if (!currentNode.isLastMoveInThisVariation()) {
-                        currentNode = currentNode.getNextNodeInMainBranch()!!
+                        currentNode = currentNode.getChildNodeInMainBranch()!!
                     } else {
                         done = true
                     }
@@ -833,10 +833,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             if (moveType == GameNodeType.MOVE_PLAYED) {
                 currentNode.getPrimaryMove()!!.let {
                     val coordinates = if (moveType == GameNodeType.MOVE_PLAYED) getSgfCoordinates(it) else ""
-                    val color = it.color
-                    val key: String
 
-                    key = when (color) {
+                    val key: String = when (val color = it.color) {
                         StoneColor.BLACK -> SGF_BLACK_MOVE
                         StoneColor.WHITE -> SGF_WHITE_MOVE
                         else -> throw NotImplementedError("Unsupported stone color: $color")

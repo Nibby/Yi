@@ -77,28 +77,12 @@ public class EditorBoardArea implements EditorComponent<Pane> {
         toolBar.setContentForLayout(newLayout);
     }
 
-    public boolean requestUndo() {
-        return board.requestUndo();
-    }
-
-    public boolean requestRedo() {
-        return board.requestRedo();
-    }
-
     public void onHighlightedNodeChange(@Nullable GameNode node) {
         board.setPreviewNode(node);
     }
 
     public GameBoardViewer getGameBoardViewer() {
         return board;
-    }
-
-    public boolean canUndo() {
-        return board.canUndo();
-    }
-
-    public boolean canRedo() {
-        return board.canRedo();
     }
 
     @Override

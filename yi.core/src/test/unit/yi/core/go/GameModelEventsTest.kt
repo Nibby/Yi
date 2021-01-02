@@ -12,8 +12,6 @@ class GameModelEventsTest {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
         var eventReceived = false
 
-        // TODO: Either I am unaware of the language features or the lambda interop between Kotlin and Java
-        //       needs some serious work.
         val eventListener = object : EventListener<NodeEvent> {
             override fun onEvent(event: NodeEvent) {
                 eventReceived = true
@@ -33,8 +31,6 @@ class GameModelEventsTest {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
         var eventReceived = false
 
-        // TODO: Either I am unaware of the language features or the lambda interop between Kotlin and Java
-        //       needs some serious work.
         val eventListener = object : EventListener<NodeEvent> {
             override fun onEvent(event: NodeEvent) {
                 eventReceived = true
@@ -54,8 +50,6 @@ class GameModelEventsTest {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
         var eventReceived = false
 
-        // TODO: Either I am unaware of the language features or the lambda interop between Kotlin and Java
-        //       needs some serious work.
         val eventListener = object : EventListener<NodeEvent> {
             override fun onEvent(event: NodeEvent) {
                 eventReceived = true
@@ -65,8 +59,8 @@ class GameModelEventsTest {
         // Method under test
         model.onNodeRemove().addListener(eventListener)
 
-        val submitResult = model.submitMove(0, 0)
-        model.removeNodeSubtree(submitResult.moveNode!!) // Has to be a legal move
+        val submitResult = model.editor.addMove(0, 0)
+        model.editor.removeNodeSubtree(submitResult.moveNode!!) // Has to be a legal move
         Thread.sleep(10)
         Assertions.assertTrue(eventReceived, "No event emitted")
     }
@@ -76,8 +70,6 @@ class GameModelEventsTest {
         val model = GameModel(3, 3, TestingGameRulesNoSuicide())
         var eventReceived = false
 
-        // TODO: Either I am unaware of the language features or the lambda interop between Kotlin and Java
-        //       needs some serious work.
         val eventListener = object : EventListener<NodeEvent> {
             override fun onEvent(event: NodeEvent) {
                 eventReceived = true
@@ -91,15 +83,15 @@ class GameModelEventsTest {
                 .playMove(0, 0)
                 .playMove(1, 0)
 
-        val thirdMove = model.submitMove(2, 0)
+        val thirdMove = model.editor.addMove(2, 0)
 
         // Sanity check
         Assertions.assertTrue(thirdMove.validationResult == MoveValidationResult.OK)
         Assertions.assertTrue(thirdMove.isPlayed)
 
         val nodeToEdit = thirdMove.moveNode!! // If the validation result is OK, then we should expect a non-null node here.
-        model.setCurrentNode(model.getRootNode()) // Set current move somewhere that's not the last move
-        model.addAnnotations(nodeToEdit, Collections.singleton(Annotation.Triangle(0, 0)))
+        model.currentNode = model.getRootNode() // Set current move somewhere that's not the last move
+        model.editor.addAnnotations(nodeToEdit, Collections.singleton(Annotation.Triangle(0, 0)))
 
         Thread.sleep(10)
         Assertions.assertTrue(eventReceived, "No event emitted")
@@ -129,7 +121,7 @@ class GameModelEventsTest {
         model.onNodeDataUpdate().addListener(eventListenerForNodeData)
         model.onCurrentNodeDataUpdate().addListener(eventListenerForCurrentNodeData)
 
-        model.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
+        model.editor.addAnnotationToCurrentNode(Annotation.Triangle(0, 0))
 
         Thread.sleep(10)
         Assertions.assertTrue(nodeDataUpdateEventReceived, "No event emitted from onNodeDataUpdate()")
@@ -160,9 +152,9 @@ class GameModelEventsTest {
                 .playMove(1, 1)
 
         model.toPreviousNode()
-        val nodeToDelete = model.getCurrentNode()
+        val nodeToDelete = model.currentNode
         model.toNextNode() // Set current move to child of the node to delete
-        model.removeNodeSubtree(nodeToDelete) // Should adjust the current node to the parent of nodeToDelete
+        model.editor.removeNodeSubtree(nodeToDelete) // Should adjust the current node to the parent of nodeToDelete
 
         Thread.sleep(10)
 

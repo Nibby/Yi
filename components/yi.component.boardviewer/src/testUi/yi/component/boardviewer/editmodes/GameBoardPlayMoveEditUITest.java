@@ -8,9 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-import yi.component.boardviewer.GameBoardAccessor;
 import yi.component.boardviewer.GameBoardUITestBase;
-import yi.component.boardviewer.edits.PlayMoveEdit;
 import yi.core.go.GameModel;
 import yi.core.go.StandardGameRules;
 
@@ -71,7 +69,8 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
             Assertions.assertTrue(currentNodeChangeEventReceived.get(),
                     "onCurrentNodeChange() event was not received for move #" + currentMoveNumber);
 
-            int undoSystemHistorySize = GameBoardAccessor.getManager(getBoard()).edit.getCurrentHistorySize();
+            var undoSystem = getGameModel().getEditor().getUndoSystem();
+            int undoSystemHistorySize = undoSystem.getEditHistorySize();
             Assertions.assertEquals(currentMoveNumber, undoSystemHistorySize,
                     "Undo system history size mismatch.");
 
@@ -82,30 +81,6 @@ public final class GameBoardPlayMoveEditUITest extends GameBoardUITestBase {
             currentNodeChangeEventReceived.set(false);
             nodeAddEventReceived.set(false);
         }
-    }
-
-    @Test
-    public void testEditAtSameLocationAsNextMoveDoesNotCreateEditInUndoSystem(FxRobot robot) {
-        // Sorry about the name! This test checks for clicking on the same spot
-        // as the next move causes the board to change state to that move and
-        // no new PlayMoveEdit is created in the undo system. This avoids
-        // corrupting undo history.
-        var model = new GameModel(19, 19, StandardGameRules.CHINESE);
-        model.beginMoveSequence().playMove(0, 0);
-        model.setCurrentNode(model.getRootNode());
-        setGameModel(model);
-
-        click(robot, 0, 0); // We're at root, now click on the same location as the first move
-
-        Assertions.assertEquals(model.getRootNode().getNextNodeInMainBranch(), model.getCurrentNode(),
-                "Current node is not at the expected position after clicking on the " +
-                        "same location as the next move in the model.");
-
-        // No new edits should be created for clicking on a continuation.
-        Assertions.assertEquals(0, GameBoardAccessor.getManager(getBoard()).edit.getCurrentHistorySize(),
-                "Undo system registered a new " + PlayMoveEdit.class.getSimpleName() + " " +
-                        "when we clicked on the same location the next move in the " +
-                        "game model.");
     }
 
     @Override

@@ -10,7 +10,4 @@ public final class GameBoardClassFactory {
         return new GameBoardManager();
     }
 
-    public static GameModelEditor createGameModelEditor() {
-        return new GameModelEditor();
-    }
 }
