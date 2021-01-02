@@ -485,6 +485,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             var charCode: Int
             var char: Char
             val buffer = StringBuilder()
+            var readingTagValue = false
+            var readNextChar = true
 
             do {
                 charCode = reader.read()
@@ -492,8 +494,20 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     throw GameParseException("Premature end of file")
                 }
                 char = charCode.toChar()
+
+                // Avoid parsing tag value as special delimiters
+                if (char == DELIM_TAG_VALUE_START) {
+                    readingTagValue = true
+                } else if (char == DELIM_TAG_VALUE_END) {
+                    readingTagValue = false
+                }
+
                 buffer.append(char)
-            } while (!delimiters.contains(char))
+
+                if (!readingTagValue && delimiters.contains(char)) {
+                    readNextChar = false
+                }
+            } while (readNextChar)
 
             return Pair(buffer.toString(), char)
         }

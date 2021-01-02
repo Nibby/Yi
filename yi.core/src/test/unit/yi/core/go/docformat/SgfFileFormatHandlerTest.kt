@@ -585,6 +585,17 @@ class SgfFileFormatHandlerTest {
         Assertions.assertEquals(GameNodeType.PASS, secondChild.getType())
     }
 
+    @Test
+    fun `treats branch end delimiter in tag value correctly`() {
+        val data = "(;GM[1]FF[4]SZ[19];B[aa];C[:-);\\[internal value :)\\]])"
+        val model = GameModelImporter.fromString(data, FileFormat.SGF)
+        val root = model.getRootNode()
+        val firstChild = root.getNextNodeInMainBranch()!!
+        val secondChild = firstChild.getNextNodeInMainBranch()!!
+
+        Assertions.assertEquals(":-);\\[internal value :)]", secondChild.getComments())
+    }
+
     private fun exportModel(gameModel: GameModel): String {
         val output = ByteArrayOutputStream()
         GameModelExporter.toOutputStream(gameModel, output, FileFormat.SGF)
