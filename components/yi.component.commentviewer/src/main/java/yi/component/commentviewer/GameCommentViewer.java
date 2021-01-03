@@ -19,7 +19,7 @@ public final class GameCommentViewer implements YiComponent {
 
     private GameModel gameModel = null;
     private GameNode nodeToShow = null;
-    private final EventListener<NodeEvent> currentMoveListener = event -> setText(event.getNode());
+    private final EventListener<NodeEvent> currentMoveListener = event -> setCommentText(event.getNode());
 
     public GameCommentViewer() {
         container = new BorderPane();
@@ -46,10 +46,10 @@ public final class GameCommentViewer implements YiComponent {
         }
         this.gameModel = Objects.requireNonNull(gameModel);
         gameModel.onCurrentNodeChange().addListener(currentMoveListener);
-        setText(gameModel.getCurrentNode());
+        setCommentText(gameModel.getCurrentNode());
     }
 
-    public void setText(@NotNull GameNode node) {
+    public void setCommentText(@NotNull GameNode node) {
         Objects.requireNonNull(node, "Node cannot be null");
 
         // Prevent setting the same text for the same node which resets the caret position
