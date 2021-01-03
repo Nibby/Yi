@@ -176,8 +176,8 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
         assert actionComponent != null : "Editor tool action component must not be null";
 
         if (iconPath != null) {
-            String iconNormal = "/yi/editor/icons/" + iconPath + "_white@2x.png";
-            String iconSelected = iconNormal.replace("_white@2x.png", "@2x.png");
+            String iconNormal = "/yi/editor/icons/" + iconPath + "_white32.png";
+            String iconSelected = iconNormal.replace("_white32.png", "32.png");
             GuiUtilities.getIcon(iconNormal, EditorTool.class, 16).ifPresent(action::setIcon);
             actionComponent.selectedProperty().addListener(event -> {
                 boolean selectedNow = actionComponent.isSelected();
