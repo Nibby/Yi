@@ -27,7 +27,8 @@ public final class StoneEditMode extends AbstractEditMode {
 
     @Override
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
-        editIntersectionAt(gridX, gridY, manager);
+        var actualColorToEdit = button == MouseButton.SECONDARY ? colorToEdit.getOpponent() : colorToEdit;
+        editIntersectionAt(actualColorToEdit, gridX, gridY, manager);
     }
 
     @Override
@@ -40,7 +41,7 @@ public final class StoneEditMode extends AbstractEditMode {
 
     }
 
-    private void editIntersectionAt(int x, int y, GameBoardManager manager) {
+    private void editIntersectionAt(StoneColor colorToEdit, int x, int y, GameBoardManager manager) {
         var currentNode = manager.getGameModel().getCurrentNode();
         GameNode nodeToEdit;
 
