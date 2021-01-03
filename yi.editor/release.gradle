@@ -17,11 +17,7 @@ def applicationIcons = [
 
 def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(thisProject).toAbsolutePath().toString()
 def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(thisProject).toAbsolutePath().toString()
-def versionString = thisProject.version
-
-if (TargetPlatform.getCurrentPlatform() != TargetPlatform.Windows) {
-    versionString = versionString.replace("-SNAPSHOT", "") // MSI installer doesn't support this suffix
-}
+def versionString = thisProject.version.replace("-SNAPSHOT", "")
 
 jlinkOptions.jdkHome = null // If null, uses JAVA_HOME env value instead
 jlinkOptions.bundledJdkVersion = 11
@@ -48,7 +44,7 @@ setupBuilder {
     vendor = 'Sizhe (Kevin) Yang'
     application = applicationName
     description = "Go game record editor"
-    appIdentifier = "codes.nibby.yi"
+    appIdentifier = "Yi"
     version = versionString
 //    licenseFile = Paths.get(rootProject.projectDir.toString()).resolve('LICENSE').toFile()
     icons = applicationIcons
@@ -76,7 +72,7 @@ setupBuilder {
         documentType {
             fileExtension = [ "sgf" ]
             name = "Smart Game File"
-            mimetype = "application/sgf"
+            mimetype = "text/plain"
             role = "Editor"
         }
     }
@@ -126,14 +122,14 @@ dmg {
 }
 
 deb {
-    installationRoot = "/usr/share/yi"
+    installationRoot = "/usr/share/Yi"
     section = "Games"
     maintainerEmail = "nibby@null.net"
     description = "Go game editor program"
 }
 
 rpm {
-    installationRoot = "/usr/share/yi"
+    installationRoot = "/usr/share/Yi"
     backwardCompatible = true
     section = "Games"
     summary = "Go game record editor"
