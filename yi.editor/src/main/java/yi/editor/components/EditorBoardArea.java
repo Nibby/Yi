@@ -8,7 +8,7 @@ import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.editor.framework.EditorHelper;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionManager;
 import yi.editor.framework.action.EditorToggleAction;
@@ -52,7 +52,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
                     }
             );
             actionToggleCoordinates.setInMainMenu(EditorMainMenuType.VIEW, 0.000d);
-            actionToggleCoordinates.setAccelerator(EditorAcceleratorId.TOGGLE_BOARD_COORDINATES);
+            actionToggleCoordinates.setAccelerator(EditorAccelerator.TOGGLE_BOARD_COORDINATES);
             board.addShowCoordinatesValueListener(actionToggleCoordinates::setSelected);
         }
 

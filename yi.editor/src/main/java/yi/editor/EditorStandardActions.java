@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
 import yi.editor.components.EditorComponent;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 import yi.editor.framework.action.*;
 
 import java.util.HashSet;
@@ -37,14 +37,14 @@ final class EditorStandardActions implements EditorComponent<Object> {
     private void createNewGameAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_NEW_GAME, handler::handleCreateNewGame);
         actionItem.setInMainMenu(EditorMainMenuType.FILE, 0d);
-        actionItem.setAccelerator(EditorAcceleratorId.NEW_GAME);
+        actionItem.setAccelerator(EditorAccelerator.NEW_GAME);
         standardActions.add(actionItem);
     }
 
     private void createNewGameInNewWindowAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_NEW_WINDOW, handler::handleCreateGameInNewWindow);
         actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.0005d);
-        actionItem.setAccelerator(EditorAcceleratorId.NEW_WINDOW);
+        actionItem.setAccelerator(EditorAccelerator.NEW_WINDOW);
 
         standardActions.add(actionItem);
     }
@@ -52,7 +52,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
     private void createOpenGameAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_OPEN_GAME, handler::handleOpenGame);
         actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.001d);
-        actionItem.setAccelerator(EditorAcceleratorId.OPEN_GAME);
+        actionItem.setAccelerator(EditorAccelerator.OPEN_GAME);
 
         standardActions.add(actionItem);
     }
@@ -60,7 +60,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
     private void createSaveAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME, handler::handleSaveGame);
         actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.002d);
-        actionItem.setAccelerator(EditorAcceleratorId.SAVE_GAME);
+        actionItem.setAccelerator(EditorAccelerator.SAVE_GAME);
 
         standardActions.add(actionItem);
     }
@@ -68,7 +68,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
     private void createSaveAsAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_AS_GAME, handler::handleSaveAsGame);
         actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.003d);
-        actionItem.setAccelerator(EditorAcceleratorId.SAVE_AS_GAME);
+        actionItem.setAccelerator(EditorAccelerator.SAVE_AS_GAME);
 
         standardActions.add(actionItem);
     }

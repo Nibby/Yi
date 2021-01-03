@@ -2,7 +2,7 @@ package yi.editor.settings;
 
 import javafx.scene.input.KeyCombination;
 import org.json.JSONObject;
-import yi.editor.framework.accelerator.EditorAcceleratorManager;
+import yi.component.shared.component.Accelerator;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -49,13 +49,13 @@ public final class EditorAcceleratorSettings extends EditorSettingsModule {
     private void loadAccelerator(JSONObject settings, String acceleratorId) {
         String acceleratorName = settings.getString(acceleratorId);
         var combination = KeyCombination.valueOf(acceleratorName);
-        EditorAcceleratorManager.setAcceleratorKeyCombination(acceleratorId, combination);
+        Accelerator.setAcceleratorKeyCombination(acceleratorId, combination);
     }
 
     @Override
     public void save() {
         var settings = new JSONObject();
-        for (EditorAcceleratorManager.Accelerator accelerator : EditorAcceleratorManager.getAllAccelerators().values()) {
+        for (Accelerator accelerator : Accelerator.getAllAccelerators().values()) {
             settings.put(accelerator.getId(), accelerator.getKeyCombination().getName());
         }
 

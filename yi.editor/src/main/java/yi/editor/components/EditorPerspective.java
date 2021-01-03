@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.EditorWindow;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorRadioAction;
@@ -32,7 +32,7 @@ public enum EditorPerspective {
     /**
      * A minimal layout that focuses on the game board.
      */
-    COMPACT(EditorTextResources.MENUITEM_PERSPECTIVE_COMPACT, EditorAcceleratorId.TOGGLE_PERSPECTIVE_COMPACT) {
+    COMPACT(EditorTextResources.MENUITEM_PERSPECTIVE_COMPACT, EditorAccelerator.TOGGLE_PERSPECTIVE_COMPACT) {
         @Override
         public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
@@ -58,7 +58,7 @@ public enum EditorPerspective {
     /**
      * An expansive layout that with in-depth editing tools.
      */
-    REVIEW(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAcceleratorId.TOGGLE_PERSPECTIVE_REVIEW) {
+    REVIEW(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAccelerator.TOGGLE_PERSPECTIVE_REVIEW) {
         @Override
         public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
@@ -131,14 +131,14 @@ public enum EditorPerspective {
     private static final ToggleGroup MENU_ACTION_TOGGLE_GROUP = new ToggleGroup();
 
     private final TextResource friendlyName;
-    private final EditorAcceleratorId acceleratorId;
+    private final EditorAccelerator acceleratorId;
 
     /**
      * Creates a new type of supported layout for {@link EditorWindow}.
      *
      * @param friendlyName User friendly name of this layout
      */
-    EditorPerspective(TextResource friendlyName, EditorAcceleratorId acceleratorId) {
+    EditorPerspective(TextResource friendlyName, EditorAccelerator acceleratorId) {
         this.friendlyName = friendlyName;
         this.acceleratorId = acceleratorId;
     }
@@ -155,7 +155,7 @@ public enum EditorPerspective {
      *
      * @return The unique identifier for the accelerator for this layout.
      */
-    public EditorAcceleratorId getAcceleratorId() {
+    public EditorAccelerator getAcceleratorId() {
         return acceleratorId;
     }
 

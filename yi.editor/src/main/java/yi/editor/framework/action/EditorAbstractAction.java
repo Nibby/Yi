@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.shared.BooleanProperty;
 import yi.component.shared.NullableProperty;
 import yi.component.shared.Property;
+import yi.component.shared.component.Accelerator;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
 import yi.editor.framework.EditorHelper;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.accelerator.EditorAcceleratorManager;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -45,7 +45,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
     private final NullableProperty<M> createdMenuItem = new NullableProperty<>(null);
     private final NullableProperty<C> createdComponent = new NullableProperty<>(null);
-    private final NullableProperty<EditorAcceleratorId> acceleratorId = new NullableProperty<>(null);
+    private final NullableProperty<EditorAccelerator> acceleratorId = new NullableProperty<>(null);
 
     private Object userObject = null;
 
@@ -101,7 +101,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
                 StringBuilder tipText = new StringBuilder(getLocalisedText());
 
                 acceleratorId.get().ifPresent(id -> {
-                    var accelerator = EditorAcceleratorManager.getAccelerator(id);
+                    var accelerator = EditorAccelerator.getAccelerator(id);
                     var keyCombination = accelerator.getKeyCombination();
                     tipText.append(" (").append(keyCombination.getDisplayText()).append(")");
                 });
@@ -181,14 +181,15 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         createdMenuItem.addListener(newMenuItem -> acceleratorId.get().ifPresent(id -> installMenuItemAccelerator(id, newMenuItem)));
     }
 
-    private void installMenuItemAccelerator(EditorAcceleratorId acceleratorId, MenuItem menuItem) {
-        if (EditorHelper.isRunningAsTest() && (acceleratorId == null || menuItem == null)) {
+    private void installMenuItemAccelerator(EditorAccelerator editorAccelerator, MenuItem menuItem) {
+        if (EditorHelper.isRunningAsTest() && (editorAccelerator == null || menuItem == null)) {
             // TODO: Supposedly UI tests aren't loading all the accelerators but
             //       I think it should. Work out what's causing this and try remove
             //       this exclusion if possible.
             return;
         }
-        EditorAcceleratorManager.install(acceleratorId, menuItem);
+        var id = editorAccelerator.getId();
+        Accelerator.install(id, menuItem);
     }
 
     @Override
@@ -221,7 +222,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     }
 
     @Override
-    public EditorAction setAccelerator(EditorAcceleratorId acceleratorId) {
+    public EditorAction setAccelerator(EditorAccelerator acceleratorId) {
         this.acceleratorId.set(acceleratorId);
         return this;
     }

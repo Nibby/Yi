@@ -9,7 +9,7 @@ import yi.component.shared.BooleanProperty;
 import yi.component.shared.component.YiRadioMenuItem;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -92,7 +92,7 @@ public class EditorRadioAction extends EditorAbstractAction<YiRadioMenuItem, Nod
     // Methods overridden to enable co-variant return types for smoother method chaining
 
     @Override
-    public EditorRadioAction setAccelerator(EditorAcceleratorId acceleratorId) {
+    public EditorRadioAction setAccelerator(EditorAccelerator acceleratorId) {
         super.setAccelerator(acceleratorId);
         return this;
     }

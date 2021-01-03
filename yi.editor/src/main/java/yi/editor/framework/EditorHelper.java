@@ -9,7 +9,6 @@ import yi.component.shared.component.FontManager;
 import yi.component.shared.component.SkinManager;
 import yi.component.shared.component.YiScene;
 import yi.component.shared.utilities.SystemUtilities;
-import yi.editor.framework.accelerator.EditorAcceleratorManager;
 import yi.editor.settings.EditorSettings;
 
 import java.nio.file.Path;
@@ -138,7 +137,6 @@ public final class EditorHelper {
         EditorApplicationEventHandler.initialize(parameters);
         EditorFontManager.loadBundledFonts();
         YiScene.addExtraStylesheet("/yi/editor/fonts/font.css", EditorHelper.class);
-        EditorAcceleratorManager.initializeAll();
         FontManager.setDefaultFont(new Font("Noto Sans", 12d));
         EditorTextResources.installSupportedLanguages();
 //        I18n.setCurrentLanguage(Language.getSupportedLanguages().get(1));

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.shared.component.YiMenuItem;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.function.Consumer;
 
@@ -38,7 +38,7 @@ public class EditorBasicAction extends EditorAbstractAction<YiMenuItem, Node> {
     // Methods overridden to enable co-variant return types for smoother method chaining
 
     @Override
-    public EditorBasicAction setAccelerator(EditorAcceleratorId acceleratorId) {
+    public EditorBasicAction setAccelerator(EditorAccelerator acceleratorId) {
         super.setAccelerator(acceleratorId);
         return this;
     }

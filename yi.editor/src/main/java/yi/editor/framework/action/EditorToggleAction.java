@@ -10,7 +10,7 @@ import yi.component.shared.component.YiCheckMenuItem;
 import yi.component.shared.component.YiToggleButton;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -119,7 +119,7 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
     // Methods overridden to enable co-variant return types for smoother method chaining
 
     @Override
-    public EditorToggleAction setAccelerator(EditorAcceleratorId acceleratorId) {
+    public EditorToggleAction setAccelerator(EditorAccelerator acceleratorId) {
         super.setAccelerator(acceleratorId);
         return this;
     }
