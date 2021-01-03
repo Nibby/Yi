@@ -109,7 +109,7 @@ public class EditorWindow extends Stage {
                                             : newPreview;
 
             commentViewer.setEditable(nodeToShowCommentsFor == getGameModel().getCurrentNode());
-            commentViewer.setText(nodeToShowCommentsFor);
+            commentViewer.setCommentText(nodeToShowCommentsFor);
         });
 
         initializeActions(actionManager);

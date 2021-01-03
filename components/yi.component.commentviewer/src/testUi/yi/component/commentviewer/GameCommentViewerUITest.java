@@ -67,9 +67,13 @@ public class GameCommentViewerUITest {
 
         commentViewer.setEditable(false);
         GameNode currentNode = gameModel.getCurrentNode();
+        GameNode anotherNode = gameModel.getEditor().addPass().getMoveNode();
+        assert anotherNode != null;
+        gameModel.getEditor().setComment(anotherNode, commentThatShouldNotBeSaved);
+        gameModel.setCurrentNode(currentNode);
         Assertions.assertTrue(currentNode.getComments().isEmpty());
 
-        commentViewer.setText(commentThatShouldNotBeSaved);
+        commentViewer.setCommentText(anotherNode);
 
         Assertions.assertTrue(currentNode.getComments().isEmpty());
     }
