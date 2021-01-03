@@ -27,8 +27,11 @@ public final class GameCommentViewer implements YiComponent {
         commentEditor.getStyleClass().add("fg-dark-secondary");
         commentEditor.setWrapText(true);
 
-        commentEditor.onKeyPressedProperty().addListener(event -> saveCommentsToNode());
-        commentEditor.onKeyReleasedProperty().addListener(event -> saveCommentsToNode());
+        commentEditor.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (commentEditor.isEditable()) {
+                saveCommentsToNode();
+            }
+        });
     }
 
     private void saveCommentsToNode() {
@@ -52,6 +55,10 @@ public final class GameCommentViewer implements YiComponent {
     public void setText(@NotNull String text) {
         Objects.requireNonNull(text, "Text cannot be null, use an empty string instead");
         commentEditor.setText(text);
+    }
+
+    public void setEditable(boolean isEditable) {
+        commentEditor.setEditable(isEditable);
     }
 
     public Pane getComponent() {
