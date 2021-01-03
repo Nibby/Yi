@@ -18,7 +18,8 @@ public final class GameCommentViewer implements YiComponent {
     private final TextArea commentEditor = new TextArea();
 
     private GameModel gameModel = null;
-    private final EventListener<NodeEvent> currentMoveListener = event -> setCommentsFromNode(event.getNode());
+    private GameNode nodeToShow = null;
+    private final EventListener<NodeEvent> currentMoveListener = event -> setText(event.getNode());
 
     public GameCommentViewer() {
         container = new BorderPane();
@@ -39,22 +40,23 @@ public final class GameCommentViewer implements YiComponent {
         gameModel.getEditor().setCommentOnCurrentNode(text);
     }
 
-    private void setCommentsFromNode(GameNode node) {
-        this.setText(node.getComments());
-    }
-
     public void setGameModel(@NotNull GameModel gameModel) {
         if (this.gameModel != null) {
             this.gameModel.onCurrentNodeChange().removeListener(currentMoveListener);
         }
         this.gameModel = Objects.requireNonNull(gameModel);
         gameModel.onCurrentNodeChange().addListener(currentMoveListener);
-        setCommentsFromNode(gameModel.getCurrentNode());
+        setText(gameModel.getCurrentNode());
     }
 
-    public void setText(@NotNull String text) {
-        Objects.requireNonNull(text, "Text cannot be null, use an empty string instead");
-        commentEditor.setText(text);
+    public void setText(@NotNull GameNode node) {
+        Objects.requireNonNull(node, "Node cannot be null");
+
+        // Prevent setting the same text for the same node which resets the caret position
+        if (nodeToShow == null || !nodeToShow.equals(node)) {
+            nodeToShow = node;
+            commentEditor.setText(node.getComments());
+        }
     }
 
     public void setEditable(boolean isEditable) {
