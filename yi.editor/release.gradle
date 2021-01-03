@@ -19,7 +19,7 @@ def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(thisProject).toAbs
 def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(thisProject).toAbsolutePath().toString()
 def versionString = thisProject.version
 
-if (TargetPlatform.getCurrentPlatform() == TargetPlatform.Windows) {
+if (TargetPlatform.getCurrentPlatform() != TargetPlatform.Windows) {
     versionString = versionString.replace("-SNAPSHOT", "") // MSI installer doesn't support this suffix
 }
 
@@ -130,4 +130,12 @@ deb {
     section = "Games"
     maintainerEmail = "nibby@null.net"
     description = "Go game editor program"
+}
+
+rpm {
+    installationRoot = "/usr/share/yi"
+    backwardCompatible = true
+    section = "Games"
+    summary = "Go game record editor"
+    architecture = "x86_64"
 }
