@@ -50,7 +50,7 @@ public class EditorWindow extends Stage {
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
     private final GameCommentViewer commentViewer;
-    private final EditorPlayerInfoToolBar playerInfoComponent;
+    private final EditorFooterToolBar playerInfoComponent;
 
     private final Property<GameModel> gameModel = new Property<>(DEFAULT_MODEL);
 
@@ -65,7 +65,7 @@ public class EditorWindow extends Stage {
         undoSystem = new EditorUndoSystem();
         addComponent(undoSystem);
 
-        playerInfoComponent = new EditorPlayerInfoToolBar();
+        playerInfoComponent = new EditorFooterToolBar();
         boardArea = new EditorBoardArea();
         addComponent(boardArea);
 

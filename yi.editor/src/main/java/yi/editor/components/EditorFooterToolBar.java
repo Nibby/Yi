@@ -1,6 +1,5 @@
 package yi.editor.components;
 
-import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -12,16 +11,16 @@ import yi.editor.framework.EditorTextResources;
 
 import static yi.editor.framework.EditorTextResources.MOVE_COUNT;
 
-public class EditorPlayerInfoToolBar extends ToolBar {
+public class EditorFooterToolBar extends ToolBar {
 
-    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white@2x.png", getClass(), 16).orElse(null));
+    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
-    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white@2x.png", getClass(), 16).orElse(null));
+    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
     private final Label moveLabel = new Label("");
 
-    public EditorPlayerInfoToolBar() {
+    public EditorFooterToolBar() {
         // TODO: Consider putting these CSS class strings into a constant class ...
         playerBlackName.getStyleClass().add("editor-player-name-hud-label");
         playerBlackName.setMaxWidth(160);
@@ -33,6 +32,7 @@ public class EditorPlayerInfoToolBar extends ToolBar {
         playerWhiteRank.setMaxWidth(50);
 
         moveLabel.getStyleClass().add("editor-move-number-hud-label");
+        getStyleClass().add("editor-player-info-toolbar");
     }
 
     private void updateGameModelInfo(GameModel gameModel) {
@@ -88,36 +88,17 @@ public class EditorPlayerInfoToolBar extends ToolBar {
 
     public void setContentForPerspective(EditorPerspective perspective) {
         getItems().clear();
-
-        if (perspective == EditorPerspective.COMPACT) {
-            setContentForCompactPerspective();
-        } else if (perspective == EditorPerspective.REVIEW) {
-            setContentForReviewPerspective();
-        }
-    }
-
-    private void setContentForCompactPerspective() {
-        setOrientation(Orientation.HORIZONTAL);
         getItems().addAll(
                 GuiUtilities.createStaticSpacer(8),
                 playerBlackName,
                 playerBlackRank,
-                GuiUtilities.createDynamicSpacer(),
-                moveLabel,
-                GuiUtilities.createDynamicSpacer(),
+                GuiUtilities.createStaticSpacer(8),
                 playerWhiteName,
                 playerWhiteRank,
+                GuiUtilities.createDynamicSpacer(),
+                moveLabel,
                 GuiUtilities.createStaticSpacer(8)
         );
-    }
-
-    private void setContentForReviewPerspective() {
-        setOrientation(Orientation.VERTICAL);
-
-        BorderPane blackInfo = createOneLineComponent(playerBlackName, playerBlackRank);
-        BorderPane whiteInfo = createOneLineComponent(playerWhiteName, playerWhiteRank);
-
-        getItems().addAll(blackInfo, whiteInfo);
     }
 
     private BorderPane createOneLineComponent(Label nameLabel, Label rankLabel) {

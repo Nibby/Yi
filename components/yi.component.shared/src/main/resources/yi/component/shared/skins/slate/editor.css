@@ -15,6 +15,10 @@
   -fx-text-fill: #afafaf;
 }
 
+.editor-player-info-toolbar {
+  -fx-background-color: #282828;
+}
+
 .editor-comment-viewer {
   -fx-background-color: #333333;
   -fx-focus-traversable: false;
