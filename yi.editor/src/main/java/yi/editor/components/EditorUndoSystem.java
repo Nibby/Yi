@@ -3,7 +3,7 @@ package yi.editor.components;
 import yi.core.go.GameModel;
 import yi.core.go.editor.GameModelUndoSystem;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 import yi.editor.framework.action.EditorAction;
 import yi.editor.framework.action.EditorActionContext;
 import yi.editor.framework.action.EditorActionManager;
@@ -28,7 +28,7 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
             }
         };
         undo.setInMainMenu(EditorMainMenuType.EDIT, 0d);
-        undo.setAccelerator(EditorAcceleratorId.UNDO);
+        undo.setAccelerator(EditorAccelerator.UNDO);
         undo.setEnabled(false);
 
         redo = new EditorBasicAction(EditorTextResources.REDO, this::requestRedo) {
@@ -42,7 +42,7 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
             }
         };
         redo.setInMainMenu(EditorMainMenuType.EDIT, 0.001d);
-        redo.setAccelerator(EditorAcceleratorId.REDO);
+        redo.setAccelerator(EditorAccelerator.REDO);
         redo.setEnabled(false);
     }
 

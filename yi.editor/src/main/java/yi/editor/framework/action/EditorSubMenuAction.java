@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.shared.component.YiMenu;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,7 +69,7 @@ public class EditorSubMenuAction extends EditorAbstractAction<Menu, Node> {
     // Methods overridden to enable co-variant return types for smoother method chaining
 
     @Override
-    public EditorAction setAccelerator(EditorAcceleratorId acceleratorId) {
+    public EditorAction setAccelerator(EditorAccelerator acceleratorId) {
         throw new UnsupportedOperationException("EditorSubMenuAction does not support accelerators");
     }
 

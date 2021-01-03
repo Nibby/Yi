@@ -16,8 +16,7 @@ import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
-import yi.editor.framework.accelerator.EditorAcceleratorManager;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,10 +108,10 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
         Assertions.assertNull(menuItemMap.get(action1).getAccelerator(),
                 "Initial accelerator state not correct");
 
-        var newAcceleratorId = EditorAcceleratorId.NEW_GAME;
+        var newAcceleratorId = EditorAccelerator.NEW_GAME;
         action1.setAccelerator(newAcceleratorId);
 
-        Assertions.assertEquals(EditorAcceleratorManager.getAccelerator(newAcceleratorId).getKeyCombination(),
+        Assertions.assertEquals(EditorAccelerator.getAccelerator(newAcceleratorId).getKeyCombination(),
                 menuItemMap.get(action1).getAccelerator(),
                 "Accelerator not updated after setAccelerator() call");
     }

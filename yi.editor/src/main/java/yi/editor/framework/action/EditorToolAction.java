@@ -13,7 +13,7 @@ import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.components.EditorTool;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -139,7 +139,7 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
                                            final ToggleGroup menuGroup,
                                            TextResource label,
                                            @Nullable String iconPath,
-                                           @Nullable EditorAcceleratorId acceleratorId,
+                                           @Nullable EditorAccelerator acceleratorId,
                                            Predicate<AbstractEditMode> selectionCriteria,
                                            double menuPosition) {
 

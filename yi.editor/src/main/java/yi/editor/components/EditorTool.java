@@ -9,7 +9,7 @@ import yi.component.boardviewer.editmodes.StoneEditMode;
 import yi.core.go.AnnotationType;
 import yi.core.go.StoneColor;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 import yi.editor.framework.action.EditorToolAction;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_PLAY_MOVE,
                     "playMove",
-                    EditorAcceleratorId.TOOL_PLAY_MOVE,
+                    EditorAccelerator.TOOL_PLAY_MOVE,
                     editMode -> editMode instanceof PlayMoveEditMode,
                     0d
             );
@@ -108,7 +108,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_CROSS,
                     "cross",
-                    EditorAcceleratorId.TOOL_CROSS,
+                    EditorAccelerator.TOOL_CROSS,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -135,7 +135,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_TRIANGLE,
                     "triangle",
-                    EditorAcceleratorId.TOOL_TRIANGLE,
+                    EditorAccelerator.TOOL_TRIANGLE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -162,7 +162,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_SQUARE,
                     "square",
-                    EditorAcceleratorId.TOOL_SQUARE,
+                    EditorAccelerator.TOOL_SQUARE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -189,7 +189,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_CIRCLE,
                     "circle",
-                    EditorAcceleratorId.TOOL_CIRCLE,
+                    EditorAccelerator.TOOL_CIRCLE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -216,7 +216,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_LABEL_LETTER,
                     "letter",
-                    EditorAcceleratorId.TOOL_LABEL_LETTER,
+                    EditorAccelerator.TOOL_LABEL_LETTER,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -248,7 +248,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_LABEL_NUMBER,
                     "number",
-                    EditorAcceleratorId.TOOL_LABEL_NUMBER,
+                    EditorAccelerator.TOOL_LABEL_NUMBER,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -308,7 +308,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_LINE,
                     "line",
-                    EditorAcceleratorId.TOOL_LINE,
+                    EditorAccelerator.TOOL_LINE,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;
@@ -335,7 +335,7 @@ public enum EditorTool {
                     menuGroup,
                     EditorTextResources.TOOL_ARROW,
                     "arrow",
-                    EditorAcceleratorId.TOOL_ARROW,
+                    EditorAccelerator.TOOL_ARROW,
                     editMode -> {
                         if (!(editMode instanceof AnnotationEditMode)) {
                             return false;

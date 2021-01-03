@@ -10,7 +10,7 @@ import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.EditorWindow;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.Comparator;
 import java.util.List;
@@ -138,12 +138,12 @@ public interface EditorAction {
     /**
      * Sets the shortcut key combination for the {@link #getAsMenuItem() menu component}.
      * <p/>
-     * A list of all mapped accelerators can be found in {@link EditorAcceleratorId}.
+     * A list of all mapped accelerators can be found in {@link EditorAccelerator}.
      *
      * @param acceleratorId Accelerator ID to be applied to the menu item component.
      * @return this instance for method chaining.
      */
-    EditorAction setAccelerator(EditorAcceleratorId acceleratorId);
+    EditorAction setAccelerator(EditorAccelerator acceleratorId);
 
     /**
      * Sets whether this action should be added to the main application menu. If

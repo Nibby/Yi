@@ -13,7 +13,7 @@ import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.components.EditorMenuBar;
 import yi.editor.framework.EditorTextResources;
-import yi.editor.framework.accelerator.EditorAcceleratorId;
+import yi.editor.framework.EditorAccelerator;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,7 +44,7 @@ public class EditorSubMenuActionTest extends EditorUITestBase {
         itemInSubMenu1 = new EditorBasicAction(EditorTextResources.MENU_PERSPECTIVE,
                 context -> itemInSubMenu1ActionExecuted.set(true));
         itemInSubMenu1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
-        itemInSubMenu1.setAccelerator(EditorAcceleratorId.TEST_ACCEL_1);
+        itemInSubMenu1.setAccelerator(EditorAccelerator.TEST_ACCEL_1);
 
         subMenu1.addChildAction(itemInSubMenu1);
 
@@ -54,7 +54,7 @@ public class EditorSubMenuActionTest extends EditorUITestBase {
         itemInSubMenu2 = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME,
                 context -> itemInSubMenu2ActionExecuted.set(true));
         itemInSubMenu2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
-        itemInSubMenu2.setAccelerator(EditorAcceleratorId.TEST_ACCEL_2);
+        itemInSubMenu2.setAccelerator(EditorAccelerator.TEST_ACCEL_2);
 
         subMenu2.addChildAction(itemInSubMenu2);
         subMenu1.addChildAction(subMenu2);
