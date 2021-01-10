@@ -330,7 +330,8 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                 } else {
                     val realCoords = convertCoordinates(sgfCoords)
                     gamePrimaryMove = Stone(realCoords[0], realCoords[1], StoneColor.BLACK)
-                    gameNodeType = GameNodeType.MOVE_PLAYED
+                    gameNodeType = if (isMoveWithinBounds(realCoords, gameModel)) GameNodeType.MOVE_PLAYED
+                                   else GameNodeType.PASS
                 }
             } else if (nodeData.containsKey(SGF_WHITE_MOVE)) {
                 val sgfCoords = nodeData[SGF_WHITE_MOVE][0]
@@ -390,8 +391,10 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             val tagValue = StringBuilder()
 
             var skipNextChar = false
+            var index = 0
+            var incrementIndex = true
 
-            for (index in nodeData.indices) {
+            while (index < nodeData.indices.last) {
                 val char = nodeData[index]
 
                 if (skipNextChar) {
@@ -413,6 +416,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                             // of the value itself, it is escaped with a leading forward
                             // slash.
                             tagValue.replace(tagValue.lastIndex, tagValue.lastIndex+1, char.toString())
+                            index++
                             continue
                         }
 
@@ -434,9 +438,15 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         readingKeyRatherThanValue = true
 
                         if (index < nodeData.length - 1) {
-                            if (nodeData[index+1] == DELIM_TAG_VALUE_START) {
+                            val nextIndexToBeginReadingValueAt = findNextValueStart(nodeData, index)
+
+                            if (nextIndexToBeginReadingValueAt >= 0) {
                                 readingKeyRatherThanValue = false
                                 skipNextChar = true
+                                index = nextIndexToBeginReadingValueAt + 1
+                                // Don't increment again because we've already re-positioned
+                                // the index here.
+                                incrementIndex = false
                             } else {
                                 tagKey.clear()
                             }
@@ -447,9 +457,32 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                         tagValue.append(char)
                     }
                 }
+
+                if (incrementIndex) {
+                    index++
+                } else {
+                    incrementIndex = true
+                }
             }
 
             return SgfNodeData(result)
+        }
+
+        private fun findNextValueStart(nodeData: String, index: Int): Int {
+            var charIndex = index
+            while (charIndex + 1 < nodeData.lastIndex) {
+                charIndex++
+                val charHere = nodeData[charIndex]
+
+                return if (charHere == '\n' || charHere == '\r' || charHere == '\t') {
+                    continue
+                } else if (charHere == DELIM_TAG_VALUE_START) {
+                    charIndex
+                } else {
+                    -1
+                }
+            }
+            return -1
         }
 
         /*

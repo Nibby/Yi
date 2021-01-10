@@ -596,6 +596,12 @@ class SgfFileFormatHandlerTest {
         Assertions.assertEquals(":-);\\[internal value :)]", secondChild.getComments())
     }
 
+    @Test
+    fun `import from IGS file format works`() {
+        val game = GameModelImporter.fromInternalResources("/sgf/igsGame.sgf", FileFormat.SGF, this::class.java)
+        // TODO: Make some assertions
+    }
+
     private fun exportModel(gameModel: GameModel): String {
         val output = ByteArrayOutputStream()
         GameModelExporter.toOutputStream(gameModel, output, FileFormat.SGF)
