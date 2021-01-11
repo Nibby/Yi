@@ -18,7 +18,7 @@ class MoveEditTest {
         undoSystem.maxHistorySize = 3
 
         // Method under test
-        val item1 = MoveEdit(0, 0)
+        val item1 = MoveEdit.playedMove(0, 0)
         undoableEditor.recordAndApplyUndoable(item1)
 
         Assertions.assertEquals(1, undoSystem.getEditHistorySize())
@@ -36,7 +36,7 @@ class MoveEditTest {
         undoSystem.maxHistorySize = 3
 
         // Method under test
-        val item1 = MoveEdit(0, 0)
+        val item1 = MoveEdit.playedMove(0, 0)
         undoableEditor.recordAndApplyUndoable(item1)
 
         // Method under test
@@ -56,14 +56,14 @@ class MoveEditTest {
 
         undoSystem.maxHistorySize = 9
 
-        undoableEditor.recordAndApplyUndoable(MoveEdit(0, 0))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(1, 0))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(2, 0))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(0, 1))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(1, 1))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(2, 1))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(0, 2))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(1, 2))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(0, 0))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(1, 0))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(2, 0))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(0, 1))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(1, 1))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(2, 1))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(0, 2))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(1, 2))
 
         val initialBoardPosition = arrayOf(
             " o ",
@@ -168,7 +168,7 @@ class MoveEditTest {
         undoSystem.maxHistorySize = 3
 
         // Method under test
-        val item1 = MoveEdit(0, 0)
+        val item1 = MoveEdit.playedMove(0, 0)
         undoableEditor.recordAndApplyUndoable(item1)
 
         // Method under test
@@ -193,7 +193,7 @@ class MoveEditTest {
         undoSystem.maxHistorySize = 3
 
         // Method under test
-        val item1 = MoveEdit(0, 0)
+        val item1 = MoveEdit.playedMove(0, 0)
         undoableEditor.recordAndApplyUndoable(item1)
 
         Assertions.assertEquals(model.getRootNode().getChildNodeInMainBranch(), model.currentNode,
@@ -216,19 +216,19 @@ class MoveEditTest {
         val undoableEditor = model.editor
         val undoSystem = undoableEditor.undoSystem
 
-        val branchMain = MoveEdit(2, 0)
+        val branchMain = MoveEdit.playedMove(2, 0)
 
-        undoableEditor.recordAndApplyUndoable(MoveEdit(0, 0))
-        undoableEditor.recordAndApplyUndoable(MoveEdit(1, 0)) // <- Create branches from here
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(0, 0))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(1, 0)) // <- Create branches from here
         undoableEditor.recordAndApplyUndoable(branchMain)
 
         // Make some branches of size 1 at the 2nd move
-        val branch1 = MoveEdit(0, 2)
-        val branch2 = MoveEdit(2, 1)
-        val branch3 = MoveEdit(2, 2)
-        val branch4 = MoveEdit(1, 1)
-        val branch5 = MoveEdit(1, 2)
-        val branch6 = MoveEdit(0, 1)
+        val branch1 = MoveEdit.playedMove(0, 2)
+        val branch2 = MoveEdit.playedMove(2, 1)
+        val branch3 = MoveEdit.playedMove(2, 2)
+        val branch4 = MoveEdit.playedMove(1, 1)
+        val branch5 = MoveEdit.playedMove(1, 2)
+        val branch6 = MoveEdit.playedMove(0, 1)
 
         model.toPreviousNode()
         undoableEditor.recordAndApplyUndoable(branch1)

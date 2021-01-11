@@ -8,7 +8,7 @@ import yi.core.go.MoveValidationResult
 /**
  * Represents an undoable game move.
  */
-class MoveEdit constructor(private val moveX: Int,
+class MoveEdit private constructor(private val moveX: Int,
                            private val moveY: Int,
                            private val editType: EditType) : GameModelEdit {
 
