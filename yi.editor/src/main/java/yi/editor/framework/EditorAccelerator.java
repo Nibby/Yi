@@ -58,6 +58,8 @@ public enum EditorAccelerator {
     SAVE_GAME("saveGame", EditorTextResources.MENUITEM_SAVE_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT }),
     SAVE_AS_GAME("saveAsGame", EditorTextResources.MENUITEM_SAVE_AS_GAME, KeyCode.S, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }),
 
+    PASS("pass", EditorTextResources.PASS, KeyCode.P, new KeyModifier[] { KeyModifier.SHORTCUT }),
+
     TEST_ACCEL_1("testAccel1", EditorTextResources.EMPTY, KeyCode.DIGIT1, new KeyModifier[] { KeyModifier.CTRL, KeyModifier.ALT, KeyModifier.SHIFT }),
     TEST_ACCEL_2("testAccel2", EditorTextResources.EMPTY, KeyCode.DIGIT2, new KeyModifier[] { KeyModifier.CTRL, KeyModifier.ALT, KeyModifier.SHIFT }),
     ;

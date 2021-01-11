@@ -1,6 +1,9 @@
 package yi.editor;
 
 import org.jetbrains.annotations.NotNull;
+import yi.core.go.GameModel;
+import yi.core.go.editor.GameModelEditor;
+import yi.core.go.editor.edit.MoveEdit;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
 import yi.editor.components.EditorComponent;
@@ -26,6 +29,21 @@ final class EditorStandardActions implements EditorComponent<Object> {
         createOpenGameAction();
         createSaveAction();
         createSaveAsAction();
+
+        createDivider(EditorMainMenuType.EDIT, 0.0999d);
+        createPassAction();
+    }
+
+    private void createPassAction() {
+        var actionItem = new EditorBasicAction(EditorTextResources.PASS, context -> {
+            var window = context.getEditorWindow();
+            GameModel gameModel = window.getGameModel();
+            GameModelEditor editor = gameModel.getEditor();
+            editor.recordAndApplyUndoable(MoveEdit.Companion.pass());
+        });
+        actionItem.setInMainMenu(EditorMainMenuType.EDIT, 0.1d);
+        actionItem.setAccelerator(EditorAccelerator.PASS);
+        standardActions.add(actionItem);
     }
 
     private void createDivider(EditorMainMenuType menuType, double position) {
