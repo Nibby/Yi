@@ -53,7 +53,7 @@ public final class PlayMoveEditMode extends AbstractEditMode {
     @Override
     public void onMousePress(MouseButton button, GameBoardManager manager, int gridX, int gridY) {
         if (button == MouseButton.PRIMARY) {
-            MoveEdit playMoveEdit = new MoveEdit(gridX, gridY);
+            MoveEdit playMoveEdit = MoveEdit.Companion.playedMove(gridX, gridY);
             manager.edit.submit(playMoveEdit);
 
             playSounds(manager, playMoveEdit);

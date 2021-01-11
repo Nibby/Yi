@@ -65,6 +65,8 @@ public final class EditorTextResources {
     public static final TextResource MOVE_COUNT = standardResource("moveCount");
     public static final TextResource PREVIEW_MOVE_PROMPT = standardResource("previewMoveText");
 
+    public static final TextResource PASS = standardResource("pass");
+
     public static void installSupportedLanguages() {
         Language.add(new Language("\u7b80\u4f53\u4e2d\u6587", Locale.SIMPLIFIED_CHINESE));
     }
