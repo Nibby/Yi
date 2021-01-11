@@ -12,7 +12,17 @@ class GameModelUndoSystemTest {
         override fun rollbackChanges(model: GameModel) {
         }
 
-        override fun performChanges(model: GameModel) {
+        override fun performChanges(model: GameModel): Boolean {
+            return true
+        }
+    }
+
+    private class UnsuccessfulTestEdit : GameModelEdit {
+        override fun rollbackChanges(model: GameModel) {
+        }
+
+        override fun performChanges(model: GameModel): Boolean {
+            return false
         }
     }
 
@@ -295,6 +305,20 @@ class GameModelUndoSystemTest {
             redoRatherThanUndo = true,
             undoSystem = undoSystem
         )
+    }
+
+    @Test
+    fun `action not performed successfully is not added to undo stack`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+        val editor = model.editor
+        val undoSystem = editor.undoSystem
+        undoSystem.maxHistorySize = 4
+
+        editor.recordAndApplyUndoable(UnsuccessfulTestEdit())
+
+        Assertions.assertEquals(0, undoSystem.getEditHistorySize())
+        Assertions.assertFalse(undoSystem.canUndo())
+        Assertions.assertFalse(undoSystem.canRedo())
     }
 
     private fun runStateAssertions(expectedHistorySize: Int,

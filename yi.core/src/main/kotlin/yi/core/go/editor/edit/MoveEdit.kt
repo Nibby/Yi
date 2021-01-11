@@ -28,16 +28,16 @@ class MoveEdit private constructor(private val moveX: Int,
         model.currentNode = parentOfSubmittedNode!!
     }
 
-    override fun performChanges(model: GameModel) {
+    override fun performChanges(model: GameModel): Boolean {
         if (submittedNode == null) {
-            submitMoveForFirstTimeEdit(model)
-            return
+            return submitMoveForFirstTimeEdit(model)
         }
 
         appendSubmittedNodeBackToGameTree(model)
+        return true
     }
 
-    private fun submitMoveForFirstTimeEdit(model: GameModel) {
+    private fun submitMoveForFirstTimeEdit(model: GameModel): Boolean {
         val currentMoveBeforeNewMoveSubmission: GameNode = model.currentNode
 
         val result: MoveSubmitResult = when (editType) {
@@ -55,7 +55,7 @@ class MoveEdit private constructor(private val moveX: Int,
         // our change doesn't count as a new "edit", so attempting to undo this change
         // will corrupt the edit history.
         if (moveValidationResult !== MoveValidationResult.OK || result.isReusingExistingNode) {
-            return
+            return false
         }
 
         check(result.isPlayed) {
@@ -65,6 +65,7 @@ class MoveEdit private constructor(private val moveX: Int,
 
         submittedNode = result.moveNode
         parentOfSubmittedNode = currentMoveBeforeNewMoveSubmission
+        return true
     }
 
     private fun appendSubmittedNodeBackToGameTree(model: GameModel) {
