@@ -18,7 +18,7 @@ sealed class StoneEdit(private var nodeToEdit: GameNode?) : GameModelEdit {
         }
     }
 
-    override fun performChanges(model: GameModel) {
+    override fun performChanges(model: GameModel): Boolean {
         if (createNewNode) {
             if (nodeToEdit == null || nodeToEdit!!.getType() != GameNodeType.STONE_EDIT) {
                 // First time submitting the node
@@ -33,6 +33,7 @@ sealed class StoneEdit(private var nodeToEdit: GameNode?) : GameModelEdit {
             parentOfNodeToEdit = nodeToEdit!!.parent!!
         }
         performChangesNow(model, nodeToEdit!!)
+        return true
     }
 
     abstract fun rollbackChangesNow(model: GameModel, nodeToEdit: GameNode)

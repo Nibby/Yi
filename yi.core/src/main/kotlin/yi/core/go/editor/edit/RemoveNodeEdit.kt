@@ -18,11 +18,12 @@ class RemoveNodeEdit constructor(private val nodeToRemove: GameNode) : GameModel
         model.editor.addNode(parentOfNodeToRemove!!, nodeToRemove)
     }
 
-    override fun performChanges(model: GameModel) {
+    override fun performChanges(model: GameModel): Boolean {
         check(nodeToRemove.isContinuationOf(model.getRootNode())) {
             "Attempting to remove node but the node is no longer part of the game tree"
         }
         model.editor.removeNodeSubtree(nodeToRemove)
+        return true
     }
 
 }

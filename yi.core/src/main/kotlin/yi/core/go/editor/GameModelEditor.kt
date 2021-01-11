@@ -27,8 +27,11 @@ class GameModelEditor(private val model: GameModel) {
     fun recordAndApplyUndoable(edit: GameModelEdit) {
         checkModelEditable()
         try {
-            edit.performChanges(model)
-            undoSystem.record(edit)
+            val isSuccessful = edit.performChanges(model)
+
+            if (isSuccessful) {
+                undoSystem.record(edit)
+            }
         } catch (ex: GameModelEditException) {
             throw GameModelEditException("Failed to perform changes: $edit", edit)
         }

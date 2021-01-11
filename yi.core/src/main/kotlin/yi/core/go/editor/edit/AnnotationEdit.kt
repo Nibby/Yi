@@ -33,9 +33,10 @@ class AnnotationEdit(private val nodeToEdit: GameNode,
         model.editor.addAnnotations(nodeToEdit, annotationsToRemove)
     }
 
-    override fun performChanges(model: GameModel) {
+    override fun performChanges(model: GameModel): Boolean {
         model.editor.removeAnnotations(nodeToEdit, annotationsToRemove)
         model.editor.addAnnotations(nodeToEdit, annotationsToAdd)
+        return true
     }
 
     companion object {
