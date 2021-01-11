@@ -25,7 +25,7 @@ class StoneEditTest {
 
         val undoableEditor = model.editor
 
-        undoableEditor.recordAndApplyUndoable(MoveEdit(0, 0))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(0, 0))
         undoableEditor.recordAndApplyUndoable(StoneEdit.Add(model.currentNode, 0, 0, StoneColor.NONE))
 
         Assertions.assertEquals(2, model.getCurrentMoveNumber())
@@ -235,7 +235,7 @@ class StoneEditTest {
         // Setup
         val undoableEditor = model.editor
 
-        undoableEditor.recordAndApplyUndoable(MoveEdit(0, 0))
+        undoableEditor.recordAndApplyUndoable(MoveEdit.playedMove(0, 0))
         undoableEditor.recordAndApplyUndoable(StoneEdit.Add(model.currentNode, 0, 0, StoneColor.NONE))
         undoableEditor.recordAndApplyUndoable(StoneEdit.Add(model.currentNode, 0, 1, StoneColor.WHITE))
 

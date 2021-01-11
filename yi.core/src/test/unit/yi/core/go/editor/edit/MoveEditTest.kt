@@ -297,6 +297,104 @@ class MoveEditTest {
         }
     }
 
+    @Test
+    fun `Play pass works`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+
+        val undoableEditor = model.editor
+        val undoSystem = undoableEditor.undoSystem
+
+        val pass = MoveEdit.pass()
+        model.editor.recordAndApplyUndoable(pass)
+
+        Assertions.assertTrue(undoSystem.canUndo())
+        Assertions.assertFalse(undoSystem.canRedo())
+        Assertions.assertEquals(1, undoSystem.getEditHistorySize())
+        Assertions.assertEquals(pass, undoSystem.getHistoryItem(0))
+
+        Assertions.assertEquals(GameNodeType.PASS, model.currentNode.getType())
+    }
+
+    @Test
+    fun `Play pass undo correctly`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+
+        val undoableEditor = model.editor
+        val undoSystem = undoableEditor.undoSystem
+
+        val pass = MoveEdit.pass()
+        model.editor.recordAndApplyUndoable(pass)
+
+        undoSystem.performUndo()
+
+        Assertions.assertFalse(undoSystem.canUndo())
+        Assertions.assertTrue(undoSystem.canRedo())
+        Assertions.assertEquals(1, undoSystem.getEditHistorySize())
+    }
+
+    @Test
+    fun `Play pass undo redo, state is correct`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+
+        val undoableEditor = model.editor
+        val undoSystem = undoableEditor.undoSystem
+
+        val pass = MoveEdit.pass()
+        model.editor.recordAndApplyUndoable(pass)
+
+        undoSystem.performUndo()
+        undoSystem.performRedo()
+
+        Assertions.assertTrue(undoSystem.canUndo())
+        Assertions.assertFalse(undoSystem.canRedo())
+        Assertions.assertEquals(1, undoSystem.getEditHistorySize())
+        Assertions.assertEquals(pass, undoSystem.getHistoryItem(0))
+
+        Assertions.assertEquals(GameNodeType.PASS, model.currentNode.getType())
+    }
+
+    @Test
+    fun `Play pass, go back to parent, then play pass again, reuses the same node`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+
+        val undoableEditor = model.editor
+        val undoSystem = undoableEditor.undoSystem
+
+        val pass = MoveEdit.pass()
+        model.editor.recordAndApplyUndoable(pass)
+        model.currentNode = model.getRootNode()
+
+        // Second pass. We would expect this edit to be ignored because the previous
+        // pass is already a continuation of root node.
+        model.editor.recordAndApplyUndoable(MoveEdit.pass())
+
+        Assertions.assertEquals(1, undoSystem.getEditHistorySize())
+        Assertions.assertEquals(pass, undoSystem.getHistoryItem(0))
+    }
+
+    @Test
+    fun `Play pass, go back to parent, then play pass again, undo is correct`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+
+        val undoableEditor = model.editor
+        val undoSystem = undoableEditor.undoSystem
+
+        val pass = MoveEdit.pass()
+        model.editor.recordAndApplyUndoable(pass)
+        model.currentNode = model.getRootNode()
+
+        // Second pass. We would expect this edit to be ignored because the previous
+        // pass is already a continuation of root node.
+        model.editor.recordAndApplyUndoable(MoveEdit.pass())
+
+        undoSystem.performUndo()
+
+        Assertions.assertEquals(1, undoSystem.getEditHistorySize())
+        Assertions.assertEquals(pass, undoSystem.getHistoryItem(0))
+        Assertions.assertEquals(model.getRootNode(), model.currentNode)
+        Assertions.assertTrue(model.getRootNode().isLastMoveInThisVariation())
+    }
+
     // TODO: Add these once pass and resign edits are properly implemented.
 //    @Test
 //    fun testUndo_Pass_StateCorrect() {
