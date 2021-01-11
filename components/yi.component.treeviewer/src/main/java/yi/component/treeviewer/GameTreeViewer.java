@@ -237,6 +237,8 @@ public final class GameTreeViewer implements YiComponent {
 
         @Override
         public void mouseClicked(MouseEvent e) {
+            getComponent().requestFocus();
+
             if (!isDragging) {
                 int[] gridPosition = getGridPosition(e);
                 int x = gridPosition[0];

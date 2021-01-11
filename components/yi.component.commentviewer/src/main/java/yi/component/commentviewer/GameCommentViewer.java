@@ -10,7 +10,9 @@ import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.NodeEvent;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.WeakHashMap;
 
 public final class GameCommentViewer implements YiComponent {
 
@@ -20,6 +22,7 @@ public final class GameCommentViewer implements YiComponent {
     private GameModel gameModel = null;
     private GameNode nodeToShow = null;
     private final EventListener<NodeEvent> currentMoveListener = event -> setCommentText(event.getNode());
+    private final Map<GameNode, Integer> cachedCaretPositionsByNode = new WeakHashMap<>();
 
     public GameCommentViewer() {
         container = new BorderPane();
@@ -27,6 +30,11 @@ public final class GameCommentViewer implements YiComponent {
         commentEditor.getStyleClass().add("editor-comment-viewer");
         commentEditor.getStyleClass().add("fg-dark-secondary");
         commentEditor.setWrapText(true);
+        commentEditor.caretPositionProperty().addListener((evt, oldValue, newValue) -> {
+            if (nodeToShow != null) {
+                saveCaretPosition(nodeToShow);
+            }
+        });
 
         commentEditor.textProperty().addListener((observable, oldValue, newValue) -> {
             if (commentEditor.isEditable()) {
@@ -57,10 +65,28 @@ public final class GameCommentViewer implements YiComponent {
             nodeToShow = node;
             commentEditor.setText(node.getComments());
         }
+        if (nodeToShow != null && commentEditor.isEditable()) {
+            restoreCaretPosition(nodeToShow, node.getComments());
+        }
     }
 
     public void setEditable(boolean isEditable) {
+        if (!isEditable && nodeToShow != null) {
+            saveCaretPosition(nodeToShow);
+        }
         commentEditor.setEditable(isEditable);
+    }
+
+    private void saveCaretPosition(@NotNull GameNode node) {
+        Objects.requireNonNull(node);
+        cachedCaretPositionsByNode.put(node, commentEditor.getCaretPosition());
+    }
+
+    private void restoreCaretPosition(GameNode node, String text) {
+        if (node != null) {
+            int cachedPosition = cachedCaretPositionsByNode.getOrDefault(node, text.length() - 1);
+            commentEditor.positionCaret(cachedPosition);
+        }
     }
 
     public Pane getComponent() {
