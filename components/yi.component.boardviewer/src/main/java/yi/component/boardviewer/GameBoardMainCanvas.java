@@ -154,8 +154,8 @@ final class GameBoardMainCanvas extends GameBoardCanvas {
             if (drawBottom) {
                 var y = coordBounds.getY()
                         + coordBounds.getHeight()
-                        + heightFontSize
-                        - maxHeightForLabels / 5 * 2
+                        + (heightFontSize+1)
+                        - maxHeightForLabels / 9 * 3
                         - textBounds.getHeight() / 2;
 
                 renderHorizontalAxisLabels(g, manager.size, boardWidth, y, font);
