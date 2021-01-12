@@ -8,7 +8,7 @@ class RemoveNodeEdit constructor(private val nodeToRemove: GameNode) : GameModel
     private var parentOfNodeToRemove: GameNode? = null
 
     init {
-        check(nodeToRemove.isRoot()) { "Cannot remove root node" }
+        check(!nodeToRemove.isRoot()) { "Cannot remove root node" }
     }
 
     override fun rollbackChanges(model: GameModel) {
