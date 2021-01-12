@@ -1,9 +1,13 @@
 package yi.editor;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import org.jetbrains.annotations.NotNull;
 import yi.core.go.GameModel;
+import yi.core.go.GameNode;
 import yi.core.go.editor.GameModelEditor;
 import yi.core.go.editor.edit.MoveEdit;
+import yi.core.go.editor.edit.RemoveNodeEdit;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
 import yi.editor.components.EditorComponent;
@@ -32,6 +36,35 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
         createDivider(EditorMainMenuType.EDIT, 0.0999d);
         createPassAction();
+        createDivider(EditorMainMenuType.EDIT, 0.1001d);
+        createRemoveNodeAction();
+    }
+
+    private void createRemoveNodeAction() {
+        var actionItem = new EditorBasicAction(EditorTextResources.REMOVE_NODE, context -> {
+            var window = context.getEditorWindow();
+            GameModel gameModel = window.getGameModel();
+            GameModelEditor editor = gameModel.getEditor();
+            GameNode node = gameModel.getCurrentNode();
+            if (!node.isRoot()) {
+                if (node.isLastMoveInThisVariation()) {
+                    editor.recordAndApplyUndoable(new RemoveNodeEdit(node));
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setContentText("Deleting this node will also delete all of its " +
+                            "subsequent variations.\n\nWould you like to continue?");
+                    alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+                    alert.showAndWait().ifPresent(button -> {
+                        if (button == ButtonType.YES) {
+                            editor.recordAndApplyUndoable(new RemoveNodeEdit(node));
+                        }
+                    });
+                }
+            }
+        });
+        actionItem.setInMainMenu(EditorMainMenuType.EDIT, 0.11d);
+        actionItem.setAccelerator(EditorAccelerator.REMOVE_NODE);
+        standardActions.add(actionItem);
     }
 
     private void createPassAction() {
