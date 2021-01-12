@@ -46,7 +46,12 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
                 .playMove(2, 0)
                 .playMove(3, 0);
 
+        testNoModelDoesNotCrash(robot);
+
         treeViewer.setGameModel(model);
+
+        Thread.sleep(1000);
+        Assertions.assertNotNull(treeViewer.getTreeStructure());
 
         testHoverSetsHighlightNode(robot);
         testClickSetsCurrentNode(robot);
@@ -54,6 +59,12 @@ public class GameTreeMouseInteractionTest extends GameTreeUITestBase {
         testDragAdjustsViewport(robot);
 
         testSetNewCurrentNodeResetsHighlightedNode(robot);
+    }
+
+    private void testNoModelDoesNotCrash(FxRobot robot) throws InterruptedException {
+        robot.moveTo(treeViewer.getComponent());
+        Thread.sleep(50);
+        robot.clickOn(MouseButton.PRIMARY);
     }
 
     private void testSetNewCurrentNodeResetsHighlightedNode(FxRobot robot) throws InterruptedException {

@@ -180,6 +180,10 @@ public final class GameTreeViewer implements YiComponent {
         return camera;
     }
 
+    protected GameTreeStructure getTreeStructure() {
+        return treeStructure;
+    }
+
     /*
         Put this here to access all the required fields without introducing excessive coupling to the
         canvas component itself.
@@ -194,20 +198,22 @@ public final class GameTreeViewer implements YiComponent {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            int[] gridPosition = getGridPosition(e);
-            int x = gridPosition[0];
-            int y = gridPosition[1];
+            if (treeStructure != null) {
+                int[] gridPosition = getGridPosition(e);
+                int x = gridPosition[0];
+                int y = gridPosition[1];
 
-            boolean hasHighlight = treeStructure.setHighlightedGrid(x, y);
+                boolean hasHighlight = treeStructure.setHighlightedGrid(x, y);
 
-            if (hasHighlight) {
-                canvas.setCursor(Cursor.HAND);
-            } else {
-                canvas.setCursor(Cursor.OPEN_HAND);
+                if (hasHighlight) {
+                    canvas.setCursor(Cursor.HAND);
+                } else {
+                    canvas.setCursor(Cursor.OPEN_HAND);
+                }
+
+                maybeFireHighlightedNodeChangeEvent(hasHighlight);
+                render();
             }
-
-            maybeFireHighlightedNodeChangeEvent(hasHighlight);
-            render();
         }
 
         private void maybeFireHighlightedNodeChangeEvent(boolean hasHighlight) {
@@ -239,7 +245,7 @@ public final class GameTreeViewer implements YiComponent {
         public void mouseClicked(MouseEvent e) {
             getComponent().requestFocus();
 
-            if (!isDragging) {
+            if (treeStructure != null && !isDragging) {
                 int[] gridPosition = getGridPosition(e);
                 int x = gridPosition[0];
                 int y = gridPosition[1];
@@ -256,18 +262,20 @@ public final class GameTreeViewer implements YiComponent {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            isDragging = true;
-            canvas.setCursor(Cursor.CLOSED_HAND);
+            if (treeStructure != null) {
+                isDragging = true;
+                canvas.setCursor(Cursor.CLOSED_HAND);
 
-            double xDiff = e.getX() - dragStartX;
-            double yDiff = e.getY() - dragStartY;
-            dragStartX = e.getX();
-            dragStartY = e.getY();
+                double xDiff = e.getX() - dragStartX;
+                double yDiff = e.getY() - dragStartY;
+                dragStartX = e.getX();
+                dragStartY = e.getY();
 
-            double offsetX = camera.getOffsetX();
-            double offsetY = camera.getOffsetY();
+                double offsetX = camera.getOffsetX();
+                double offsetY = camera.getOffsetY();
 
-            setBoundedOffset(offsetX + xDiff, offsetY + yDiff);
+                setBoundedOffset(offsetX + xDiff, offsetY + yDiff);
+            }
         }
 
         private void setBoundedOffset(double offsetX, double offsetY) {
@@ -303,16 +311,18 @@ public final class GameTreeViewer implements YiComponent {
 
         @Override
         public void mouseScrolled(ScrollEvent e) {
-            // TODO: Scrolling behaviour adjusts view offset rather than game
-            //       state. Potentially make this adjustable in preferences so
-            //       that those who are migrating from another app can feel at home.
-            double deltaX = e.getDeltaX();
-            double deltaY = e.getDeltaY();
+            if (treeStructure != null) {
+                // TODO: Scrolling behaviour adjusts view offset rather than game
+                //       state. Potentially make this adjustable in preferences so
+                //       that those who are migrating from another app can feel at home.
+                double deltaX = e.getDeltaX();
+                double deltaY = e.getDeltaY();
 
-            double offsetX = camera.getOffsetX();
-            double offsetY = camera.getOffsetY();
+                double offsetX = camera.getOffsetX();
+                double offsetY = camera.getOffsetY();
 
-            camera.setOffset(offsetX + deltaX, offsetY + deltaY);
+                camera.setOffset(offsetX + deltaX, offsetY + deltaY);
+            }
         }
 
         @Override
