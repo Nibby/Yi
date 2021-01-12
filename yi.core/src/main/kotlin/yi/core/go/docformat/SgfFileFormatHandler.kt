@@ -113,7 +113,17 @@ internal class SgfFileFormatHandler : FileFormatHandler {
                     readCharNextLoop = true
                 } else if (char == DELIM_BRANCH_END) {
                     branchStack.pop()
-                    readCharNextLoop = true
+                    if (branchStack.isEmpty()) {
+                        // The entire SGF record has been loaded
+                        // TODO: Some servers, such as FlyOrDie, may store multiple games in
+                        //       one SGF file. They are in the form of multiple self-contained
+                        //       SGF data. Right now we only load the first game, but we
+                        //       should load all of them eventually.
+                        break;
+                    } else {
+                        // Was only the end of a sub-branch, SGF record still continues
+                        readCharNextLoop = true
+                    }
                 } else if (char == DELIM_NODE_START) {
                     val readResult = readUntil(reader, DELIM_BRANCH_START, DELIM_BRANCH_END, DELIM_NODE_START)
 
@@ -593,7 +603,7 @@ internal class SgfFileFormatHandler : FileFormatHandler {
             fun removeValueForKey(tagKey: String, valueToRemove: String) {
                 if (containsKey(tagKey)) {
                     while (data[tagKey]!!.contains(valueToRemove)) {
-                        println("Removed $valueToRemove")
+//                        println("Removed $valueToRemove")
                         data[tagKey]!!.remove(valueToRemove)
                     }
 
