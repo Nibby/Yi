@@ -1,8 +1,8 @@
 package yi.editor.components;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.NotNull;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.core.go.GameModel;
@@ -18,6 +18,14 @@ public class EditorFooterToolBar extends ToolBar {
     private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
+    private final Button moveBack1 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowUp_white32.png", getClass(), 16).orElse(null));
+    private final Button moveBack10 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowUpDouble_white32.png", getClass(), 16).orElse(null));
+    private final Button moveBackToBeginning = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowUpmost_white32.png", getClass(), 16).orElse(null));
+
+    private final Button moveNext1 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowDown_white32.png", getClass(), 16).orElse(null));
+    private final Button moveNext10 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowDownDouble_white32.png", getClass(), 16).orElse(null));
+    private final Button moveToEnd = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowDownmost_white32.png", getClass(), 16).orElse(null));
+
     private final Label moveLabel = new Label("");
 
     public EditorFooterToolBar() {
@@ -30,6 +38,13 @@ public class EditorFooterToolBar extends ToolBar {
         playerWhiteName.setMaxWidth(160);
         playerWhiteRank.getStyleClass().add("editor-player-rank-hud-label");
         playerWhiteRank.setMaxWidth(50);
+
+        moveBack1.getStyleClass().add("button-style3");
+        moveBack10.getStyleClass().add("button-style3");
+        moveBackToBeginning.getStyleClass().add("button-style3");
+        moveNext1.getStyleClass().add("button-style3");
+        moveNext10.getStyleClass().add("button-style3");
+        moveToEnd.getStyleClass().add("button-style3");
 
         moveLabel.getStyleClass().add("editor-move-number-hud-label");
         getStyleClass().add("editor-player-info-toolbar");
@@ -96,27 +111,14 @@ public class EditorFooterToolBar extends ToolBar {
                 playerWhiteName,
                 playerWhiteRank,
                 GuiUtilities.createDynamicSpacer(),
+                moveBackToBeginning,
+                moveBack10,
+                moveBack1,
                 moveLabel,
+                moveNext1,
+                moveNext10,
+                moveToEnd,
                 GuiUtilities.createStaticSpacer(8)
         );
-    }
-
-    private BorderPane createOneLineComponent(Label nameLabel, Label rankLabel) {
-        var borderPane = new BorderPane();
-        borderPane.setLeft(GuiUtilities.createStaticSpacer(8));
-        borderPane.setCenter(nameLabel);
-
-        // Name label is far taller than rank label due to the stone icon
-        // we use this trick to put both labels on the same text baseline
-        rankLabel.setMinHeight(nameLabel.getHeight());
-        rankLabel.setMaxHeight(nameLabel.getHeight());
-        rankLabel.setPrefHeight(nameLabel.getHeight());
-
-        var rankLabelWithSpacing = new BorderPane();
-        rankLabelWithSpacing.setLeft(GuiUtilities.createStaticSpacer(4));
-        rankLabelWithSpacing.setCenter(rankLabel);
-        borderPane.setRight(rankLabelWithSpacing);
-
-        return borderPane;
     }
 }
