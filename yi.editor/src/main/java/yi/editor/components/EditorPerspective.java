@@ -71,19 +71,15 @@ public enum EditorPerspective {
             var tree = window.getTreeComponent();
             var commentArea = window.getCommentComponent();
 
-            BorderPane compositeArea = new BorderPane();
-            compositeArea.setCenter(commentArea);
-//            compositeArea.setBottom(window.getPlayerInfoComponent());
-
-            var sideSplit = new SplitPane(tree, compositeArea);
+            var sideSplit = new SplitPane(tree, commentArea);
             sideSplit.setOrientation(Orientation.VERTICAL);
             sideSplit.getDividers().get(0).setPosition(0.7d);
 
             var splitPane = new SplitPane(boardpane, sideSplit);
             content.setCenter(splitPane);
 
+            SplitPane.setResizableWithParent(commentArea, false);
             SplitPane.setResizableWithParent(sideSplit, false);
-            SplitPane.setResizableWithParent(tree, false);
 
             splitPane.getDividers().get(0).setPosition(0.7d);
             splitPane.getDividers().get(0).positionProperty().addListener(positionChanged -> {
