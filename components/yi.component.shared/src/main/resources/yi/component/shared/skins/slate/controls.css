@@ -82,6 +82,18 @@
   -fx-background-color: #DDDDDD;
 }
 
+.button-style3 {
+  -fx-background-color: transparent;
+}
+
+.button-style3:hover {
+  -fx-background-color: rgba(1, 1, 1, 0.4);
+}
+
+.button-style3:selected {
+  -fx-background-color: #DDDDDD;
+}
+
 /* Containers and Panes */
 .parent, .split-pane, .pane, .border-pane {
   -fx-border-color: transparent;
