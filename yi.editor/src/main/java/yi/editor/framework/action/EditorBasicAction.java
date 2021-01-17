@@ -1,9 +1,11 @@
 package yi.editor.framework.action;
 
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.component.shared.component.YiButton;
 import yi.component.shared.component.YiMenuItem;
 import yi.component.shared.i18n.TextResource;
 import yi.editor.components.EditorMainMenuType;
@@ -32,7 +34,7 @@ public class EditorBasicAction extends EditorAbstractAction<YiMenuItem, Node> {
 
     @Override
     protected Node getAsComponentImpl() {
-        throw new UnsupportedOperationException("Not implemented");
+        return new YiButton(getText(), getIcon());
     }
 
     // Methods overridden to enable co-variant return types for smoother method chaining

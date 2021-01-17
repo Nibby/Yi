@@ -3,6 +3,7 @@ package yi.editor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.jetbrains.annotations.NotNull;
+import yi.component.shared.utilities.GuiUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.editor.GameModelEditor;

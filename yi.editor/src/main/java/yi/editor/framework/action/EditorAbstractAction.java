@@ -94,23 +94,20 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
         });
     }
 
-    private void updateNodeCompactness(Node node, boolean isCompact) {
-        if (node instanceof Labeled) {
-            var labeled = (Labeled) node;
-            if (isCompact) {
-                StringBuilder tipText = new StringBuilder(getLocalisedText());
+    private void updateNodeCompactness(Labeled node, boolean isCompact) {
+        if (isCompact) {
+            StringBuilder tipText = new StringBuilder(getLocalisedText());
 
-                acceleratorId.get().ifPresent(id -> {
-                    var accelerator = EditorAccelerator.getAccelerator(id);
-                    var keyCombination = accelerator.getKeyCombination();
-                    tipText.append(" (").append(keyCombination.getDisplayText()).append(")");
-                });
-                labeled.setTooltip(new Tooltip(tipText.toString()));
-                labeled.setText("");
-            } else {
-                labeled.setText(getLocalisedText());
-                labeled.setTooltip(null);
-            }
+            acceleratorId.get().ifPresent(id -> {
+                var accelerator = EditorAccelerator.getAccelerator(id);
+                var keyCombination = accelerator.getKeyCombination();
+                tipText.append(" (").append(keyCombination.getDisplayText()).append(")");
+            });
+            node.setTooltip(new Tooltip(tipText.toString()));
+            node.setText("");
+        } else {
+            node.setText(getLocalisedText());
+            node.setTooltip(null);
         }
     }
 
@@ -291,13 +288,13 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
             newComponent.setUserData(this);
             newComponent.setVisible(isVisible());
             newComponent.setDisable(!isEnabled());
-            updateNodeCompactness(newComponent, isComponentCompact());
             if (newComponent instanceof Labeled) {
                 var labeled = (Labeled) newComponent;
                 if (isShowingIconOnComponent()) {
                     labeled.setGraphic(getIcon());
                 }
                 labeled.setText(getLocalisedText());
+                updateNodeCompactness(labeled, isComponentCompact());
             }
             if (newComponent instanceof ButtonBase) {
                 var buttonBase = (ButtonBase) newComponent;

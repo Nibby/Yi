@@ -50,7 +50,7 @@ public class EditorWindow extends Stage {
     private final EditorBoardArea boardArea;
     private final GameTreeViewer treeViewer;
     private final GameCommentViewer commentViewer;
-    private final EditorFooterToolBar playerInfoComponent;
+    private final EditorFooterToolBar footerToolBar;
 
     private final Property<GameModel> gameModel = new Property<>(DEFAULT_MODEL);
 
@@ -65,7 +65,9 @@ public class EditorWindow extends Stage {
         undoSystem = new EditorUndoSystem();
         addComponent(undoSystem);
 
-        playerInfoComponent = new EditorFooterToolBar();
+        footerToolBar = new EditorFooterToolBar();
+        addComponent(footerToolBar);
+
         boardArea = new EditorBoardArea();
         addComponent(boardArea);
 
@@ -95,7 +97,7 @@ public class EditorWindow extends Stage {
             treeViewer.setGameModel(newModel);
             undoSystem.setGameModel(newModel);
             commentViewer.setGameModel(newModel);
-            playerInfoComponent.setGameModel(newModel);
+            footerToolBar.setGameModel(newModel);
         });
 
         treeViewer.addPreviewNodeChangeListener(boardArea::onHighlightedNodeChange);
@@ -202,7 +204,7 @@ public class EditorWindow extends Stage {
             return; // Avoid flickering when setting the same layout
         }
         boardArea.setContentForPerspective(newLayout);
-        playerInfoComponent.setContentForPerspective(newLayout);
+        footerToolBar.setContentForPerspective(newLayout);
 
         var content = newLayout.getContent(this);
         var controlPane = new BorderPane();
@@ -316,7 +318,7 @@ public class EditorWindow extends Stage {
         return ACTIVE_WINDOWS.size();
     }
 
-    public Node getPlayerInfoComponent() {
-        return playerInfoComponent;
+    public Node getFooterToolBar() {
+        return footerToolBar;
     }
 }

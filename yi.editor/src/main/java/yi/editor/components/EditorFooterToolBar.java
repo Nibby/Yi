@@ -1,30 +1,69 @@
 package yi.editor.components;
 
-import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import org.jetbrains.annotations.NotNull;
+import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
+import yi.editor.EditorWindow;
 import yi.editor.framework.EditorTextResources;
+import yi.editor.framework.action.EditorAction;
+import yi.editor.framework.action.EditorActionManager;
+import yi.editor.framework.action.EditorBasicAction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import static yi.editor.framework.EditorTextResources.MOVE_COUNT;
 
-public class EditorFooterToolBar extends ToolBar {
+public class EditorFooterToolBar extends ToolBar implements EditorComponent<ToolBar> {
 
     private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
     private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
-    private final Button moveBack1 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowUp_white32.png", getClass(), 16).orElse(null));
-    private final Button moveBack10 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowUpDouble_white32.png", getClass(), 16).orElse(null));
-    private final Button moveBackToBeginning = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowUpmost_white32.png", getClass(), 16).orElse(null));
+    private final List<EditorAction> navActions = new ArrayList<>();
+    private final EditorAction toPrevious1Action = createNavAction(
+            EditorTextResources.TO_PREVIOUS_NODE,
+            GameModel::toPreviousNode,
+            "/yi/editor/icons/arrowUp_white32.png"
+    );
 
-    private final Button moveNext1 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowDown_white32.png", getClass(), 16).orElse(null));
-    private final Button moveNext10 = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowDownDouble_white32.png", getClass(), 16).orElse(null));
-    private final Button moveToEnd = new Button("", GuiUtilities.getIcon("/yi/editor/icons/arrowDownmost_white32.png", getClass(), 16).orElse(null));
+    private final EditorAction toPrevious10Action = createNavAction(
+            EditorTextResources.TO_PREVIOUS_10_NODES,
+            model -> model.toPreviousNode(10),
+            "/yi/editor/icons/arrowUpDouble_white32.png"
+    );
+
+    private final EditorAction toRootAction = createNavAction(
+            EditorTextResources.TO_ROOT_NODE,
+            model -> model.setCurrentNode(model.getRootNode()),
+            "/yi/editor/icons/arrowUpmost_white32.png"
+    );
+
+    private final EditorAction toNext1Action = createNavAction(
+            EditorTextResources.TO_NEXT_NODE,
+            GameModel::toNextNode,
+            "/yi/editor/icons/arrowDown_white32.png"
+    );
+
+    private final EditorAction toNext10Action = createNavAction(
+            EditorTextResources.TO_NEXT_10_NODES,
+            model -> model.toNextNode(10),
+            "/yi/editor/icons/arrowDownDouble_white32.png"
+    );
+
+    private final EditorAction toVariationEndAction = createNavAction(
+            EditorTextResources.TO_VARIATION_END,
+            model -> model.toNextNode(Integer.MAX_VALUE),
+            "/yi/editor/icons/arrowDownmost_white32.png"
+    );
 
     private final Label moveLabel = new Label("");
 
@@ -38,13 +77,6 @@ public class EditorFooterToolBar extends ToolBar {
         playerWhiteName.setMaxWidth(160);
         playerWhiteRank.getStyleClass().add("editor-player-rank-hud-label");
         playerWhiteRank.setMaxWidth(50);
-
-        moveBack1.getStyleClass().add("button-style3");
-        moveBack10.getStyleClass().add("button-style3");
-        moveBackToBeginning.getStyleClass().add("button-style3");
-        moveNext1.getStyleClass().add("button-style3");
-        moveNext10.getStyleClass().add("button-style3");
-        moveToEnd.getStyleClass().add("button-style3");
 
         moveLabel.getStyleClass().add("editor-move-number-hud-label");
         getStyleClass().add("editor-player-info-toolbar");
@@ -111,14 +143,43 @@ public class EditorFooterToolBar extends ToolBar {
                 playerWhiteName,
                 playerWhiteRank,
                 GuiUtilities.createDynamicSpacer(),
-                moveBackToBeginning,
-                moveBack10,
-                moveBack1,
+                toRootAction.getAsComponent(),
+                toPrevious10Action.getAsComponent(),
+                toPrevious1Action.getAsComponent(),
                 moveLabel,
-                moveNext1,
-                moveNext10,
-                moveToEnd,
+                toNext1Action.getAsComponent(),
+                toNext10Action.getAsComponent(),
+                toVariationEndAction.getAsComponent(),
                 GuiUtilities.createStaticSpacer(8)
         );
+    }
+
+    private EditorAction createNavAction(TextResource text, Consumer<GameModel> action, String iconPath) {
+        var actionItem = new EditorBasicAction(text, context -> {
+            EditorWindow window = context.getEditorWindow();
+            GameModel model = window.getGameModel();
+            action.accept(model);
+        });
+        actionItem.setIcon(GuiUtilities.getIcon(iconPath, EditorFooterToolBar.class, 16).orElse(null));
+        actionItem.setComponentCompact(true);
+
+        Node button = actionItem.getAsComponent();
+        assert button != null;
+        button.setFocusTraversable(false);
+        button.getStyleClass().add("button-style3");
+
+        navActions.add(actionItem);
+
+        return actionItem;
+    }
+
+    @Override
+    public @NotNull EditorAction[] getActions(EditorActionManager actionManager) {
+        return navActions.toArray(new EditorAction[0]);
+    }
+
+    @Override
+    public Optional<ToolBar> getComponent() {
+        return Optional.of(this);
     }
 }
