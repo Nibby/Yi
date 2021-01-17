@@ -245,8 +245,10 @@ class GameModel(val boardWidth: Int,
         var newPosition = currentNode
 
         for (i in 0 until steps) {
-            newPosition.parent?.let {
-                newPosition = it
+            if (newPosition.parent != null) {
+                newPosition = newPosition.parent!!
+            } else {
+                break
             }
         }
         currentNode = newPosition
@@ -277,6 +279,8 @@ class GameModel(val boardWidth: Int,
         for (i in 0 until steps) {
             if (newPosition.children.isNotEmpty()) {
                 newPosition = newPosition.children[0]
+            } else {
+                break
             }
         }
         currentNode = newPosition
