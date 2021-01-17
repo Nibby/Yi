@@ -39,14 +39,14 @@ public enum EditorPerspective {
 
             var board = window.getBoardComponent();
             content.setCenter(board);
-            content.setBottom(window.getPlayerInfoComponent());
+            content.setBottom(window.getFooterToolBar());
 
             return content;
         }
 
         @Override
         public Dimension2D getMinimumWindowSize() {
-            return new Dimension2D(540, 600);
+            return new Dimension2D(600, 600);
         }
 
         @Override
@@ -66,7 +66,7 @@ public enum EditorPerspective {
             var boardpane = new BorderPane();
             var board = window.getBoardComponent();
             boardpane.setCenter(board);
-            boardpane.setBottom(window.getPlayerInfoComponent());
+            boardpane.setBottom(window.getFooterToolBar());
 
             var tree = window.getTreeComponent();
             var commentArea = window.getCommentComponent();
