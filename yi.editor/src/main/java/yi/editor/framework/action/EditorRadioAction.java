@@ -98,8 +98,8 @@ public class EditorRadioAction extends EditorAbstractAction<YiRadioMenuItem, Nod
     }
 
     @Override
-    public EditorRadioAction setInMainMenu(@NotNull EditorMainMenuType menu, double position) {
-        super.setInMainMenu(menu, position);
+    public EditorRadioAction setInMenuBar(@NotNull EditorMainMenuType menu, double position) {
+        super.setInMenuBar(menu, position);
         return this;
     }
 

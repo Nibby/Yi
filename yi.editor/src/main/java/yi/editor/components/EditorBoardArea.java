@@ -51,7 +51,7 @@ public class EditorBoardArea implements EditorComponent<Pane> {
                         board.setShowCoordinates(nextState);
                     }
             );
-            actionToggleCoordinates.setInMainMenu(EditorMainMenuType.VIEW, 0.000d);
+            actionToggleCoordinates.setInMenuBar(EditorMainMenuType.VIEW, 0.000d);
             actionToggleCoordinates.setAccelerator(EditorAccelerator.TOGGLE_BOARD_COORDINATES);
             board.addShowCoordinatesValueListener(actionToggleCoordinates::setSelected);
         }

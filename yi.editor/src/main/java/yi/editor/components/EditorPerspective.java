@@ -230,7 +230,7 @@ public enum EditorPerspective {
 
     public static EditorAction[] createActions() {
         var perspectiveSubmenu = new EditorSubMenuAction(EditorTextResources.MENU_PERSPECTIVE);
-        perspectiveSubmenu.setInMainMenu(EditorMainMenuType.VIEW, 1.0d);
+        perspectiveSubmenu.setInMenuBar(EditorMainMenuType.VIEW, 1.0d);
 
         var result = new HashSet<EditorAction>();
         for (int i = 0; i < values().length; ++i) {
@@ -257,7 +257,7 @@ public enum EditorPerspective {
                 setSelected(window.getPerspective() == thisPerspective);
             }
         };
-        editorAction.setInMainMenu(EditorMainMenuType.VIEW, position);
+        editorAction.setInMenuBar(EditorMainMenuType.VIEW, position);
         editorAction.setSelected(EditorSettings.general.getPerspective() == thisPerspective);
         editorAction.setMenuToggleGroup(MENU_ACTION_TOGGLE_GROUP);
         editorAction.setAccelerator(thisPerspective.getAcceleratorId());

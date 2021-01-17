@@ -27,7 +27,7 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
                 undo.setEnabled(undoSystem.canUndo());
             }
         };
-        undo.setInMainMenu(EditorMainMenuType.EDIT, 0d);
+        undo.setInMenuBar(EditorMainMenuType.EDIT, 0d);
         undo.setAccelerator(EditorAccelerator.UNDO);
         undo.setEnabled(false);
 
@@ -41,7 +41,7 @@ public final class EditorUndoSystem implements EditorComponent<Object> {
                 redo.setEnabled(undoSystem.canRedo());
             }
         };
-        redo.setInMainMenu(EditorMainMenuType.EDIT, 0.001d);
+        redo.setInMenuBar(EditorMainMenuType.EDIT, 0.001d);
         redo.setAccelerator(EditorAccelerator.REDO);
         redo.setEnabled(false);
     }

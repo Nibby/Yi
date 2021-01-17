@@ -261,7 +261,7 @@ public class EditorWindow extends Stage {
 
     private <ComponentType> void addComponent(EditorComponent<ComponentType> component) {
         for (EditorAction action : component.getActions(actionManager)) {
-            if (action.isInMainMenu() && menuBar != null) {
+            if (action.isInMenuBar() && menuBar != null) {
                 // Current action system implementation requires all actions to be created
                 // prior to creating the menu bar. In other words, if an action is to
                 // export a menu item, it should be done in this class constructor, or

@@ -27,13 +27,13 @@ public final class EditorToggleActionTest extends EditorUITestBase {
     @Override
     protected void initializeTestActions(EditorActionManager actionManager) {
         action1 = createTestToggleAction();
-        action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
+        action1.setInMenuBar(EditorMainMenuType.TESTING, 0d);
 
         action2 = createTestToggleAction();
-        action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
+        action2.setInMenuBar(EditorMainMenuType.TESTING, 1d);
 
         action3 = createTestToggleAction();
-        action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
+        action3.setInMenuBar(EditorMainMenuType.TESTING, 0.5d);
 
         action1.setSelected(true);
 

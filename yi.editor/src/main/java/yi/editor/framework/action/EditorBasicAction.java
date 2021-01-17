@@ -1,7 +1,6 @@
 package yi.editor.framework.action;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,8 +45,8 @@ public class EditorBasicAction extends EditorAbstractAction<YiMenuItem, Node> {
     }
 
     @Override
-    public EditorBasicAction setInMainMenu(@NotNull EditorMainMenuType menu, double position) {
-        super.setInMainMenu(menu, position);
+    public EditorBasicAction setInMenuBar(@NotNull EditorMainMenuType menu, double position) {
+        super.setInMenuBar(menu, position);
         return this;
     }
 

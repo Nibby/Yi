@@ -74,8 +74,8 @@ public class EditorSubMenuAction extends EditorAbstractAction<Menu, Node> {
     }
 
     @Override
-    public EditorSubMenuAction setInMainMenu(@NotNull EditorMainMenuType menu, double position) {
-        super.setInMainMenu(menu, position);
+    public EditorSubMenuAction setInMenuBar(@NotNull EditorMainMenuType menu, double position) {
+        super.setInMenuBar(menu, position);
         return this;
     }
 
