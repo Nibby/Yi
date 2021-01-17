@@ -225,14 +225,14 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     }
 
     @Override
-    public EditorAction setInMainMenu(@NotNull EditorMainMenuType menu, double position) {
+    public EditorAction setInMenuBar(@NotNull EditorMainMenuType menu, double position) {
         this.mainMenuType = menu;
         this.menuPosition = position;
         return this;
     }
 
     @Override
-    public boolean isInMainMenu() {
+    public boolean isInMenuBar() {
         return mainMenuType != null;
     }
 
@@ -249,7 +249,7 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
 
     @Override
     public @NotNull M getAsMenuItem() {
-        if (!isInMainMenu()) {
+        if (!isInMenuBar()) {
             throw new IllegalStateException("Cannot create menu item for action that is " +
                     "not set to appear in the main menu. Action: " + getLocalisedText());
         }

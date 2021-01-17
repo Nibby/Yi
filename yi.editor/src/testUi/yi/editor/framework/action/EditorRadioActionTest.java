@@ -29,15 +29,15 @@ public final class EditorRadioActionTest extends EditorUITestBase {
     @Override
     protected void initializeTestActions(EditorActionManager actionManager) {
         action1 = createTestRadioAction();
-        action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
+        action1.setInMenuBar(EditorMainMenuType.TESTING, 0d);
         action1.setMenuToggleGroup(toggleGroup);
 
         action2 = createTestRadioAction();
-        action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
+        action2.setInMenuBar(EditorMainMenuType.TESTING, 1d);
         action2.setMenuToggleGroup(toggleGroup);
 
         action3 = createTestRadioAction();
-        action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
+        action3.setInMenuBar(EditorMainMenuType.TESTING, 0.5d);
         action3.setMenuToggleGroup(toggleGroup);
 
         action1.setSelected(true);

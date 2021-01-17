@@ -3,7 +3,6 @@ package yi.editor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import org.jetbrains.annotations.NotNull;
-import yi.component.shared.utilities.GuiUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameNode;
 import yi.core.go.editor.GameModelEditor;
@@ -63,7 +62,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
                 }
             }
         });
-        actionItem.setInMainMenu(EditorMainMenuType.EDIT, 0.11d);
+        actionItem.setInMenuBar(EditorMainMenuType.EDIT, 0.11d);
         actionItem.setAccelerator(EditorAccelerator.REMOVE_NODE);
         standardActions.add(actionItem);
     }
@@ -75,27 +74,27 @@ final class EditorStandardActions implements EditorComponent<Object> {
             GameModelEditor editor = gameModel.getEditor();
             editor.recordAndApplyUndoable(MoveEdit.Companion.pass());
         });
-        actionItem.setInMainMenu(EditorMainMenuType.EDIT, 0.1d);
+        actionItem.setInMenuBar(EditorMainMenuType.EDIT, 0.1d);
         actionItem.setAccelerator(EditorAccelerator.PASS);
         standardActions.add(actionItem);
     }
 
     private void createDivider(EditorMainMenuType menuType, double position) {
         var sep = new EditorSeparatorAction();
-        sep.setInMainMenu(menuType, position);
+        sep.setInMenuBar(menuType, position);
         standardActions.add(sep);
     }
 
     private void createNewGameAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_NEW_GAME, handler::handleCreateNewGame);
-        actionItem.setInMainMenu(EditorMainMenuType.FILE, 0d);
+        actionItem.setInMenuBar(EditorMainMenuType.FILE, 0d);
         actionItem.setAccelerator(EditorAccelerator.NEW_GAME);
         standardActions.add(actionItem);
     }
 
     private void createNewGameInNewWindowAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_NEW_WINDOW, handler::handleCreateGameInNewWindow);
-        actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.0005d);
+        actionItem.setInMenuBar(EditorMainMenuType.FILE, 0.0005d);
         actionItem.setAccelerator(EditorAccelerator.NEW_WINDOW);
 
         standardActions.add(actionItem);
@@ -103,7 +102,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createOpenGameAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_OPEN_GAME, handler::handleOpenGame);
-        actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.001d);
+        actionItem.setInMenuBar(EditorMainMenuType.FILE, 0.001d);
         actionItem.setAccelerator(EditorAccelerator.OPEN_GAME);
 
         standardActions.add(actionItem);
@@ -111,7 +110,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createSaveAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME, handler::handleSaveGame);
-        actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.002d);
+        actionItem.setInMenuBar(EditorMainMenuType.FILE, 0.002d);
         actionItem.setAccelerator(EditorAccelerator.SAVE_GAME);
 
         standardActions.add(actionItem);
@@ -119,7 +118,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
 
     private void createSaveAsAction() {
         var actionItem = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_AS_GAME, handler::handleSaveAsGame);
-        actionItem.setInMainMenu(EditorMainMenuType.FILE, 0.003d);
+        actionItem.setInMenuBar(EditorMainMenuType.FILE, 0.003d);
         actionItem.setAccelerator(EditorAccelerator.SAVE_AS_GAME);
 
         standardActions.add(actionItem);

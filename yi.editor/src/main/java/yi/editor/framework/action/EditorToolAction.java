@@ -164,7 +164,7 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
                 window.getGameModel().getEditor().setEditable(false);
             }
         });
-        action.setInMainMenu(EditorMainMenuType.TOOLS, menuPosition);
+        action.setInMenuBar(EditorMainMenuType.TOOLS, menuPosition);
         if (acceleratorId != null) {
             action.setAccelerator(acceleratorId);
         }

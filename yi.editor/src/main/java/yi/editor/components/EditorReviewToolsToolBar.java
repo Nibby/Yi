@@ -91,9 +91,9 @@ public class EditorReviewToolsToolBar extends ToolBar {
 
     private Collection<? extends EditorAction> getDividers() {
         var dividers = new ArrayList<EditorAction>();
-        dividers.add(new EditorSeparatorAction().setInMainMenu(EditorMainMenuType.TOOLS, 0.005));
-        dividers.add(new EditorSeparatorAction().setInMainMenu(EditorMainMenuType.TOOLS, 0.025));
-        dividers.add(new EditorSeparatorAction().setInMainMenu(EditorMainMenuType.TOOLS, 0.095));
+        dividers.add(new EditorSeparatorAction().setInMenuBar(EditorMainMenuType.TOOLS, 0.005));
+        dividers.add(new EditorSeparatorAction().setInMenuBar(EditorMainMenuType.TOOLS, 0.025));
+        dividers.add(new EditorSeparatorAction().setInMenuBar(EditorMainMenuType.TOOLS, 0.095));
         return dividers;
     }
 }

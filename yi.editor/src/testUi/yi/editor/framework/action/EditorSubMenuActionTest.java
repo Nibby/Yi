@@ -39,21 +39,21 @@ public class EditorSubMenuActionTest extends EditorUITestBase {
     @Override
     protected void initializeTestActions(EditorActionManager actionManager) {
         subMenu1 = new EditorSubMenuAction(EditorTextResources.MENUITEM_NEW_GAME);
-        subMenu1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
+        subMenu1.setInMenuBar(EditorMainMenuType.TESTING, 0d);
 
         itemInSubMenu1 = new EditorBasicAction(EditorTextResources.MENU_PERSPECTIVE,
                 context -> itemInSubMenu1ActionExecuted.set(true));
-        itemInSubMenu1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
+        itemInSubMenu1.setInMenuBar(EditorMainMenuType.TESTING, 0d);
         itemInSubMenu1.setAccelerator(EditorAccelerator.TEST_ACCEL_1);
 
         subMenu1.addChildAction(itemInSubMenu1);
 
         subMenu2 = new EditorSubMenuAction(EditorTextResources.MENUITEM_SAVE_AS_GAME);
-        subMenu2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
+        subMenu2.setInMenuBar(EditorMainMenuType.TESTING, 1d);
 
         itemInSubMenu2 = new EditorBasicAction(EditorTextResources.MENUITEM_SAVE_GAME,
                 context -> itemInSubMenu2ActionExecuted.set(true));
-        itemInSubMenu2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
+        itemInSubMenu2.setInMenuBar(EditorMainMenuType.TESTING, 1d);
         itemInSubMenu2.setAccelerator(EditorAccelerator.TEST_ACCEL_2);
 
         subMenu2.addChildAction(itemInSubMenu2);

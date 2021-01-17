@@ -26,11 +26,13 @@ public class EditorMenuBar extends MenuBar {
         for (EditorAction action : allActions) {
             action.setContext(context);
 
-            if (action.isInMainMenu() && !action.isAddedToMenu()) {
+            if (action.isInMenuBar()) {
                 var menuItem = action.getAsMenuItem();
                 menuItem.setOnAction(e -> action.performAction());
                 menuItem.setUserData(action);
+            }
 
+            if (action.isInMenuBar() && !action.isAddedToMenu()) {
                 var menuType = action.getMainMenuType();
                 topLevelActionsByMenu.putIfAbsent(menuType, new ArrayList<>());
 

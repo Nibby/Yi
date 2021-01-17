@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  * Defines one actionable task in the game editor. Each action must be atomic and
  * self-contained, in that it does not depend on another action to run.
  * <p/>
- * Actions can be set to show in the menu bar through {@link #setInMainMenu(EditorMainMenuType, double)}.
+ * Actions can be set to show in the menu bar through {@link #setInMenuBar(EditorMainMenuType, double)}.
  * Optionally, an action can be exported to a JavaFx {@link Node} via {@link #getAsComponent()}.
  *
  * @see EditorActionManager
@@ -158,15 +158,15 @@ public interface EditorAction {
      *                 See {@link #getMenuPosition()}.
      * @return this instance for method chaining.
      */
-    EditorAction setInMainMenu(@NotNull EditorMainMenuType menu, double position);
+    EditorAction setInMenuBar(@NotNull EditorMainMenuType menu, double position);
 
     /**
      * @return {@code true} if this action should be added to the main menu.
      */
-    boolean isInMainMenu();
+    boolean isInMenuBar();
 
     /**
-     * @return {@code true} if this component {@link #isInMainMenu() is in main menu} and
+     * @return {@code true} if this component {@link #isInMenuBar() is in main menu} and
      *         it does not belong in a sub-menu within that menu.
      */
     boolean isTopLevelMenuItem();
@@ -179,10 +179,10 @@ public interface EditorAction {
     double getMenuPosition();
 
     /**
-     * This value is only relevant if the action {@link #isInMainMenu() is in main menu}.
+     * This value is only relevant if the action {@link #isInMenuBar() is in main menu}.
      *
      * @return Main menu category in which this action will export its menu item under.
-     * @see #setInMainMenu(EditorMainMenuType, double)
+     * @see #setInMenuBar(EditorMainMenuType, double)
      */
     @NotNull EditorMainMenuType getMainMenuType();
 

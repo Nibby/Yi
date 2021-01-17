@@ -46,13 +46,13 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
     @Override
     protected void initializeTestActions(EditorActionManager actionManager) {
         action1 = createAction(() -> action1ActionPerformed.set(true));
-        action1.setInMainMenu(EditorMainMenuType.TESTING, 0d);
+        action1.setInMenuBar(EditorMainMenuType.TESTING, 0d);
 
         action2 = createAction(() -> action2ActionPerformed.set(true));
-        action2.setInMainMenu(EditorMainMenuType.TESTING, 1d);
+        action2.setInMenuBar(EditorMainMenuType.TESTING, 1d);
 
         action3 = createAction(() -> action3ActionPerformed.set(true));
-        action3.setInMainMenu(EditorMainMenuType.TESTING, 0.5d);
+        action3.setInMenuBar(EditorMainMenuType.TESTING, 0.5d);
 
         actionManager.addActions(new EditorAction[] { action1, action2, action3 });
     }

@@ -125,8 +125,8 @@ public class EditorToggleAction extends EditorAbstractAction<YiCheckMenuItem, Yi
     }
 
     @Override
-    public EditorToggleAction setInMainMenu(@NotNull EditorMainMenuType menu, double position) {
-        super.setInMainMenu(menu, position);
+    public EditorToggleAction setInMenuBar(@NotNull EditorMainMenuType menu, double position) {
+        super.setInMenuBar(menu, position);
         return this;
     }
 
