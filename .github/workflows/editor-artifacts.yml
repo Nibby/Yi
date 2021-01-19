@@ -24,9 +24,7 @@ jobs:
         java-version: 11
 
     - name: Produce MSI installer
-      run: ./gradlew :yi.editor:msi \
-               -PbuildVersion=${{github.event.inputs.version}} \
-               -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+      run: ./gradlew :yi.editor:msi -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
     - name: Upload artifacts
       if: success()
@@ -49,9 +47,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Produce app bundle
-        run: ./gradlew :yi.editor:dmg \
-          -PbuildVersion=${{github.event.inputs.version}} \
-          -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+        run: ./gradlew :yi.editor:dmg -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
       - name: Upload artifacts
         if: success()
@@ -74,14 +70,11 @@ jobs:
         run: chmod +x gradlew
 
       - name: Produce DEB package
-        run: ./gradlew :yi.editor:deb \
-          -PbuildVersion=${{github.event.inputs.version}} \
+        run: ./gradlew :yi.editor:deb -PbuildVersion=${{github.event.inputs.version}}
           -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
       - name: Produce RPM package
-        run: ./gradlew :yi.editor:rpm \
-            -PbuildVersion=${{github.event.inputs.version}} \
-            -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+        run: ./gradlew :yi.editor:rpm -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
       - name: Upload artifacts
         if: success()
