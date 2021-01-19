@@ -1,0 +1,91 @@
+name: Make Editor Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string for this release, excluding "v" prefix'
+        required: true
+      snapshot-build:
+        description: 'This release is a work in progress'
+        required: true
+        default: 'true'
+
+jobs:
+  artifacts-win:
+    name: Windows Artifacts
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Produce MSI installer
+      run: ./gradlew :yi.editor:msi \
+               -PbuildVersion=${{github.event.inputs.version}} \
+               -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+
+    - name: Upload artifacts
+      if: success()
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-artifacts
+        path: build/yi.editor/artifacts/*
+
+  artifacts-mac:
+    name: macOS Artifacts
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Produce app bundle
+        run: ./gradlew :yi.editor:dmg \
+          -PbuildVersion=${{github.event.inputs.version}} \
+          -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+
+      - name: Upload artifacts
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac-artifacts
+          path: build/yi.editor/artifacts/*
+
+  artifacts-linux:
+    name: Linux Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Produce DEB package
+        run: ./gradlew :yi.editor:deb \
+          -PbuildVersion=${{github.event.inputs.version}} \
+          -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+
+      - name: Produce RPM package
+        run: ./gradlew :yi.editor:rpm \
+            -PbuildVersion=${{github.event.inputs.version}} \
+            -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+
+      - name: Upload artifacts
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-artifacts
+          path: build/yi.editor/artifacts/*
