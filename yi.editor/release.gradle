@@ -1,7 +1,9 @@
 import yi.buildsrc.release.TargetPlatform
 import yi.buildsrc.release.YiReleasePlugin
 
+import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.Path
 
 apply plugin: YiReleasePlugin
 apply plugin: 'de.inetsoftware.setupbuilder'
@@ -17,12 +19,13 @@ def applicationIcons = [
 
 def jreDir = YiReleasePlugin.getCustomJreImageDirectoryAsPath(thisProject).toAbsolutePath().toString()
 def artifactsDir = YiReleasePlugin.getReleaseArtifactsDirectoryAsPath(thisProject).toAbsolutePath().toString()
+
 def versionString = thisProject.version.replace("-SNAPSHOT", "")
 
 jlinkOptions.jdkHome = null // If null, uses JAVA_HOME env value instead
 jlinkOptions.bundledJdkVersion = 11
 jlinkOptions.mainModuleName = thisProject.ext.mainModuleName
-jlinkOptions.mainJarArtifactName = "${thisProject.name}-${thisProject.version}.jar".toString()
+jlinkOptions.mainJarArtifactName = "${thisProject.name}-${versionString}.jar".toString()
 jlinkOptions.outputDir = jreDir
 
 def executableVMArguments = [
@@ -37,7 +40,11 @@ if (TargetPlatform.getCurrentPlatform() == TargetPlatform.macOS) {
     def macOsJrePath = Paths.get(jreDir).resolve("Contents").resolve("Home")
     jreDir = macOsJrePath.toAbsolutePath().toString()
     jlinkOptions.outputDir = jreDir
+}
 
+jar {
+    archiveBaseName = thisProject.name
+    archiveVersion = thisProject.version
 }
 
 setupBuilder {
@@ -100,7 +107,6 @@ deb.dependsOn(prerequisites)
 msi.dependsOn(prerequisites)
 rpm.dependsOn(prerequisites)
 
-
 msi {
     arch = "x64"
     minOS = 6.1
@@ -134,4 +140,35 @@ rpm {
     section = "Games"
     summary = "Go game record editor"
     architecture = "x86_64"
+}
+
+task renameArtifacts() {
+    doLast {
+        String artifactName = "${applicationName}-${versionString}".toString()
+        Path artifactDir = project.getBuildDir().toPath().resolve("artifacts")
+
+        renameIfExists(artifactDir, artifactName, ".dmg")
+        renameIfExists(artifactDir, artifactName, ".msi")
+        renameIfExists(artifactDir, artifactName, ".deb")
+        renameIfExists(artifactDir, artifactName, ".rpm")
+    }
+}
+
+dmg.finalizedBy(renameArtifacts)
+deb.finalizedBy(renameArtifacts)
+msi.finalizedBy(renameArtifacts)
+rpm.finalizedBy(renameArtifacts)
+
+def renameIfExists(Path artifactDir, String artifactName, String extension) {
+    if (isSnapshotBuild) {
+        Path artifactPath = artifactDir.resolve(artifactName + extension)
+        Path newArtifactPath = artifactDir.resolve(artifactName + "-SNAPSHOT" + extension)
+
+        if (Files.exists(artifactPath) && !Files.isDirectory(artifactPath)) {
+            logger.lifecycle("Renaming '${artifactPath.getFileName().toString()}' to " +
+                    "'${newArtifactPath.getFileName().toString()}'")
+            Files.move(artifactPath, newArtifactPath)
+        }
+    }
+
 }

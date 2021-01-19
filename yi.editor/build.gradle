@@ -15,6 +15,17 @@ plugins {
 buildDir = '../build/' + getProject().getName()
 project.ext.mainModuleName = "yi.editor"
 
+if (hasProperty("buildVersion")) {
+    version = project['buildVersion']
+} else {
+    version = "9999.0"
+}
+
+ext.isSnapshotBuild = true
+if (project.hasProperty("snapshotBuild") && project['snapshotBuild'] == 'false') {
+    ext.isSnapshotBuild = false
+}
+
 // Tasks related to app distribution
 apply from: "release.gradle"
 
