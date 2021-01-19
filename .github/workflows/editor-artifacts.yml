@@ -24,7 +24,8 @@ jobs:
         java-version: 11
 
     - name: Produce MSI installer
-      run: ./gradlew :yi.editor:msi -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+      run: gradlew :yi.editor:msi -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+      shell: cmd
 
     - name: Upload artifacts
       if: success()
