@@ -5,6 +5,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import yi.component.shared.component.Accelerator;
 import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
 import yi.editor.EditorWindow;
@@ -284,4 +285,9 @@ public interface EditorAction {
      * @see #setComponentCompact(boolean)
      */
     boolean isComponentCompact();
+
+    /**
+     * @return The {@link Accelerator} for this action.
+     */
+    Optional<Accelerator> getAccelerator();
 }

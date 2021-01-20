@@ -20,6 +20,7 @@ import yi.editor.framework.EditorAccelerator;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -523,5 +524,11 @@ public abstract class EditorAbstractAction<M extends MenuItem, C extends Node> i
     @Override
     public String toString() {
         return "Action: " + getLocalisedText();
+    }
+
+    public Optional<Accelerator> getAccelerator() {
+        var result = new AtomicReference<Accelerator>(null);
+        acceleratorId.get().ifPresent(acceleratorId -> result.set(acceleratorId.getAccelerator()));
+        return Optional.ofNullable(result.get());
     }
 }
