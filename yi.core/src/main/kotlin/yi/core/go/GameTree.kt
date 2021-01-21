@@ -1,5 +1,8 @@
 package yi.core.go
 
+import java.util.*
+import java.util.function.Consumer
+
 open class GameTree constructor(internal var rootNode: GameNode) {
 
     constructor(emptyStateHash: Long) : this(GameNode(StateDelta.forRootNode(emptyStateHash)))
@@ -47,14 +50,37 @@ open class GameTree constructor(internal var rootNode: GameNode) {
      *
      * @param node The node to be removed from the game tree
      * @throws IllegalArgumentException If the node to be removed does not belong to this tree
+     * or if it is the root node.
      */
     fun removeNode(node: GameNode) {
-        if (!isDescendant(node))
-            throw IllegalArgumentException("Cannot remove a node that is not part of this move tree")
+        checkValidNodeRemoval(node)
 
         node.parent?.children?.remove(node)
         node.children.forEach { child -> child.parent = null }
         node.root = null
+    }
+
+    /**
+     * Removes the specified node from the game tree by severing it from the child list
+     * of its parent node. This means all parent and children data will be kept intact
+     * for the removed node and its descendants.
+     *
+     * @throws IllegalArgumentException If the node to be removed is the root node
+     */
+    fun removeNodeShallow(node: GameNode) {
+        checkValidNodeRemoval(node)
+
+        node.parent?.children?.remove(node)
+        node.parent = null
+    }
+
+    private fun checkValidNodeRemoval(node: GameNode) {
+        if (!isDescendant(node)) {
+            throw IllegalArgumentException("Cannot remove a node that is not part of this move tree")
+        }
+        if (node.isRoot()) {
+            throw IllegalArgumentException("Cannot remove the root node")
+        }
     }
 
     /**
@@ -76,6 +102,7 @@ open class GameTree constructor(internal var rootNode: GameNode) {
             node.parent?.children?.remove(node)
             node.parent = null
         }
+
         node.children.forEach { child -> child.parent = null; removeNodeSubtree(child); }
         node.children.clear()
     }
@@ -88,5 +115,17 @@ open class GameTree constructor(internal var rootNode: GameNode) {
      */
     fun isDescendant(node: GameNode): Boolean {
         return node.root == rootNode
+    }
+
+    companion object {
+        fun traverseSubtree(node: GameNode, taskForEachNode: Consumer<GameNode>) {
+            val unprocessed = Stack<GameNode>()
+            unprocessed.push(node)
+            while (unprocessed.isNotEmpty()) {
+                val nodeToProcess = unprocessed.pop()
+                taskForEachNode.accept(nodeToProcess)
+                unprocessed.addAll(nodeToProcess.children)
+            }
+        }
     }
 }

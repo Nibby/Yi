@@ -3,9 +3,7 @@ package yi.core.go.editor
 import yi.core.go.GameModel
 import yi.core.go.editor.edit.GameModelEdit
 import yi.core.go.editor.edit.GameModelMergeableEdit
-import java.lang.IllegalArgumentException
 import java.util.*
-import kotlin.jvm.Throws
 
 /**
  * Enables undoable changes to a [GameModel].
@@ -93,6 +91,9 @@ class GameModelUndoSystem(private val model: GameModel) {
      * to the [GameModel] so far undoable.
      */
     fun clearEditHistory() {
+        for (item in editHistory) {
+            item.dispose()
+        }
         editHistory.clear()
     }
 
@@ -143,14 +144,17 @@ class GameModelUndoSystem(private val model: GameModel) {
             // Discard the existing edit history
             val originalSize: Int = editHistory.size
             for (i in positionInHistory + 1 until originalSize) {
-                editHistory.pop()
+                val itemToDiscard = editHistory.pop()
+                itemToDiscard.dispose()
             }
         }
     }
 
     private fun pruneHistorySize() {
         while (editHistory.size > maxHistorySize) {
-            editHistory.removeAt(0)
+            val editToRemoveFromHistory = editHistory[0]
+            editToRemoveFromHistory.dispose()
+            editHistory.remove(editToRemoveFromHistory)
             --positionInHistory
         }
     }

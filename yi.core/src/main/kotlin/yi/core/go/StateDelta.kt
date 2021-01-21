@@ -10,8 +10,8 @@ package yi.core.go
 class StateDelta {
 
     internal val type: GameNodeType
-    internal val primaryMove: Stone?
-    internal val captures: Set<Stone>
+    internal var primaryMove: Stone?
+    internal var captures: Set<Stone>
     internal var stateHash: Long
     internal val stoneEdits: HashSet<Stone>
     internal val annotations: HashSet<Annotation>
@@ -46,6 +46,15 @@ class StateDelta {
         this.primaryMove?.let {
             stoneDelta.add(it)
         }
+    }
+
+    internal fun dispose() {
+        primaryMove = null
+        stoneEdits.clear()
+        annotations.clear()
+        metadata.clear()
+        comments = ""
+        captures = HashSet()
     }
 
     internal companion object Factory {

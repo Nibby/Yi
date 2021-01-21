@@ -9,20 +9,36 @@ import yi.core.go.editor.edit.GameModelEdit
 class GameModelUndoSystemTest {
 
     private class TestEdit : GameModelEdit {
+        var persisted = false
+            private set
+
         override fun rollbackChanges(model: GameModel) {
         }
 
         override fun performChanges(model: GameModel): Boolean {
             return true
         }
+
+        override fun dispose() {
+            super.dispose()
+            persisted = true
+        }
     }
 
     private class UnsuccessfulTestEdit : GameModelEdit {
+        var persisted = false
+            private set
+
         override fun rollbackChanges(model: GameModel) {
         }
 
         override fun performChanges(model: GameModel): Boolean {
             return false
+        }
+
+        override fun dispose() {
+            super.dispose()
+            persisted = true
         }
     }
 
@@ -319,6 +335,25 @@ class GameModelUndoSystemTest {
         Assertions.assertEquals(0, undoSystem.getEditHistorySize())
         Assertions.assertFalse(undoSystem.canUndo())
         Assertions.assertFalse(undoSystem.canRedo())
+    }
+
+    @Test
+    fun `edits are persisted when edit stack limit exceeded`() {
+        val model = GameModel(3, 3, StandardGameRules.CHINESE)
+        val editor = model.editor
+        val undoSystem = editor.undoSystem
+        undoSystem.maxHistorySize = 2
+
+        val persistedEdit = TestEdit()
+        val unpersistedEdit = TestEdit()
+        val unpersistedEdit2 = TestEdit()
+        editor.recordAndApplyUndoable(persistedEdit)
+        editor.recordAndApplyUndoable(unpersistedEdit)
+        editor.recordAndApplyUndoable(unpersistedEdit2)
+
+        Assertions.assertTrue(persistedEdit.persisted)
+        Assertions.assertFalse(unpersistedEdit.persisted)
+        Assertions.assertFalse(unpersistedEdit2.persisted)
     }
 
     private fun runStateAssertions(expectedHistorySize: Int,

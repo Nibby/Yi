@@ -30,4 +30,12 @@ interface GameModelEdit {
      */
     @Throws(GameModelEditException::class)
     fun performChanges(model: GameModel): Boolean
+
+    /**
+     * Notifies the edit is now discarded from the undo history, and that any temporary
+     * data used to support undo/redo operation can be safely discarded.
+     */
+    fun dispose() {
+        
+    }
 }
