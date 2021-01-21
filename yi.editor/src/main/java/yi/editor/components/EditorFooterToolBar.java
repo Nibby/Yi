@@ -3,6 +3,8 @@ package yi.editor.components;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
@@ -161,7 +163,13 @@ public class EditorFooterToolBar extends ToolBar implements EditorComponent<Tool
             GameModel model = window.getGameModel();
             action.accept(model);
         });
-        actionItem.setIcon(IconUtilities.loadIcon(iconPath, EditorFooterToolBar.class, 16).orElse(null));
+        ImageView originalIconView = IconUtilities.loadIcon(iconPath, EditorFooterToolBar.class, 16).orElse(null);
+        Image icon = null;
+        if (originalIconView != null) {
+            Image originalIcon = originalIconView.getImage();
+            icon = IconUtilities.flatColorSwap(originalIcon, 180, 180, 180);
+            actionItem.setIcon(new ImageView(icon));
+        }
         actionItem.setComponentCompact(true);
 
         Node button = actionItem.getAsComponent();
