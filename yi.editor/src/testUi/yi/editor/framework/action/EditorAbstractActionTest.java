@@ -13,6 +13,7 @@ import org.testfx.framework.junit5.Start;
 import yi.component.shared.component.YiButton;
 import yi.component.shared.component.YiMenuItem;
 import yi.component.shared.utilities.GuiUtilities;
+import yi.component.shared.utilities.IconUtilities;
 import yi.editor.EditorUITestBase;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
@@ -129,7 +130,7 @@ public final class EditorAbstractActionTest extends EditorUITestBase {
         // A little yuck, but we have to be careful to use a 16x16 icon here otherwise
         // the action will wrap the image in a re-sized version, causing the two objects
         // to not equal each other.
-        ImageView icon = GuiUtilities.getIcon("/testIcon.png", getClass()).orElseThrow();
+        ImageView icon = IconUtilities.loadIcon("/testIcon.png", getClass()).orElseThrow();
         action1.setIcon(icon);
 
         Assertions.assertEquals(menuItemMap.get(action1).getGraphic(), icon,

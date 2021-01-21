@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import yi.component.shared.component.Accelerator;
 import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
+import yi.component.shared.utilities.IconUtilities;
 import yi.editor.EditorWindow;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.framework.EditorTextResources;
@@ -126,8 +127,9 @@ public interface EditorAction {
      * @return this instance for method chaining.
      */
     default EditorAction setIcon(@NotNull String iconResPath, Class<?> resourceClass) {
-        var icon = GuiUtilities.getIcon(iconResPath, resourceClass)
-                .orElseThrow(() -> new IllegalArgumentException("Icon not loaded: \"" + iconResPath + "\""));
+        var icon = IconUtilities.loadIcon(iconResPath, resourceClass)
+                .orElseThrow(() -> new IllegalArgumentException("Icon not loaded: \""
+                        + iconResPath + "\""));
         return setIcon(icon);
     }
 
