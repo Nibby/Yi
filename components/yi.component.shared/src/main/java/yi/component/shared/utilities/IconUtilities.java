@@ -109,7 +109,7 @@ public final class IconUtilities {
      * @param b Blue element, 0 - 255
      * @return Re-colored image
      */
-    public static Image flatColor(Image originalIcon, int r, int g, int b) {
+    public static Image flatColorSwap(Image originalIcon, int r, int g, int b) {
         int iconWidth = (int) originalIcon.getWidth();
         int iconHeight = (int) originalIcon.getHeight();
         var pixelReader = originalIcon.getPixelReader();
