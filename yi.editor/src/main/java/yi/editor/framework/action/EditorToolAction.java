@@ -11,6 +11,7 @@ import yi.component.shared.component.YiRadioMenuItem;
 import yi.component.shared.component.YiToggleButton;
 import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
+import yi.component.shared.utilities.IconUtilities;
 import yi.editor.components.EditorMainMenuType;
 import yi.editor.components.EditorTool;
 import yi.editor.framework.EditorAccelerator;
@@ -178,11 +179,11 @@ public class EditorToolAction extends EditorAbstractAction<YiRadioMenuItem, YiTo
         if (iconPath != null) {
             String iconNormal = "/yi/editor/icons/" + iconPath + "_white32.png";
             String iconSelected = iconNormal.replace("_white32.png", "32.png");
-            GuiUtilities.getIcon(iconNormal, EditorTool.class, 16).ifPresent(action::setIcon);
+            IconUtilities.loadIcon(iconNormal, EditorTool.class, 16).ifPresent(action::setIcon);
             actionComponent.selectedProperty().addListener(event -> {
                 boolean selectedNow = actionComponent.isSelected();
                 String icon = selectedNow ? iconSelected : iconNormal;
-                GuiUtilities.getIcon(icon, EditorTool.class, 16).ifPresent(action::setIcon);
+                IconUtilities.loadIcon(icon, EditorTool.class, 16).ifPresent(action::setIcon);
             });
         }
         action.setComponentToggleGroup(componentGroup);

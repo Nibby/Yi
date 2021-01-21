@@ -6,6 +6,7 @@ import javafx.scene.control.ToolBar;
 import org.jetbrains.annotations.NotNull;
 import yi.component.shared.i18n.TextResource;
 import yi.component.shared.utilities.GuiUtilities;
+import yi.component.shared.utilities.IconUtilities;
 import yi.core.go.GameModel;
 import yi.core.go.GameModelInfo;
 import yi.editor.EditorWindow;
@@ -23,9 +24,9 @@ import static yi.editor.framework.EditorTextResources.MOVE_COUNT;
 
 public class EditorFooterToolBar extends ToolBar implements EditorComponent<ToolBar> {
 
-    private final Label playerBlackName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/blackStone_white32.png", getClass(), 16).orElse(null));
+    private final Label playerBlackName = new Label("", IconUtilities.loadIcon("/yi/editor/icons/blackStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerBlackRank = new Label("");
-    private final Label playerWhiteName = new Label("", GuiUtilities.getIcon("/yi/editor/icons/whiteStone_white32.png", getClass(), 16).orElse(null));
+    private final Label playerWhiteName = new Label("", IconUtilities.loadIcon("/yi/editor/icons/whiteStone_white32.png", getClass(), 16).orElse(null));
     private final Label playerWhiteRank = new Label("");
 
     private final List<EditorAction> navActions = new ArrayList<>();
@@ -160,7 +161,7 @@ public class EditorFooterToolBar extends ToolBar implements EditorComponent<Tool
             GameModel model = window.getGameModel();
             action.accept(model);
         });
-        actionItem.setIcon(GuiUtilities.getIcon(iconPath, EditorFooterToolBar.class, 16).orElse(null));
+        actionItem.setIcon(IconUtilities.loadIcon(iconPath, EditorFooterToolBar.class, 16).orElse(null));
         actionItem.setComponentCompact(true);
 
         Node button = actionItem.getAsComponent();
