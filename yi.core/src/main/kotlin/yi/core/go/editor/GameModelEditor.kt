@@ -376,27 +376,55 @@ class GameModelEditor(private val model: GameModel) {
      */
     fun removeNodeSubtree(node: GameNode) {
         checkModelEditable()
-        // Do it here because the node lineage will be destroyed after removing node subtree.
-        // and we want to fire the current node change event after node removal event.
-        val readjustCurrentNode = model.currentNode.isContinuationOf(node)
 
-        // Since root cannot be deleted, there will always be a parent for the node to be removed.
-        val nodeToAdjustTo = if (readjustCurrentNode) {
-            if (node.isRoot()) node
-            else node.parent!!
-        } else null
-
+        val newCurrentMove: GameNode? = getNewCurrentNodeAfterNodeRemoval(node)
         model.gameTree.removeNodeSubtree(node)
-
-        // TODO: If removing towards the start of a very large tree, the deletion is also
-        //       fired for each node which may lead to performance issues...
         model.onNodeRemove().fireEvent(NodeEvent(node))
-
-        if (readjustCurrentNode) {
-            model.currentNode = nodeToAdjustTo!!
-        }
+        newCurrentMove?.let { model.currentNode = it }
 
         model.isModified = true
+    }
+
+    /**
+     * Removes the node from the game tree by removing it from its parent's list of
+     * children. All hierarchy information will be kept intact on the removed node and
+     * its descendent nodes. If the current move is part of the subtree deleted, it will
+     * be reset to the parent of the deleted node.
+     *
+     * It is recommended to use [removeNodeSubtree] for more permanent deletion changes,
+     * as preserving dead branch hierarchy may lead to memory leaks. This method may be
+     * useful if the removal is temporary, as it introduces less work to restore the
+     * removed node later.
+     *
+     * This method emits an [GameModel.onNodeRemove] event.
+     *
+     * @throws IllegalStateException When attempting to remove the root node.
+     */
+    fun removeNode(node: GameNode) {
+        check (!node.isRoot()) {
+            "Cannot remove root node"
+        }
+
+        checkModelEditable()
+
+        val newCurrentMove: GameNode? = getNewCurrentNodeAfterNodeRemoval(node)
+        model.gameTree.removeNodeShallow(node)
+        model.onNodeRemove().fireEvent(NodeEvent(node))
+        newCurrentMove?.let { model.currentNode = it }
+
+        model.isModified = true
+    }
+
+    private fun getNewCurrentNodeAfterNodeRemoval(nodeToRemove: GameNode): GameNode? {
+        // Do it here because the node lineage will be destroyed after removing node subtree.
+        // and we want to fire the current node change event after node removal event.
+        val readjustCurrentNode = model.currentNode.isContinuationOf(nodeToRemove)
+
+        // Since root cannot be deleted, there will always be a parent for the node to be removed.
+        return if (readjustCurrentNode) {
+            if (nodeToRemove.isRoot()) nodeToRemove
+            else nodeToRemove.parent!!
+        } else null
     }
 
     /**

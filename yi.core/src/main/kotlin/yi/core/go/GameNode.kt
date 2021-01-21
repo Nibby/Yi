@@ -341,4 +341,19 @@ class GameNode constructor(val delta: StateDelta) {
         val newHash = stateHasher.computeUpdateHash(lastHash, delta.stoneEdits)
         delta.stateHash = newHash
     }
+
+    /**
+     * If this node does not have a parent and is not a rood node, traverses
+     * itself and its descendants to erase the subtree hierarchy data, freeing
+     * up the objects for garbage collection.
+     */
+    fun dispose() {
+        if (!isRoot() && parent == null) {
+            GameTree.traverseSubtree(this) { nodeToErase ->
+                nodeToErase.parent = null
+                nodeToErase.children.clear()
+                nodeToErase.delta.dispose()
+            }
+        }
+    }
 }

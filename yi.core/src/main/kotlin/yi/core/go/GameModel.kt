@@ -5,6 +5,7 @@ import yi.core.go.editor.GameModelEditor
 import yi.core.go.rules.GameRulesHandler
 import java.nio.file.Path
 import java.util.*
+import java.util.function.Consumer
 import kotlin.collections.ArrayList
 
 /**
