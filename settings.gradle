@@ -6,6 +6,9 @@ include "yi.core"
 include componentProject
 include "yi.editor"
 
-file(componentProject).listFiles().each { folder ->
-    include "$componentProject:$folder.name"
+file(componentProject).listFiles().each { file ->
+    if (file.isDirectory()) {
+        include "$componentProject:$file.name"
+    }
+
 }
