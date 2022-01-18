@@ -5,6 +5,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Yi.app.main" options="--add-exports javafx.graphics/com.sun.glass.ui=codes.nibby.yi.app" />
       <module name="Yi.yi.editor.main" options="--add-exports javafx.graphics/com.sun.glass.ui=yi.editor" />
     </option>
   </component>

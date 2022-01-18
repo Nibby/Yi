@@ -1,4 +1,4 @@
-name: Make Editor Artifacts
+name: Make Artifacts
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
         java-version: 11
 
     - name: Produce MSI installer
-      run: gradlew :yi.editor:msi -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+      run: gradlew :app:msi -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
       shell: cmd
 
     - name: Upload artifacts
@@ -32,7 +32,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows-artifacts
-        path: build/yi.editor/artifacts/*
+        path: build/app/artifacts/*
 
   artifacts-mac:
     name: macOS Artifacts
@@ -48,14 +48,14 @@ jobs:
         run: chmod +x gradlew
 
       - name: Produce app bundle
-        run: ./gradlew :yi.editor:dmg -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+        run: ./gradlew :app:dmg -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
       - name: Upload artifacts
         if: success()
         uses: actions/upload-artifact@v2
         with:
           name: mac-artifacts
-          path: build/yi.editor/artifacts/*
+          path: build/app/artifacts/*
 
   artifacts-linux:
     name: Linux Artifacts
@@ -71,15 +71,15 @@ jobs:
         run: chmod +x gradlew
 
       - name: Produce DEB package
-        run: ./gradlew :yi.editor:deb -PbuildVersion=${{github.event.inputs.version}}
+        run: ./gradlew :app:deb -PbuildVersion=${{github.event.inputs.version}}
           -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
       - name: Produce RPM package
-        run: ./gradlew :yi.editor:rpm -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
+        run: ./gradlew :app:rpm -PbuildVersion=${{github.event.inputs.version}} -PsnapshotBuild=${{github.event.inputs.snapshot-build}}
 
       - name: Upload artifacts
         if: success()
         uses: actions/upload-artifact@v2
         with:
           name: linux-artifacts
-          path: build/yi.editor/artifacts/*
+          path: build/app/artifacts/*

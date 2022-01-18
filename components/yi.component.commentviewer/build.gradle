@@ -1,5 +1,0 @@
-apply plugin: 'org.openjfx.javafxplugin'
-
-javafx {
-    modules += ['javafx.web']
-}

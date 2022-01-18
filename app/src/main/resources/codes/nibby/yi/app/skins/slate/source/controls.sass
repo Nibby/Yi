@@ -1,0 +1,175 @@
+// Individual UI control styles
+@import "palette"
+
+.tool-bar, .menu-bar, .split-pane
+  -fx-border-color: transparent
+  -fx-border-insets: 0px
+  -fx-border-width: 0px
+  -fx-background-color: $BACKGROUND_DARK_SECONDARY
+
+.menu-bar
+  -fx-padding: 0px
+  -fx-box-border: transparent
+  -fx-background-color: $BACKGROUND_DARK_SECONDARY
+
+.menu .label
+  -fx-text-fill: $FOREGROUND_DARK
+
+.menu:hover, .menu:showing
+  -fx-background-color: $LIGHT_CONTROLS_BACKGROUND_HOVER
+
+  .label
+    -fx-text-fill: $LIGHT_CONTROLS_FOREGROUND
+
+// Only style selected menu inside main menus.
+.menu:showing > .menu:showing
+  -fx-background-color: $LIGHT_CONTROLS_BACKGROUND_SELECTED
+
+.context-menu, * > .context-menu
+  -fx-background-color: $LIGHT_CONTROLS_BACKGROUND_HOVER
+  -fx-padding: 0px
+  -fx-box-border: transparent
+  -fx-border-insets: 0px
+
+.menu-item .label
+  -fx-text-fill: $LIGHT_CONTROLS_FOREGROUND
+
+.menu-item:focused
+  -fx-background-color: $LIGHT_CONTROLS_BACKGROUND_SELECTED
+
+  .label
+    -fx-text-fill: white
+
+/* Buttons */
+.tool-bar
+  .button, .toggle-button
+    -fx-border-radius: 4px
+    -fx-background-radius: 4px
+    -fx-padding: 6px
+
+    .tool-bar-style2
+      -fx-background-color: transparent
+
+.label
+  -fx-text-fill: $TEXT_FOREGROUND
+
+.button, .toggle-button
+  -fx-background-color: $BUTTON_BACKGROUND
+  -fx-text-fill: $TEXT_FOREGROUND
+
+.button:hover, .toggle-button:hover
+  -fx-background-color: $BUTTON_BACKGROUND_HOVER
+
+.button-default
+  -fx-background-color: $ACCENT_COLOR
+
+.button-default:hover
+  -fx-background-color: $ACCENT_HOVER_COLOR
+
+.toggle-button:selected
+  -fx-background-color: $LIGHT_CONTROLS_BACKGROUND_SELECTED
+
+.text-input-control
+  -fx-text-fill: $TEXT_FOREGROUND
+  -fx-background-color: transparent
+  -fx-highlight-text-fill: $TEXT_HIGHLIGHT_FOREGROUND
+  -fx-highlight-fill: $TEXT_HIGHLIGHT_BACKGROUND
+
+.text-field
+  -fx-background-color: $BACKGROUND_DARK
+  -fx-border-width: 1px
+  -fx-border-color: $LIGHT_CONTROLS_FOREGROUND
+  -fx-border-radius: $CONTROL_CORNER_RADIUS
+  -fx-background-radius: $CONTROL_CORNER_RADIUS
+  -fx-text-fill: $TEXT_FOREGROUND
+  -fx-prompt-text-fill: $TEXT_SECONDARY_FOREGROUND
+
+.text-field:focused
+  -fx-border-color: $ACCENT_COLOR
+
+.spinner
+  -fx-border-width: 1px
+  -fx-border-color: $LIGHT_CONTROLS_FOREGROUND
+  -fx-border-radius: $CONTROL_CORNER_RADIUS
+  -fx-background-color: $BACKGROUND_DARK
+
+  .text-field
+    -fx-border-width: 0px
+
+  .increment-arrow-button, .decrement-arrow-button
+    -fx-background-color: $BUTTON_BACKGROUND
+    .increment-arrow, .decrement-arrow
+      -fx-background-color: rgb(180, 180, 180)
+
+  .increment-arrow-button:hover, .decrement-arrow-button:hover
+    -fx-background-color: $BUTTON_BACKGROUND_HOVER
+    .increment-arrow, .decrement-arrow
+      -fx-background-color: rgb(200, 200, 200)
+
+.combo-box
+  -fx-background-color: $BUTTON_BACKGROUND
+
+  .cell
+    -fx-text-fill: $TEXT_FOREGROUND
+
+  .arrow-button
+    -fx-background-color: transparent
+    .arrow
+      -fx-background-color: rgb(180, 180, 180)
+  .arrow-button:hover
+    -fx-background-color: transparent
+    .arrow
+      -fx-background-color: rgb(200, 200, 200)
+
+  .combo-box-popup
+    -fx-border-color: $BACKGROUND_LIGHT
+
+    .list-view
+      -fx-background-color: $BACKGROUND_LIGHT
+      -fx-border-width: 1px
+      -fx-border-insets: 0px
+      -fx-background-insets: 0px
+      .list-cell
+        -fx-background-color: transparent
+        -fx-text-fill: $LIGHT_CONTROLS_FOREGROUND
+      .list-cell:hover
+        -fx-background-color: $ACCENT_COLOR
+        -fx-text-fill: $TEXT_HIGHLIGHT_FOREGROUND
+
+.combo-box:hover
+  -fx-background-color: $BUTTON_BACKGROUND_HOVER
+
+/* TODO: These don't really belong here. Need to replace usage with lego-block alternatives */
+.button-style2
+  -fx-background-color: transparent
+
+.button-style2:hover
+  -fx-background-color: transparent
+
+.button-style2:selected
+  -fx-background-color: $BACKGROUND_LIGHT
+
+.button-style3
+  -fx-background-color: transparent
+
+.button-style3:hover
+  -fx-background-color: rgba(1, 1, 1, 0.40)
+
+.button-style3:selected
+  -fx-background-color: $BACKGROUND_LIGHT
+
+/* Containers and Panes */
+
+.parent, .split-pane, .pane, .border-pane
+  -fx-border-color: transparent
+  -fx-border-width: 0px
+  -fx-border-insets: 0px
+  -fx-box-border: transparent
+  -fx-padding: 0px
+
+.split-pane-divider
+  -fx-padding: 0px 0px 0px 0px
+  -fx-border-insets: 0px
+  -fx-border-color: transparent
+  -fx-background-color: $BACKGROUND_DARK // Only to cover for the divider for the dark game tree. Need a better mechanism.
+  -fx-background-insets: 0px

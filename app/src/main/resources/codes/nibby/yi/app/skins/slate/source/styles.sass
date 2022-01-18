@@ -1,0 +1,41 @@
+@import "palette"
+
+.bg-dark
+  -fx-background-color: $BACKGROUND_DARK
+
+.bg-dark-secondary
+  -fx-background-color: $BACKGROUND_DARK_SECONDARY
+
+.fg-dark
+  -fx-text-fill: $FOREGROUND_DARK
+
+.fg-dark-secondary
+  -fx-text-fill: $FOREGROUND_DARK_SECONDARY
+
+.fg-light
+  -fx-text-fill: $BACKGROUND_LIGHT
+
+/* Component presets */
+.dark-scroll-pane-container
+  .content
+    -fx-text-fill: $FOREGROUND_DARK
+
+  .scroll-pane
+    -fx-background-color: $BACKGROUND_DARK_SECONDARY
+    -fx-background-radius: 0px
+
+    .content
+      -fx-background-color: $BACKGROUND_DARK_SECONDARY
+      -fx-background-radius: 0px
+
+    *.scroll-bar
+      -fx-background-color: $BACKGROUND_DARK_SECONDARY
+
+      .decrement-button
+        -fx-background-color: inherit
+      .track
+        -fx-background-color: inherit
+      .thumb
+        -fx-background-color: $FOREGROUND_DARK_SECONDARY
+      .increment-button
+        -fx-background-color: inherit
