@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public final class PlayMoveEditMode extends AbstractEditMode {
 
-    protected PlayMoveEditMode() {
+    PlayMoveEditMode() {
 
     }
 
@@ -66,7 +66,7 @@ public final class PlayMoveEditMode extends AbstractEditMode {
             StoneColor moveColor = getStoneColor(manager.getGameModel(), edit);
             manager.audio.playMoveSound(moveColor);
 
-            int captures = 0;
+            int captures;
             if (submittedNode != null) {
                 captures = submittedNode.getCapturesThisTurn().size();
             } else {

@@ -3,6 +3,7 @@ package yi.component.boardviewer;
 import yi.core.go.GameModel;
 import yi.core.go.editor.edit.GameModelEdit;
 
+// TODO: Possibly not needed
 public final class GameBoardModelEditor {
 
     private final GameBoardManager manager;

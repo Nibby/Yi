@@ -24,8 +24,8 @@ import java.util.Stack;
 import java.util.function.Function;
 
 /**
- * The core interface component that handles the display of the game board, as well as user
- * input to browse and edit {@link GameModel} data.
+ * Interface component responsible for the presentation of the game board.
+ * It also handles user input, browsing and editing {@link GameModel} data.
  */
 public final class GameBoardViewer implements YiComponent {
 
@@ -184,7 +184,7 @@ public final class GameBoardViewer implements YiComponent {
         manager.view.boardGridColor = gridColor;
     }
 
-    protected final GameBoardManager getManager() {
+    GameBoardManager getManager() {
         return manager;
     }
 

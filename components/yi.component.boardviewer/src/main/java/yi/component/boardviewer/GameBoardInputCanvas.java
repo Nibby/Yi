@@ -59,6 +59,8 @@ final class GameBoardInputCanvas extends GameBoardCanvas {
         final int MAX_NUMBER_OF_MOVES_IN_PREVIEW = 20;
 
         intersectionsWithPreviewNode.clear();
+
+        // TODO: Only do this if the user has set a preference for it.
         if (currentNode.hasAlternativeVariations()) {
             // TODO: Support OGS AI Reviews (1 stone edit rather than primary move)
             var tempIntersectionMap = new HashMap<Integer, GameNode>(currentNode.getChildNodes().size());

@@ -297,8 +297,9 @@ final class GameTreeStructure {
 
         private void assertNotOccupied(int x, int y) {
             if (isPositionOccupied(x, y)) {
-                throw new IllegalArgumentException("The position at (" + x + ", " + y + ") " +
-                        "is already occupied");
+                throw new IllegalArgumentException(
+                    "The position at (" + x + ", " + y + ") is already occupied"
+                );
             }
         }
 

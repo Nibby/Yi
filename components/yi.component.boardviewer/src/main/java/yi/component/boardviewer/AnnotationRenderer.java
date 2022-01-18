@@ -32,8 +32,12 @@ public final class AnnotationRenderer {
      * @param font Font used to draw annotation labels, can be {@code null} if it does not
      *             apply to non-label annotations.
      */
-    public static void render(Annotation annotation, GraphicsContext g,
-                              GameBoardManager manager, @Nullable Font font) {
+    public static void render(
+        Annotation annotation,
+        GraphicsContext g,
+        GameBoardManager manager,
+        @Nullable Font font
+    ) {
         if (annotation instanceof Annotation.PointAnnotation) {
             renderPointAnnotation((Annotation.PointAnnotation) annotation, g, manager, font);
         } else if (annotation instanceof Annotation.DirectionalAnnotation) {
@@ -43,9 +47,12 @@ public final class AnnotationRenderer {
         }
     }
 
-    private static void renderPointAnnotation(Annotation.PointAnnotation annotation,
-                                              GraphicsContext g, GameBoardManager manager,
-                                              @Nullable Font font) {
+    private static void renderPointAnnotation(
+        Annotation.PointAnnotation annotation,
+        GraphicsContext g,
+        GameBoardManager manager,
+        @Nullable Font font
+    ) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] position = manager.size.getStoneRenderPosition(annotation.getX(), annotation.getY());
         double x = position[0];
@@ -91,10 +98,18 @@ public final class AnnotationRenderer {
                 assert annotation instanceof Annotation.Label;
                 Objects.requireNonNull(font, "Annotation font cannot be null when drawing labels");
                 double[] centerPoint = manager.size.getGridRenderPosition(annotation.getX(), annotation.getY(), 0);
-                var labelSize = stoneSize / 3 * 2;
-                renderLabel(g, ((Annotation.Label) annotation).getText(), font,
-                        centerPoint[0], centerPoint[1], annoBounds.getWidth(), annoBounds.getHeight(),
-                        stone == StoneColor.NONE);
+                double xx = centerPoint[0];
+                double yy = centerPoint[1];
+                renderLabel(
+                    g,
+                    ((Annotation.Label) annotation).getText(),
+                    font,
+                    xx,
+                    yy,
+                    annoBounds.getWidth(),
+                    annoBounds.getHeight(),
+                    stone == StoneColor.NONE
+                );
                 break;
             case DIM:
                 // Stone size + stone gap size, tiles nicely with adjacent fade annotations
@@ -113,8 +128,11 @@ public final class AnnotationRenderer {
         g.setLineWidth(originalLineWidth);
     }
 
-    private static void renderDirectionalAnnotation(Annotation.DirectionalAnnotation annotation,
-                                                    GraphicsContext g, GameBoardManager manager) {
+    private static void renderDirectionalAnnotation(
+        Annotation.DirectionalAnnotation annotation,
+        GraphicsContext g,
+        GameBoardManager manager
+    ) {
         double stoneSize = manager.size.getStoneSizeInPixels();
         double[] start = manager.size.getGridRenderPosition(annotation.getX(), annotation.getY(), 0d);
         double[] end = manager.size.getGridRenderPosition(annotation.getXEnd(), annotation.getYEnd(), 0d);
@@ -147,17 +165,26 @@ public final class AnnotationRenderer {
 
     private static final Color ANNOTATION_BACKGROUND_COLOR = new Color(1d, 1d, 1d, 0.2d);
 
-    private static void renderLabel(GraphicsContext g, String text, Font font,
-                                    double centerX, double centerY, double width, double height,
-                                    boolean drawBackground) {
+    private static void renderLabel(
+        GraphicsContext g,
+        String text,
+        Font font,
+        double centerX,
+        double centerY,
+        double width,
+        double height,
+        boolean drawBackground
+    ) {
         if (drawBackground) {
             var textFill = g.getFill();
             var overflow = width/2;
             g.setFill(ANNOTATION_BACKGROUND_COLOR);
-            g.fillOval(centerX - width/2 -overflow,
-                    centerY - width/2 - overflow,
-                    width + 2*overflow,
-                    height + 2*overflow);
+            g.fillOval(
+                centerX - width/2 -overflow,
+                centerY - width/2 - overflow,
+                width + 2*overflow,
+                height + 2*overflow
+            );
             g.setFill(textFill);
         }
 
@@ -171,8 +198,14 @@ public final class AnnotationRenderer {
                 bounds.getWidth());
     }
 
-    private static void renderArrow(GraphicsContext g, double xStart, double yStart,
-                                    double xEnd, double yEnd, double stoneSize) {
+    private static void renderArrow(
+        GraphicsContext g,
+        double xStart,
+        double yStart,
+        double xEnd,
+        double yEnd,
+        double stoneSize
+    ) {
         renderLine(g, xStart, yStart, xEnd, yEnd);
 
         final double tipSize = stoneSize / 4d;

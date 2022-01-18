@@ -7,30 +7,44 @@ import java.util.Optional;
 
 /**
  * Manages the size parameters for drawing the game board. Properties in this class are
- * usually dynamically calculated depending on the dimension of the game board canvas.
- * For that reason, many properties use a hard-coded percentage rather than some constant
+ * calculated based on the dimensions of the game board component.
  * value.
- *
- * The percentage is usually taken from the shorter side of a boundary
- * (i.e. {@code Math.min(a, b) * percentage}.
  */
 public final class GameBoardSize {
 
+    /*
+     * Internally, distances between regions are measured in percentages.
+     * The percentage is calculated from the shorter side of a rectangular boundary
+     * (Math.min(width, height) * percentage).
+     */
+
     private Rectangle stageBounds;
+
+    // Nested within stageBounds, used to draw the board background
     private LayoutRectangle boardBounds;
 
+    // Nested within boardBounds, used to draw coordinate labels after a gap from the edge
     private LayoutRectangle coordinateLabelBounds;
+
+    // Nested within coordinateLabelBounds, used to draw board intersections after a gap
     private Rectangle gridBounds;
 
-    // These are percentages of gridBounds.
-    private double stoneGapSize;
-    private double stoneSize;
-    private double gridUnitSize; // Size of the stone + gap at each intersection
+    // These 'double' are percentages values derived from gridBounds.
+    // Remember it is calculated from the shorter side of the dimensions.
 
+    // Gap size between adjacent stones.
+    private double stoneGapSize;
+    // Diameter of one stone on this board, always square.
+    private double stoneSize;
+    // Size of the stone + gap at each intersection, always square.
+    private double gridUnitSize;
+
+    // Fx shadow parameters when drawing each stone, if going for a realism style.
+    // Otherwise, these parameters are optional.
     private double stoneShadowRadius;
     private double stoneShadowOffset;
 
-    // Cached compute parameter values for recomputing
+    // Cached values from last compute call
     private boolean cachedOnce = false;
     private double cachedComponentWidth;
     private double cachedComponentHeight;
@@ -39,14 +53,29 @@ public final class GameBoardSize {
 
     GameBoardSize() { }
 
-    protected final void recompute(CoordinateLabelPosition newLabelPosition) {
+    /**
+     * Recalculates the board sizing assuming the total drawable region has not
+     * changed. This method is used when internal drawable elements are toggled
+     * on or off, which causes a change in sizing of other elements.
+     * <p/>
+     * This method requires {@link #compute(double, double, int, int, CoordinateLabelPosition)}
+     * be called at least once.
+     *
+     * @param newLabelPosition New coordinate label positions.
+     */
+    void recompute(CoordinateLabelPosition newLabelPosition) {
         if (!cachedOnce) {
             throw new IllegalStateException("compute() must be invoked once first");
         }
 
-        computeImpl(cachedComponentWidth, cachedComponentHeight,
-                cachedBoardWidth, cachedBoardHeight,
-                newLabelPosition, false);
+        computeImpl(
+            cachedComponentWidth,
+            cachedComponentHeight,
+            cachedBoardWidth,
+            cachedBoardHeight,
+            newLabelPosition,
+            false
+        );
     }
 
     /**
@@ -58,21 +87,33 @@ public final class GameBoardSize {
      * @param boardWidth Number of board intersections horizontally
      * @param boardHeight Number of board intersections vertically
      */
-    protected final void compute(double componentWidth, double componentHeight,
-                                 int boardWidth, int boardHeight,
-                                 CoordinateLabelPosition labelPos) {
-        computeImpl(componentWidth, componentHeight, boardWidth, boardHeight, labelPos, true);
+    void compute(
+        double componentWidth,
+        double componentHeight,
+        int boardWidth,
+        int boardHeight,
+        CoordinateLabelPosition labelPos
+    ) {
+        computeImpl(
+            componentWidth,
+            componentHeight,
+            boardWidth,
+            boardHeight,
+            labelPos,
+            true
+        );
     }
 
-    private void computeImpl(double componentWidth, double componentHeight,
-                                     int boardWidth, int boardHeight,
-                                     CoordinateLabelPosition coordinateLabelPosition,
-                                     boolean cacheResult) {
-
+    private void computeImpl(
+        double componentWidth,
+        double componentHeight,
+        int boardWidth,
+        int boardHeight,
+        CoordinateLabelPosition coordinateLabelPosition,
+        boolean cacheResult
+    ) {
         stageBounds = new Rectangle(0, 0, componentWidth, componentHeight);
 
-        // Overview:
-        // =========
         // Start by approximating a reasonable size of the go board based on the total
         // intersection width-to-height ratio, then we find the maximum rectangle inside
         // the stage of such ratio, which serves as the basis of the grid intersections.
@@ -146,9 +187,12 @@ public final class GameBoardSize {
         }
     }
 
-    private void cacheParameters(double componentWidth, double componentHeight,
-                                 int boardWidth, int boardHeight) {
-
+    private void cacheParameters(
+        double componentWidth,
+        double componentHeight,
+        int boardWidth,
+        int boardHeight
+    ) {
         this.cachedComponentWidth = componentWidth;
         this.cachedComponentHeight = componentHeight;
         this.cachedBoardWidth = boardWidth;
@@ -161,48 +205,83 @@ public final class GameBoardSize {
         Determines how the grid boundaries are arranged within the game board based on the
         co-ordinate label orientation.
      */
-    private LayoutRectangle computeCoordinateLabelBounds(LayoutRectangle gridBounds,
-                                                         double stoneSize,
-                                                         CoordinateLabelPosition coordinateLabelPosition) {
+    private LayoutRectangle computeCoordinateLabelBounds(
+        LayoutRectangle gridBounds,
+        double stoneSize,
+        CoordinateLabelPosition lbPos
+    ) {
         double marginLeft = 0, marginTop = 0, marginBottom = 0, marginRight = 0;
         LayoutRectangle.ContainerStrategy containerStrategy;
 
-        if (coordinateLabelPosition == CoordinateLabelPosition.NONE) {
+        if (lbPos == CoordinateLabelPosition.NONE) {
             return gridBounds;
-        } else if (coordinateLabelPosition == CoordinateLabelPosition.TOP_AND_LEFT) {
+        } else if (lbPos == CoordinateLabelPosition.TOP_AND_LEFT) {
             containerStrategy = LayoutRectangle.ContainerStrategy.CLAMP_BOTTOM_RIGHT;
             marginBottom = stoneSize;
             marginRight = stoneSize;
-        } else if (coordinateLabelPosition == CoordinateLabelPosition.BOTTOM_AND_RIGHT) {
+        } else if (lbPos == CoordinateLabelPosition.BOTTOM_AND_RIGHT) {
             containerStrategy = LayoutRectangle.ContainerStrategy.CLAMP_TOP_LEFT;
             marginTop = stoneSize;
             marginLeft = stoneSize;
-        } else if (coordinateLabelPosition == CoordinateLabelPosition.ALL_SIDES) {
+        } else if (lbPos == CoordinateLabelPosition.ALL_SIDES) {
             marginTop = stoneSize;
             marginLeft = stoneSize;
             marginBottom = stoneSize;
             marginRight = stoneSize;
             containerStrategy = LayoutRectangle.ContainerStrategy.CENTER;
         } else {
-            throw new IllegalStateException("Unimplemented coordinate label position: " + coordinateLabelPosition);
+            throw new IllegalStateException("Unimplemented coordinate label position: " + lbPos);
         }
 
         return gridBounds.createParentWithMargin(marginLeft, marginTop, marginRight,
                 marginBottom, containerStrategy);
     }
 
+    /**
+     *
+     * @return Total allocated game board drawing region (dimensions of board canvas).
+     */
     public Rectangle getStageBounds() {
         return stageBounds;
     }
 
+    /**
+     * This value is optional for stones that want a 2D-feel.
+     *
+     * @return Fx drop shadow radius for each stone.
+     */
     public double getStoneShadowRadius() {
         return stoneShadowRadius;
     }
 
+    /**
+     * This value is optional for stones that want a 2D-feel.
+     *
+     * @return Fx shadow offset for each stone.
+     */
     public double getStoneShadowOffset() {
         return stoneShadowOffset;
     }
 
+    /**
+     * Retrieves the canvas drawing co-ordinates for a stone located in the
+     * (gridX, gridY) intersection, where (0, 0) represents the top left
+     * intersection.
+     * <p/>
+     * Result is an array of size 2 representing the top-left point to start
+     * drawing a stone:
+     * <pre> {@code
+     * double[] pos = getStoneRenderPosition(0, 0);
+     * double x = pos[0];
+     * double y = pos[1];
+     * double stoneSize = getStoneSizeInPixels();
+     * graphics.fillOval(x, y, stoneSize, stoneSize);
+     * } </pre>
+     *
+     * @param gridX Intersection X position
+     * @param gridY Intersection Y position
+     * @return Drawing co-ordinates of a stone located at (gridX, gridY) intersection.
+     */
     public double[] getStoneRenderPosition(int gridX, int gridY) {
         return getGridRenderPosition(gridX, gridY, getStoneSizeInPixels());
     }
@@ -216,21 +295,38 @@ public final class GameBoardSize {
     }
 
     /**
-     * Returns the drawing position of logical position (gridX, gridY) for an object of
-     * size objectWidth by objectHeight. The returned position will automatically be
-     * adjusted such that drawing an object of this size will make the intersection
-     * at the center of the object.
+     * Returns the canvas drawing position of some object located at the intersection
+     * {@code (gridX, gridY) } where (0, 0) represents the top left intersection
+     * on the board.
+     * <p/>
+     * The returned co-ordinate adjust to the dimensions of the object such that
+     * drawing it will make the board intersection the center point of the object.
+     * <p/>
+     * The result is an array of size 2 representing the top-left point to start
+     * drawing the object:
+     * <pre> {@code
+     * double[] pos = getGridRenderPosition(0, 0, 16, 24);
+     * double x = pos[0];
+     * double y = pos[1];
+     * // Draw the object...
+     * } </pre>
      * <p/>
      * To convert a drawing position to logical board position, see
      * {@link #getGridPosition(double, double)}
      *
-     * @param gridX Logical x position on the game board
-     * @param gridY Logical y position on the game board
-     * @param objectWidth The draw width of the object on this intersection
-     * @param objectHeight The draw height of the object on this intersection
-     * @return Size 2 array consisting of { drawX, drawY } co-ordinates in that order
+     * @param gridX Intersection X position
+     * @param gridY Intersection Y position
+     * @param objectWidth The object width in pixels
+     * @param objectHeight The object height in pixels
+     * @return Drawing co-ordinates of the object such that it is drawn centered
+     *         on the intersection.
      */
-    public double[] getGridRenderPosition(int gridX, int gridY, double objectWidth, double objectHeight) {
+    public double[] getGridRenderPosition(
+        int gridX,
+        int gridY,
+        double objectWidth,
+        double objectHeight
+    ) {
         Rectangle gridBounds = getGridBounds();
 
         double x = gridBounds.getX() + getGridUnitSizeInPixels() * gridX - objectWidth / 2;
@@ -338,10 +434,18 @@ public final class GameBoardSize {
         return Math.max(1d, thickness);
     }
 
+    /**
+     *
+     * @return Pixel length of the gap between adjacent stones.
+     */
     public double getStoneGapSizeInPixels() {
         return stoneGapSize;
     }
 
+    /**
+     *
+     * @return Pixel length of one stone + gap size.
+     */
     public double getGridUnitSizeInPixels() {
         return gridUnitSize;
     }
@@ -350,6 +454,11 @@ public final class GameBoardSize {
         return percentage * Math.min(rectangle.getWidth(), rectangle.getHeight());
     }
 
+    /**
+     *
+     * @return true if {@link #compute(double, double, int, int, CoordinateLabelPosition)}
+     *         has been called at least once.
+     */
     public boolean hasComputedOnce() {
         return cachedOnce;
     }

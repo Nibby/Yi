@@ -10,7 +10,7 @@ import javafx.scene.paint.Stop;
 import yi.core.go.StoneColor;
 
 /**
- * List of predefined stone textures.
+ * Collection of predefined stone textures.
  */
 public enum PresetStoneStyle {
 

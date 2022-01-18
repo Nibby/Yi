@@ -12,7 +12,7 @@ public final class StoneEditMode extends AbstractEditMode {
 
     private final StoneColor colorToEdit;
 
-    protected StoneEditMode(StoneColor colorToEdit) {
+    StoneEditMode(StoneColor colorToEdit) {
         if (colorToEdit == StoneColor.NONE) {
             throw new IllegalArgumentException("Stone color must not be NONE.");
         }

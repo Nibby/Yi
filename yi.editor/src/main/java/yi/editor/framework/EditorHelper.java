@@ -7,7 +7,6 @@ import yi.component.shared.audio.CommonAudioSets;
 import yi.component.shared.audio.SoundManager;
 import yi.component.shared.component.FontManager;
 import yi.component.shared.component.SkinManager;
-import yi.component.shared.component.YiScene;
 import yi.component.shared.utilities.SystemUtilities;
 import yi.editor.settings.EditorSettings;
 

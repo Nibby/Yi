@@ -11,7 +11,7 @@ import java.io.StringWriter;
 
 final class EditorUncaughtExceptionHandler {
 
-    protected static void initialize() {
+    static void initialize() {
         Thread.setDefaultUncaughtExceptionHandler(new Handler());
     }
 

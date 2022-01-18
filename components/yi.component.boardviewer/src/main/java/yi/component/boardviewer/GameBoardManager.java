@@ -12,9 +12,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Main controller class for {@link GameBoardCanvas} state. Receives UI and game events and manages the interaction
- * of subcomponents within the game module.
+ * Main container class for all {@link GameBoardCanvas} state. Receives UI and
+ * game events and manages the interaction of subcomponents within the game module.
  */
+// TODO: Eek! God class design, refactor
 public final class GameBoardManager {
 
     public final GameBoardSize size = new GameBoardSize();
@@ -28,28 +29,36 @@ public final class GameBoardManager {
     private boolean debugMode = false;
     private GameModel model = null;
 
-    protected GameBoardManager() { }
+    GameBoardManager() { }
 
     public void setBoardCanvasSize(double componentWidth, double componentHeight, GameModel game) {
-        size.compute(componentWidth, componentHeight, game.getBoardWidth(),
-                game.getBoardHeight(), view.coordinateLabelPosition);
+        size.compute(
+            componentWidth,
+            componentHeight,
+            game.getBoardWidth(),
+            game.getBoardHeight(),
+            view.coordinateLabelPosition
+        );
     }
 
     boolean isDebugMode() {
         return debugMode;
     }
 
-    protected final void setDebugMode(boolean debugMode) {
+    void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
 
-    protected final void setGameModel(@NotNull GameModel gameModel) {
+    void setGameModel(@NotNull GameModel gameModel) {
         this.model = Objects.requireNonNull(gameModel);
     }
 
     public @NotNull GameModel getGameModel() {
-        Objects.requireNonNull(model, "No game model set. Use setGameModel() once " +
-                "before calling getGameModel()");
+        Objects.requireNonNull(
+            model,
+            "No game model set. Use setGameModel() once before calling getGameModel()"
+        );
+
         return model;
     }
 

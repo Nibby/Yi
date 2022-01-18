@@ -11,6 +11,7 @@ import yi.core.go.StoneColor;
  */
 public final class GameBoardAudio {
 
+    // The current sound set in use. If null, no sounds will be played.
     private final NullableProperty<StoneAudioSet> audioSet = new NullableProperty<>(null);
 
     GameBoardAudio() {
@@ -18,8 +19,8 @@ public final class GameBoardAudio {
     }
 
     /**
-     * Sets the sounds to play in various board scenarios. This parameter is nullable if
-     * no sound is to be played.
+     * Sets the sounds to play during board actions such as submitting move.
+     * This parameter can be null if no sound is to be played.
      *
      * @param audioSet An optional audio set to use for stone sounds.
      */
@@ -47,8 +48,11 @@ public final class GameBoardAudio {
         if (delayMs == 0) {
             playCaptureSoundImpl(captures, stoneColorCaptured);
         } else {
-            doDelayedTask("playCaptureSound:" + captures, delayMs,
-                    () -> playCaptureSoundImpl(captures, stoneColorCaptured));
+            doDelayedTask(
+                "playCaptureSound:" + captures,
+                delayMs,
+                () -> playCaptureSoundImpl(captures, stoneColorCaptured)
+            );
         }
     }
 

@@ -179,8 +179,12 @@ public final class AnnotationEditMode extends AbstractEditMode {
     private int directionalAnnoFirstY;
     private boolean directionalAnnoStartPositionDefined = false;
     
-    private void maybeCreateAnnotation(GameBoardManager manager, int gridX, int gridY,
-                                       boolean isLabelEditOfDifferentType) {
+    private void maybeCreateAnnotation(
+        GameBoardManager manager,
+        int gridX,
+        int gridY,
+        boolean isLabelEditOfDifferentType
+    ) {
         Annotation annotationHere = manager.getGameModel().getCurrentNode().getAnnotationAt(gridX, gridY);
 
         if (annotationHere != null && annotationHere.getType() == typeToApply
@@ -213,8 +217,14 @@ public final class AnnotationEditMode extends AbstractEditMode {
         }
     }
 
-    private static void createPointAnnotation(GameBoardManager manager, AnnotationType annotationType,
-                                              int gridX, int gridY, String nextLabelText, long sessionId) {
+    private static void createPointAnnotation(
+        GameBoardManager manager,
+        AnnotationType annotationType,
+        int gridX,
+        int gridY,
+        String nextLabelText,
+        long sessionId
+    ) {
         if (!AnnotationType.Companion.isPointAnnotation(annotationType)) {
             throw new IllegalArgumentException("Not a point annotation: " + annotationType.name());
         }
@@ -224,8 +234,15 @@ public final class AnnotationEditMode extends AbstractEditMode {
         createAnnotation(manager, pointAnno, sessionId);
     }
 
-    private static void maybeCreateDirectionalAnnotation(GameBoardManager manager, AnnotationType annotationType,
-                                                         int startX, int startY, int endX, int endY, long sessionId) {
+    private static void maybeCreateDirectionalAnnotation(
+        GameBoardManager manager,
+        AnnotationType annotationType,
+        int startX,
+        int startY,
+        int endX,
+        int endY,
+        long sessionId
+    ) {
         if (!AnnotationType.Companion.isDirectionalAnnotation(annotationType)) {
             throw new IllegalArgumentException("Not a directional annotation: " + annotationType.name());
         }
@@ -234,7 +251,12 @@ public final class AnnotationEditMode extends AbstractEditMode {
         createAnnotation(manager, directionalAnno, sessionId);
     }
 
-    private static void removeAnnotationAt(GameBoardManager manager, int gridX, int gridY, long sessionId) {
+    private static void removeAnnotationAt(
+        GameBoardManager manager,
+        int gridX,
+        int gridY,
+        long sessionId
+    ) {
         Annotation annotation = manager.getGameModel().getCurrentNode().getAnnotationAt(gridX, gridY);
 
         if (annotation != null) {
@@ -294,7 +316,7 @@ public final class AnnotationEditMode extends AbstractEditMode {
 
         if (labelType == LabelType.LETTER) {
             var annoTexts =
-                    manager.getGameModel().getCurrentNode().getAnnotations()
+                manager.getGameModel().getCurrentNode().getAnnotations()
                     .stream()
                     .filter(anno -> anno instanceof Annotation.Label)
                     .map(anno -> ((Annotation.Label) anno).getText())
