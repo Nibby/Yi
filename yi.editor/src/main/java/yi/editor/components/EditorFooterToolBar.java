@@ -38,51 +38,51 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
 
     private final List<EditorAction> navActions = new ArrayList<>();
     private final EditorAction toPrevious1Action = createNavAction(
-            EditorTextResources.TO_PREVIOUS_NODE,
-            GameModel::toPreviousNode,
-            "/yi/editor/icons/arrowUp_white32.png",
-            EditorAccelerator.TO_PREVIOUS_NODE,
-            0d
+        EditorTextResources.TO_PREVIOUS_NODE,
+        GameModel::toPreviousNode,
+        "/yi/editor/icons/arrowUp_white32.png",
+        EditorAccelerator.TO_PREVIOUS_NODE,
+        0d
     );
 
     private final EditorAction toPrevious10Action = createNavAction(
-            EditorTextResources.TO_PREVIOUS_10_NODES,
-            model -> model.toPreviousNode(10),
-            "/yi/editor/icons/arrowUpDouble_white32.png",
-            EditorAccelerator.TO_PREVIOUS_10_NODES,
-            0.01d
+        EditorTextResources.TO_PREVIOUS_10_NODES,
+        model -> model.toPreviousNode(10),
+        "/yi/editor/icons/arrowUpDouble_white32.png",
+        EditorAccelerator.TO_PREVIOUS_10_NODES,
+        0.01d
     );
 
     private final EditorAction toRootAction = createNavAction(
-            EditorTextResources.TO_ROOT_NODE,
-            model -> model.setCurrentNode(model.getRootNode()),
-            "/yi/editor/icons/arrowUpmost_white32.png",
-            EditorAccelerator.TO_ROOT_NODE,
-            0.02d
+        EditorTextResources.TO_ROOT_NODE,
+        model -> model.setCurrentNode(model.getRootNode()),
+        "/yi/editor/icons/arrowUpmost_white32.png",
+        EditorAccelerator.TO_ROOT_NODE,
+        0.02d
     );
 
     private final EditorAction toNext1Action = createNavAction(
-            EditorTextResources.TO_NEXT_NODE,
-            GameModel::toNextNode,
-            "/yi/editor/icons/arrowDown_white32.png",
-            EditorAccelerator.TO_NEXT_NODE,
-            0.03d
+        EditorTextResources.TO_NEXT_NODE,
+        GameModel::toNextNode,
+        "/yi/editor/icons/arrowDown_white32.png",
+        EditorAccelerator.TO_NEXT_NODE,
+        0.03d
     );
 
     private final EditorAction toNext10Action = createNavAction(
-            EditorTextResources.TO_NEXT_10_NODES,
-            model -> model.toNextNode(10),
-            "/yi/editor/icons/arrowDownDouble_white32.png",
-            EditorAccelerator.TO_NEXT_10_NODES,
-            0.04d
+        EditorTextResources.TO_NEXT_10_NODES,
+        model -> model.toNextNode(10),
+        "/yi/editor/icons/arrowDownDouble_white32.png",
+        EditorAccelerator.TO_NEXT_10_NODES,
+        0.04d
     );
 
     private final EditorAction toVariationEndAction = createNavAction(
-            EditorTextResources.TO_VARIATION_END,
-            model -> model.toNextNode(Integer.MAX_VALUE),
-            "/yi/editor/icons/arrowDownmost_white32.png",
-            EditorAccelerator.TO_VARIATION_END,
-            0.05d
+        EditorTextResources.TO_VARIATION_END,
+        model -> model.toNextNode(Integer.MAX_VALUE),
+        "/yi/editor/icons/arrowDownmost_white32.png",
+        EditorAccelerator.TO_VARIATION_END,
+        0.05d
     );
 
     {
@@ -100,7 +100,7 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
                 editModelInfoAction.setIcon(new ImageView(recoloredIcon));
             });
         editModelInfoAction.setAccelerator(EditorAccelerator.EDIT_GAME_INFO);
-        editModelInfoAction.setInMenuBar(EditorMainMenuType.FILE, 0.8f);
+        editModelInfoAction.setInMenuBar(EditorMainMenuType.FILE, 0.81f);
         editModelInfoAction.setShowIconOnMenuItem(false);
         editModelInfoAction.setComponentCompact(true);
         Node node = editModelInfoAction.getAsComponent();
@@ -124,26 +124,22 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
         var mainToolBar = new HBox();
         mainToolBar.setAlignment(Pos.CENTER_LEFT);
         mainToolBar.getChildren().setAll(
-                createHBoxSpacer(16),
-                playerBlackName,
-                playerBlackRank,
-                createHBoxSpacer(16),
-                playerWhiteName,
-                playerWhiteRank
+            createHBoxSpacer(16),
+            playerBlackName,
+            createHBoxSpacer(4),
+            playerBlackRank,
+            createHBoxSpacer(16),
+            playerWhiteName,
+            createHBoxSpacer(4),
+            playerWhiteRank
         );
         setCenter(mainToolBar);
 
         var rightToolBar = new HBox();
         rightToolBar.setAlignment(Pos.CENTER_RIGHT);
         rightToolBar.getChildren().setAll(
-                toRootAction.getAsComponent(),
-                toPrevious10Action.getAsComponent(),
-                toPrevious1Action.getAsComponent(),
-                moveLabel,
-                toNext1Action.getAsComponent(),
-                toNext10Action.getAsComponent(),
-                toVariationEndAction.getAsComponent(),
-                createHBoxSpacer(8)
+            moveLabel,
+            createHBoxSpacer(8)
         );
         setRight(rightToolBar);
     }
@@ -169,8 +165,11 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
 
     private void updateGameModelInfo(GameModel gameModel) {
         var blackName = gameModel.getInfo().getPlayerBlackName();
-        playerBlackName.setText(blackName.isBlank()
-                ? EditorTextResources.DEFAULT_BLACK_NAME.getLocalisedText() : blackName);
+        playerBlackName.setText(
+            blackName.isBlank()
+                ? EditorTextResources.DEFAULT_BLACK_NAME.getLocalisedText()
+                : blackName
+        );
 
         var blackRank = gameModel.getInfo().getPlayerBlackRank();
         playerBlackRank.setVisible(!blackRank.isBlank());
@@ -178,8 +177,11 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
         playerBlackRank.setText(gameModel.getInfo().getPlayerBlackRank());
 
         var whiteName = gameModel.getInfo().getPlayerWhiteName();
-        playerWhiteName.setText(whiteName.isBlank()
-                ? EditorTextResources.DEFAULT_WHITE_NAME.getLocalisedText() : whiteName);
+        playerWhiteName.setText(
+            whiteName.isBlank()
+                ? EditorTextResources.DEFAULT_WHITE_NAME.getLocalisedText()
+                : whiteName
+        );
 
         var whiteRank = gameModel.getInfo().getPlayerWhiteRank();
         playerWhiteRank.setVisible(!whiteRank.isBlank());
@@ -196,7 +198,9 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
 
     public void setGameModel(@NotNull GameModel newModel) {
         newModel.getInfo().addChangeListener(this::onGameInfoUpdate);
-        newModel.onCurrentNodeChange().addListener(newValue -> updateMoveInfo(newValue.getNode().getMoveNumber()));
+        newModel.onCurrentNodeChange().addListener(newValue ->
+            updateMoveInfo(newValue.getNode().getMoveNumber())
+        );
 
         updateGameModelInfo(newModel);
         editModelInfoAction.setAction(context -> {
@@ -241,11 +245,13 @@ public class EditorFooterToolBar extends BorderPane implements EditorComponent<B
         return spacer;
     }
 
-    private EditorAction createNavAction(TextResource text,
-                                         Consumer<GameModel> action,
-                                         String iconPath,
-                                         EditorAccelerator accelerator,
-                                         double menuPosition) {
+    private EditorAction createNavAction(
+        TextResource text,
+        Consumer<GameModel> action,
+        String iconPath,
+        EditorAccelerator accelerator,
+        double menuPosition
+    ) {
         var actionItem = new EditorBasicAction(text, context -> {
             EditorWindow window = context.getEditorWindow();
             GameModel model = window.getGameModel();
