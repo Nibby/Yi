@@ -44,8 +44,10 @@ final class EditorStandardActionsHandler implements EditorStandardActions.Action
             var dontSaveButton = ModalActionButton.createSecondaryButton(EditorTextResources.DONT_SAVE, null);
             var cancelButton = ModalActionButton.createSecondaryButton(EditorTextResources.CANCEL, null);
 
-            var overwriteAlert = new YiModalAlertPane("Create new document",
-                    "Would you like to save your changes to the current document?");
+            var overwriteAlert = new YiModalAlertPane(
+                "Create new document",
+                "Would you like to save your changes to the current document?"
+            );
             overwriteAlert.setActionButtons(saveButton, cancelButton, dontSaveButton);
             overwriteAlert.setDefaultControlButton(saveButton);
             overwriteAlert.setCloseCallback(button -> {
@@ -74,7 +76,7 @@ final class EditorStandardActionsHandler implements EditorStandardActions.Action
 
     @Override
     public void handleCreateGameInNewWindow(EditorActionContext context) {
-        var newWindow = new EditorWindow(GameModelUtilities.createGameModel(), EditorPerspective.REVIEW);
+        var newWindow = new EditorWindow(GameModelUtilities.createGameModel(), EditorPerspective.EDIT);
         newWindow.show();
     }
 

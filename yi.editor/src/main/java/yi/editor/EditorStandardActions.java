@@ -33,6 +33,7 @@ final class EditorStandardActions implements EditorComponent<Object> {
         createOpenGameAction();
         createSaveAction();
         createSaveAsAction();
+        createDivider(EditorMainMenuType.FILE, 0.8d);
 
         createDivider(EditorMainMenuType.EDIT, 0.0999d);
         createPassAction();

@@ -65,7 +65,7 @@ public class EditorReviewToolsToolBar extends ToolBar {
     }
 
     public void setContentForLayout(EditorPerspective layout) {
-        var showIt = layout == EditorPerspective.REVIEW;
+        var showIt = layout == EditorPerspective.EDIT;
         setVisible(showIt);
         setManaged(showIt);
 

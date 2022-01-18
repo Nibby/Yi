@@ -34,7 +34,7 @@ public enum EditorAccelerator {
     }),
 
     TOGGLE_PERSPECTIVE_COMPACT("togglePerspectiveCompact", EditorTextResources.TOGGLE_PERSPECTIVE_COMPACT, KeyCode.W, new KeyModifier[] { KeyModifier.SHORTCUT }),
-    TOGGLE_PERSPECTIVE_REVIEW("togglePerspectiveReview", EditorTextResources.TOGGLE_PERSPECTIVE_REVIEW, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }),
+    TOGGLE_PERSPECTIVE_EDIT("togglePerspectiveEdit", EditorTextResources.TOGGLE_PERSPECTIVE_EDIT, KeyCode.E, new KeyModifier[] { KeyModifier.SHORTCUT }),
 
     TOGGLE_BOARD_COORDINATES("toggleBoardCoordinates", EditorTextResources.MENUITEM_TOGGLE_COORDINATES, KeyCode.C, new KeyModifier[] { KeyModifier.SHORTCUT, KeyModifier.SHIFT }),
 

@@ -32,7 +32,7 @@ public final class EditorTextResources {
     public static final TextResource MENU_TESTING = standardResource("menu.testing");
 
     public static final TextResource MENUITEM_PERSPECTIVE_COMPACT = standardResource("menuItem.perspective.compact");
-    public static final TextResource MENUITEM_PERSPECTIVE_REVIEW = standardResource("menuItem.perspective.review");
+    public static final TextResource MENUITEM_PERSPECTIVE_REVIEW = standardResource("menuItem.perspective.edit");
 
     public static final TextResource MENUITEM_NEW_GAME = standardResource("menuItem.newGame");
     public static final TextResource MENUITEM_NEW_WINDOW = standardResource("menuItem.newWindow");
@@ -57,7 +57,7 @@ public final class EditorTextResources {
     public static final TextResource TOOL_ARROW = standardResource("tool.arrow");
     public static final TextResource TOOL_DIM = standardResource("tool.dim");
 
-    public static final TextResource TOGGLE_PERSPECTIVE_REVIEW = standardResource("shortcut.togglePerspectiveReview");
+    public static final TextResource TOGGLE_PERSPECTIVE_EDIT = standardResource("shortcut.togglePerspectiveReview");
     public static final TextResource TOGGLE_PERSPECTIVE_COMPACT = standardResource("shortcut.togglePerspectiveCompact");
 
     public static final TextResource DEFAULT_BLACK_NAME = standardResource("default.blackName");

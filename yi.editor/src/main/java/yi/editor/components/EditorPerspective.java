@@ -56,9 +56,9 @@ public enum EditorPerspective {
     },
 
     /**
-     * An expansive layout that with in-depth editing tools.
+     * Layout with extra editing and navigation tools.
      */
-    REVIEW(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAccelerator.TOGGLE_PERSPECTIVE_REVIEW) {
+    EDIT(EditorTextResources.MENUITEM_PERSPECTIVE_REVIEW, EditorAccelerator.TOGGLE_PERSPECTIVE_EDIT) {
         @Override
         public Parent getContent(EditorWindow window) {
             var content = new BorderPane();
