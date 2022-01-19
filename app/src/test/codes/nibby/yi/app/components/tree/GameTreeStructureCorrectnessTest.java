@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 // TODO: The error display for failed test cases can do with improvement. Currently it is not intuitive
 //       to understand at a glance the difference between the actual structure produced and the expected structure.
-public class GameTreeStructureCorrectnessTest {
+public final class GameTreeStructureCorrectnessTest {
 
     private static final class TestingRules extends GameRulesHandler {
 

@@ -1,19 +1,17 @@
 package codes.nibby.yi.app.framework.action;
 
-import codes.nibby.yi.app.components.AppMainMenuType;
 import codes.nibby.yi.app.components.AppEditTool;
-import codes.nibby.yi.app.framework.AppAccelerator;
+import codes.nibby.yi.app.components.AppMainMenuType;
+import codes.nibby.yi.app.components.board.GameBoardViewer;
+import codes.nibby.yi.app.components.board.editmodes.AbstractEditMode;
+import codes.nibby.yi.app.framework.*;
+import codes.nibby.yi.app.framework.property.BooleanProperty;
+import codes.nibby.yi.app.framework.property.NullableProperty;
+import codes.nibby.yi.app.i18n.TextResource;
+import codes.nibby.yi.models.editor.GameModelEditor;
 import javafx.scene.control.ToggleGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import codes.nibby.yi.app.components.board.GameBoardViewer;
-import codes.nibby.yi.app.components.board.editmodes.AbstractEditMode;
-import codes.nibby.yi.app.framework.YiRadioMenuItem;
-import codes.nibby.yi.app.framework.YiToggleButton;
-import codes.nibby.yi.app.i18n.TextResource;
-import codes.nibby.yi.app.framework.property.BooleanProperty;
-import codes.nibby.yi.app.framework.property.NullableProperty;
-import codes.nibby.yi.app.utilities.IconUtilities;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -31,11 +29,11 @@ public class AppToolAction extends AppAbstractAction<YiRadioMenuItem, YiToggleBu
         selectedProperty.addListener(this::updateSelectionState);
 
         componentGroup.addListener(newValue ->
-                getCachedComponent().ifPresent(comp -> comp.setToggleGroup(newValue))
+            getCachedComponent().ifPresent(comp -> comp.setToggleGroup(newValue))
         );
 
         menuItemGroup.addListener(newValue ->
-                getCachedMenuItem().ifPresent(menuItem -> menuItem.setToggleGroup(newValue))
+            getCachedMenuItem().ifPresent(menuItem -> menuItem.setToggleGroup(newValue))
         );
     }
 
@@ -139,7 +137,7 @@ public class AppToolAction extends AppAbstractAction<YiRadioMenuItem, YiToggleBu
         final ToggleGroup componentGroup,
         final ToggleGroup menuGroup,
         TextResource label,
-        @Nullable String iconPath,
+        @Nullable AppIcon icon,
         @Nullable AppAccelerator acceleratorId,
         Predicate<AbstractEditMode> selectionCriteria,
         double menuPosition
@@ -155,14 +153,15 @@ public class AppToolAction extends AppAbstractAction<YiRadioMenuItem, YiToggleBu
             }
         };
         action.setAction(context -> {
-            var window = context.getInvokerWindow();
-            var board = window.getBoardArea().getGameBoardViewer();
+            AppWindow window = context.getInvokerWindow();
+            GameBoardViewer board = window.getBoardArea().getGameBoardViewer();
+            GameModelEditor editor = window.getGameModel().getEditor();
 
             if (action.isSelected()) {
                 tool.apply(getGameBoardViewer(context));
-                window.getGameModel().getEditor().setEditable(true);
+                editor.setEditable(true);
             } else if (componentGroup.getSelectedToggle() == null && board.isEditable()) {
-                window.getGameModel().getEditor().setEditable(false);
+                editor.setEditable(false);
             }
         });
         action.setInMenuBar(AppMainMenuType.TOOLS, menuPosition);
@@ -176,14 +175,16 @@ public class AppToolAction extends AppAbstractAction<YiRadioMenuItem, YiToggleBu
         YiToggleButton actionComponent = action.getAsComponent();
         assert actionComponent != null : "Editor tool action component must not be null";
 
-        if (iconPath != null) {
-            String iconNormal = "/codes/nibby/yi/app/icons/" + iconPath + "_white32.png";
-            String iconSelected = iconNormal.replace("_white32.png", "32.png");
-            IconUtilities.loadIcon(iconNormal, AppEditTool.class, 16).ifPresent(action::setIcon);
+        if (icon != null) {
+            AppIcon unselectedStateIcon = icon.getDarkModeIcon();
+            AppIcon selectedStateIcon = icon.getLightModeIcon();
+
+            action.setIcon(unselectedStateIcon);
+
             actionComponent.selectedProperty().addListener(event -> {
                 boolean selectedNow = actionComponent.isSelected();
-                String icon = selectedNow ? iconSelected : iconNormal;
-                IconUtilities.loadIcon(icon, AppEditTool.class, 16).ifPresent(action::setIcon);
+                AppIcon iconToUse = selectedNow ? selectedStateIcon : unselectedStateIcon;
+                action.setIcon(iconToUse);
             });
         }
         action.setComponentToggleGroup(componentGroup);

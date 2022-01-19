@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 
-public final class JSON {
+public final class JsonUtilities {
 
-    private JSON() {
+    private JsonUtilities() {
         // Utility class, no instantiation
     }
 

@@ -1,6 +1,6 @@
 package codes.nibby.yi.app.utilities;
 
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.models.GameModel;
 import codes.nibby.yi.models.StandardGameRules;
 

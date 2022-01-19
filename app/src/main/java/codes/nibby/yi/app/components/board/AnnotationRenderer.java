@@ -193,9 +193,10 @@ public final class AnnotationRenderer {
         metricsTest.setFont(font);
         Bounds bounds = metricsTest.getBoundsInLocal();
         g.fillText(text,
-                centerX - bounds.getWidth() / 2,
-                centerY - bounds.getHeight() / 2 + g.getFont().getSize(),
-                bounds.getWidth());
+            centerX - bounds.getWidth() / 2,
+            centerY - bounds.getHeight() / 2 + g.getFont().getSize(),
+            bounds.getWidth()
+        );
     }
 
     private static void renderArrow(

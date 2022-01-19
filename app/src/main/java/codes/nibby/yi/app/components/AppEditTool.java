@@ -1,6 +1,7 @@
 package codes.nibby.yi.app.components;
 
 import codes.nibby.yi.app.framework.AppAccelerator;
+import codes.nibby.yi.app.framework.AppIcon;
 import codes.nibby.yi.app.framework.AppText;
 import codes.nibby.yi.app.framework.action.AppToolAction;
 import javafx.scene.control.ToggleGroup;
@@ -28,14 +29,14 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_PLAY_MOVE,
-                    "playMove",
-                    AppAccelerator.TOOL_PLAY_MOVE,
-                    editMode -> editMode instanceof PlayMoveEditMode,
-                    0d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_PLAY_MOVE,
+                AppIcon.TOOL_PLAY_MOVE,
+                AppAccelerator.TOOL_PLAY_MOVE,
+                editMode -> editMode instanceof PlayMoveEditMode,
+                0d
             );
         }
     },
@@ -49,20 +50,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_ADD_BLACK,
-                    "addBlack",
-                    null,
-                    editMode -> {
-                        if (!(editMode instanceof StoneEditMode)) {
-                            return false;
-                        }
-                        var stoneEditMode = (StoneEditMode) editMode;
-                        return stoneEditMode.getColorToEdit() == StoneColor.BLACK;
-                    },
-                    0.01d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_ADD_BLACK,
+                AppIcon.TOOL_ADD_BLACK,
+                null,
+                editMode -> {
+                    if (!(editMode instanceof StoneEditMode)) {
+                        return false;
+                    }
+                    var stoneEditMode = (StoneEditMode) editMode;
+                    return stoneEditMode.getColorToEdit() == StoneColor.BLACK;
+                },
+                0.01d
             );
         }
     },
@@ -76,20 +77,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup toggleGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    toggleGroup,
-                    menuGroup,
-                    AppText.TOOL_ADD_WHITE,
-                    "addWhite",
-                    null,
-                    editMode -> {
-                        if (!(editMode instanceof StoneEditMode)) {
-                            return false;
-                        }
-                        var stoneEditMode = (StoneEditMode) editMode;
-                        return stoneEditMode.getColorToEdit() == StoneColor.WHITE;
-                    },
-                    0.02d
+                this,
+                toggleGroup,
+                menuGroup,
+                AppText.TOOL_ADD_WHITE,
+                AppIcon.TOOL_ADD_WHITE,
+                null,
+                editMode -> {
+                    if (!(editMode instanceof StoneEditMode)) {
+                        return false;
+                    }
+                    var stoneEditMode = (StoneEditMode) editMode;
+                    return stoneEditMode.getColorToEdit() == StoneColor.WHITE;
+                },
+                0.02d
             );
         }
     },
@@ -103,20 +104,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_CROSS,
-                    "cross",
-                    AppAccelerator.TOOL_CROSS,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.CROSS;
-                    },
-                    0.03d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_CROSS,
+                AppIcon.TOOL_CROSS,
+                AppAccelerator.TOOL_CROSS,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.CROSS;
+                },
+                0.03d
             );
         }
     },
@@ -129,21 +130,21 @@ public enum AppEditTool {
 
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
-                return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_TRIANGLE,
-                    "triangle",
-                    AppAccelerator.TOOL_TRIANGLE,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.TRIANGLE;
-                    },
-                    0.04d
+            return AppToolAction.forTool(
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_TRIANGLE,
+                AppIcon.TOOL_TRIANGLE,
+                AppAccelerator.TOOL_TRIANGLE,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.TRIANGLE;
+                },
+                0.04d
             );
         }
     },
@@ -156,22 +157,22 @@ public enum AppEditTool {
 
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
-                return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_SQUARE,
-                    "square",
-                    AppAccelerator.TOOL_SQUARE,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.SQUARE;
-                    },
-                    0.05d
-                );
+            return AppToolAction.forTool(
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_SQUARE,
+                AppIcon.TOOL_SQUARE,
+                AppAccelerator.TOOL_SQUARE,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.SQUARE;
+                },
+                0.05d
+            );
         }
     },
 
@@ -184,20 +185,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_CIRCLE,
-                    "circle",
-                    AppAccelerator.TOOL_CIRCLE,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.CIRCLE;
-                    },
-                    0.06d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_CIRCLE,
+                AppIcon.TOOL_CIRCLE,
+                AppAccelerator.TOOL_CIRCLE,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.CIRCLE;
+                },
+                0.06d
             );
         }
     },
@@ -211,25 +212,25 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_LABEL_LETTER,
-                    "letter",
-                    AppAccelerator.TOOL_LABEL_LETTER,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
-                            return false;
-                        }
-                        Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
-                        assert labelType.isPresent();
-                        return labelType.get() == AnnotationEditMode.LabelType.LETTER;
-                    },
-                    0.07d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_LABEL_LETTER,
+                AppIcon.TOOL_LABEL_LETTER,
+                AppAccelerator.TOOL_LABEL_LETTER,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
+                        return false;
+                    }
+                    Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
+                    assert labelType.isPresent();
+                    return labelType.get() == AnnotationEditMode.LabelType.LETTER;
+                },
+                0.07d
             );
         }
     },
@@ -243,25 +244,25 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_LABEL_NUMBER,
-                    "number",
-                    AppAccelerator.TOOL_LABEL_NUMBER,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
-                            return false;
-                        }
-                        Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
-                        assert labelType.isPresent();
-                        return labelType.get() == AnnotationEditMode.LabelType.NUMBER;
-                    },
-                    0.08d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_LABEL_NUMBER,
+                AppIcon.TOOL_LABEL_NUMBER,
+                AppAccelerator.TOOL_LABEL_NUMBER,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    if (annotationMode.getTypeToApply() != AnnotationType.LABEL) {
+                        return false;
+                    }
+                    Optional<AnnotationEditMode.LabelType> labelType = annotationMode.getLabelType();
+                    assert labelType.isPresent();
+                    return labelType.get() == AnnotationEditMode.LabelType.NUMBER;
+                },
+                0.08d
             );
         }
     },
@@ -276,20 +277,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_DIM,
-                    "dim",
-                    null,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.DIM;
-                    },
-                    0.09d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_DIM,
+                AppIcon.TOOL_DIM,
+                null,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.DIM;
+                },
+                0.09d
             );
         }
     },
@@ -303,20 +304,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_LINE,
-                    "line",
-                    AppAccelerator.TOOL_LINE,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.LINE;
-                    },
-                    0.10d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_LINE,
+                AppIcon.TOOL_LINE,
+                AppAccelerator.TOOL_LINE,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.LINE;
+                },
+                0.10d
             );
         }
     },
@@ -330,20 +331,20 @@ public enum AppEditTool {
         @Override
         public AppToolAction createAction(ToggleGroup componentGroup, ToggleGroup menuGroup) {
             return AppToolAction.forTool(
-                    this,
-                    componentGroup,
-                    menuGroup,
-                    AppText.TOOL_ARROW,
-                    "arrow",
-                    AppAccelerator.TOOL_ARROW,
-                    editMode -> {
-                        if (!(editMode instanceof AnnotationEditMode)) {
-                            return false;
-                        }
-                        var annotationMode = (AnnotationEditMode) editMode;
-                        return annotationMode.getTypeToApply() == AnnotationType.ARROW;
-                    },
-                    0.11d
+                this,
+                componentGroup,
+                menuGroup,
+                AppText.TOOL_ARROW,
+                AppIcon.TOOL_ARROW,
+                AppAccelerator.TOOL_ARROW,
+                editMode -> {
+                    if (!(editMode instanceof AnnotationEditMode)) {
+                        return false;
+                    }
+                    var annotationMode = (AnnotationEditMode) editMode;
+                    return annotationMode.getTypeToApply() == AnnotationType.ARROW;
+                },
+                0.11d
             );
         }
     };

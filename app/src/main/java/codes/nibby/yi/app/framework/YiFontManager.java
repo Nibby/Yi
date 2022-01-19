@@ -1,6 +1,5 @@
 package codes.nibby.yi.app.framework;
 
-import codes.nibby.yi.app.framework.Resource;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;

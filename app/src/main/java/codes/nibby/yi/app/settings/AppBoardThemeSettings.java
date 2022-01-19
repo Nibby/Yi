@@ -1,10 +1,11 @@
 package codes.nibby.yi.app.settings;
 
+import codes.nibby.yi.app.framework.ResourcePath;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.json.JSONObject;
 import codes.nibby.yi.app.utilities.ComparisonUtilities;
-import codes.nibby.yi.app.utilities.JSON;
+import codes.nibby.yi.app.utilities.JsonUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.util.Optional;
  */
 public final class AppBoardThemeSettings extends AppSettingsModule {
 
-    private static final String DEFAULT_THEME_DIRECTORY = "/codes/nibby/yi/app/themes/";
     private static final String THEME_SETTINGS_FILE = "theme.json";
 
     // JSON keys
@@ -78,12 +78,12 @@ public final class AppBoardThemeSettings extends AppSettingsModule {
     }
 
     private void loadDefaultTheme(String selectedThemeDirectory) {
-        String themeDir = DEFAULT_THEME_DIRECTORY + selectedThemeDirectory;
+        String themeDir = ResourcePath.BOARD_THEMES.getFolderPath() + selectedThemeDirectory;
         // We just have to assume it exists at this point, otherwise something is horribly
         // wrong.
         String jsonFile = themeDir + "/" + THEME_SETTINGS_FILE;
         InputStream jsonFileInputStream = AppBoardThemeSettings.class.getResourceAsStream(jsonFile);
-        JSONObject json = JSON.read(jsonFileInputStream);
+        JSONObject json = JsonUtilities.read(jsonFileInputStream);
         loadFromJson(themeDir, json, false);
     }
 

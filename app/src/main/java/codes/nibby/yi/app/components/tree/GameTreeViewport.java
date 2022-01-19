@@ -14,7 +14,7 @@ import java.util.Set;
  * A drawing offset manager that determines the draw position of all the elements on
  * the tree canvas. Supports a smooth panning animation.
  */
-final class Camera {
+final class GameTreeViewport {
 
     private double offsetX = 0d;
     private double offsetY = 0d;
@@ -37,11 +37,11 @@ final class Camera {
     // Number of times doSmoothScroll() should be called in order for the entire transition to take place
     final int animationSteps = 30;
 
-    public Camera(double viewportWidth, double viewportHeight) {
+    public GameTreeViewport(double viewportWidth, double viewportHeight) {
         this(0d, 0d, viewportWidth, viewportHeight);
     }
 
-    public Camera(double offsetX, double offsetY, double viewportWidth, double viewportHeight) {
+    public GameTreeViewport(double offsetX, double offsetY, double viewportWidth, double viewportHeight) {
         setOffset(offsetX, offsetY);
         setViewportSize(viewportWidth, viewportHeight);
     }

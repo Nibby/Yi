@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GameTreeViewerCameraTest {
+public final class GameTreeViewerGameTreeViewportTest {
 
     // TODO: Doesn't work, probably because events must be invoked on a Fx thread. Use a Fx UI testing framework to test this.
 //    @Test
@@ -63,14 +63,14 @@ public class GameTreeViewerCameraTest {
         double viewportWidth = 100;
         double viewportHeight = 100;
 
-        var camera = new Camera(0, 0, viewportWidth, viewportHeight);
+        var viewport = new GameTreeViewport(0, 0, viewportWidth, viewportHeight);
 
         // Act
-        camera.setCenterOnCoordinateImmediately(50, 50);
+        viewport.setCenterOnCoordinateImmediately(50, 50);
 
         // Assert
-        Assertions.assertTrue(ComparisonUtilities.doubleEquals(0d, camera.getOffsetX()));
-        Assertions.assertTrue(ComparisonUtilities.doubleEquals(0d, camera.getOffsetY()));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(0d, viewport.getOffsetX()));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(0d, viewport.getOffsetY()));
     }
 
     @Test
@@ -79,18 +79,18 @@ public class GameTreeViewerCameraTest {
         double viewportWidth = 100;
         double viewportHeight = 100;
 
-        var camera = new Camera(viewportWidth, viewportHeight);
-        camera.setCenterOnCoordinateImmediately(50, 50); // OffsetX, OffsetY should be (0, 0)
+        var viewport = new GameTreeViewport(viewportWidth, viewportHeight);
+        viewport.setCenterOnCoordinateImmediately(50, 50); // OffsetX, OffsetY should be (0, 0)
 
         // Act
-        camera.setViewportSize(200, 200);
+        viewport.setViewportSize(200, 200);
 
         // Assert
-        Assertions.assertTrue(ComparisonUtilities.doubleEquals(camera.getCenterX(), 50));
-        Assertions.assertTrue(ComparisonUtilities.doubleEquals(camera.getCenterY(), 50));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(viewport.getCenterX(), 50));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(viewport.getCenterY(), 50));
 
-        Assertions.assertTrue(ComparisonUtilities.doubleEquals(camera.getOffsetX(), 50));
-        Assertions.assertTrue(ComparisonUtilities.doubleEquals(camera.getOffsetY(), 50));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(viewport.getOffsetX(), 50));
+        Assertions.assertTrue(ComparisonUtilities.doubleEquals(viewport.getOffsetY(), 50));
     }
 
     @Test
@@ -99,12 +99,12 @@ public class GameTreeViewerCameraTest {
         double viewportWidth = 100;
         double viewportHeight = 100;
 
-        var camera = new Camera(viewportWidth, viewportHeight);
-        camera.setCenterOnCoordinateImmediately(50, 50); // OffsetX, OffsetY should be (0, 0)
+        var viewport = new GameTreeViewport(viewportWidth, viewportHeight);
+        viewport.setCenterOnCoordinateImmediately(50, 50); // OffsetX, OffsetY should be (0, 0)
 
         var eventReceived = new AtomicBoolean(false);
 
-        camera.addOffsetChangeListener(() -> {
+        viewport.addOffsetChangeListener(() -> {
             if (eventReceived.get()) {
                 Assertions.fail("More than one event received!");
             }
@@ -113,7 +113,7 @@ public class GameTreeViewerCameraTest {
         });
 
         // Act
-        camera.setViewportSize(200, 200);
+        viewport.setViewportSize(200, 200);
 
         // Assert
         Thread.sleep(50);

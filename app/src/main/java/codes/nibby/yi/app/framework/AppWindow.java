@@ -3,6 +3,7 @@ package codes.nibby.yi.app.framework;
 import codes.nibby.yi.app.components.*;
 import codes.nibby.yi.app.framework.action.AppAction;
 import codes.nibby.yi.app.framework.action.AppActionManager;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.hack.Hacks;
 import codes.nibby.yi.app.settings.AppSettings;
 import javafx.scene.Node;
@@ -130,7 +131,7 @@ public class AppWindow extends YiWindow {
     }
 
     private void setIcons() {
-        final String baseDir = "/codes/nibby/yi/app/icons/stage/";
+        final String baseDir = ResourcePath.ICONS.resolve("stage").getFolderPath();
         if (!SystemUtilities.isMac()) {
             getStage().getIcons().addAll(
                 new Image(AppWindow.class.getResourceAsStream(baseDir + "icon16.png")),
@@ -300,11 +301,11 @@ public class AppWindow extends YiWindow {
         return perspective.get();
     }
 
-    public static int getActiveWindowCount() {
-        return ACTIVE_WINDOWS.size();
-    }
-
     public Node getFooterToolBar() {
         return footerToolBar;
+    }
+
+    public static int getActiveWindowCount() {
+        return ACTIVE_WINDOWS.size();
     }
 }

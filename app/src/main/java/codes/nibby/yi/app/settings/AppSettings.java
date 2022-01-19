@@ -1,9 +1,9 @@
 package codes.nibby.yi.app.settings;
 
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import org.json.JSONObject;
 import codes.nibby.yi.app.components.board.GameBoardViewer;
-import codes.nibby.yi.app.utilities.JSON;
+import codes.nibby.yi.app.utilities.JsonUtilities;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -149,7 +149,7 @@ public final class AppSettings {
             return Optional.empty();
         }
 
-        return Optional.of(JSON.read(settingsFile));
+        return Optional.of(JsonUtilities.read(settingsFile));
     }
 
     public static void applySavedBoardSettings(GameBoardViewer board) {

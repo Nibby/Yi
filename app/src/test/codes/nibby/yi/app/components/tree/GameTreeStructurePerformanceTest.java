@@ -11,7 +11,7 @@ import codes.nibby.yi.models.rules.GameRulesHandler;
 import java.util.concurrent.TimeUnit;
 
 // TODO: Move me into a performance test source set
-public class GameTreeStructurePerformanceTest {
+public final class GameTreeStructurePerformanceTest {
 
     @Test
     public void testVerticalGrowth_300Nodes_FastEnough() {

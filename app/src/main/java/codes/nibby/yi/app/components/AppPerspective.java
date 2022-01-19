@@ -46,7 +46,7 @@ public enum AppPerspective {
 
         @Override
         public Dimension2D getMinimumWindowSize() {
-            return new Dimension2D(600, 600);
+            return new Dimension2D(500, 600);
         }
 
         @Override

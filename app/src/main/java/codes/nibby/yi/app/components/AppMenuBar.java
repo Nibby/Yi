@@ -1,7 +1,7 @@
 package codes.nibby.yi.app.components;
 
 import codes.nibby.yi.app.framework.AppWindow;
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.framework.YiMenu;
 import codes.nibby.yi.app.framework.action.AppAction;
 import codes.nibby.yi.app.framework.action.AppActionContext;

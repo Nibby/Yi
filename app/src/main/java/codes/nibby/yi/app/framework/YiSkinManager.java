@@ -7,15 +7,12 @@ import java.util.concurrent.atomic.AtomicReference;
  * Tracks all preset component {@link YiSkin} available to the platform. Each
  * skin contains CSS files specific to the
  * type of aesthetics it aims to achieve.
- *
- * <p/>Additional CSS may be added during runtime to be used by all skins, see
- * {@link #addExtraStylesheet(String, Class)}.
  */
 public final class YiSkinManager {
 
     private static final Set<Resource> EXTRA_STYLESHEETS = new HashSet<>();
 
-    private static final YiSkin SLATE = YiSkin.fromResources("/codes/nibby/yi/app/skins/slate/", YiSkinManager.class).orElseThrow();
+    private static final YiSkin SLATE = YiSkin.fromResources(ResourcePath.SKINS.resolve("slate"), YiSkinManager.class).orElseThrow();
 
     private static final AtomicReference<YiSkin> USED_SKIN = new AtomicReference<>(null);
 
@@ -47,16 +44,16 @@ public final class YiSkinManager {
      * {@link YiWindow}. The file will be loaded using the class loader
      * in the module of the CSS file.
      *
-     * @param cssResourcePath Internal resource path for the CSS file.
+     * @param cssFile Internal resource path for the CSS file.
      * @param resourceLoaderClass Class loader to use to load the resource. This class should
      *                            be in the same module as the CSS file.
      */
-    public static void addExtraStylesheet(String cssResourcePath, Class<?> resourceLoaderClass) {
-        var resource = new Resource(cssResourcePath, resourceLoaderClass);
+    public static void addExtraStylesheet(ResourcePath cssFile, Class<?> resourceLoaderClass) {
+        var resource = new Resource(cssFile, resourceLoaderClass);
         EXTRA_STYLESHEETS.add(resource);
     }
 
-    protected static Set<Resource> getExtraStylesheets() {
+    static Set<Resource> getExtraStylesheets() {
         return Collections.unmodifiableSet(EXTRA_STYLESHEETS);
     }
 }

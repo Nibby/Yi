@@ -1,8 +1,11 @@
 package codes.nibby.yi.app.framework.action;
 
+import codes.nibby.yi.app.AppUITestBase;
 import codes.nibby.yi.app.components.AppMainMenuType;
 import codes.nibby.yi.app.framework.AppAccelerator;
 import codes.nibby.yi.app.framework.AppText;
+import codes.nibby.yi.app.framework.YiButton;
+import codes.nibby.yi.app.framework.YiMenuItem;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Menu;
@@ -13,10 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.Start;
-import codes.nibby.yi.app.framework.YiButton;
-import codes.nibby.yi.app.framework.YiMenuItem;
-import codes.nibby.yi.app.utilities.IconUtilities;
-import codes.nibby.yi.app.AppUITestBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,16 +103,19 @@ public final class AppAbstractActionTest extends AppUITestBase {
     }
 
     private void testSetAccelerator(HashMap<AppAction, MenuItem> menuItemMap) {
-
-        Assertions.assertNull(menuItemMap.get(action1).getAccelerator(),
-                "Initial accelerator state not correct");
+        Assertions.assertNull(
+            menuItemMap.get(action1).getAccelerator(),
+            "Initial accelerator state not correct"
+        );
 
         var newAcceleratorId = AppAccelerator.NEW_GAME;
         action1.setAccelerator(newAcceleratorId);
 
-        Assertions.assertEquals(AppAccelerator.getAccelerator(newAcceleratorId).getKeyCombination(),
-                menuItemMap.get(action1).getAccelerator(),
-                "Accelerator not updated after setAccelerator() call");
+        Assertions.assertEquals(
+            AppAccelerator.getAccelerator(newAcceleratorId).getKeyCombination(),
+            menuItemMap.get(action1).getAccelerator(),
+            "Accelerator not updated after setAccelerator() call"
+        );
     }
 
     private void testSetIcon(HashMap<AppAction, MenuItem> menuItemMap,
@@ -121,15 +123,19 @@ public final class AppAbstractActionTest extends AppUITestBase {
 
         action1.setIcon(null);
 
-        Assertions.assertNull(menuItemMap.get(action1).getGraphic(),
-                "Initial graphic should be empty on menu item");
-        Assertions.assertNull(((Labeled) nodeMap.get(action1)).getGraphic(),
-                "Initial graphic should be empty on node");
+        Assertions.assertNull(
+            menuItemMap.get(action1).getGraphic(),
+            "Initial graphic should be empty on menu item"
+        );
+        Assertions.assertNull(
+            ((Labeled) nodeMap.get(action1)).getGraphic(),
+            "Initial graphic should be empty on node"
+        );
 
         // A little yuck, but we have to be careful to use a 16x16 icon here otherwise
         // the action will wrap the image in a re-sized version, causing the two objects
         // to not equal each other.
-        ImageView icon = IconUtilities.loadIcon("/testIcon.png", getClass()).orElseThrow();
+        ImageView icon = new ImageView("/testIcon.png");
         action1.setIcon(icon);
 
         Assertions.assertEquals(menuItemMap.get(action1).getGraphic(), icon,

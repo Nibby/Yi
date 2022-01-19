@@ -1,4 +1,4 @@
-package codes.nibby.yi.app.framework;
+package codes.nibby.yi.app.framework.global;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

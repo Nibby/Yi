@@ -1,18 +1,17 @@
 package codes.nibby.yi.app.framework.action;
 
-import codes.nibby.yi.app.framework.AppWindow;
+import codes.nibby.yi.app.components.Accelerator;
 import codes.nibby.yi.app.components.AppMainMenuType;
 import codes.nibby.yi.app.components.AppMenuBar;
 import codes.nibby.yi.app.framework.AppAccelerator;
 import codes.nibby.yi.app.framework.AppText;
+import codes.nibby.yi.app.framework.AppWindow;
+import codes.nibby.yi.app.i18n.TextResource;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import codes.nibby.yi.app.components.Accelerator;
-import codes.nibby.yi.app.i18n.TextResource;
-import codes.nibby.yi.app.utilities.IconUtilities;
 
 import java.util.Comparator;
 import java.util.List;
@@ -117,21 +116,6 @@ public interface AppAction {
      * @return this instance for method chaining.
      */
     AppAction setIcon(@Nullable ImageView icon);
-
-    /**
-     * Loads an icon resource on the classpath. Internally this method delegates the call
-     * to {@link #setIcon(ImageView)}}.
-     *
-     * @param iconResPath Icon resource path.
-     * @param resourceClass Class used to load the resource.
-     * @return this instance for method chaining.
-     */
-    default AppAction setIcon(@NotNull String iconResPath, Class<?> resourceClass) {
-        var icon = IconUtilities.loadIcon(iconResPath, resourceClass)
-                .orElseThrow(() -> new IllegalArgumentException("Icon not loaded: \""
-                        + iconResPath + "\""));
-        return setIcon(icon);
-    }
 
     /**
      * @return Desired graphic to show on the exported component.

@@ -30,7 +30,7 @@ public final class GameTreeViewer implements YiComponent {
     private final YiCanvasContainer canvasContainer;
     private GameTreeViewerSettings settings = GameTreeViewerSettings.getDefault();
     private final GameTreeCanvas canvas;
-    private final Camera camera;
+    private final GameTreeViewport viewport;
 
     private GameModel gameModel;
     private final GameTreeStructure treeStructure = new GameTreeStructure();
@@ -43,14 +43,14 @@ public final class GameTreeViewer implements YiComponent {
 
         canvasContainer = new YiCanvasContainer(canvas);
         elementSize = new GameTreeElementSize();
-        camera = new Camera(canvasContainer.getWidth(), canvasContainer.getHeight());
+        viewport = new GameTreeViewport(canvasContainer.getWidth(), canvasContainer.getHeight());
 
         canvasContainer.addSizeUpdateListener(newSize -> {
-            camera.setViewportSize(newSize.getWidth(), newSize.getHeight());
+            viewport.setViewportSize(newSize.getWidth(), newSize.getHeight());
             render();
         });
 
-        camera.addOffsetChangeListener(this::render);
+        viewport.addOffsetChangeListener(this::render);
     }
 
     public void setSettings(GameTreeViewerSettings settings) {
@@ -59,7 +59,7 @@ public final class GameTreeViewer implements YiComponent {
 
     private void updateCameraAndRender(GameNode nodeToCenter) {
         treeStructure.getTreeNodeElementForNode(nodeToCenter)
-                .ifPresent(treeElement -> camera.setCenterElementWithAnimation(treeElement, elementSize.getGridSize()));
+                .ifPresent(treeElement -> viewport.setCenterElementWithAnimation(treeElement, elementSize.getGridSize()));
 
         render();
     }
@@ -70,14 +70,14 @@ public final class GameTreeViewer implements YiComponent {
             var currentNode = gameModel.getCurrentNode();
             var previewNode = treeStructure.getHighlightedNodePath();
 
-            canvas.render(settings, camera, elements, currentNode, previewNode, elementSize);
+            canvas.render(settings, viewport, elements, currentNode, previewNode, elementSize);
         }
     }
 
     private List<TreeNodeElement> getVisibleElementsInViewport() {
         var gridWidth = elementSize.getGridSize().getWidth();
         var gridHeight = elementSize.getGridSize().getHeight();
-        var offsetY = -camera.getOffsetY();
+        var offsetY = -viewport.getOffsetY();
 
         // Some branches may be very far from their parent, in this case we still want to render it
         var startX = 0;
@@ -113,9 +113,9 @@ public final class GameTreeViewer implements YiComponent {
         var currentNode = this.gameModel.getCurrentNode();
         TreeNodeElement currentNodeElement = this.treeStructure.getTreeNodeElementForNode(currentNode).orElseThrow();
         if (panToNewNode) {
-            this.camera.setCenterElementWithAnimation(currentNodeElement, elementSize.getGridSize());
+            this.viewport.setCenterElementWithAnimation(currentNodeElement, elementSize.getGridSize());
         } else {
-            this.camera.setCenterElementImmediately(currentNodeElement, elementSize.getGridSize());
+            this.viewport.setCenterElementImmediately(currentNodeElement, elementSize.getGridSize());
         }
 
         this.gameModel.onCurrentNodeChange().addListener(currentMoveChangeListener);
@@ -174,14 +174,14 @@ public final class GameTreeViewer implements YiComponent {
         treeStructure.getTreeNodeElementForNode(node).ifPresent(element::set);
         var value = element.get();
         if (value != null) {
-            var bounds = canvas.getElementBounds(value, elementSize, camera);
+            var bounds = canvas.getElementBounds(value, elementSize, viewport);
             return Optional.of(bounds);
         }
         return Optional.empty();
     }
 
-    protected final Camera getCamera() {
-        return camera;
+    protected final GameTreeViewport getViewport() {
+        return viewport;
     }
 
     protected GameTreeStructure getTreeStructure() {
@@ -275,8 +275,8 @@ public final class GameTreeViewer implements YiComponent {
                 dragStartX = e.getX();
                 dragStartY = e.getY();
 
-                double offsetX = camera.getOffsetX();
-                double offsetY = camera.getOffsetY();
+                double offsetX = viewport.getOffsetX();
+                double offsetY = viewport.getOffsetY();
 
                 setBoundedOffset(offsetX + xDiff, offsetY + yDiff);
             }
@@ -320,7 +320,7 @@ public final class GameTreeViewer implements YiComponent {
                 boundOffsetY = bottomBound;
             }
 
-            camera.setOffset(boundOffsetX, boundOffsetY);
+            viewport.setOffset(boundOffsetX, boundOffsetY);
         }
 
         @Override
@@ -332,10 +332,10 @@ public final class GameTreeViewer implements YiComponent {
                 double deltaX = e.getDeltaX();
                 double deltaY = e.getDeltaY();
 
-                double offsetX = camera.getOffsetX();
-                double offsetY = camera.getOffsetY();
+                double offsetX = viewport.getOffsetX();
+                double offsetY = viewport.getOffsetY();
 
-                camera.setOffset(offsetX + deltaX, offsetY + deltaY);
+                viewport.setOffset(offsetX + deltaX, offsetY + deltaY);
             }
         }
 
@@ -348,8 +348,8 @@ public final class GameTreeViewer implements YiComponent {
             double gridWidth = elementSize.getGridSize().getWidth();
             double gridHeight = elementSize.getGridSize().getHeight();
 
-            int gridX = (int) Math.round(((e.getX() - gridWidth / 2) - camera.getOffsetX()) / gridWidth);
-            int gridY = (int) Math.round(((e.getY() - gridHeight / 2) - camera.getOffsetY()) / gridHeight);
+            int gridX = (int) Math.round(((e.getX() - gridWidth / 2) - viewport.getOffsetX()) / gridWidth);
+            int gridY = (int) Math.round(((e.getY() - gridHeight / 2) - viewport.getOffsetY()) / gridHeight);
 
             return new int[] { gridX, gridY };
         }

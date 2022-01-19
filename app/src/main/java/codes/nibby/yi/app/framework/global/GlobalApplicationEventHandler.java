@@ -1,6 +1,7 @@
-package codes.nibby.yi.app.framework;
+package codes.nibby.yi.app.framework.global;
 
 
+import codes.nibby.yi.app.framework.AppWindow;
 import com.sun.glass.ui.Application;
 import javafx.application.Platform;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Handles desktop application events.
@@ -27,7 +29,7 @@ public final class GlobalApplicationEventHandler {
     }
 
     private static final Queue<File> OPEN_FILE_QUEUE = new ArrayDeque<>();
-    private static boolean hasPreInitializationOpenFileEvent = false;
+    private static final AtomicBoolean HAS_PRE_INIT_OPEN_FILE_EVENT = new AtomicBoolean(false);
 
     public static void initialize(@Nullable javafx.application.Application.Parameters parameters) {
         Application.EventHandler internalHandler = Application.GetApplication().getEventHandler();
@@ -139,7 +141,7 @@ public final class GlobalApplicationEventHandler {
     }
 
     private static void queueFile(File file) {
-        hasPreInitializationOpenFileEvent = true;
+        HAS_PRE_INIT_OPEN_FILE_EVENT.set(true);
         // Process this in the Fx thread once the application has finished initializing.
         OPEN_FILE_QUEUE.add(file);
     }
@@ -166,10 +168,10 @@ public final class GlobalApplicationEventHandler {
             loadedSomething |= loadGameModel(file);
         }
 
-        hasPreInitializationOpenFileEvent = loadedSomething;
+        HAS_PRE_INIT_OPEN_FILE_EVENT.set(loadedSomething);
     }
 
     public static boolean hasPreInitializationOpenFileEvent() {
-        return hasPreInitializationOpenFileEvent;
+        return HAS_PRE_INIT_OPEN_FILE_EVENT.get();
     }
 }

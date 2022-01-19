@@ -30,7 +30,7 @@ public class GameTreeViewerMouseInteractionTest extends GameTreeUITestBase {
         super.startFx(stage);
 
         treeViewer.addPreviewNodeChangeListener(newHighlight -> this.highlightedNode = newHighlight);
-        var camera = treeViewer.getCamera();
+        var camera = treeViewer.getViewport();
         camera.addOffsetChangeListener(() -> {
             offsetX = camera.getOffsetX();
             offsetY = camera.getOffsetY();
@@ -200,7 +200,7 @@ public class GameTreeViewerMouseInteractionTest extends GameTreeUITestBase {
     }
 
     private Point2D centerOnRootNode(FxRobot robot) {
-        treeViewer.getCamera().setCenterOnCoordinateImmediately(0, 0);
+        treeViewer.getViewport().setCenterOnCoordinateImmediately(0, 0);
         Rectangle2D bounds = treeViewer.getElementBoundsForNode(model.getRootNode()).orElseThrow();
         return moveToCenter(bounds, robot);
     }

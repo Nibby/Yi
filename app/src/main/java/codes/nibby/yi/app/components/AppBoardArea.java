@@ -1,7 +1,7 @@
 package codes.nibby.yi.app.components;
 
 import codes.nibby.yi.app.framework.AppAccelerator;
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.framework.AppText;
 import codes.nibby.yi.app.framework.action.AppAction;
 import codes.nibby.yi.app.framework.action.AppActionManager;
@@ -44,11 +44,11 @@ public final class AppBoardArea implements AppComponent<Pane> {
         transferBoardBackgroundToContainer();
 
         actionToggleCoordinates = new AppToggleAction(
-                AppText.MENUITEM_TOGGLE_COORDINATES,
-                context -> {
-                    boolean nextState = !board.isShowingBoardCoordinates();
-                    board.setShowCoordinates(nextState);
-                }
+            AppText.MENUITEM_TOGGLE_COORDINATES,
+            context -> {
+                boolean nextState = !board.isShowingBoardCoordinates();
+                board.setShowCoordinates(nextState);
+            }
         );
         actionToggleCoordinates.setInMenuBar(AppMainMenuType.VIEW, 0.000d);
         actionToggleCoordinates.setAccelerator(AppAccelerator.TOGGLE_BOARD_COORDINATES);

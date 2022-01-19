@@ -4,7 +4,7 @@ import codes.nibby.yi.app.framework.AppWindow;
 import codes.nibby.yi.app.components.AppMainMenuType;
 import codes.nibby.yi.app.components.AppMenuBar;
 import codes.nibby.yi.app.components.AppPerspective;
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.framework.action.AppActionManager;
 import codes.nibby.yi.app.utilities.GameModelUtilities;
 import javafx.scene.control.Menu;

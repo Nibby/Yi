@@ -8,7 +8,8 @@ module codes.nibby.yi.app {
     requires codes.nibby.yi.models;
     requires javafx.media;
 
+    requires com.google.common;
+
     exports codes.nibby.yi.app;
-    exports codes.nibby.yi.app.framework;
 
 }

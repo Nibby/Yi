@@ -7,42 +7,41 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * Represents an internal resource entry.
- *
- * @apiNote Since the migration to JPMS, resources across modules are no longer dumped
- * onto the {@code classpath}. For that reason, resource entries must associate their
- * resource path with the module the entry must be loaded from.
- * <p/>
- * For the resource to be accessible, the module providing the resource must open the
- * package the resource belongs to in its {@code module-info.java} like so:
- * <pre>opens resource.package.path;</pre>
+ * Represents a file in the app project {@code resources} folder. This class always
+ * assumes the target is a file, so it calls {@link ResourcePath#getFilePath()} on
+ * the supplied path.
  */
 public final class Resource {
 
-    private final String resourcePath;
+    private final ResourcePath path;
     private final Class<?> resourceLoaderClass;
 
     /**
      * Defines an internal resource from a given module.
      *
-     * @param resourcePath Resource path.
+     * @param path Resource path.
      * @param resourceLoaderClass Class to be used to load the resource.
      */
-    public Resource(@NotNull String resourcePath, @NotNull Class<?> resourceLoaderClass) {
-        this.resourcePath = Objects.requireNonNull(resourcePath);
+    public Resource(@NotNull ResourcePath path, @NotNull Class<?> resourceLoaderClass) {
+        this.path = Objects.requireNonNull(path);
         this.resourceLoaderClass = Objects.requireNonNull(resourceLoaderClass);
     }
 
     /**
      * @return URL path description of this resource.
      */
+    @NotNull
     public URL getResourceUrl() {
-        return resourceLoaderClass.getResource(resourcePath);
+        String filePath = path.getFilePath();
+        URL url = resourceLoaderClass.getResource(filePath);
+        Objects.requireNonNull(url, "Invalid resource path: " + path);
+        return url;
     }
 
     /**
      * @return URL path description of this resource as String.
      */
+    @NotNull
     public String getResourceUrlAsString() {
         return getResourceUrl().toString();
     }
@@ -51,7 +50,11 @@ public final class Resource {
      * @return {@link InputStream} for loading this resource. May be {@code null} if the
      * resource does not exist, or is not discoverable.
      */
+    @NotNull
     public InputStream getInputStream() {
-        return resourceLoaderClass.getResourceAsStream(resourcePath);
+        String filePath = path.getFilePath();
+        InputStream inputStream = resourceLoaderClass.getResourceAsStream(filePath);
+        Objects.requireNonNull(inputStream, "Invalid resource path: " + path);
+        return inputStream;
     }
 }

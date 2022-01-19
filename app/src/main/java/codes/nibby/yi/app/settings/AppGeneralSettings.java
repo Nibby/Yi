@@ -3,7 +3,7 @@ package codes.nibby.yi.app.settings;
 import codes.nibby.yi.app.components.AppPerspective;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-import codes.nibby.yi.app.utilities.JSON;
+import codes.nibby.yi.app.utilities.JsonUtilities;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -47,9 +47,9 @@ public final class AppGeneralSettings extends AppSettingsModule {
     }
 
     private void loadFromJson(JSONObject settings) {
-        JSON.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> boardThemeDirectory = value);
-        JSON.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> perspective = AppPerspective.getValue(value));
-        setShowBoardCoordinates(JSON.getBoolean(settings, KEY_SHOW_BOARD_COORDINATES, true));
+        JsonUtilities.getString(settings, KEY_BOARD_THEME_DIRECTORY).ifPresent(value -> boardThemeDirectory = value);
+        JsonUtilities.getString(settings, KEY_CONTENT_LAYOUT).ifPresent(value -> perspective = AppPerspective.getValue(value));
+        setShowBoardCoordinates(JsonUtilities.getBoolean(settings, KEY_SHOW_BOARD_COORDINATES, true));
     }
 
     @Override

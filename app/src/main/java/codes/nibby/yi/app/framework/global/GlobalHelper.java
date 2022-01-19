@@ -1,5 +1,6 @@
-package codes.nibby.yi.app.framework;
+package codes.nibby.yi.app.framework.global;
 
+import codes.nibby.yi.app.framework.*;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
@@ -128,12 +129,13 @@ public final class GlobalHelper {
             GlobalUncaughtExceptionHandler.initialize();
         }
         if (isInitialized && !isRunningAsTest()) {
-            throw new IllegalStateException("initializeContext() should only be called " +
-                    "once in production");
+            throw new IllegalStateException(
+                "initializeContext() should only be called once in production"
+            );
         }
         GlobalApplicationEventHandler.initialize(parameters);
         GlobalFontInitializer.loadBundledFonts();
-        YiSkinManager.addExtraStylesheet("/codes/nibby/yi/app/fonts/font.css", GlobalHelper.class);
+        YiSkinManager.addExtraStylesheet(ResourcePath.FONTS.resolve("font.css"), GlobalHelper.class);
         YiFontManager.setDefaultFont(new Font("Noto Sans", 12d));
         AppText.installSupportedLanguages();
 //        I18n.setCurrentLanguage(Language.getSupportedLanguages().get(1));
@@ -150,9 +152,5 @@ public final class GlobalHelper {
         }));
 
         isInitialized = true;
-
-        if (!isRunningAsTest()) {
-            GlobalApplicationEventHandler.loadAllQueuedOpenFiles();
-        }
     }
 }

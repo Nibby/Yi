@@ -1,6 +1,15 @@
 package codes.nibby.yi.app.dialogs;
 
+import codes.nibby.yi.app.framework.AppIcon;
 import codes.nibby.yi.app.framework.AppText;
+import codes.nibby.yi.app.framework.modal.ActionType;
+import codes.nibby.yi.app.framework.modal.ModalActionButton;
+import codes.nibby.yi.app.framework.modal.YiAbstractModalPane;
+import codes.nibby.yi.app.i18n.TextResource;
+import codes.nibby.yi.models.GameModel;
+import codes.nibby.yi.models.GameModelInfo;
+import codes.nibby.yi.models.StandardGameRules;
+import codes.nibby.yi.models.rules.GameRulesHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -8,15 +17,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import codes.nibby.yi.app.framework.modal.ActionType;
-import codes.nibby.yi.app.framework.modal.ModalActionButton;
-import codes.nibby.yi.app.framework.modal.YiAbstractModalPane;
-import codes.nibby.yi.app.i18n.TextResource;
-import codes.nibby.yi.app.utilities.IconUtilities;
-import codes.nibby.yi.models.GameModel;
-import codes.nibby.yi.models.GameModelInfo;
-import codes.nibby.yi.models.StandardGameRules;
-import codes.nibby.yi.models.rules.GameRulesHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -239,13 +239,12 @@ public final class GameModelEditDialog extends YiAbstractModalPane {
             playerInfoSection.setHgap(5);
             playerInfoSection.setVgap(10);
             {
-                var blackIcon = new Label("", IconUtilities.loadIcon("/codes/nibby/yi/app/icons/blackStone_white32.png", getClass(), 24).orElse(null));
+                var blackIcon = new Label("", AppIcon.BLACK_STONE.deriveIcon(24));
                 playerInfoSection.add(blackIcon, 0, 0);
                 playerInfoSection.add(playerBlackName, 1, 0);
                 playerInfoSection.add(playerBlackRank, 2, 0);
 
-                var whiteIcon = new Label("", IconUtilities.loadIcon("/codes/nibby/yi/app/icons/whiteStone_white32.png", getClass(), 24).orElse(null));
-
+                var whiteIcon = new Label("", AppIcon.WHITE_STONE.deriveIcon(24));
                 playerInfoSection.add(whiteIcon, 0, 1);
                 playerInfoSection.add(playerWhiteName, 1, 1);
                 playerInfoSection.add(playerWhiteRank, 2, 1);

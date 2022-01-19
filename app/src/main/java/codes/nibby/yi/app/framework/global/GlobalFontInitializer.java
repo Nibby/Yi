@@ -1,8 +1,10 @@
-package codes.nibby.yi.app.framework;
+package codes.nibby.yi.app.framework.global;
+
+import codes.nibby.yi.app.framework.ResourcePath;
+import codes.nibby.yi.app.framework.YiFontManager;
 
 final class GlobalFontInitializer {
 
-    private static final String FONT_RESOURCE_DIR = "/codes/nibby/yi/app/fonts/";
     private static final String[] BUNDLED_FONT_NAMES = {
             "NotoSans-Bold.ttf",
             "NotoSans-BoldItalic.ttf",
@@ -18,7 +20,7 @@ final class GlobalFontInitializer {
 
     public static void loadBundledFonts() {
         for (String fontName : BUNDLED_FONT_NAMES) {
-            String fontResource = FONT_RESOURCE_DIR + fontName;
+            String fontResource = ResourcePath.FONTS.getFolderPath() + fontName;
             YiFontManager.loadFont(fontResource, GlobalFontInitializer.class);
         }
     }

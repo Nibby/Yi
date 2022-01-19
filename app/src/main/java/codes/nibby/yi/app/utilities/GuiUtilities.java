@@ -184,4 +184,11 @@ public final class GuiUtilities {
             }
         }
     }
+
+    /**
+     * @return true if the application is running in dark mode.
+     */
+    public static boolean isDarkMode() {
+        return true; // TODO: Implement me
+    }
 }

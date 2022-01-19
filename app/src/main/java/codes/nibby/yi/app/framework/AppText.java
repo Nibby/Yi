@@ -12,10 +12,8 @@ import java.util.ResourceBundle;
  */
 public final class AppText {
 
-    private static final String I18N_PACKAGE = "codes.nibby.yi.app.i18n.";
-
-    private static final String BUNDLE_NAME = I18N_PACKAGE + "EditorTranslations";
-    private static final ResourceBundle BUNDLE = I18n.getResourceBundle(BUNDLE_NAME, AppText.class.getModule());
+    private static final ResourcePath BUNDLE_PATH = ResourcePath.I18N.resolve("GeneralTranslations");
+    private static final ResourceBundle BUNDLE = I18n.getResourceBundle(BUNDLE_PATH, AppText.class.getModule());
 
     public static final TextResource EMPTY = standardResource("empty");
 

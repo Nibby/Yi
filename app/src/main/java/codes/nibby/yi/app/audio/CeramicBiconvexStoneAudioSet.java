@@ -1,5 +1,6 @@
 package codes.nibby.yi.app.audio;
 
+import codes.nibby.yi.app.framework.ResourcePath;
 import org.jetbrains.annotations.NotNull;
 import codes.nibby.yi.models.StoneColor;
 
@@ -16,6 +17,8 @@ final class CeramicBiconvexStoneAudioSet extends ExtendedStoneAudioSet {
     private static final int CAPTURE_THREE_STONES = 2;
     private static final int CAPTURE_SMALL_GROUP = 3;
     private static final int CAPTURE_BIG_GROUP = 4;
+
+    private final ResourcePath resourceFolder = ResourcePath.SOUNDS.resolve("biconvex");
 
     @Override
     protected Map<Integer, String[]> getCaptureStoneSoundByCategory() {
@@ -45,7 +48,7 @@ final class CeramicBiconvexStoneAudioSet extends ExtendedStoneAudioSet {
     }
 
     private String sound(String audioNameWithoutExtensionOrPrefix) {
-        return "/codes/nibby/yi/app/sounds/biconvex/" + audioNameWithoutExtensionOrPrefix + ".mp3";
+        return resourceFolder.resolve(audioNameWithoutExtensionOrPrefix + ".mp3").getFilePath();
     }
 
     @Override

@@ -44,7 +44,7 @@ final class GameTreeCanvas extends Canvas {
         addEventHandler(KeyEvent.KEY_PRESSED, handler::keyPressed);
     }
 
-    public void render(GameTreeViewerSettings settings, Camera camera,
+    public void render(GameTreeViewerSettings settings, GameTreeViewport gameTreeViewport,
                        List<TreeNodeElement> visibleElements, GameNode currentNode,
                        @Nullable GameNode previewNode,
                        GameTreeElementSize size) {
@@ -60,8 +60,8 @@ final class GameTreeCanvas extends Canvas {
         graphics.setLineWidth(BRANCH_LINE_WIDTH);
         graphics.setFill(settings.getNodeColor());
 
-        double offsetX = camera.getOffsetX();
-        double offsetY = camera.getOffsetY();
+        double offsetX = gameTreeViewport.getOffsetX();
+        double offsetY = gameTreeViewport.getOffsetY();
 
         final double gridWidth = size.getGridSize().getWidth();
         final double gridHeight = size.getGridSize().getHeight();
@@ -279,13 +279,13 @@ final class GameTreeCanvas extends Canvas {
 
     public Rectangle2D getElementBounds(@NotNull TreeNodeElement element,
                                         GameTreeElementSize elementSize,
-                                        Camera camera) {
+                                        GameTreeViewport viewport) {
         var gridSize = elementSize.getGridSize();
 
         double width = gridSize.getWidth();
         double height = gridSize.getHeight();
-        double x = element.getGridX() * width + camera.getOffsetX();
-        double y = element.getGridY() * height + camera.getOffsetY();
+        double x = element.getGridX() * width + viewport.getOffsetX();
+        double y = element.getGridY() * height + viewport.getOffsetY();
 
         return new Rectangle2D(x, y, width, height);
     }

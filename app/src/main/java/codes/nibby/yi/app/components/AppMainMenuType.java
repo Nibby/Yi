@@ -2,7 +2,7 @@ package codes.nibby.yi.app.components;
 
 import org.jetbrains.annotations.NotNull;
 import codes.nibby.yi.app.i18n.TextResource;
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.framework.AppText;
 
 public enum AppMainMenuType {

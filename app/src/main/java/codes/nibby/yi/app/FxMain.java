@@ -1,7 +1,7 @@
 package codes.nibby.yi.app;
 
-import codes.nibby.yi.app.framework.GlobalApplicationEventHandler;
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalApplicationEventHandler;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.framework.AppWindow;
 import codes.nibby.yi.app.settings.AppSettings;
 import codes.nibby.yi.app.utilities.GameModelUtilities;
@@ -12,13 +12,28 @@ public class FxMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        GlobalHelper.initializeContext(getParameters());
+        initialize();
+
+        if (!GlobalHelper.isRunningAsTest()) {
+            openPendingDocuments();
+        }
 
         if (!GlobalApplicationEventHandler.hasPreInitializationOpenFileEvent()) {
-            var gameModel = GameModelUtilities.createGameModel();
-            var window = new AppWindow(gameModel, AppSettings.general.getPerspective());
-            window.show();
+            newGameRecordWindow();
         }
     }
 
+    private void initialize() {
+        GlobalHelper.initializeContext(getParameters());
+    }
+
+    private void openPendingDocuments() {
+        GlobalApplicationEventHandler.loadAllQueuedOpenFiles();
+    }
+
+    private void newGameRecordWindow() {
+        var gameModel = GameModelUtilities.createGameModel();
+        var window = new AppWindow(gameModel, AppSettings.general.getPerspective());
+        window.show();
+    }
 }

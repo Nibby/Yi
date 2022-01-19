@@ -2,7 +2,7 @@ package codes.nibby.yi.app.framework.action;
 
 import codes.nibby.yi.app.components.AppMainMenuType;
 import codes.nibby.yi.app.framework.AppAccelerator;
-import codes.nibby.yi.app.framework.GlobalHelper;
+import codes.nibby.yi.app.framework.global.GlobalHelper;
 import codes.nibby.yi.app.framework.AppText;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;

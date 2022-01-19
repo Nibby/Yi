@@ -11,13 +11,13 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * <p/>A skin is a collection of related CSS that is applied to JavaFx components
- * for aesthetic purposes. Each skin begins with an entry point, which is a file
+ * A {@code YiSkin} is a collection of CSS files applied to JavaFx components
+ * to customise their look and feel. Each skin contains an entry file
  * called {@code skin.css} in the skin's top level directory.
  */
 public final class YiSkin {
 
-    private static final String COMMON_CSS_FILE = "/codes/nibby/yi/app/skins/common.css";
+    private static final ResourcePath COMMON_CSS_FILE = ResourcePath.SKINS.resolve("common.css");
     private static final String MAIN_CSS_FILE_NAME = "skin.css";
 
     static {
@@ -121,11 +121,11 @@ public final class YiSkin {
      * Instantiates a skin from the resource loader of the specified class.
      * The resource directory can be accessed using {@link Class#getResource(String)}.
      *
-     * @param directoryUrl Resource URL of the top level skin directory.
+     * @param skinFolder Resource path of the skin directory.
      * @return The skin if the url points to a valid skin resource directory, otherwise {@link Optional#empty()}.
      */
-    public static Optional<YiSkin> fromResources(String directoryUrl, Class<?> resourceClass) {
-        var url = resourceClass.getResource(directoryUrl);
+    public static Optional<YiSkin> fromResources(ResourcePath skinFolder, Class<?> resourceClass) {
+        var url = resourceClass.getResource(skinFolder.getFolderPath());
         return Optional.of(new YiSkin(url));
     }
 }

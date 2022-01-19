@@ -14,10 +14,12 @@ public final class YiPresetTextResource {
 
     }
 
-    private static final String I18N_PACKAGE = "yi.component.shared.i18n.";
-    private static final String BUNDLE_NAME = I18N_PACKAGE + "Presets";
-    private static final ResourceBundle BUNDLE = I18n.getResourceBundle(BUNDLE_NAME,
-            YiPresetTextResource.class.getModule());
+    private static final ResourcePath I18N_PACKAGE = ResourcePath.I18N;
+    private static final ResourcePath DIALOG_TRANSLATIONS_BUNDLE = I18N_PACKAGE.resolve("DialogTranslations");
+    private static final ResourceBundle DIALOG_TRANSLATIONS = I18n.getResourceBundle(
+        DIALOG_TRANSLATIONS_BUNDLE,
+        YiPresetTextResource.class.getModule()
+    );
 
     public static final TextResource EMPTY = resource("empty");
     public static final TextResource BUTTON_OKAY = resource("okay");
@@ -25,6 +27,6 @@ public final class YiPresetTextResource {
     public static final TextResource BUTTON_APPLY = resource("apply");
 
     private static TextResource resource(String i18nKey) {
-        return new TextResource(i18nKey, BUNDLE);
+        return new TextResource(i18nKey, DIALOG_TRANSLATIONS);
     }
 }
